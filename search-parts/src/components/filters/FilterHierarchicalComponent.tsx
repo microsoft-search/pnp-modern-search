@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, IDataFilterValueInfo, ExtensibilityConstants, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import styles from './FilterHierarchicalComponent.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
@@ -50,6 +50,30 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
     private pendingStateUpdateTimers: Array<ReturnType<typeof setTimeout>> = [];
+    private lastSelectedTermId: string | null = null;
+    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+
+    private setImmediateProgressCursor(): void {
+        if (!globalThis.document) {
+            return;
+        }
+
+        if (globalThis.document.documentElement) {
+            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        if (globalThis.document.body) {
+            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        const styleId = FilterHierarchicalComponent.GLOBAL_BUSY_CURSOR_STYLE_ID;
+        if (!globalThis.document.getElementById(styleId)) {
+            const styleElement = globalThis.document.createElement('style');
+            styleElement.id = styleId;
+            styleElement.textContent = '* { cursor: progress !important; }';
+            globalThis.document.head.appendChild(styleElement);
+        }
+    }
 
     constructor(props: IFilterHierarchicalProps) {
         super(props);
@@ -61,7 +85,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         };
     }
 
-    private initializeExpandedTerms = (): { [key: string]: boolean } => {
+    private readonly initializeExpandedTerms = (): { [key: string]: boolean } => {
         const expandedTerms: { [key: string]: boolean } = {};
 
         const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
@@ -87,7 +111,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return expandedTerms;
     }
 
-    private getExpandedTermsForSelectedValues = (): { [key: string]: boolean } => {
+    private readonly getExpandedTermsForSelectedValues = (): { [key: string]: boolean } => {
         const expandedTerms: { [key: string]: boolean } = {};
         const selectedFilters = this.getSelectedFilterValues();
         const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
@@ -112,33 +136,100 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return expandedTerms;
     }
 
-    private expandAllDescendants = (terms: any[], expandedTerms: { [key: string]: boolean }): void => {
+    private readonly expandAllDescendants = (terms: any[], expandedTerms: { [key: string]: boolean }): void => {
         terms.forEach(term => {
-            if (term.children && term.children.length > 0) {
+            if (term.children?.length > 0) {
                 expandedTerms[term.id] = true;
                 this.expandAllDescendants(term.children, expandedTerms);
             }
         });
     }
 
-    private normalizeLabel = (value: string): string => {
-        return value ? value.trim().toLowerCase() : '';
+    private readonly normalizeLabel = (value: string): string => {
+        return this.getResolvedLabel(value).toLowerCase();
     }
 
-    private findAndExpandPathToTerm = (terms: any[], guidToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
+    private readonly getResolvedLabel = (value: string): string => {
+        const trimmedValue = `${value || ''}`.trim();
+
+        // Fast path for already readable labels (most taxonomy term labels).
+        // Avoid regex/decode work for each node on every render.
+        if (trimmedValue
+            && !trimmedValue.includes('|')
+            && !trimmedValue.includes('ǂ')
+            && !/^#?[0-9a-fA-F]{24,}$/.test(trimmedValue)) {
+            return trimmedValue;
+        }
+
+        const extractReadableLabel = (input: string): string => {
+            const cleanedValue = `${input || ''}`.trim().replace(/^"+|"+$/g, '');
+            if (!cleanedValue) {
+                return '';
+            }
+
+            const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#0?[0-9a-f-]{32,36}\|(.+)$/i.exec(cleanedValue);
+            if (taxonomyLabelMatch?.[1]?.trim()) {
+                return taxonomyLabelMatch[1].trim();
+            }
+
+            const genericGuidLabelMatch = /\|#0?[0-9a-f-]{32,36}\|([^|]+)$/i.exec(cleanedValue);
+            if (genericGuidLabelMatch?.[1]?.trim()) {
+                return genericGuidLabelMatch[1].trim();
+            }
+
+            const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
+            if (claimsLabelMatch?.[1]?.trim()) {
+                return claimsLabelMatch[1].trim();
+            }
+
+            const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
+            if (personLikeLabelMatch?.[1]?.trim()) {
+                return personLikeLabelMatch[1].trim();
+            }
+
+            const emailMatch = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/.exec(cleanedValue);
+            if (emailMatch?.[1]) {
+                return emailMatch[1];
+            }
+
+            const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
+            const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part) && !/^#?[0-9a-fA-F]{24,}$/.test(part));
+            if (firstReadablePart) {
+                return firstReadablePart;
+            }
+
+            return '';
+        };
+
+        const rawValue = `${value || ''}`;
+        const readableRawValue = extractReadableLabel(rawValue);
+        if (readableRawValue) {
+            return readableRawValue;
+        }
+
+        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
+        const readableDecodedValue = extractReadableLabel(decodedValue);
+        if (readableDecodedValue) {
+            return readableDecodedValue;
+        }
+
+        return rawValue.trim();
+    }
+
+    private readonly findAndExpandPathToTerm = (terms: any[], guidToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
         for (const term of terms) {
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
 
             if (termGuid === guidToMatch) {
                 // Expand the selected term and all its descendants so the full sub-tree is visible.
-                if (term.children && term.children.length > 0) {
+                if (term.children?.length > 0) {
                     expandedTerms[term.id] = true;
                     this.expandAllDescendants(term.children, expandedTerms);
                 }
                 return true;
             }
 
-            if (term.children && term.children.length > 0) {
+            if (term.children?.length > 0) {
                 if (this.findAndExpandPathToTerm(term.children, guidToMatch, expandedTerms)) {
                     expandedTerms[term.id] = true;
                     return true;
@@ -149,19 +240,19 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return false;
     }
 
-    private findAndExpandPathToTermByLabel = (terms: any[], labelToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
+    private readonly findAndExpandPathToTermByLabel = (terms: any[], labelToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
         for (const term of terms) {
             const termLabel = this.normalizeLabel(term.label);
 
             if (termLabel === labelToMatch) {
-                if (term.children && term.children.length > 0) {
+                if (term.children?.length > 0) {
                     expandedTerms[term.id] = true;
                     this.expandAllDescendants(term.children, expandedTerms);
                 }
                 return true;
             }
 
-            if (term.children && term.children.length > 0) {
+            if (term.children?.length > 0) {
                 if (this.findAndExpandPathToTermByLabel(term.children, labelToMatch, expandedTerms)) {
                     expandedTerms[term.id] = true;
                     return true;
@@ -172,7 +263,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return false;
     }
 
-    private initializeSelectedTerms = (): { [key: string]: boolean } => {
+    private readonly initializeSelectedTerms = (): { [key: string]: boolean } => {
         const selectedTerms: { [key: string]: boolean } = {};
         const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
         const selectedFilters = this.getSelectedFilterValues();
@@ -200,7 +291,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                 const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
                 const termLabel = this.normalizeLabel(term.label);
                 selectedTerms[term.id] = (selectedGuids.size > 0 && selectedGuids.has(termGuid)) || (termLabel.length > 0 && selectedLabels.has(termLabel));
-                if (term.children && term.children.length > 0) {
+                if (term.children?.length > 0) {
                     collectTerms(term.children);
                 }
             });
@@ -210,7 +301,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return selectedTerms;
     }
 
-    private getSelectedFilterValues = (): any[] => {
+    private readonly getSelectedFilterValues = (): any[] => {
         const submittedSelections = this.props.selectedFilters || [];
         if (submittedSelections.length > 0) {
             return submittedSelections
@@ -219,30 +310,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
 
         return (this.props.filter?.values || []).filter((value: any) => value?.selected && value?.value);
-    }
-
-    private isTermSelectedFromCurrentValues = (term: any): boolean => {
-        const filterValues = this.getSelectedFilterValues();
-        if (filterValues.length === 0) {
-            return false;
-        }
-
-        const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-        const termLabel = this.normalizeLabel(term.label);
-
-        return filterValues.some((fv: any) => {
-            if (!fv?.value) {
-                return false;
-            }
-
-            const filterGuids = TaxonomyHelper.extractGuidsFromFilterValue(fv.value);
-            if (termGuid && filterGuids.includes(termGuid)) {
-                return true;
-            }
-
-            const filterLabels = this.extractLabelsFromFilter(fv);
-            return termLabel.length > 0 && filterLabels.includes(termLabel);
-        });
     }
 
     public shouldComponentUpdate(nextProps: IFilterHierarchicalProps, nextState: IFilterHierarchicalState): boolean {
@@ -255,11 +322,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return false;
     }
 
-    private getSelectedSignature = (values: any[]): string => {
+    private readonly getSelectedSignature = (values: any[]): string => {
         return values
             .filter(v => v?.selected && v?.value)
             .map(v => v.value)
-            .sort()
+            .sort((left, right) => left.localeCompare(right))
             .join('|');
     }
 
@@ -299,7 +366,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         this.pendingStateUpdateTimers = [];
     }
 
-    private toggleExpand = (termId: string): void => {
+    private readonly toggleExpand = (termId: string): void => {
         this.scheduleStateUpdate(() => {
             this.setState(prevState => ({
                 expandedTerms: {
@@ -310,165 +377,179 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         });
     }
 
-    private onTermCheckboxChange = (term: any, checked: boolean): void => {
-        this.scheduleStateUpdate(() => {
-            this.setState(prevState => ({
-                selectedTerms: checked
-                    ? Object.keys(prevState.selectedTerms).reduce((acc, key) => {
-                        acc[key] = key === term.id;
-                        return acc;
-                    }, {} as { [key: string]: boolean })
-                    : {
-                        ...prevState.selectedTerms,
-                        [term.id]: false
-                    }
-            }));
-        });
+    private readonly onTermCheckboxChange = (term: any, checked: boolean): void => {
+        this.setImmediateProgressCursor();
+        this.updateSelectedTermsState(term.id, checked);
 
         const termGuid = TaxonomyHelper.extractGuidFromTermId(term.id) || '';
         const normalizedTermGuid = TaxonomyHelper.normalizeGuid(termGuid);
-        const isParentNode = term.children && term.children.length > 0;
+        const resolvedTermLabel = this.getResolvedLabel(term.label);
+        const isParentNode = term.children?.length > 0;
 
         if (isParentNode) {
-            // For parent nodes, prefer raw refiner values from search results when available.
-            // These can already include provider-specific descendant semantics (for example an or(GPP,GP0) payload).
-            const gppToken = `GPP|#${termGuid}`;
-            const gppEncoded = this.encodeRefinementToken(gppToken);
-            const gp0Encoded = this.encodeRefinementToken(`GP0|#${termGuid}`);
-
-            const currentFilterValues = this.props.filter?.values || [];
-            const normalizedTermLabel = this.normalizeLabel(term.label);
-            const matchingRefiner = currentFilterValues.find((filterValue: any) => {
-                if (!filterValue?.value) return false;
-
-                const filterGuids = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value);
-                if (normalizedTermGuid.length > 0 && filterGuids.includes(normalizedTermGuid)) {
-                    return true;
-                }
-
-                const filterLabels = this.extractLabelsFromFilter(filterValue);
-                return normalizedTermLabel.length > 0 && filterLabels.includes(normalizedTermLabel);
-            });
-
-            // Dispatch custom event with single-select behavior
-            if (this.props.domElement) {
-                const valuesToClear = currentFilterValues
-                    .filter((value: any) => value?.selected)
-                    .map((value: any) => ({
-                        name: value.name,
-                        value: value.value,
-                        operator: value.operator || FilterComparisonOperator.Eq,
-                        selected: false
-                    } as IDataFilterValueInfo));
-
-                const baseParentValues: IDataFilterValueInfo[] = [{
-                    name: term.label,
-                    value: gppEncoded,
-                    operator: FilterComparisonOperator.Eq,
-                    selected: checked,
-                }, {
-                    name: term.label,
-                    value: gp0Encoded,
-                    operator: FilterComparisonOperator.Eq,
-                    selected: checked,
-                }, {
-                    name: term.label,
-                    value: term.label,
-                    operator: FilterComparisonOperator.Eq,
-                    selected: checked,
-                }];
-
-                const matchingValue = matchingRefiner
-                    ? {
-                        name: term.label,
-                        value: this.sanitizeRefinerValue(matchingRefiner.value),
-                        operator: matchingRefiner.operator,
-                        selected: checked,
-                    } as IDataFilterValueInfo
-                    : undefined;
-
-                const nextSelectedValues = this.dedupeFilterValues([
-                    ...(matchingValue ? [matchingValue] : []),
-                    ...baseParentValues
-                ]);
-
-                const filterValues: IDataFilterValueInfo[] = [
-                    ...valuesToClear,
-                    ...nextSelectedValues
-                ];
-
-                this.props.domElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
-                    detail: {
-                        filterName: this.props.filter?.filterName,
-                        filterValues: filterValues,
-                        instanceId: this.props.instanceId
-                    },
-                    bubbles: true,
-                    cancelable: true
-                }));
-            }
+            this.handleParentTermSelection(termGuid, normalizedTermGuid, resolvedTermLabel, checked);
         } else {
-            // For leaf nodes: emit only GP0
-            const filterValues = this.props.filter?.values || [];
-            const termGuidForMatching = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-            const normalizedTermLabel = this.normalizeLabel(term.label);
-            const matchingRefiner = filterValues.find((filterValue: any) => {
-                if (!filterValue?.value) return false;
-                const filterGuids = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value);
-                if (filterGuids.includes(termGuidForMatching)) {
-                    return true;
-                }
-
-                const filterLabels = this.extractLabelsFromFilter(filterValue);
-                return normalizedTermLabel.length > 0 && filterLabels.includes(normalizedTermLabel);
-            });
-
-            // Use the raw refiner value from search as-is (handles both localized or(...) FQL and ǂǂHEX formats).
-            // buildFqlRefinementString passes or(...) through unchanged and ǂǂHEX with its surrounding quotes,
-            // both of which produce correct RefinementFilters FQL and return results.
-            const filterValue: IDataFilterValueInfo = matchingRefiner ? {
-                name: term.label,
-                value: this.sanitizeRefinerValue(matchingRefiner.value),
-                operator: matchingRefiner.operator,
-                selected: checked,
-            } : {
-                name: term.label,
-                value: termGuidForMatching ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`) : term.id,
-                selected: checked,
-            };
-
-            if (checked && this.props.domElement) {
-                const currentFilterValues = this.props.filter?.values || [];
-                const valuesToClear = currentFilterValues
-                    .filter((value: any) => value?.selected)
-                    .map((value: any) => ({
-                        name: value.name,
-                        value: value.value,
-                        operator: value.operator || FilterComparisonOperator.Eq,
-                        selected: false
-                    } as IDataFilterValueInfo));
-
-                const nextSelectedValues: IDataFilterValueInfo[] = [filterValue];
-
-                this.props.domElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
-                    detail: {
-                        filterName: this.props.filter?.filterName,
-                        filterValues: [
-                            ...valuesToClear,
-                            ...nextSelectedValues
-                        ],
-                        instanceId: this.props.instanceId
-                    },
-                    bubbles: true,
-                    cancelable: true
-                }));
-            } else {
-                this.props.onChecked(this.props.filter?.filterName, filterValue);
-            }
+            this.handleLeafTermSelection(term, resolvedTermLabel, checked);
         }
     }
 
-    private extractLabelsFromTokenString = (token: string): string[] => {
+    private updateSelectedTermsState(termId: string, checked: boolean): void {
+        this.scheduleStateUpdate(() => {
+            this.setState(prevState => {
+                const nextSelectedTerms = { ...prevState.selectedTerms };
+
+                if (checked) {
+                    if (this.lastSelectedTermId && this.lastSelectedTermId !== termId) {
+                        nextSelectedTerms[this.lastSelectedTermId] = false;
+                    }
+
+                    nextSelectedTerms[termId] = true;
+                    this.lastSelectedTermId = termId;
+                } else {
+                    nextSelectedTerms[termId] = false;
+
+                    if (this.lastSelectedTermId === termId) {
+                        this.lastSelectedTermId = null;
+                    }
+                }
+
+                return {
+                    selectedTerms: nextSelectedTerms
+                };
+            });
+        });
+    }
+
+    private handleParentTermSelection(
+        termGuid: string,
+        normalizedTermGuid: string,
+        resolvedTermLabel: string,
+        checked: boolean
+    ): void {
+        const currentFilterValues = this.props.filter?.values || [];
+        const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
+        const matchingRefiner = this.findMatchingRefiner(currentFilterValues, normalizedTermGuid, normalizedTermLabel);
+        const valuesToClear = this.createSingleSelectClearValues(currentFilterValues);
+        const baseParentValues: IDataFilterValueInfo[] = [
+            this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GPP|#${termGuid}`), checked),
+            this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GP0|#${termGuid}`), checked),
+            this.createSelectedFilterValue(resolvedTermLabel, resolvedTermLabel, checked)
+        ];
+
+        const matchingValue = matchingRefiner
+            ? this.createSelectedFilterValue(
+                resolvedTermLabel,
+                this.sanitizeRefinerValue(matchingRefiner.value),
+                checked,
+                matchingRefiner.operator
+            )
+            : undefined;
+
+        const filterValues = [
+            ...valuesToClear,
+            ...this.dedupeFilterValues([
+                ...(matchingValue ? [matchingValue] : []),
+                ...baseParentValues
+            ])
+        ];
+
+        this.dispatchFilterUpdate(filterValues);
+    }
+
+    private handleLeafTermSelection(term: any, resolvedTermLabel: string, checked: boolean): void {
+        const currentFilterValues = this.props.filter?.values || [];
+        const termGuidForMatching = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
+        const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
+        const matchingRefiner = this.findMatchingRefiner(currentFilterValues, termGuidForMatching, normalizedTermLabel);
+        const filterValue = matchingRefiner
+            ? this.createSelectedFilterValue(
+                resolvedTermLabel,
+                this.sanitizeRefinerValue(matchingRefiner.value),
+                checked,
+                matchingRefiner.operator
+            )
+            : (() => {
+                const fallbackValue = termGuidForMatching
+                    ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`)
+                    : term.id;
+
+                return this.createSelectedFilterValue(
+                    resolvedTermLabel,
+                    fallbackValue,
+                    checked
+                );
+            })();
+
+        if (checked && this.props.domElement) {
+            const valuesToClear = this.createSingleSelectClearValues(currentFilterValues);
+            this.dispatchFilterUpdate([
+                ...valuesToClear,
+                filterValue
+            ]);
+            return;
+        }
+
+        this.props.onChecked(this.props.filter?.filterName, filterValue);
+    }
+
+    private findMatchingRefiner(filterValues: any[], normalizedTermGuid: string, normalizedTermLabel: string): any {
+        return filterValues.find((filterValue: any) => {
+            if (!filterValue?.value) {
+                return false;
+            }
+
+            const filterGuids = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value);
+            if (normalizedTermGuid.length > 0 && filterGuids.includes(normalizedTermGuid)) {
+                return true;
+            }
+
+            const filterLabels = this.extractLabelsFromFilter(filterValue);
+            return normalizedTermLabel.length > 0 && filterLabels.includes(normalizedTermLabel);
+        });
+    }
+
+    private createSingleSelectClearValues(currentFilterValues: any[]): IDataFilterValueInfo[] {
+        return currentFilterValues
+            .filter((value: any) => value?.selected)
+            .map((value: any) => ({
+                name: value.name,
+                value: value.value,
+                operator: value.operator || FilterComparisonOperator.Eq,
+                selected: false
+            }));
+    }
+
+    private createSelectedFilterValue(
+        name: string,
+        value: string,
+        selected: boolean,
+        operator: FilterComparisonOperator = FilterComparisonOperator.Eq
+    ): IDataFilterValueInfo {
+        return {
+            name,
+            value,
+            operator,
+            selected,
+        };
+    }
+
+    private dispatchFilterUpdate(filterValues: IDataFilterValueInfo[]): void {
+        if (!this.props.domElement) {
+            return;
+        }
+
+        this.props.domElement.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+            detail: {
+                filterName: this.props.filter?.filterName,
+                filterValues,
+                instanceId: this.props.instanceId
+            },
+            bubbles: true,
+            cancelable: true
+        }));
+    }
+
+    private readonly extractLabelsFromTokenString = (token: string): string[] => {
         if (!token) return [];
 
         const labels = new Set<string>();
@@ -479,7 +560,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             }
         };
 
-        const taxonomyLabelRegex = /L0\|#0?[-0-9a-fA-F]{32,36}\|([^;\)]+)/g;
+        const taxonomyLabelRegex = /L0\|#0?[0-9a-f-]{32,36}\|([^;)]+)/gi;
         let regexMatch: RegExpExecArray | null;
         while ((regexMatch = taxonomyLabelRegex.exec(token)) !== null) {
             addLabel(regexMatch[1]);
@@ -488,7 +569,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return Array.from(labels);
     }
 
-    private extractLabelsFromFilter = (filterValue: any): string[] => {
+    private readonly extractLabelsFromFilter = (filterValue: any): string[] => {
         if (!filterValue) return [];
 
         const labels = new Set<string>();
@@ -522,12 +603,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         if (!token) return token;
         const hex = token
             .split('')
-            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .map(char => (char.codePointAt(0) || 0).toString(16).padStart(2, '0'))
             .join('');
         return `"ǂǂ${hex}"`;
     }
 
-    private sanitizeRefinerValue = (rawValue: string): string => {
+    private readonly sanitizeRefinerValue = (rawValue: string): string => {
         if (!rawValue) {
             return rawValue;
         }
@@ -537,7 +618,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             return rawValue;
         }
 
-        const tokenMatch = decodedValue.match(/^((?:GP0|GPP|L0)\|#0?)([-0-9a-fA-F]+)/i);
+        const tokenMatch = /^((?:GP0|GPP|L0)\|#0?)([0-9a-f-]+)/i.exec(decodedValue);
         if (!tokenMatch) {
             return rawValue;
         }
@@ -551,7 +632,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return this.encodeRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
     }
 
-    private dedupeFilterValues = (values: IDataFilterValueInfo[]): IDataFilterValueInfo[] => {
+    private readonly dedupeFilterValues = (values: IDataFilterValueInfo[]): IDataFilterValueInfo[] => {
         const seen = new Set<string>();
         return values.filter(value => {
             const key = `${value.operator ?? FilterComparisonOperator.Eq}::${value.value}`;
@@ -564,27 +645,28 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         });
     }
 
-    private termOrDescendantExistsInResults = (term: any, resultGuids: Set<string>, resultLabels: Set<string>): boolean => {
+    private readonly termOrDescendantExistsInResults = (term: any, resultGuids: Set<string>, resultLabels: Set<string>): boolean => {
         const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
         if (resultGuids.has(termGuid)) return true;
         const termLabel = this.normalizeLabel(term.label);
         if (termLabel && resultLabels.has(termLabel)) return true;
-        if (term.children && term.children.length > 0) {
+        if (term.children?.length > 0) {
             return term.children.some((child: any) => this.termOrDescendantExistsInResults(child, resultGuids, resultLabels));
         }
         return false;
     }
 
-    private termOrDescendantMatchesSearch = (term: any, lowerSearchText: string): boolean => {
+    private readonly termOrDescendantMatchesSearch = (term: any, lowerSearchText: string): boolean => {
         if (!lowerSearchText) return true;
-        if (term.label && term.label.toLowerCase().includes(lowerSearchText)) return true;
-        if (term.children && term.children.length > 0) {
+        const resolvedTermLabel = this.getResolvedLabel(term.label);
+        if (resolvedTermLabel?.toLowerCase().includes(lowerSearchText)) return true;
+        if (term.children?.length > 0) {
             return term.children.some((child: any) => this.termOrDescendantMatchesSearch(child, lowerSearchText));
         }
         return false;
     }
 
-    private onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    private readonly onSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const newSearchText = event.target.value;
         if (this.searchDebounceTimer !== null) {
             clearTimeout(this.searchDebounceTimer);
@@ -607,13 +689,13 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         this.pendingStateUpdateTimers.push(timer);
     }
 
-    private findTermByGuid = (guid: string, terms: any[]): any => {
+    private readonly findTermByGuid = (guid: string, terms: any[]): any => {
         for (const term of terms) {
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
             if (termGuid === guid) {
                 return term;
             }
-            if (term.children && term.children.length > 0) {
+            if (term.children?.length > 0) {
                 const found = this.findTermByGuid(guid, term.children);
                 if (found) {
                     return found;
@@ -623,20 +705,21 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         return null;
     }
 
-    private collectDescendantGuids = (term: any, guids: Set<string>): void => {
+    private readonly collectDescendantGuids = (term: any, guids: Set<string>): void => {
         if (term) {
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
             guids.add(termGuid);
-            if (term.children && term.children.length > 0) {
+            if (term.children?.length > 0) {
                 term.children.forEach((child: any) => this.collectDescendantGuids(child, guids));
             }
         }
     }
 
-    private renderTerm = (term: any, level: number = 0, resultGuids: Set<string> = new Set(), resultLabels: Set<string> = new Set(), lowerSearchText: string = '', hasResultSignals: boolean = true): JSX.Element | null => {
-        const hasChildren = term.children && term.children.length > 0;
+    private readonly renderTerm = (term: any, level: number = 0, resultGuids: Set<string> = new Set(), resultLabels: Set<string> = new Set(), lowerSearchText: string = '', hasResultSignals: boolean = true): JSX.Element | null => {
+        const hasChildren = term.children?.length > 0;
         const isExpanded = this.state.expandedTerms[term.id];
         const isSelected = this.state.selectedTerms[term.id];
+        const displayLabel = this.getResolvedLabel(term.label);
         const indent = level * 20;
 
         const termExistsInResults = this.termOrDescendantExistsInResults(term, resultGuids, resultLabels);
@@ -656,7 +739,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                     )}
                     {!hasChildren && <span className={styles.noChildrenSpacer}></span>}
                     <Checkbox
-                        label={term.label}
+                        label={displayLabel}
                         checked={isSelected}
                         onChange={(ev, checked) => this.onTermCheckboxChange(term, !!checked)}
                         className={styles.termCheckbox}
@@ -720,7 +803,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         });
         guidsToExpand.forEach((guid: string) => {
             const term = this.findTermByGuid(guid, hierarchicalTerms);
-            if (term && term.children && term.children.length > 0) {
+            if (term?.children?.length > 0) {
                 term.children.forEach((child: any) => {
                     const childDescendants = new Set<string>();
                     this.collectDescendantGuids(child, childDescendants);
@@ -758,8 +841,8 @@ export class FilterHierarchicalWebComponent extends BaseWebComponent {
         super();
     }
 
-    public async connectedCallback() {
-        let props = this.resolveAttributes();
+    public connectedCallback(): void {
+        const props = this.resolveAttributes();
         const hierarchical = <FilterHierarchicalComponent
             {...props}
             domElement={this}
@@ -770,7 +853,7 @@ export class FilterHierarchicalWebComponent extends BaseWebComponent {
                         filterName: filterName,
                         filterValues: [filterValue],
                         instanceId: props.instanceId
-                    } as IDataFilterInfo,
+                    },
                     bubbles: true,
                     cancelable: true
                 }));

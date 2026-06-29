@@ -7,6 +7,28 @@ import { IDatePickerProps, IDatePickerStyles, IDatePickerStyleProps, DatePicker,
 import * as strings from 'CommonStrings';
 import { DateHelper } from '../../helpers/DateHelper';
 
+const setImmediateProgressCursor = (): void => {
+    if (!globalThis.document) {
+        return;
+    }
+
+    if (globalThis.document.documentElement) {
+        globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    if (globalThis.document.body) {
+        globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    const styleId = 'pnp-modern-search-busy-cursor-style';
+    if (!globalThis.document.getElementById(styleId)) {
+        const styleElement = globalThis.document.createElement('style');
+        styleElement.id = styleId;
+        styleElement.textContent = '* { cursor: progress !important; }';
+        globalThis.document.head.appendChild(styleElement);
+    }
+};
+
 export interface IFilterDateRangeComponentProps {
 
     /**
@@ -266,6 +288,7 @@ export class FilterDateRangeWebComponent extends BaseWebComponent {
 
             const filter = props.filter as IDataFilterInternal;
             renderDateRange = <FilterDateRangeComponent {...props} dayjs={dayjs} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
+                setImmediateProgressCursor();
 
                 // Unselect all previous values
                 const updatedValues = filter.values.map(value => {
