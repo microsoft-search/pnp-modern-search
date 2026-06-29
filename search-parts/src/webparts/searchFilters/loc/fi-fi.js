@@ -30,6 +30,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
                 FilterLimitReachedWarningToggle: "Näytä varoitus, kun raja saavutetaan",
                 FilterLimitReachedWarningMessage: "Tulosten enimmäismäärä on saavutettu — kaikkia vastaavia kohteita ei näytetä. Rajaa luetteloa tarkentamalla hakua.",
+                PeopleTemplateQUserMappingWarning: "Henkilömallin varoitus: arvot eivät näytä käyttäjäidentiteeteiltä. Tätä ominaisuutta ei todennäköisesti ole yhdistetty Q_USER-indeksoituun ominaisuuteen.",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
