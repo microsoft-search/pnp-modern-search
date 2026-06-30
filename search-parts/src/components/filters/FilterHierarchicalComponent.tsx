@@ -776,7 +776,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
 
         const availableFilterValues = this.props.filter?.values || [];
-        const selectedFilterValues = this.getSelectedFilterValues();
         const resultGuidSet = new Set<string>();
         const resultLabelSet = new Set<string>();
         availableFilterValues.forEach((fv: any) => {
@@ -789,28 +788,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             this.extractLabelsFromFilter(fv).forEach(label => resultLabelSet.add(label));
         });
         const hasResultSignals = resultGuidSet.size > 0 || resultLabelSet.size > 0;
-        
-        // Keep selected descendants available when a parent node is selected,
-        // but do not globally enable unrelated terms that are absent from the dataset.
-        const expandedResultGuidSet = new Set(resultGuidSet);
-        const guidsToExpand = new Set<string>();
-        selectedFilterValues.forEach((fv: any) => {
-            if (!fv?.value) {
-                return;
-            }
 
-            TaxonomyHelper.extractGuidsFromFilterValue(fv.value).forEach(guid => guidsToExpand.add(guid));
-        });
-        guidsToExpand.forEach((guid: string) => {
-            const term = this.findTermByGuid(guid, hierarchicalTerms);
-            if (term?.children?.length > 0) {
-                term.children.forEach((child: any) => {
-                    const childDescendants = new Set<string>();
-                    this.collectDescendantGuids(child, childDescendants);
-                    childDescendants.forEach(cguid => expandedResultGuidSet.add(cguid));
-                });
-            }
-        });
+        // Keep enable/disable strictly tied to current dataset signals.
+        // A term is enabled only when it (or a visible descendant for branch nodes)
+        // exists in current refinement results.
+        const enabledResultGuidSet = resultGuidSet;
         
         const lowerSearchText = this.state.searchText.toLowerCase();
 
@@ -829,7 +811,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         className={styles.searchInput}
                     />
                 </div>
-                {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, expandedResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
+                {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, enabledResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
             </div>
         );
     }
