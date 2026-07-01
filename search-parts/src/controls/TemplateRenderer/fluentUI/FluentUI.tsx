@@ -30,7 +30,7 @@ export function useLocalFluentUI(elementsRegistry: CardObjectRegistry<CardElemen
 
 export const getDefaultFluentUITheme = (): ITheme => {
     let currentTheme;
-    const themeColorsFromWindow: any = (window as any).__themeState__.theme;
+    const themeColorsFromWindow: any = (window as any)?.__themeState__?.theme;
     if (themeColorsFromWindow) {
         currentTheme = createTheme({
             palette: themeColorsFromWindow
@@ -71,9 +71,12 @@ export const createDarkTeamsTheme = (): ITheme => {
     theme = createTheme({
         ...{ palette: require("../themes/teamsDarkPalette.json") }
     });
-    theme.semanticColors.primaryButtonText = theme.semanticColors.buttonText;
-    theme.semanticColors.primaryButtonTextHovered = theme.semanticColors.buttonTextHovered;
-    theme.semanticColors.primaryButtonTextPressed = theme.semanticColors.buttonTextPressed;
+
+    if (theme?.semanticColors) {
+        theme.semanticColors.primaryButtonText = theme.semanticColors.buttonText;
+        theme.semanticColors.primaryButtonTextHovered = theme.semanticColors.buttonTextHovered;
+        theme.semanticColors.primaryButtonTextPressed = theme.semanticColors.buttonTextPressed;
+    }
 
     return theme;
 };

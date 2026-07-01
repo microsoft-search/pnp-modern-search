@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, IDataFilterInternal, ExtensibilityConstants, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { ITheme, ChoiceGroup, IChoiceGroupOption, MessageBar, MessageBarType } from '@fluentui/react';
+import { ITheme, ChoiceGroup, IChoiceGroupOption, MessageBar, MessageBarType, getTheme } from '@fluentui/react';
 import * as strings from 'CommonStrings';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { DateHelper } from '../../helpers/DateHelper';
@@ -122,7 +122,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
 
         return <div>
             <ChoiceGroup
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 options={this.state.options}
                 selectedKey={this._getIntervalKeyForValue(dateAsString)}
                 onChange={this._onChange}
@@ -134,7 +134,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                     flexContainer: {
                         selectors: {
                             label: {
-                                color: this.props.themeVariant.semanticColors.bodyText
+                                color: this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
                             }
                         }
                     }

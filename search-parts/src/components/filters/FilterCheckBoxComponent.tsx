@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Text } from '@fluentui/react';
+import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Text, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
@@ -103,7 +103,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 
     private _getTextColor(): string {
         if (this.props.themeVariant?.isInverted) {
-            return this.props.themeVariant.semanticColors.bodyText;
+            return this.props.themeVariant?.semanticColors?.bodyText ?? '#323130';
         }
 
         return this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
@@ -235,10 +235,10 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                         width: '100%'
                     },
                     text: {
-                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
+                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant?.semanticColors?.disabledText ?? '#a19f9d' : textColor
                     }
                 }}
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 defaultChecked={this.props.selected}
                 disabled={this.props.disabled}
                 title={labelValue}
@@ -279,7 +279,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                         disabled: this.props.disabled,
                         styles: {
                             field: {
-                                color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
+                                color: this.props.count && this.props.count === 0 ? this.props.themeVariant?.semanticColors?.disabledText ?? '#a19f9d' : textColor
                             }
                         }
                     }

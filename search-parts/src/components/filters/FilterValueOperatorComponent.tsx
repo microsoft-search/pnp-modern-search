@@ -83,7 +83,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             '.ms-ChoiceField + .ms-ChoiceField::before': {
                                                                 content: '"/"',
                                                                 padding: '0 4px',
-                                                                color: this.props.themeVariant?.isInverted ? '#fff' : this.props.themeVariant?.semanticColors.bodyText
+                                                                color: this.props.themeVariant?.isInverted ? '#fff' : this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
                                                             },
                                                             'label::before, label::after': {
                                                                 display: 'none',
@@ -96,7 +96,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                                 color: this.props.themeVariant ? this.props.themeVariant.palette.themePrimary : '#005a9e'
                                                             },
                                                             'label span.ms-ChoiceFieldLabel, label span.ms-ChoiceFieldLabel:hover': {
-                                                                color: this.props.themeVariant.isInverted ? '#fff' : this.props.themeVariant.semanticColors.bodyText
+                                                                color: this.props.themeVariant?.isInverted ? '#fff' : this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
                                                             }
                                                         }
                                                     }

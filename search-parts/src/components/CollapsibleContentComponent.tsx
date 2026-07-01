@@ -233,7 +233,9 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         // Keep a reference to the divider props so the panel can be collapsed programmatically
         // (e.g. on Escape) and stay in sync with the GroupedList internal collapse state (#3900).
         this.headerDividerProps = props;
-        let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        let textColor: string = this.props.themeVariant?.isInverted
+            ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
+            : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const warningDescriptionId = `pnp-warning-${(this.props.groupName || 'group').toString().replace(/[^a-zA-Z0-9_-]/g, '-')}`;
         const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
             root: {

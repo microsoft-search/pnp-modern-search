@@ -379,7 +379,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                     <div style={{
                         fontWeight: 'normal',
                         height: '100%',
-                        color: this.props.themeVariant.semanticColors.bodyText,
+                        color: this.props.themeVariant?.semanticColors?.bodyText ?? '#323130',
                         fontSize: 12,
                         marginLeft: -8
                     }}>
@@ -398,7 +398,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                     <div style={{
                         fontWeight: 'normal',
                         height: '100%',
-                        color: this.props.themeVariant.semanticColors.bodyText,
+                        color: this.props.themeVariant?.semanticColors?.bodyText ?? '#323130',
                         fontSize: 12,
                         marginLeft: 5
                     }}>
