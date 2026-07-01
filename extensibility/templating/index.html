@@ -957,6 +957,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#formatspfilesize" class="md-nav__link">
+    formatSPFileSize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#deep-link-example-for-search-filters" class="md-nav__link">
     Deep Link Example For Search Filters
   </a>
@@ -1457,6 +1464,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#formatspfilesize" class="md-nav__link">
+    formatSPFileSize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#deep-link-example-for-search-filters" class="md-nav__link">
     Deep Link Example For Search Filters
   </a>
@@ -1851,6 +1865,78 @@
 <p><strong>Syntax</strong> <code>{{hexToString &lt;value&gt;}}</code></p>
 <p><strong>Description</strong> Convert a UTF-8 hexadecimal string back to text. The helper also accepts the filter value format used in deep links, including optional surrounding quotes and the <code>ǂǂ</code> prefix.</p>
 <p><strong>Example</strong> <code>{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}</code> returns <code>Keogh’s Crisps</code>.</p>
+<h4 id="formatspfilesize">formatSPFileSize<a class="headerlink" href="#formatspfilesize" title="Permanent link">&para;</a></h4>
+<p><strong>Syntax</strong> <code>{{formatSPFileSize &lt;value&gt;}}</code></p>
+<p><strong>Description</strong> Formats a file size in bytes into a SharePoint-style value — <code>bytes</code>,
+<code>KB</code>, <code>MB</code>, <code>GB</code>, or <code>TB</code>. Pass a numeric <strong>bytes</strong> value: map a managed property
+holding the raw file size in bytes to a slot such as <code>fileSizeBytes</code>, then reference
+that slot in your template.</p>
+<blockquote>
+<p><strong>Recommended source property:</strong> map a <code>RefinableInt</code> from <code>OWS_FILESIZEDISPLAY</code>.
+In testing this produced more accurate byte values — and therefore more accurate
+unit conversions — than the <code>Size</code> managed property, which can yield off-by-a-unit
+rounding at tier boundaries.</p>
+<p>The <code>TB</code> tier is included for forward-compatibility: SharePoint Online's current
+maximum file size is 250 GB, so <code>TB</code> output is not reached in practice today, but
+the helper handles it should that limit rise.</p>
+</blockquote>
+<p>Zero-byte, empty, invalid, negative, and non-integer values render as blank.</p>
+<p><strong>Example</strong> <code>{{formatSPFileSize (slot item @root.slots.fileSizeBytes)}}</code></p>
+<p>Representative examples:</p>
+<table>
+<thead>
+<tr>
+<th>Input (bytes)</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>invalid (for example, <code>abc</code>)</td>
+<td>(blank)</td>
+</tr>
+<tr>
+<td>0</td>
+<td>(blank)</td>
+</tr>
+<tr>
+<td>500</td>
+<td><code>500 bytes</code></td>
+</tr>
+<tr>
+<td>1023</td>
+<td><code>1023 bytes</code></td>
+</tr>
+<tr>
+<td>1024</td>
+<td><code>1 KB</code></td>
+</tr>
+<tr>
+<td>1048575</td>
+<td><code>1.00 MB</code></td>
+</tr>
+<tr>
+<td>1048576</td>
+<td><code>1 MB</code></td>
+</tr>
+<tr>
+<td>10485760</td>
+<td><code>10 MB</code></td>
+</tr>
+<tr>
+<td>1073741823</td>
+<td><code>1.00 GB</code></td>
+</tr>
+<tr>
+<td>1073741824</td>
+<td><code>1 GB</code></td>
+</tr>
+<tr>
+<td>44398312377</td>
+<td><code>41.3 GB</code></td>
+</tr>
+</tbody>
+</table>
 <h4 id="deep-link-example-for-search-filters">Deep Link Example For Search Filters<a class="headerlink" href="#deep-link-example-for-search-filters" title="Permanent link">&para;</a></h4>
 <p>If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.</p>
 <p>The deep-link query string parameter is <code>f_&lt;Search Filters instance ID&gt;</code>. The filter <code>value</code> must contain the UTF-8 hex form of the label, prefixed with <code>ǂǂ</code> and wrapped in escaped quotes.</p>
