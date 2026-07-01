@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Panel, PanelType, IPanelProps, Text, ITheme } from '@fluentui/react';
+import { Panel, PanelType, IPanelProps, Text, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { Log } from "@microsoft/sp-core-library";
 import styles from "./PanelComponent.module.scss";
@@ -103,8 +103,10 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
 
     public render() {
 
+        const resolvedTheme: ITheme = this.props.themeVariant ? this.props.themeVariant as ITheme : getTheme();
+
         let panelProps: IPanelProps = {
-            theme: this.props.themeVariant as ITheme,
+            theme: resolvedTheme,
             isOpen: this.state.showPanel,
             type: this.props.size ? Number(this.props.size) : PanelType.medium,
             isHiddenOnDismiss: false,
@@ -134,7 +136,7 @@ export class PanelComponent extends React.Component<IPanelComponentProps, IPanel
         }
 
         return <div>
-            <Text theme={this.props.themeVariant as ITheme}>
+            <Text theme={resolvedTheme}>
                 <div
                     role={"menubar"}
                     tabIndex={0}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import Pagination from 'react-js-pagination';
-import { Icon, ITheme } from '@fluentui/react';
+import { Icon, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './PaginationComponent.module.scss';
 
@@ -146,10 +146,10 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                         <div className={`${isThemeInverted ? styles.inverted : styles.standard}`}>
                             <Pagination
                                 activePage={this.state.currentPageNumber}
-                                firstPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
-                                lastPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
-                                prevPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
-                                nextPageText={<Icon theme={this.props.themeVariant as ITheme} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
+                                firstPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
+                                lastPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
+                                prevPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
+                                nextPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
                                 activeLinkClass={`${styles.active} ${isThemeInverted ? styles.active__inverted : ''}`}
                                 itemsCountPerPage={this.props.itemsCountPerPage}
                                 totalItemsCount={totalCount}

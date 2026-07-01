@@ -885,6 +885,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         // Set the input query text globally for the page. There can be only one input query text submitted at a time even if multiple search box components are on the page
         GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, searchQuery);
 
+        // Bump a page-wide submission id on every submit so connected Search Results always re-query,
+        // even when the query text is unchanged (issue #4790).
+        const submissionId = (GlobalSettings.getValue<number>(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, 0) || 0) + 1;
+        GlobalSettings.setValue(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, submissionId);
+
         this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
         this.context.dynamicDataSourceManager.notifySourceChanged();
 

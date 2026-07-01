@@ -19,6 +19,13 @@ export class Constants {
      * The regular expression to sanitize URIs with DomPurify
      */
     public static readonly ALLOWED_URI_REGEXP = /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|msteams|rcapp|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i;
+
+    /**
+     * Page-wide GlobalSettings key holding a monotonically increasing id that is bumped every time a
+     * search is explicitly submitted from a Search Box (Enter or the Search button). Connected Search
+     * Results use it to force a fresh query even when the query text is unchanged (issue #4790).
+     */
+    public static readonly SEARCH_BOX_SUBMISSION_ID_KEY = 'pnpSearchBoxSubmissionId';
 }
 
 export enum AutoCalculatedDataSourceFields {

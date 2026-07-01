@@ -8,6 +8,7 @@ import {
     Icon,
     ITheme,
     PersonaPresence,
+    getTheme,
 } from "@fluentui/react";
 import { TemplateService } from "../services/templateService/TemplateService";
 import * as ReactDOM from "react-dom";
@@ -198,7 +199,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         } : {};
 
         const persona: IPersonaProps = {
-            theme: this.props.themeVariant as ITheme,
+            theme: (this.props.themeVariant as ITheme) || getTheme(),
             imageUrl: hideCoin ? undefined : imageUrlResolved,
             imageShouldFadeIn: false,
             imageShouldStartVisible: true,

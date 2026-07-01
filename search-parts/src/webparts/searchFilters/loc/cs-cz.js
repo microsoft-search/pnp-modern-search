@@ -30,6 +30,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Maximální počet hodnot je 1000",
                 FilterLimitReachedWarningToggle: "Zobrazit upozornění při dosažení limitu",
                 FilterLimitReachedWarningMessage: "Byl dosažen limit výsledků — nejsou zobrazeny všechny odpovídající položky. Upřesněte hledání a zúžte seznam.",
+                PeopleTemplateQUserMappingWarning: "Upozornění šablony osob: hodnoty nevypadají jako identity uživatelů. Tato vlastnost pravděpodobně není mapována na procházenou vlastnost Q_USER.",
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",

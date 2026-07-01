@@ -15,6 +15,12 @@ export interface ISearchResultsContainerProps {
   dataContext: IDataContext;
 
   /**
+   * A page-wide id that changes every time a connected Search Box submits (Enter or the Search
+   * button), even when the query text is unchanged. Lets the results re-query on re-submission (issue #4790).
+   */
+  lastSubmittedQueryId?: number;
+
+  /**
    * The current page context
    */
   pageContext: PageContext;

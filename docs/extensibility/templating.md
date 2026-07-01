@@ -259,6 +259,44 @@ Supported output format tokens include all [dayjs format tokens](https://day.js.
 
 **Example** `{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}` returns `Keogh’s Crisps`.
 
+#### formatSPFileSize
+
+**Syntax** `{{formatSPFileSize <value>}}`
+
+**Description** Formats a file size in bytes into a SharePoint-style value — `bytes`,
+`KB`, `MB`, `GB`, or `TB`. Pass a numeric **bytes** value: map a managed property
+holding the raw file size in bytes to a slot such as `fileSizeBytes`, then reference
+that slot in your template.
+
+> **Recommended source property:** map a `RefinableInt` from `OWS_FILESIZEDISPLAY`.
+> In testing this produced more accurate byte values — and therefore more accurate
+> unit conversions — than the `Size` managed property, which can yield off-by-a-unit
+> rounding at tier boundaries.
+
+> The `TB` tier is included for forward-compatibility: SharePoint Online's current
+> maximum file size is 250 GB, so `TB` output is not reached in practice today, but
+> the helper handles it should that limit rise.
+
+Zero-byte, empty, invalid, negative, and non-integer values render as blank.
+
+**Example** `{{formatSPFileSize (slot item @root.slots.fileSizeBytes)}}`
+
+Representative examples:
+
+| Input (bytes) | Output |
+|---|---|
+| invalid (for example, `abc`) | (blank) |
+| 0 | (blank) |
+| 500 | `500 bytes` |
+| 1023 | `1023 bytes` |
+| 1024 | `1 KB` |
+| 1048575 | `1.00 MB` |
+| 1048576 | `1 MB` |
+| 10485760 | `10 MB` |
+| 1073741823 | `1.00 GB` |
+| 1073741824 | `1 GB` |
+| 44398312377 | `41.3 GB` |
+
 #### Deep Link Example For Search Filters
 
 If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.

@@ -1,10 +1,32 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, IDataFilterInternal, ExtensibilityConstants, FilterComparisonOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { ITheme, ChoiceGroup, IChoiceGroupOption, MessageBar, MessageBarType } from '@fluentui/react';
+import { ITheme, ChoiceGroup, IChoiceGroupOption, MessageBar, MessageBarType, getTheme } from '@fluentui/react';
 import * as strings from 'CommonStrings';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { DateHelper } from '../../helpers/DateHelper';
+
+const setImmediateProgressCursor = (): void => {
+    if (!globalThis.document) {
+        return;
+    }
+
+    if (globalThis.document.documentElement) {
+        globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    if (globalThis.document.body) {
+        globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    const styleId = 'pnp-modern-search-busy-cursor-style';
+    if (!globalThis.document.getElementById(styleId)) {
+        const styleElement = globalThis.document.createElement('style');
+        styleElement.id = styleId;
+        styleElement.textContent = '* { cursor: progress !important; }';
+        globalThis.document.head.appendChild(styleElement);
+    }
+};
 
 export enum DateFilterInterval {
     AnyTime,
@@ -100,7 +122,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
 
         return <div>
             <ChoiceGroup
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 options={this.state.options}
                 selectedKey={this._getIntervalKeyForValue(dateAsString)}
                 onChange={this._onChange}
@@ -112,7 +134,7 @@ export class FilterDateIntervalComponent extends React.Component<IFilterDateInte
                     flexContainer: {
                         selectors: {
                             label: {
-                                color: this.props.themeVariant.semanticColors.bodyText
+                                color: this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
                             }
                         }
                     }
@@ -344,6 +366,7 @@ export class FilterDateIntervalWebComponent extends BaseWebComponent {
 
             const filter = props.filter as IDataFilterInternal;
             renderDateRange = <FilterDateIntervalComponent {...props} dayjs={dayjs} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
+                setImmediateProgressCursor();
 
                 // Unselect all previous values
                 const updatedValues = filter.values.map(value => {

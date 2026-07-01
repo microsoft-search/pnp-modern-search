@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { BaseWebComponent } from "@pnp/modern-search-extensibility";
-import { ActionButton, IIconProps, ITheme } from "@fluentui/react";
+import { ActionButton, IIconProps, ITheme, getTheme } from "@fluentui/react";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { AadTokenProviderFactory, HttpClient, HttpClientResponse, IHttpClientOptions, ISPHttpClientOptions, SPHttpClient, SPHttpClientResponse } from "@microsoft/sp-http";
 import { Guid, Log } from "@microsoft/sp-core-library";
@@ -95,7 +95,7 @@ export class DownloadSelectedItemsButtonComponent extends React.Component<IExpor
                 !requiredPropertiesAvailable
               }
               onClick={this._downloadSelectedItems}
-              theme={this.props.themeVariant as ITheme}
+              theme={(this.props.themeVariant as ITheme) || getTheme()}
             />
           );
         }

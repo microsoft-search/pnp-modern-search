@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Icon, ITheme, IIconStyles, ImageFit } from '@fluentui/react';
+import { Icon, ITheme, IIconStyles, ImageFit, getTheme } from '@fluentui/react';
 import { getFileTypeIconAsUrl, FileTypeIconSize, FileIconType, IFileTypeIconOptions } from '@fluentui/react-file-type-icons';
 import { FileTypeIconHelper } from '../helpers/FileTypeIconHelper';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -98,7 +98,7 @@ export class FileIcon extends React.Component<IFileIconProps, IFileIconState> {
             iconProps = buildFileTypeIconProps({ type: FileIconType.genericFile, size: size });
         }
 
-        return <Icon styles={this.props.styles} theme={this.props.themeVariant as ITheme} {...iconProps} />;
+        return <Icon styles={this.props.styles} theme={(this.props.themeVariant as ITheme) || getTheme()} {...iconProps} />;
     }
 }
 
