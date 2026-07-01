@@ -22,6 +22,7 @@ import {
   ITheme,
   Selection,
   IconButton,
+  getTheme,
 } from "@fluentui/react";
 import * as Handlebars from "handlebars";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
@@ -561,7 +562,7 @@ export class DetailsListComponent extends React.Component<
 
     let shimmeredDetailsListProps: IShimmeredDetailsListProps = {
       componentRef: this._detailsListRef,
-      theme: this.props.themeVariant as ITheme,
+      theme: (this.props.themeVariant as ITheme) || getTheme(),
       items: items,
       compact: this.props.isCompact,
       columns: columns,
@@ -774,9 +775,9 @@ export class DetailsListComponent extends React.Component<
     if (showCheckbox) {
       shimmerElementsRow.push(
         <ShimmerElementsGroup
-          theme={this.props.themeVariant as ITheme}
+          theme={(this.props.themeVariant as ITheme) || getTheme()}
           backgroundColor={
-            this.props.themeVariant.semanticColors.bodyBackground
+            this.props.themeVariant?.semanticColors?.bodyBackground ?? "#ffffff"
           }
           key={"checkboxGap"}
           shimmerElements={[
@@ -830,11 +831,11 @@ export class DetailsListComponent extends React.Component<
 
       shimmerElementsRow.push(
         <ShimmerElementsGroup
-          theme={this.props.themeVariant as ITheme}
+          theme={(this.props.themeVariant as ITheme) || getTheme()}
           key={columnIdx}
           width={`${groupWidth}px`}
           backgroundColor={
-            this.props.themeVariant.semanticColors.bodyBackground
+            this.props.themeVariant?.semanticColors?.bodyBackground ?? "#ffffff"
           }
           shimmerElements={shimmerElements}
         />
@@ -845,8 +846,8 @@ export class DetailsListComponent extends React.Component<
       <ShimmerElementsGroup
         key={"endGap"}
         width={"100%"}
-        backgroundColor={this.props.themeVariant.semanticColors.bodyBackground}
-        theme={this.props.themeVariant as ITheme}
+        backgroundColor={this.props.themeVariant?.semanticColors?.bodyBackground ?? "#ffffff"}
+        theme={(this.props.themeVariant as ITheme) || getTheme()}
         shimmerElements={[
           { type: ShimmerElementType.gap, width: "100%", height: gapHeight },
         ]}
@@ -854,7 +855,7 @@ export class DetailsListComponent extends React.Component<
     );
     return (
       <Shimmer
-        theme={this.props.themeVariant as ITheme}
+        theme={(this.props.themeVariant as ITheme) || getTheme()}
         customElementsGroup={
           <div style={{ display: "flex" }}>{shimmerElementsRow}</div>
         }
@@ -869,7 +870,7 @@ export class DetailsListComponent extends React.Component<
           ...rowProps.styles,
           root: {
             backgroundColor:
-              this.props.themeVariant.semanticColors.bodyBackgroundChecked,
+              this.props.themeVariant?.semanticColors?.bodyBackgroundChecked ?? "#f3f2f1",
           },
         };
       }
@@ -885,7 +886,7 @@ export class DetailsListComponent extends React.Component<
       }
 
       return (
-        <DetailsRowCheck {...props} theme={this.props.themeVariant as ITheme} />
+        <DetailsRowCheck {...props} theme={(this.props.themeVariant as ITheme) || getTheme()} />
       );
     };
 
@@ -900,7 +901,7 @@ export class DetailsListComponent extends React.Component<
             : undefined
         }
       >
-        <DetailsRow {...rowProps} theme={this.props.themeVariant as ITheme} />
+        <DetailsRow {...rowProps} theme={(this.props.themeVariant as ITheme) || getTheme()} />
       </div>
     );
   }
@@ -932,11 +933,11 @@ export class DetailsListComponent extends React.Component<
                   flexShrink: 0,
                 },
                 icon: {
-                  color: this.props.themeVariant?.semanticColors.bodySubtext,
+                  color: this.props.themeVariant?.semanticColors?.bodySubtext,
                   fontSize: "12px",
                 },
                 rootHovered: {
-                  backgroundColor: this.props.themeVariant?.semanticColors.listHeaderBackgroundHovered,
+                  backgroundColor: this.props.themeVariant?.semanticColors?.listHeaderBackgroundHovered,
                 },
               }}
               ariaLabel={`More information about ${column.name}`}
@@ -950,16 +951,15 @@ export class DetailsListComponent extends React.Component<
   private _onRenderColumnHeaderTooltip = (tooltipHostProps: ITooltipHostProps): JSX.Element => {
     const customStyles: Partial<ITooltipStyles> = {};
     customStyles.root = {
-      backgroundColor: this.props.themeVariant.semanticColors.listBackground,
-      color: this.props.themeVariant.semanticColors.listText,
+      backgroundColor: this.props.themeVariant?.semanticColors?.listBackground ?? "#ffffff",
+      color: this.props.themeVariant?.semanticColors?.listText ?? "#323130",
       selectors: {
         ":hover": {
           backgroundColor:
-            this.props.themeVariant.semanticColors
-              .listHeaderBackgroundHovered,
+            this.props.themeVariant?.semanticColors?.listHeaderBackgroundHovered ?? "#f3f2f1",
         },
         i: {
-          color: this.props.themeVariant.semanticColors.listText,
+          color: this.props.themeVariant?.semanticColors?.listText ?? "#323130",
         },
       },
     };
@@ -974,7 +974,7 @@ export class DetailsListComponent extends React.Component<
     return (
       <TooltipHost
         {...tooltipHostProps}
-        theme={this.props.themeVariant as ITheme}
+        theme={(this.props.themeVariant as ITheme) || getTheme()}
         styles={customStyles}
       />
     );
@@ -988,7 +988,7 @@ export class DetailsListComponent extends React.Component<
 
     return defaultRender!({
       ...props,
-      theme: this.props.themeVariant as ITheme,
+      theme: (this.props.themeVariant as ITheme) || getTheme(),
     });
   }
 
@@ -998,22 +998,22 @@ export class DetailsListComponent extends React.Component<
   ): JSX.Element {
 
     return (
-      <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced={true} stickyBackgroundColor={this.props.themeVariant.semanticColors.listBackground}>
+      <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced={true} stickyBackgroundColor={this.props.themeVariant?.semanticColors?.listBackground ?? "#ffffff"}>
         {defaultRender({
           ...props,
           className: detailsListStyles.detailsListHeader,
           styles: {
             root: {
               backgroundColor: "transparent",
-              color: this.props.themeVariant.semanticColors.bodyText,
-              borderBottom: `1px solid ${this.props.themeVariant.semanticColors.bodyDivider}`,
+              color: this.props.themeVariant?.semanticColors?.bodyText ?? "#323130",
+              borderBottom: `1px solid ${this.props.themeVariant?.semanticColors?.bodyDivider ?? "#edebe9"}`,
               selectors: {
                 i: {
-                  color: this.props.themeVariant.semanticColors.bodyText,
+                  color: this.props.themeVariant?.semanticColors?.bodyText ?? "#323130",
                   fontWeight: "600",
                 },
                 [`.${detailsListStyles.detailsListHeader} .ms-DetailsHeader-cellTitle`]: {
-                  color: this.props.themeVariant.semanticColors.bodyText,
+                  color: this.props.themeVariant?.semanticColors?.bodyText ?? "#323130",
                   fontWeight: "600",
                 }
               }

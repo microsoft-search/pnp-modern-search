@@ -42,6 +42,26 @@ The filter settings are as follow:
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
 
+### Refiner value limit warning
+
+Use **Show warning when limit is reached** together with **# of values** when a filter can return many refiner or aggregation values.
+
+When the warning is enabled, an info icon is shown next to the filter title if the connected API reports that the configured **# of values** limit was reached. This means the visible filter list may be truncated and not all matching values are currently shown.
+
+For troubleshooting, PnP Modern Search also writes a browser console message for each refiner or aggregation showing how many values were returned by the API and what limit was configured. When the returned count matches or exceeds the configured limit, the message is emitted as a warning and notes that additional values may have been truncated by the API.
+
+Example console warning:
+
+```text
+[PnP Modern Search][SharePoint Search] Refiner 'RefinableString00' returned 500 item(s), matching or exceeding the configured limit of 500. Additional values may have been truncated by the API.
+```
+
+This is useful when:
+
+- you keep **# of values** lower than 1000 for performance or readability
+- you want to warn users that they should narrow their search before trusting the full filter list
+- you need a visible hint that increasing **# of values** may expose more refiner values
+
 ### Hierarchical refiner (taxonomy)
 
 Use the **Hierarchical Refiner** template when you want to browse and filter terms as a tree (parent/child hierarchy).

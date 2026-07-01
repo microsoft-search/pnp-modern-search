@@ -1,9 +1,8 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { DefaultButton, PrimaryButton } from '@fluentui/react';
+import { DefaultButton, PrimaryButton, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from '@fluentui/react';
 import styles from "./FilterMultiComponent.module.scss";
 import * as strings from 'CommonStrings';
 
@@ -39,6 +38,29 @@ export interface IFilterMultiState {
 }
 
 export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMultiState> {
+    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+
+    private _setImmediateProgressCursor(): void {
+        if (!globalThis.document) {
+            return;
+        }
+
+        if (globalThis.document.documentElement) {
+            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        if (globalThis.document.body) {
+            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+        }
+
+        const styleId = FilterMulti.GLOBAL_BUSY_CURSOR_STYLE_ID;
+        if (!globalThis.document.getElementById(styleId)) {
+            const styleElement = globalThis.document.createElement('style');
+            styleElement.id = styleId;
+            styleElement.textContent = '* { cursor: progress !important; }';
+            globalThis.document.head.appendChild(styleElement);
+        }
+    }
 
     public constructor(props: IFilterMultiProps) {
         super(props);
@@ -51,13 +73,13 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
             <PrimaryButton
                 className={styles.applyBtn}
                 disabled={this.props.applyDisabled}
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 onClick={this._applyFilters}>
                 {strings.Filters.ApplyAllFiltersButtonLabel}
             </PrimaryButton>
             <DefaultButton
                 className={styles.clearBtn}
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 disabled={this.props.clearDisabled}
                 onClick={this._clearFilters}>
                 {strings.Filters.ClearAllFiltersButtonLabel}
@@ -69,6 +91,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
      * Applies all selected filter values for the current filter
      */
     private _applyFilters() {
+        this._setImmediateProgressCursor();
         this.props.onApply();
     }
 
@@ -76,6 +99,7 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
      * Clears all selected filters for the current refiner
      */
     private _clearFilters() {
+        this._setImmediateProgressCursor();
         this.props.onClear();
     }
 }

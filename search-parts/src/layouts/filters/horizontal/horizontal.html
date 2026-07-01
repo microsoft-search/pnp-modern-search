@@ -135,7 +135,7 @@
 							</pnp-filtercombobox>
 						</div>
 				{{else}}
-					<pnp-collapsible data-group-name="{{filter.displayName}}" data-show-warning-marker="{{filter.showLimitExceededWarning}}" data-warning-marker-tooltip="{{filter.limitExceededWarningText}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
+					<pnp-collapsible data-group-name="{{filter.displayName}}" data-group-storage-key="{{@root.instanceId}}::{{filter.filterName}}" data-show-warning-marker="{{filter.showWarningMarker}}" data-warning-marker-tooltip="{{filter.warningMarkerTooltipText}}" data-default-collapsed="{{#or filter.hasSelectedValues filter.expandByDefault}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
 							
 						<template id="collapsible-header">
 						</template>
@@ -194,44 +194,47 @@
 									</div>
 								{{else}}
 									{{#eq filter.selectedTemplate 'PeopleTemplate'}}
-											{{#if filter.isMulti}}
-												<div class="filter--option">
-													<pnp-filteroperator 
-														data-instance-id="{{@root.instanceId}}"
-														data-filter-name="{{filter.filterName}}" 
-														data-operator="{{filter.operator}}" 
-														data-theme-variant="{{JSONstringify @root.theme}}"
-													></pnp-filteroperator>
-												</div>
-											{{/if}}
+									{{#if filter.showPeopleTemplateMappingWarning}}
+										<div class="filter--message">{{filter.peopleTemplateMappingWarningText}}</div>
+									{{/if}}
+									{{#if filter.isMulti}}
+										<div class="filter--option">
+											<pnp-filteroperator 
+												data-instance-id="{{@root.instanceId}}"
+												data-filter-name="{{filter.filterName}}" 
+												data-operator="{{filter.operator}}" 
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											></pnp-filteroperator>
+										</div>
+									{{/if}}
 								
-											<div class="filter--option">
-												<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
-											</div>
+									<div class="filter--option">
+										<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+									</div>
 
-							<div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
-												{{#each filter.values}}
-													<div title="{{#with (split name '|')}}{{[1]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
-														<pnp-filtercheckbox 
-															data-instance-id="{{@root.instanceId}}" 
-															data-filter-name="{{filter.filterName}}" 
-															data-name= "{{#with (split name '|')}}{{[1]}}{{/with}}" 
-															data-value="{{value}}" 
-															data-selected="{{selected}}" 
-															data-disabled="{{disabled}}" 
-															data-count="{{count}}"
-															data-is-multi="{{../isMulti}}"
-															data-value-count="{{../values.length}}"
-															data-value-index="{{@index}}"
-															data-theme-variant="{{JSONstringify @root.theme}}"
-														>
-														</pnp-filtercheckbox>
-														{{#if ../showCount}}
-															<span data-ui-test-id="filterCount">({{count}})</span>
-														{{/if}}
-													</div>
-												{{/each}}
-											</div>				
+									<div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
+										{{#each filter.values}}
+												<div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+													<pnp-filtercheckbox 
+														data-instance-id="{{@root.instanceId}}" 
+														data-filter-name="{{filter.filterName}}" 
+														data-name="{{name}}" 
+														data-value="{{value}}" 
+														data-selected="{{selected}}" 
+														data-disabled="{{disabled}}" 
+														data-count="{{count}}"
+														data-is-multi="{{../isMulti}}"
+														data-value-count="{{../values.length}}"
+														data-value-index="{{@index}}"
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													>
+													</pnp-filtercheckbox>
+													{{#if ../showCount}}
+														<span data-ui-test-id="filterCount">({{count}})</span>
+													{{/if}}
+												</div>
+										{{/each}}
+									</div>				
 									{{else}}
 
 										{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
@@ -249,6 +252,7 @@
 													<pnp-filterhierarchical 
 														data-instance-id="{{@root.instanceId}}" 
 														data-filter="{{JSONstringify filter 2}}"
+														data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
 														data-theme-variant="{{JSONstringify @root.theme}}"
 													>
 													</pnp-filterhierarchical>

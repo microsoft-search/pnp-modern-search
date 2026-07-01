@@ -11,4 +11,14 @@ export interface ISearchFiltersContainerState {
      * Filters submitted to the data source
      */
     submittedFilters: IDataFilter[];
+
+    /**
+     * Indicates if filter updates are currently being processed
+     */
+    isUpdatingResults?: boolean;
+
+    /**
+     * Filter name currently driving the busy state.
+     */
+    activeBusyFilterName?: string;
 }

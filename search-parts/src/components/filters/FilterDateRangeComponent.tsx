@@ -3,9 +3,31 @@ import { BaseWebComponent, FilterComparisonOperator, IDataFilterInfo, IDataFilte
 import * as ReactDOM from 'react-dom';
 import { ITheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { IDatePickerProps, IDatePickerStyles, IDatePickerStyleProps, DatePicker, Link, MessageBar, MessageBarType } from '@fluentui/react';
+import { IDatePickerProps, IDatePickerStyles, IDatePickerStyleProps, DatePicker, Link, MessageBar, MessageBarType, getTheme } from '@fluentui/react';
 import * as strings from 'CommonStrings';
 import { DateHelper } from '../../helpers/DateHelper';
+
+const setImmediateProgressCursor = (): void => {
+    if (!globalThis.document) {
+        return;
+    }
+
+    if (globalThis.document.documentElement) {
+        globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    if (globalThis.document.body) {
+        globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
+    }
+
+    const styleId = 'pnp-modern-search-busy-cursor-style';
+    if (!globalThis.document.getElementById(styleId)) {
+        const styleElement = globalThis.document.createElement('style');
+        styleElement.id = styleId;
+        styleElement.textContent = '* { cursor: progress !important; }';
+        globalThis.document.head.appendChild(styleElement);
+    }
+};
 
 export interface IFilterDateRangeComponentProps {
 
@@ -67,13 +89,13 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
                 textField: {
                     selectors: {
                         input: {
-                            backgroundColor: this.props.themeVariant.semanticColors.bodyBackground,
-                            color: this.props.themeVariant.semanticColors.bodyText
+                            backgroundColor: this.props.themeVariant?.semanticColors?.bodyBackground ?? '#ffffff',
+                            color: this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
 
 
                         },
                         'input::placeholder': {
-                            color: this.props.themeVariant.semanticColors.bodyText
+                            color: this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
                         }
                     }
                 }
@@ -105,7 +127,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             showGoToToday: true,
             borderless: true,
             styles: datePickerStyles,
-            theme: this.props.themeVariant as ITheme,
+            theme: (this.props.themeVariant as ITheme) || getTheme(),
             strings: strings.General.DatePickerStrings,
             formatDate: this._onFormatDate,
             allowTextInput: true,
@@ -118,7 +140,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
             value: this.state.selectedToDate,
             showGoToToday: true,
             styles: datePickerStyles,
-            theme: this.props.themeVariant as ITheme,
+            theme: (this.props.themeVariant as ITheme) || getTheme(),
             borderless: true,
             strings: strings.General.DatePickerStrings,
             formatDate: this._onFormatDate,
@@ -141,7 +163,7 @@ export class FilterDateRangeComponent extends React.Component<IFilterDateRangeCo
         return <div>
             <DatePicker {...fromProps} />
             <DatePicker {...toProps} />
-            <Link theme={this.props.themeVariant as ITheme} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Filters.ClearAllFiltersButtonLabel}</Link>
+            <Link theme={(this.props.themeVariant as ITheme) || getTheme()} onClick={this._clearFilters} disabled={!this.state.selectedToDate && !this.state.selectedFromDate}>{strings.Filters.ClearAllFiltersButtonLabel}</Link>
         </div>;
     }
 
@@ -266,6 +288,7 @@ export class FilterDateRangeWebComponent extends BaseWebComponent {
 
             const filter = props.filter as IDataFilterInternal;
             renderDateRange = <FilterDateRangeComponent {...props} dayjs={dayjs} filter={filter} onUpdate={((filterValues: IDataFilterValueInfo[]) => {
+                setImmediateProgressCursor();
 
                 // Unselect all previous values
                 const updatedValues = filter.values.map(value => {

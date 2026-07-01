@@ -15,6 +15,12 @@ export interface ICollapsibleContentComponentProps {
     groupName?: string;
 
     /**
+     * Optional unique key used to persist collapsed state.
+     * Use this when multiple groups can share the same display name.
+     */
+    groupStorageKey?: string;
+
+    /**
      * If the group should be collapsed by default
      */
     defaultCollapsed?: boolean;
@@ -69,18 +75,14 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         super(props);
 
         // Create a unique storage key for this collapsible group
-        this.storageKey = `pnp-collapsible-${props.groupName}`;
+        this.storageKey = `pnp-collapsible-${props.groupStorageKey || props.groupName}`;
         
         // Check if there's a stored state for this group
         const storedState = sessionStorage.getItem(this.storageKey);
         const defaultCollapsed = this.getNormalizedDefaultCollapsed(props.defaultCollapsed);
         
-        // A forced-open state from the parent (selected filters or expandByDefault)
-        // must override any previously stored collapsed preference.
-        const initialCollapsedState = defaultCollapsed === false
-            ? false
-            : storedState
-                ? JSON.parse(storedState)
+        const initialCollapsedState = storedState
+            ? JSON.parse(storedState)
             : !!defaultCollapsed;
         
         this.state = {
@@ -109,21 +111,8 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         }
     }
 
-    public componentDidUpdate(prevProps: ICollapsibleContentComponentProps) {
-        const defaultCollapsed = this.getNormalizedDefaultCollapsed(this.props.defaultCollapsed);
-        const prevDefaultCollapsed = this.getNormalizedDefaultCollapsed(prevProps.defaultCollapsed);
-
-        // Only react when the parent default changes to open.
-        // This keeps expandByDefault as an initial/open-on-state-change behavior,
-        // but still lets users collapse the panel afterwards.
-        if (defaultCollapsed === false && prevDefaultCollapsed !== defaultCollapsed && this.state.isCollapsed) {
-            if (this.state.isCollapsed) {
-                sessionStorage.setItem(this.storageKey, JSON.stringify(false));
-                this.setState({
-                    isCollapsed: false
-                });
-            }
-        }
+    public componentDidUpdate(): void {
+        // Keep user-controlled collapse state; do not force open on parent refresh.
     }
 
     private getNormalizedDefaultCollapsed(defaultCollapsed: boolean | string | undefined): boolean | undefined {
@@ -244,7 +233,9 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         // Keep a reference to the divider props so the panel can be collapsed programmatically
         // (e.g. on Escape) and stay in sync with the GroupedList internal collapse state (#3900).
         this.headerDividerProps = props;
-        let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        let textColor: string = this.props.themeVariant?.isInverted
+            ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
+            : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const warningDescriptionId = `pnp-warning-${(this.props.groupName || 'group').toString().replace(/[^a-zA-Z0-9_-]/g, '-')}`;
         const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
             root: {

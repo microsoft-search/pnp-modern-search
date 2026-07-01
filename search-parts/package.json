@@ -1,6 +1,6 @@
 {
     "name": "@pnp/modern-search-web-parts",
-    "version": "4.23.0",
+    "version": "4.23.1",
     "private": true,
     "engines": {
         "node": ">=22.14.0 < 23.0.0"
@@ -39,11 +39,11 @@
         "adaptivecards": "2.11.2",
         "adaptivecards-templating": "2.3.1",
         "dayjs": "1.11.19",
-        "dompurify": "3.4.0",
+        "dompurify": "3.4.11",
         "handlebars": "4.7.9",
         "immutability-helper": "3.1.1",
         "jspath": "0.4.0",
-        "markdown-it": "14.1.1",
+        "markdown-it": "14.2.0",
         "react": "17.0.1",
         "react-ace": "10.1.0",
         "react-dom": "17.0.1",
@@ -126,6 +126,7 @@
         "immutable": "4.3.8",
         "js-cookie": "3.0.7",
         "js-yaml": "4.1.1",
+        "launch-editor": "2.14.1",
         "lodash": "4.18.0",
         "lodash-es": "4.18.0",
         "markdown-to-jsx": "7.4.0",
@@ -191,6 +192,7 @@
             "immutable": "4.3.8",
             "js-cookie": "3.0.7",
             "js-yaml": "4.1.1",
+            "launch-editor": "2.14.1",
             "lodash": "4.18.0",
             "lodash-es": "4.18.0",
             "markdown-to-jsx": "7.4.0",
@@ -218,5 +220,6 @@
             "fsevents",
             "swiper"
         ]
-    }
+    },
+    "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402"
 }

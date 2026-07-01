@@ -29,6 +29,7 @@ declare interface ISearchFiltersWebPartStrings {
             FilterMaxBucketsWarning: string;
             FilterLimitReachedWarningToggle: string;
             FilterLimitReachedWarningMessage: string;
+            PeopleTemplateQUserMappingWarning: string;
             FilterDisplayName: string;
             FilterTemplate: string;
             FilterExpandByDefault: string;

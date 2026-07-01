@@ -31,6 +31,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Det maksimale antal værdier er 1000",
                 FilterLimitReachedWarningToggle: "Vis advarsel, når grænsen er nået",
                 FilterLimitReachedWarningMessage: "Resultatgrænsen er nået — ikke alle matchende elementer vises. Forfin din søgning for at indsnævre listen.",
+                PeopleTemplateQUserMappingWarning: "Advarsel for personskabelon: værdierne ligner ikke brugeridentiteter. Egenskaben er sandsynligvis ikke knyttet til en Q_USER-crawlet egenskab.",
                 FilterTemplate: "Skabelon",
                 FilterExpandByDefault: "Udvid som standard",
                 ExpandAllNodesByDefault: "Udvid alle noder som standard",

@@ -30,6 +30,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Die maximale Anzahl von Werten ist 1000",
                 FilterLimitReachedWarningToggle: "Warnung anzeigen, wenn das Limit erreicht ist",
                 FilterLimitReachedWarningMessage: "Ergebnislimit erreicht — nicht alle passenden Elemente werden angezeigt. Verfeinern Sie Ihre Suche, um die Liste einzugrenzen.",
+                PeopleTemplateQUserMappingWarning: "Warnung für Personenvorlage: Die Werte sehen nicht wie Benutzeridentitäten aus. Diese Eigenschaft ist wahrscheinlich nicht einer Q_USER-Crawleigenschaft zugeordnet.",
                 FilterDisplayName: "Anzeige name",
                 FilterTemplate: "Vorlage",
                 FilterExpandByDefault: "Standardmäßig erweitert",
