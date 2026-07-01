@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { ITheme } from '@fluentui/react';
+import { ITheme, getTheme } from '@fluentui/react';
 import { Icon } from '@fluentui/react/lib/Icon'
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
@@ -29,7 +29,7 @@ export interface IIconState {
 export class FileIcon extends React.Component<IIconProps, IIconState> {
 
     public render() {
-        return <Icon iconName={this.props.name} theme={this.props.themeVariant as ITheme} />;
+        return <Icon iconName={this.props.name} theme={(this.props.themeVariant as ITheme) || getTheme()} />;
     }
 }
 

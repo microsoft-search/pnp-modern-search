@@ -1,9 +1,8 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { DefaultButton, PrimaryButton } from '@fluentui/react';
+import { DefaultButton, PrimaryButton, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from '@fluentui/react';
 import styles from "./FilterMultiComponent.module.scss";
 import * as strings from 'CommonStrings';
 
@@ -74,13 +73,13 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
             <PrimaryButton
                 className={styles.applyBtn}
                 disabled={this.props.applyDisabled}
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 onClick={this._applyFilters}>
                 {strings.Filters.ApplyAllFiltersButtonLabel}
             </PrimaryButton>
             <DefaultButton
                 className={styles.clearBtn}
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 disabled={this.props.clearDisabled}
                 onClick={this._clearFilters}>
                 {strings.Filters.ClearAllFiltersButtonLabel}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilter, IDataFilterValue, FilterConditionOperator, FilterComparisonOperator, IDataFilterInfo, ExtensibilityConstants, IDataFilterConfiguration, IDataFilterValueInfo } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Label, Icon, ITheme } from '@fluentui/react';
+import { Label, Icon, ITheme, getTheme } from '@fluentui/react';
 import styles from './SelectedFiltersComponent.module.scss';
 import * as strings from 'CommonStrings';
 import { Log } from '@microsoft/sp-core-library';
@@ -127,23 +127,23 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
                     return <>
                         <div className={styles.filterRow}>
-                            <Label theme={this.props.themeVariant as ITheme}>
+                            <Label theme={(this.props.themeVariant as ITheme) || getTheme()}>
                                 <Icon iconName='ClearFilter'
                                     data-ui-test-id={TestConstants.SelectedFiltersClearFilter}
-                                    theme={this.props.themeVariant as ITheme}
+                                    theme={(this.props.themeVariant as ITheme) || getTheme()}
                                     onClick={() => {
                                         // Remove all the values for that filter
                                         this._onRemovefilter(filter.filterName, filter.values, this.props.instanceId);
                                     }}>
                                 </Icon>
                             </Label>
-                            <Label className={styles.filterRowValues} style={{ minWidth: 0 }} theme={this.props.themeVariant as ITheme}>
+                            <Label className={styles.filterRowValues} style={{ minWidth: 0 }} theme={(this.props.themeVariant as ITheme) || getTheme()}>
                                 <div className={styles.ellipsis}>[{renderValues}]</div>
                             </Label>
                         </div>
                         {i < filters.length - 1 && filter.values.length > 0 ?
                             <div className={styles.filterRow}>
-                                <Label className={styles.operator} theme={this.props.themeVariant as ITheme}>{`${this.getConditionOperatorString(this.props.operator as FilterConditionOperator)}`}</Label>
+                                <Label className={styles.operator} theme={(this.props.themeVariant as ITheme) || getTheme()}>{`${this.getConditionOperatorString(this.props.operator as FilterConditionOperator)}`}</Label>
                             </div>
                             : null
                         }

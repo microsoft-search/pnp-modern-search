@@ -214,7 +214,7 @@ export class DocumentCardComponent extends React.Component<
     };
 
     let previewProps: IDocumentCardPreviewProps = {
-      theme: this.props.themeVariant as ITheme,
+      theme: (this.props.themeVariant as ITheme) || getTheme(),
       previewImages: [
         {
           name: processedProps.title,
@@ -275,8 +275,8 @@ export class DocumentCardComponent extends React.Component<
         documentCardStyles.root = {
           borderWidth: "2px",
           borderColor:
-            this.props.themeVariant.semanticColors
-              .primaryButtonBackgroundHovered,
+            this.props.themeVariant?.semanticColors
+              ?.primaryButtonBackgroundHovered ?? "#0f6cbd",
         };
       }
     }
@@ -288,7 +288,7 @@ export class DocumentCardComponent extends React.Component<
         data-selection-toggle
       >
         <DocumentCard
-          theme={this.props.themeVariant as ITheme}
+          theme={(this.props.themeVariant as ITheme) || getTheme()}
           onClick={previewFunc}
           styles={documentCardStyles}
           type={
@@ -331,7 +331,7 @@ export class DocumentCardComponent extends React.Component<
               ></div>
             ) : null}
             <Link
-              theme={this.props.themeVariant as ITheme}
+              theme={(this.props.themeVariant as ITheme) || getTheme()}
               href={processedProps.href}
               target="_blank"
               styles={{
@@ -345,7 +345,7 @@ export class DocumentCardComponent extends React.Component<
               }}
             >
               <DocumentCardTitle
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 title={processedProps.title}
                 //  shouldTruncate={true}
               />
@@ -365,7 +365,7 @@ export class DocumentCardComponent extends React.Component<
             ) : null}
             {processedProps.author ? (
               <DocumentCardActivity
-                theme={this.props.themeVariant as ITheme}
+                theme={(this.props.themeVariant as ITheme) || getTheme()}
                 activity={activityText}
                 people={[
                   {

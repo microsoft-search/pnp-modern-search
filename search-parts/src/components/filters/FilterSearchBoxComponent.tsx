@@ -169,7 +169,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
 
     private readonly getTextColor = (): string => {
         if (this.props.themeVariant?.isInverted) {
-            return this.props.themeVariant.semanticColors.bodyText;
+            return this.props.themeVariant?.semanticColors?.bodyText ?? '#323130';
         }
 
         return this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
