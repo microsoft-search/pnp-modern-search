@@ -270,16 +270,7 @@
                                                         {{else}}
                                                             {{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
                                                                 <div class="filter--value-hierarchical">
-                                                                    {{#if filter.isMulti}}
-                                                                        <div class="filter--option">
-                                                                            <pnp-filteroperator 
-                                                                                data-instance-id="{{@root.instanceId}}"
-                                                                                data-filter-name="{{filter.filterName}}" 
-                                                                                data-operator="{{filter.operator}}" 
-                                                                                data-theme-variant="{{JSONstringify @root.theme}}"
-                                                                            ></pnp-filteroperator>
-                                                                        </div>
-                                                                    {{/if}}
+                                                                    {{{hierarchicalOperator filter @root.instanceId @root.theme}}}
                                                                     <pnp-filterhierarchical 
                                                                         data-instance-id="{{@root.instanceId}}" 
                                                                         data-filter="{{JSONstringify filter 2}}"
@@ -299,16 +290,7 @@
                                         <template id="collapsible-footer">
                                             {{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
                                                 {{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
-                                                    {{#if filter.isMulti}}
-                                                        <pnp-filtermultiselect 
-                                                            data-instance-id="{{@root.instanceId}}" 
-                                                            data-filter-name="{{filter.filterName}}" 
-                                                            data-apply-disabled="{{#if filter.canApply}}false{{else}}true{{/if}}" 
-                                                            data-clear-disabled="{{#if filter.canClear}}false{{else}}true{{/if}}"
-                                                            data-theme-variant="{{JSONstringify @root.theme}}"
-                                                        >
-                                                        </pnp-filtermultiselect>
-                                                    {{/if}}
+                                                    {{{hierarchicalMultiselect filter @root.instanceId @root.theme}}}
                                                 {{else}}
                                                     {{#isnt filter.selectedTemplate 'TaxonomyPickerFilterTemplate'}}
                                                         {{#eq filter.values.length 0}}

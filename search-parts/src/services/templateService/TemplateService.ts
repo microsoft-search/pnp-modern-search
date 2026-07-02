@@ -1194,6 +1194,43 @@ export class TemplateService implements ITemplateService {
                 return Math.abs(dayCount);
             }
         );
+
+        const hb: any = this._handlebars;
+        const escapeFn = hb.Utils?.escapeExpression ?? String;
+
+        this.Handlebars.registerHelper("hierarchicalOperator", (filter: any, instanceId: string, theme: any) => {
+            if (!filter?.isMulti) {
+                return "";
+            }
+
+            return new hb.SafeString(`
+                <div class="filter--option">
+                    <pnp-filteroperator
+                        data-instance-id="${escapeFn(instanceId)}"
+                        data-filter-name="${escapeFn(filter.filterName)}"
+                        data-operator="${escapeFn(filter.operator)}"
+                        data-theme-variant="${escapeFn(JSON.stringify(theme))}"
+                    ></pnp-filteroperator>
+                </div>
+            `);
+        });
+
+        this.Handlebars.registerHelper("hierarchicalMultiselect", (filter: any, instanceId: string, theme: any) => {
+            if (!filter?.isMulti) {
+                return "";
+            }
+
+            return new hb.SafeString(`
+                <pnp-filtermultiselect
+                    data-instance-id="${escapeFn(instanceId)}"
+                    data-filter-name="${escapeFn(filter.filterName)}"
+                    data-apply-disabled="${filter.canApply ? 'false' : 'true'}"
+                    data-clear-disabled="${filter.canClear ? 'false' : 'true'}"
+                    data-theme-variant="${escapeFn(JSON.stringify(theme))}"
+                >
+                </pnp-filtermultiselect>
+            `);
+        });
     }
 
     private async _initAdaptiveCardsResources(): Promise<void> {
