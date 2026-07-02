@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import styles from './FilterHierarchicalComponent.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { IconButton } from '@fluentui/react/lib/Button';
 import * as strings from 'CommonStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
@@ -44,6 +45,12 @@ export interface IFilterHierarchicalState {
     expandedTerms: { [key: string]: boolean };
     selectedTerms: { [key: string]: boolean };
     searchText: string;
+}
+
+interface ISelectedHierarchyTerm {
+    id: string;
+    label: string;
+    term: any;
 }
 
 export class FilterHierarchicalComponent extends React.Component<IFilterHierarchicalProps, IFilterHierarchicalState> {
@@ -395,7 +402,14 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     private updateSelectedTermsState(termId: string, checked: boolean): void {
         this.scheduleStateUpdate(() => {
             this.setState(prevState => {
-                const nextSelectedTerms = { ...prevState.selectedTerms };
+                const isSingleSelectMode = !this.props.filter?.isMulti;
+                const nextSelectedTerms = isSingleSelectMode && checked
+                    ? Object.keys(prevState.selectedTerms).reduce((acc, key) => {
+                        acc[key] = false;
+                        return acc;
+                    }, {} as { [key: string]: boolean })
+                    : { ...prevState.selectedTerms };
+
                 nextSelectedTerms[termId] = checked;
 
                 return {
@@ -683,6 +697,29 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
     }
 
+    private readonly getSelectedHierarchyTerms = (terms: any[]): ISelectedHierarchyTerm[] => {
+        const selectedTerms: ISelectedHierarchyTerm[] = [];
+
+        const collectSelectedTerms = (items: any[]): void => {
+            items.forEach((item: any) => {
+                if (this.state.selectedTerms[item.id]) {
+                    selectedTerms.push({
+                        id: item.id,
+                        label: this.getResolvedLabel(item.label),
+                        term: item
+                    });
+                }
+
+                if (item.children?.length > 0) {
+                    collectSelectedTerms(item.children);
+                }
+            });
+        };
+
+        collectSelectedTerms(terms || []);
+        return selectedTerms;
+    }
+
     private readonly renderTerm = (term: any, level: number = 0, resultGuids: Set<string> = new Set(), resultLabels: Set<string> = new Set(), lowerSearchText: string = '', hasResultSignals: boolean = true): JSX.Element | null => {
         const hasChildren = term.children?.length > 0;
         const isExpanded = this.state.expandedTerms[term.id];
@@ -763,6 +800,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const enabledResultGuidSet = resultGuidSet;
         
         const lowerSearchText = this.state.searchText.toLowerCase();
+        const selectedHierarchyTerms = this.props.filter?.isMulti ? this.getSelectedHierarchyTerms(hierarchicalTerms) : [];
 
         return (
             <div
@@ -779,6 +817,22 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         className={styles.searchInput}
                     />
                 </div>
+                {selectedHierarchyTerms.length > 0 && (
+                    <div className={styles.selectedTermsContainer}>
+                        {selectedHierarchyTerms.map(selectedTerm => (
+                            <div key={selectedTerm.id} className={styles.selectedTermPill}>
+                                <span className={styles.selectedTermLabel}>{selectedTerm.label}</span>
+                                <IconButton
+                                    iconProps={{ iconName: 'Cancel' }}
+                                    title={`${strings.Filters.ClearAllFiltersButtonLabel} ${selectedTerm.label}`}
+                                    ariaLabel={`${strings.Filters.ClearAllFiltersButtonLabel} ${selectedTerm.label}`}
+                                    className={styles.removeSelectedTermButton}
+                                    onClick={() => this.onTermCheckboxChange(selectedTerm.term, false)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
                 {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, enabledResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
             </div>
         );

@@ -118,13 +118,13 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                         renderFilterValues = <span className={styles.operator} style={{ marginLeft: 5, marginRight: 5 }}>{`${operator}`}</span>;
                     }
 
-                    return <>
+                    return <React.Fragment key={`${filter.filterName}-${entry.displayValue}-${j}`}>
                         {filterString}
                         {renderFilterValues}
-                    </>;
+                    </React.Fragment>;
                 });
 
-                return <>
+                return <React.Fragment key={`${filter.filterName}-${i}`}>
                     <div className={styles.filterRow}>
                         <Label theme={(this.props.themeVariant as ITheme) || getTheme()}>
                             <Icon iconName='ClearFilter'
@@ -146,7 +146,7 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                         </div>
                         : null
                     }
-                </>;
+                </React.Fragment>;
             });
 
             renderSelectedFilterValues = <div className={styles.selectedFilters}>
