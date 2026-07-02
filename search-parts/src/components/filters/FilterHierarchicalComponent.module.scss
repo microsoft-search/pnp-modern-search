@@ -12,6 +12,46 @@
     margin-bottom: 8px;
   }
 
+  .selectedTermsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .selectedTermPill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 16px;
+    background-color: var(--themePrimary, #03787c);
+    color: var(--white, #ffffff);
+    max-width: 100%;
+    min-height: 28px;
+    padding: 0 4px 0 12px;
+  }
+
+  .selectedTermLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    line-height: 20px;
+    max-width: 220px;
+  }
+
+  .removeSelectedTermButton {
+    margin-left: 2px;
+    color: var(--white, #ffffff);
+
+    :global(.ms-Button-flexContainer) {
+      color: var(--white, #ffffff);
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+
   .searchInput {
     width: 100%;
     padding: 6px 8px;

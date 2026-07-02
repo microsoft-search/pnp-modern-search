@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import styles from './FilterHierarchicalComponent.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { IconButton } from '@fluentui/react/lib/Button';
 import * as strings from 'CommonStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
@@ -46,11 +47,16 @@ export interface IFilterHierarchicalState {
     searchText: string;
 }
 
+interface ISelectedHierarchyTerm {
+    id: string;
+    label: string;
+    term: any;
+}
+
 export class FilterHierarchicalComponent extends React.Component<IFilterHierarchicalProps, IFilterHierarchicalState> {
 
     private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
     private pendingStateUpdateTimers: Array<ReturnType<typeof setTimeout>> = [];
-    private lastSelectedTermId: string | null = null;
     private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
 
     private setImmediateProgressCursor(): void {
@@ -396,22 +402,15 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     private updateSelectedTermsState(termId: string, checked: boolean): void {
         this.scheduleStateUpdate(() => {
             this.setState(prevState => {
-                const nextSelectedTerms = { ...prevState.selectedTerms };
+                const isSingleSelectMode = !this.props.filter?.isMulti;
+                const nextSelectedTerms = isSingleSelectMode && checked
+                    ? Object.keys(prevState.selectedTerms).reduce((acc, key) => {
+                        acc[key] = false;
+                        return acc;
+                    }, {} as { [key: string]: boolean })
+                    : { ...prevState.selectedTerms };
 
-                if (checked) {
-                    if (this.lastSelectedTermId && this.lastSelectedTermId !== termId) {
-                        nextSelectedTerms[this.lastSelectedTermId] = false;
-                    }
-
-                    nextSelectedTerms[termId] = true;
-                    this.lastSelectedTermId = termId;
-                } else {
-                    nextSelectedTerms[termId] = false;
-
-                    if (this.lastSelectedTermId === termId) {
-                        this.lastSelectedTermId = null;
-                    }
-                }
+                nextSelectedTerms[termId] = checked;
 
                 return {
                     selectedTerms: nextSelectedTerms
@@ -429,7 +428,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const currentFilterValues = this.props.filter?.values || [];
         const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
         const matchingRefiner = this.findMatchingRefiner(currentFilterValues, normalizedTermGuid, normalizedTermLabel);
-        const valuesToClear = this.createSingleSelectClearValues(currentFilterValues);
         const baseParentValues: IDataFilterValueInfo[] = [
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GPP|#${termGuid}`), checked),
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GP0|#${termGuid}`), checked),
@@ -446,7 +444,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             : undefined;
 
         const filterValues = [
-            ...valuesToClear,
             ...this.dedupeFilterValues([
                 ...(matchingValue ? [matchingValue] : []),
                 ...baseParentValues
@@ -481,11 +478,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             })();
 
         if (checked && this.props.domElement) {
-            const valuesToClear = this.createSingleSelectClearValues(currentFilterValues);
-            this.dispatchFilterUpdate([
-                ...valuesToClear,
-                filterValue
-            ]);
+            this.dispatchFilterUpdate([filterValue]);
             return;
         }
 
@@ -506,17 +499,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             const filterLabels = this.extractLabelsFromFilter(filterValue);
             return normalizedTermLabel.length > 0 && filterLabels.includes(normalizedTermLabel);
         });
-    }
-
-    private createSingleSelectClearValues(currentFilterValues: any[]): IDataFilterValueInfo[] {
-        return currentFilterValues
-            .filter((value: any) => value?.selected)
-            .map((value: any) => ({
-                name: value.name,
-                value: value.value,
-                operator: value.operator || FilterComparisonOperator.Eq,
-                selected: false
-            }));
     }
 
     private createSelectedFilterValue(
@@ -715,6 +697,29 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
     }
 
+    private readonly getSelectedHierarchyTerms = (terms: any[]): ISelectedHierarchyTerm[] => {
+        const selectedTerms: ISelectedHierarchyTerm[] = [];
+
+        const collectSelectedTerms = (items: any[]): void => {
+            items.forEach((item: any) => {
+                if (this.state.selectedTerms[item.id]) {
+                    selectedTerms.push({
+                        id: item.id,
+                        label: this.getResolvedLabel(item.label),
+                        term: item
+                    });
+                }
+
+                if (item.children?.length > 0) {
+                    collectSelectedTerms(item.children);
+                }
+            });
+        };
+
+        collectSelectedTerms(terms || []);
+        return selectedTerms;
+    }
+
     private readonly renderTerm = (term: any, level: number = 0, resultGuids: Set<string> = new Set(), resultLabels: Set<string> = new Set(), lowerSearchText: string = '', hasResultSignals: boolean = true): JSX.Element | null => {
         const hasChildren = term.children?.length > 0;
         const isExpanded = this.state.expandedTerms[term.id];
@@ -795,6 +800,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const enabledResultGuidSet = resultGuidSet;
         
         const lowerSearchText = this.state.searchText.toLowerCase();
+        const selectedHierarchyTerms = this.props.filter?.isMulti ? this.getSelectedHierarchyTerms(hierarchicalTerms) : [];
 
         return (
             <div
@@ -811,6 +817,22 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         className={styles.searchInput}
                     />
                 </div>
+                {selectedHierarchyTerms.length > 0 && (
+                    <div className={styles.selectedTermsContainer}>
+                        {selectedHierarchyTerms.map(selectedTerm => (
+                            <div key={selectedTerm.id} className={styles.selectedTermPill}>
+                                <span className={styles.selectedTermLabel}>{selectedTerm.label}</span>
+                                <IconButton
+                                    iconProps={{ iconName: 'Cancel' }}
+                                    title={`${strings.Filters.ClearAllFiltersButtonLabel} ${selectedTerm.label}`}
+                                    ariaLabel={`${strings.Filters.ClearAllFiltersButtonLabel} ${selectedTerm.label}`}
+                                    className={styles.removeSelectedTermButton}
+                                    onClick={() => this.onTermCheckboxChange(selectedTerm.term, false)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
                 {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, enabledResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
             </div>
         );

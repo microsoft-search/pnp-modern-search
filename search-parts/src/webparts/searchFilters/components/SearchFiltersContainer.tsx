@@ -951,7 +951,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return {
             displayName: filterConfiguration.displayValue?.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
             filterName: availableFilter.filterName,
-            isMulti: !!filterConfiguration.isMulti,
+            isMulti: this.isMultiValueFilter(filterConfiguration),
             showCount: !!filterConfiguration.showCount,
             expandByDefault: !!filterConfiguration.expandByDefault,
             showWarningMarker,
@@ -1134,7 +1134,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             filterName: filterInfo.filterName,
             hasSelectedValues: filterInfo.filterValues.some(value => value.selected),
             selectedOnce: true,
-            isMulti: !!filterConfiguration.isMulti,
+            isMulti: this.isMultiValueFilter(filterConfiguration),
             showCount: !!filterConfiguration.showCount,
             expandByDefault: !!filterConfiguration.expandByDefault,
             values: filterValuesInternal,
@@ -1152,7 +1152,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             updatedUiFilters = update(updatedUiFilters, { [filterIdx]: { operator: { $set: filterInfo.operator } } });
         }
 
-        if (!filterConfiguration.isMulti) {
+        if (!this.isMultiValueFilter(filterConfiguration)) {
             updatedUiFilters[filterIdx].values = updatedUiFilters[filterIdx].values.map(value => ({
                 ...value,
                 selected: false
@@ -1477,11 +1477,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         if (debugContext) {
             this.logUpdateStep(debugContext, 'onFilterValuesUpdated:uiMerged', {
                 filterExistsInUi: filterIdx !== -1,
-                isMulti: !!filterConfiguration.isMulti
+                isMulti: this.isMultiValueFilter(filterConfiguration)
             });
         }
 
-        if (filterConfiguration.isMulti && !filterInfo.forceUpdate) {
+        if (this.isMultiValueFilter(filterConfiguration) && !filterInfo.forceUpdate) {
             this.updatePendingMultiFilterState(currentUiFilters, filterInfo.filterName);
             this.commitPendingMultiFilterState(currentUiFilters, debugContext);
             return;
@@ -1604,6 +1604,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+    }
+
+    private isMultiValueFilter(filterConfiguration: IDataFilterConfiguration | IHierarchicalFilterConfiguration): boolean {
+        return !!filterConfiguration.isMulti;
     }
 
     private encodeTaxonomyRefinementToken(token: string): string {
@@ -1879,7 +1883,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         displayName: filterConfiguration.displayValue?.trim() ? filterConfiguration.displayValue : filter.filterName,
                         expandByDefault: filterConfiguration.expandByDefault,
                         filterName: filter.filterName,
-                        isMulti: filterConfiguration.isMulti,
+                        isMulti: this.isMultiValueFilter(filterConfiguration),
                         selectedTemplate: filterConfiguration.selectedTemplate,
                         showCount: filterConfiguration.showCount,
                         showWarningMarker: false,
