@@ -50,7 +50,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
     private pendingStateUpdateTimers: Array<ReturnType<typeof setTimeout>> = [];
-    private lastSelectedTermId: string | null = null;
     private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
 
     private setImmediateProgressCursor(): void {
@@ -397,21 +396,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         this.scheduleStateUpdate(() => {
             this.setState(prevState => {
                 const nextSelectedTerms = { ...prevState.selectedTerms };
-
-                if (checked) {
-                    if (this.lastSelectedTermId && this.lastSelectedTermId !== termId) {
-                        nextSelectedTerms[this.lastSelectedTermId] = false;
-                    }
-
-                    nextSelectedTerms[termId] = true;
-                    this.lastSelectedTermId = termId;
-                } else {
-                    nextSelectedTerms[termId] = false;
-
-                    if (this.lastSelectedTermId === termId) {
-                        this.lastSelectedTermId = null;
-                    }
-                }
+                nextSelectedTerms[termId] = checked;
 
                 return {
                     selectedTerms: nextSelectedTerms
@@ -429,7 +414,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const currentFilterValues = this.props.filter?.values || [];
         const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
         const matchingRefiner = this.findMatchingRefiner(currentFilterValues, normalizedTermGuid, normalizedTermLabel);
-        const valuesToClear = this.createSingleSelectClearValues(currentFilterValues);
         const baseParentValues: IDataFilterValueInfo[] = [
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GPP|#${termGuid}`), checked),
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GP0|#${termGuid}`), checked),
@@ -446,7 +430,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             : undefined;
 
         const filterValues = [
-            ...valuesToClear,
             ...this.dedupeFilterValues([
                 ...(matchingValue ? [matchingValue] : []),
                 ...baseParentValues
@@ -481,11 +464,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             })();
 
         if (checked && this.props.domElement) {
-            const valuesToClear = this.createSingleSelectClearValues(currentFilterValues);
-            this.dispatchFilterUpdate([
-                ...valuesToClear,
-                filterValue
-            ]);
+            this.dispatchFilterUpdate([filterValue]);
             return;
         }
 
@@ -506,17 +485,6 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             const filterLabels = this.extractLabelsFromFilter(filterValue);
             return normalizedTermLabel.length > 0 && filterLabels.includes(normalizedTermLabel);
         });
-    }
-
-    private createSingleSelectClearValues(currentFilterValues: any[]): IDataFilterValueInfo[] {
-        return currentFilterValues
-            .filter((value: any) => value?.selected)
-            .map((value: any) => ({
-                name: value.name,
-                value: value.value,
-                operator: value.operator || FilterComparisonOperator.Eq,
-                selected: false
-            }));
     }
 
     private createSelectedFilterValue(
