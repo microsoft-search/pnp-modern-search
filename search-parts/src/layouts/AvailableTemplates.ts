@@ -5,6 +5,7 @@ export enum BuiltinFilterTemplates {
     DateRange = 'DateRangeFilterTemplate',
     ComboBox = 'ComboBoxFilterTemplate',
     People = 'PeopleTemplate',
+    AllPeople = 'AllPeopleTemplate',
     DateInterval = 'DateIntervalFilterTemplate',
     TaxonomyPicker = 'TaxonomyPickerFilterTemplate',
     Hierarchical = 'HierarchicalFilterTemplate'
@@ -18,6 +19,7 @@ export const BuiltinFilterTypes = {
     [BuiltinFilterTemplates.DateInterval]: FilterType.Refiner,
     [BuiltinFilterTemplates.ComboBox]: FilterType.Refiner,
     [BuiltinFilterTemplates.People]: FilterType.Refiner,
+    [BuiltinFilterTemplates.AllPeople]: FilterType.Refiner,
     [BuiltinFilterTemplates.Hierarchical]: FilterType.Refiner,
     [BuiltinFilterTemplates.DateRange]: FilterType.StaticFilter,
     [BuiltinFilterTemplates.TaxonomyPicker]: FilterType.StaticFilter

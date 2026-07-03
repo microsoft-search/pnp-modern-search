@@ -194,6 +194,9 @@
 									</div>
 								{{else}}
 									{{#eq filter.selectedTemplate 'PeopleTemplate'}}
+									{{#if filter.isAllPeopleTemplate}}
+									<div style="background-color:#edf5ff;padding:8px;border-radius:4px;">
+									{{/if}}
 									{{#if filter.showPeopleTemplateMappingWarning}}
 										<div class="filter--message">{{filter.peopleTemplateMappingWarningText}}</div>
 									{{/if}}
@@ -235,6 +238,9 @@
 												</div>
 										{{/each}}
 									</div>				
+									{{#if filter.isAllPeopleTemplate}}
+									</div>
+									{{/if}}
 									{{else}}
 
 										{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}

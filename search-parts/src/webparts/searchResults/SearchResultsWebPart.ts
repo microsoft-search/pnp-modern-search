@@ -2320,6 +2320,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 dataContext.filters.selectedFilters = selectedFilters;
                 dataContext.filters.filterOperator = filtersSourceData.filterOperator;
                 dataContext.filters.instanceId = filtersSourceData.instanceId;
+                (dataContext.filters as any).allPeopleExpansionRequests = filtersSourceData.allPeopleExpansionRequests || [];
 
                 this._lastSelectedFilters = dataContext.filters.selectedFilters;
             }

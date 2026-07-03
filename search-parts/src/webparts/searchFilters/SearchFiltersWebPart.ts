@@ -26,7 +26,7 @@ import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourc
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import { ComponentType } from '../../common/ComponentType';
-import { IDataFilterSourceData } from '../../models/dynamicData/IDataFilterSourceData';
+import { IDataFilterSourceData, IAllPeopleExpansionRequest } from '../../models/dynamicData/IDataFilterSourceData';
 import { IDataFilter, ILayoutDefinition, LayoutType, ILayout, FilterConditionOperator, IDataFilterResult, IDataFilterConfiguration, FilterType, IDataFilterResultValue, IComponentDefinition, FilterSortType, FilterSortDirection } from '@pnp/modern-search-extensibility';
 import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
@@ -86,6 +86,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _dataSourceDynamicProperties: DynamicProperty<IDataResultSourceData>[] = [];
     private _verticalsSourceData: DynamicProperty<IDataVerticalSourceData>;
     private _selectedFilters: IDataFilter[] = [];
+    private _allPeopleExpansionRequests: IAllPeopleExpansionRequest[] = [];
+    private _allPeopleExpansionRequestId = 0;
 
     /**
      * Dynamically loaded components for property pane
@@ -357,6 +359,23 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             // Notify dynamic data consumers data have changed
                             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
                         },
+                        onRequestAllPeopleExpansion: (filterName: string) => {
+                            if (!filterName) {
+                                return;
+                            }
+
+                            const nextRequest: IAllPeopleExpansionRequest = {
+                                filterName,
+                                requestId: ++this._allPeopleExpansionRequestId,
+                                requestedAt: Date.now()
+                            };
+
+                            this._allPeopleExpansionRequests = this._allPeopleExpansionRequests
+                                .filter(request => request.filterName !== filterName)
+                                .concat(nextRequest);
+
+                            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
+                        },
                         templateService: this.templateService,
                         taxonomyService: this.taxonomyService,
                         webPartTitleProps: {
@@ -472,7 +491,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     selectedFilters: this._selectedFilters,
                     filterOperator: this.properties.filterOperator,
                     instanceId: this.instanceId,
-                    connectedResultsSourceReferences: this.properties.dataResultsDataSourceReferences
+                    connectedResultsSourceReferences: this.properties.dataResultsDataSourceReferences,
+                    allPeopleExpansionRequests: this._allPeopleExpansionRequests
                 } as IDataFilterSourceData;
 
             default:
@@ -559,15 +579,26 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         if (propertyPath.localeCompare('filtersConfiguration') === 0 && !isEqual(oldValue, newValue)) {
 
             // Remove duplicate fields. We can't have multiple filters with the same field
-            this.properties.filtersConfiguration = uniqBy(this.properties.filtersConfiguration, 'filterName');
+            const previousConfigurations = uniqBy(this.properties.filtersConfiguration, 'filterName');
+            this.properties.filtersConfiguration = previousConfigurations;
 
             // Set correct default values according to the template
             const nextConfigurations = newValue as IHierarchicalFilterConfiguration[];
             this.properties.filtersConfiguration = nextConfigurations.map(configuration => {
+                const correspondingPreviousConfig = previousConfigurations.find(c => c.filterName === configuration.filterName);
+
+                if (!configuration.selectedTemplate && correspondingPreviousConfig?.selectedTemplate) {
+                    configuration.selectedTemplate = correspondingPreviousConfig.selectedTemplate;
+                }
+
                 if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange
                     || configuration.selectedTemplate === BuiltinFilterTemplates.DateInterval) {
                     configuration.isMulti = false;
                     configuration.operator = FilterConditionOperator.AND;
+                }
+
+                if (configuration.selectedTemplate === BuiltinFilterTemplates.AllPeople && !configuration.maxBuckets) {
+                    configuration.maxBuckets = 100;
                 }
 
                 // Preserve hierarchical settings set through custom fields.
@@ -585,6 +616,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             // Reset filters
             this._selectedFilters = [];
+            this._allPeopleExpansionRequests = [];
 
             this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
         }
@@ -974,6 +1006,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             {
                                 key: BuiltinFilterTemplates.People,
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.PeopleTemplate
+                            },
+                            {
+                                key: BuiltinFilterTemplates.AllPeople,
+                                text: `${webPartStrings.PropertyPane.DataFilterCollection.Templates.PeopleTemplate} (POC)`
                             },
                             {
                                 key: BuiltinFilterTemplates.ComboBox,

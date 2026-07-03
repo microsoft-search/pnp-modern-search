@@ -1,5 +1,11 @@
 import { IDataFilterConfiguration, IDataFilter, FilterConditionOperator } from "@pnp/modern-search-extensibility";
 
+export interface IAllPeopleExpansionRequest {
+    filterName: string;
+    requestId: number;
+    requestedAt: number;
+}
+
 export interface IDataFilterSourceData {
 
     /**
@@ -26,4 +32,10 @@ export interface IDataFilterSourceData {
      * The data source references this filter web part is connected to (used for bidirectional connection validation)
      */
     connectedResultsSourceReferences?: string[];
+
+    /**
+     * Optional manual expansion requests for the AllPeople template.
+     * These are consumed by data sources to run additional segmented refiner calls.
+     */
+    allPeopleExpansionRequests?: IAllPeopleExpansionRequest[];
 }

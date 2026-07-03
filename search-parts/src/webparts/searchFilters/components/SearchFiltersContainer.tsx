@@ -53,6 +53,7 @@ interface IFilterInternalWithWarning extends IDataFilterInternal {
     showPeopleTemplateMappingWarning?: boolean;
     peopleTemplateMappingWarningText?: string;
     warningMarkerTooltipText?: string;
+    isAllPeopleTemplate?: boolean;
 }
 
 interface IHierarchicalTerm {
@@ -601,7 +602,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const selectedFilterValues = selectedFilterIdx === -1 ? [] : currentUiFilters[selectedFilterIdx].values;
         const selectedValueIndexByRaw = new Map<string, number>();
 
-        if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.People) {
+        if (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.People
+            || filterConfiguration.selectedTemplate === BuiltinFilterTemplates.AllPeople) {
             this.warmPeopleDisplayNameCacheFromValues(availableFilter.values);
             this.warmPeopleDisplayNameCacheFromValues(selectedFilterValues);
         }
@@ -931,6 +933,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } {
         const filterOperator = selectedFilterIdx === -1 ? filterConfiguration.operator : currentUiFilters[selectedFilterIdx].operator;
+        const isAllPeopleTemplate = filterConfiguration.selectedTemplate === BuiltinFilterTemplates.AllPeople;
+        const selectedTemplate = filterConfiguration.selectedTemplate === BuiltinFilterTemplates.AllPeople
+            ? BuiltinFilterTemplates.People
+            : filterConfiguration.selectedTemplate;
         const showLimitExceededWarning = Boolean(filterConfiguration.showLimitExceededWarning && filterWithLimitInfo.isMaxBucketsExceeded);
         const limitExceededWarningText = showLimitExceededWarning
             ? this.formatLocalizedString(
@@ -939,7 +945,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             )
             : undefined;
         const showPeopleTemplateMappingWarning = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
-            && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.People
+            && (filterConfiguration.selectedTemplate === BuiltinFilterTemplates.People
+                || filterConfiguration.selectedTemplate === BuiltinFilterTemplates.AllPeople)
             && this.shouldShowPeopleTemplateMappingWarning(availableFilter);
         const peopleTemplateMappingWarningText = showPeopleTemplateMappingWarning
             ? (webPartStrings.PropertyPane.DataFilterCollection.PeopleTemplateQUserMappingWarning
@@ -961,7 +968,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             peopleTemplateMappingWarningText,
             warningMarkerTooltipText,
             selectedOnce: selectionState.selectedOnce,
-            selectedTemplate: filterConfiguration.selectedTemplate,
+            selectedTemplate,
+            isAllPeopleTemplate,
             hasSelectedValues: selectionState.hasSelectedValues,
             values,
             operator: filterOperator,
@@ -1346,6 +1354,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // Bind events when the values operator is updated for a specific filter
         // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
         this.bindFilterValueOperatorUpdated();
+
+        // Bind events when an AllPeople template requests additional refiner values
+        this.bindAllPeopleExpansionEvents();
 
         // Initial state
         this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
@@ -1821,6 +1832,23 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             });
 
         }));
+    }
+
+    private bindAllPeopleExpansionEvents(): void {
+        this.componentRef.current.addEventListener('pnp-modern-search:all-people-load-more', ((ev: CustomEvent) => {
+            ev.stopImmediatePropagation();
+
+            const eventDetail = ev.detail as { instanceId?: string; filterName?: string };
+            if (!eventDetail?.filterName) {
+                return;
+            }
+
+            if (eventDetail.instanceId && eventDetail.instanceId !== this.props.instanceId) {
+                return;
+            }
+
+            this.props.onRequestAllPeopleExpansion?.(eventDetail.filterName);
+        }) as EventListener);
     }
 
     // Build the template context

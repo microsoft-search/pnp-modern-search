@@ -42,6 +42,7 @@ import { AutoCalculatedDataSourceFields, SortableFields } from '../common/Consta
 import { ObjectHelper } from '../helpers/ObjectHelper';
 import commonStyles from '../styles/Common.module.scss';
 import { PnPClientStorage } from "@pnp/common/storage";
+import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 
@@ -137,6 +138,18 @@ export interface ISharePointSearchDataSourceProperties {
     cacheTimeout: number;
 }
 
+interface IAllPeopleExpansionRequest {
+    filterName: string;
+    requestId: number;
+    requestedAt: number;
+}
+
+interface IAllPeopleExpansionResult {
+    values: IDataFilterResultValue[];
+    segmentCalls: number;
+    segmentsTruncated: number;
+}
+
 export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearchDataSourceProperties> {
 
     private _availableLanguages: IPropertyPaneDropdownOption[] = [];
@@ -164,6 +177,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * The data source items count
      */
     private _itemsCount: number;
+    private _lastProcessedAllPeopleExpansionRequestByFilter: { [filterName: string]: number } = {};
 
     /*
     * A date helper instance
@@ -259,6 +273,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         };
 
         this.logRefinerCounts(dataContext, data.filters || []);
+        await this.applyAllPeopleExpansionRequests(dataContext, searchQuery, data);
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
         if (this.properties.enableLocalization) {
@@ -298,6 +313,162 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             console.info(`[PnP Modern Search][SharePoint Search] Refiner '${filter.filterName}' returned ${returnedCount} item(s) from the API (limit ${configuredLimit}).`);
         });
+    }
+
+    private async applyAllPeopleExpansionRequests(dataContext: IDataContext, baseSearchQuery: ISharePointSearchQuery, data: IDataSourceData): Promise<void> {
+        const requests: IAllPeopleExpansionRequest[] = ((dataContext.filters as any)?.allPeopleExpansionRequests || []) as IAllPeopleExpansionRequest[];
+        if (!requests || requests.length === 0) {
+            return;
+        }
+
+        const filterConfigurations = dataContext.filters?.filtersConfiguration || [];
+
+        for (const request of requests) {
+            const requestId = Number(request?.requestId || 0);
+            const filterName = `${request?.filterName || ''}`;
+
+            if (!filterName || requestId <= 0) {
+                continue;
+            }
+
+            const lastProcessedRequestId = this._lastProcessedAllPeopleExpansionRequestByFilter[filterName] || 0;
+            if (requestId <= lastProcessedRequestId) {
+                continue;
+            }
+
+            const filterConfig = filterConfigurations.find((config: any) => config?.filterName === filterName);
+            if (!filterConfig || filterConfig.selectedTemplate !== BuiltinFilterTemplates.AllPeople) {
+                this._lastProcessedAllPeopleExpansionRequestByFilter[filterName] = requestId;
+                continue;
+            }
+
+            const currentFilter = (data.filters || []).find(filter => `${filter?.filterName}` === filterName) as IDataFilterResult & {
+                isMaxBucketsExceeded?: boolean;
+                configuredMaxBuckets?: number;
+                returnedValueCount?: number;
+            };
+
+            if (!currentFilter || !currentFilter.isMaxBucketsExceeded) {
+                this._lastProcessedAllPeopleExpansionRequestByFilter[filterName] = requestId;
+                continue;
+            }
+
+            const configuredLimit = filterConfig?.maxBuckets || 1000;
+            const expansion = await this.fetchAllPeopleSegmentedRefiners(baseSearchQuery, filterName, configuredLimit, filterConfig.sortBy, filterConfig.sortDirection);
+
+            if (expansion.values.length > 0) {
+                currentFilter.values = this.mergeDistinctRefinerValues(currentFilter.values || [], expansion.values);
+                currentFilter.returnedValueCount = currentFilter.values.length;
+                currentFilter.configuredMaxBuckets = configuredLimit;
+
+                if (currentFilter.values.length < configuredLimit) {
+                    currentFilter.isMaxBucketsExceeded = false;
+                }
+            }
+
+            this._lastProcessedAllPeopleExpansionRequestByFilter[filterName] = requestId;
+
+            console.info(`[PnP Modern Search][SharePoint Search] AllPeople expansion '${filterName}' completed with ${expansion.values.length} additional value(s) across ${expansion.segmentCalls} segment call(s). Truncated segments: ${expansion.segmentsTruncated}.`);
+        }
+    }
+
+    private async fetchAllPeopleSegmentedRefiners(baseSearchQuery: ISharePointSearchQuery, filterName: string, maxBuckets: number, sortBy: FilterSortType, sortDirection: FilterSortDirection): Promise<IAllPeopleExpansionResult> {
+        const segments = this.getAllPeoplePrefixSegments();
+        const maxCalls = 8;
+        const result: IAllPeopleExpansionResult = {
+            values: [],
+            segmentCalls: 0,
+            segmentsTruncated: 0
+        };
+
+        for (const segment of segments) {
+            if (result.segmentCalls >= maxCalls) {
+                break;
+            }
+
+            const segmentFilterClause = `(${segment.prefixes.map(prefix => `${filterName}:${prefix}*`).join(' OR ')})`;
+            const segmentQuery = cloneDeep(baseSearchQuery);
+            segmentQuery.StartRow = 0;
+            segmentQuery.RowLimit = 1;
+            segmentQuery.Refiners = this.buildAllPeopleRefinerExpression(filterName, maxBuckets, sortBy, sortDirection);
+            segmentQuery.QueryTemplate = this.appendQueryTemplateConstraint(baseSearchQuery.QueryTemplate, segmentFilterClause);
+
+            const segmentResults = await this._sharePointSearchService.search(segmentQuery);
+            result.segmentCalls++;
+
+            const segmentFilter = (segmentResults.refinementResults || []).find(filter => `${filter?.filterName}` === filterName);
+            if (!segmentFilter || !segmentFilter.values || segmentFilter.values.length === 0) {
+                continue;
+            }
+
+            result.values = this.mergeDistinctRefinerValues(result.values, segmentFilter.values);
+
+            if (segmentFilter.values.length >= maxBuckets) {
+                result.segmentsTruncated++;
+            }
+        }
+
+        return result;
+    }
+
+    private getAllPeoplePrefixSegments(): Array<{ key: string; prefixes: string[] }> {
+        return [
+            { key: 'a-d', prefixes: ['a', 'b', 'c', 'd'] },
+            { key: 'e-h', prefixes: ['e', 'f', 'g', 'h'] },
+            { key: 'i-l', prefixes: ['i', 'j', 'k', 'l'] },
+            { key: 'm-p', prefixes: ['m', 'n', 'o', 'p'] },
+            { key: 'q-t', prefixes: ['q', 'r', 's', 't'] },
+            { key: 'u-z', prefixes: ['u', 'v', 'w', 'x', 'y', 'z'] },
+            { key: '0-4', prefixes: ['0', '1', '2', '3', '4'] },
+            { key: '5-9', prefixes: ['5', '6', '7', '8', '9'] }
+        ];
+    }
+
+    private buildAllPeopleRefinerExpression(filterName: string, maxBuckets: number, sortBy: FilterSortType, sortDirection: FilterSortDirection): string {
+        const sort = sortBy === FilterSortType.ByName ? 'name' : 'frequency';
+        const direction = sortDirection === FilterSortDirection.Ascending ? 'ascending' : 'descending';
+        return `${filterName}(filter=${maxBuckets}/0/*,sort=${sort}/${direction},deephits=1000000)`;
+    }
+
+    private appendQueryTemplateConstraint(queryTemplate: string, filterClause: string): string {
+        const baseTemplate = `${queryTemplate || ''}`.trim();
+        if (!baseTemplate) {
+            return filterClause;
+        }
+
+        return `${baseTemplate} AND ${filterClause}`;
+    }
+
+    private mergeDistinctRefinerValues(baseValues: IDataFilterResultValue[], additionalValues: IDataFilterResultValue[]): IDataFilterResultValue[] {
+        const mergedMap = new Map<string, IDataFilterResultValue>();
+
+        baseValues.forEach(value => {
+            if (!value) {
+                return;
+            }
+
+            mergedMap.set(`${value.value ?? ''}`.toLocaleLowerCase(), value);
+        });
+
+        additionalValues.forEach(value => {
+            if (!value) {
+                return;
+            }
+
+            const key = `${value.value ?? ''}`.toLocaleLowerCase();
+            if (!mergedMap.has(key)) {
+                mergedMap.set(key, value);
+                return;
+            }
+
+            const existing = mergedMap.get(key);
+            existing.count = Math.max(existing.count || 0, value.count || 0);
+            existing.name = existing.name || value.name;
+            existing.value = existing.value || value.value;
+            mergedMap.set(key, existing);
+        });
+
+        return Array.from(mergedMap.values());
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -1052,6 +1223,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     return `${filterConfig.filterName}(discretize=manual/${pastYear}/${past3Months}/${pastMonth}/${pastWeek}/${past24hours}/${today})`;
 
+                } else if (filterConfig.selectedTemplate === BuiltinFilterTemplates.AllPeople) {
+                    const sort = filterConfig.sortBy == FilterSortType.ByName ? "name" : "frequency";
+                    const direction = filterConfig.sortDirection == FilterSortDirection.Ascending ? "ascending" : "descending";
+                    const allPeopleMaxBuckets = filterConfig.maxBuckets || 100;
+                    return `${filterConfig.filterName}(filter=${allPeopleMaxBuckets}/0/*,sort=${sort}/${direction},deephits=1000000)`;
+
                 } else if (filterConfig.maxBuckets) {
                     const sort = filterConfig.sortBy == FilterSortType.ByName ? "name" : "frequency";
                     const direction = filterConfig.sortDirection == FilterSortDirection.Ascending ? "ascending" : "descending";
@@ -1357,6 +1534,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             // 4. Update original filters with localized values
             updatedFilters = updatedFilters.map((filter) => {
+                const containsTaxonomyValues = (filter.values || []).some(filterValue => {
+                    const filterValueName = `${filterValue?.name ?? ''}`;
+                    return TAXONOMY_REFINER_REGEX.test(filterValueName);
+                });
 
                 filter.values = filter.values.map((value) => {
 
@@ -1386,9 +1567,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         value.name = existingFilters[0].localizedTermLabel;
                     }
 
-                    // Keep only terms (L0 or GP0). The crawl property ows_taxid_xxx return term sets too.
-                    // GP0 values should be kept as they represent actual terms when maxBuckets is used
-                    if (!(/(GTSet|GPP)/i).test(value.name)) {
+                    // Keep only terms (L0 or GP0) for taxonomy-like filters. The crawl property
+                    // ows_taxid_xxx can return term sets too (GTSet/GPP). For non-taxonomy filters
+                    // (for instance people-like values), GPP must be preserved.
+                    if (!containsTaxonomyValues || !(/(GTSet|GPP)/i).test(value.name)) {
                         return value;
                     }
 

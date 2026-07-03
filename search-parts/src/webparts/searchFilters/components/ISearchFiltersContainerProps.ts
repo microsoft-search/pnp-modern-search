@@ -59,6 +59,11 @@ export interface ISearchFiltersContainerProps {
   onUpdateFilters: (filters: IDataFilter[]) => void;
 
   /**
+   * Handler method when an AllPeople template requests additional refiner values.
+   */
+  onRequestAllPeopleExpansion?: (filterName: string) => void;
+
+  /**
    * A template service instance
    */
   templateService: ITemplateService;

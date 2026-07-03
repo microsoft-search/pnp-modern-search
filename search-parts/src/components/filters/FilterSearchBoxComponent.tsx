@@ -268,7 +268,8 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
     }
 
     private readonly isPeopleTemplate = (): boolean => {
-        return (this.props.filter as any)?.selectedTemplate === 'PeopleTemplate';
+        const selectedTemplate = (this.props.filter as any)?.selectedTemplate;
+        return selectedTemplate === 'PeopleTemplate' || selectedTemplate === 'AllPeopleTemplate';
     }
 
     private readonly getDisplayName = (rawName: string): string => {
