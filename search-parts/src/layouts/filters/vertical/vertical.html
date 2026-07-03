@@ -200,6 +200,19 @@
 											<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
 										</div>
 
+										{{#if filter.isAllPeopleTemplate}}
+											<div class="filter--option">
+												<pnp-allpeoplefilter
+													data-instance-id="{{@root.instanceId}}"
+													data-filter-name="{{filter.filterName}}"
+													data-show-limit-warning="{{filter.showLimitExceededWarning}}"
+													data-limit-warning-text="{{filter.limitExceededWarningText}}"
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												>
+												</pnp-allpeoplefilter>
+											</div>
+										{{/if}}
+
 										<div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
 											{{#each filter.values}}
 
