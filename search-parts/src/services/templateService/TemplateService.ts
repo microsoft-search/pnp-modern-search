@@ -313,13 +313,53 @@ export class TemplateService implements ITemplateService {
         await this._customElementHelperPromise;
     }
 
+    /**
+     * Re-parses raw CSS text through a throwaway, inert DOMParser document to
+     * obtain a populated CSSOM stylesheet. This is used when a style element is
+     * detached (e.g. created via Range.createContextualFragment) and therefore
+     * exposes a null `style.sheet`. Going through the browser's real CSS engine
+     * preserves modern features such as CSS nesting, which the regex fallback
+     * cannot handle. The document produced by DOMParser is inert (scripts never
+     * run) and the CSS text is assigned via textContent, so no markup breakout
+     * or code execution is possible.
+     */
+    private parseCssTextToSheet(cssText: string): CSSStyleSheet | null {
+        if (!cssText || !cssText.trim()) {
+            return null;
+        }
+
+        try {
+            const doc = new DOMParser().parseFromString("<style></style>", "text/html");
+            const styleEl = doc.getElementsByTagName("style")[0];
+
+            if (!styleEl) {
+                return null;
+            }
+
+            styleEl.textContent = cssText;
+            return (styleEl.sheet as CSSStyleSheet) ?? null;
+        } catch {
+            return null;
+        }
+    }
+
     public legacyStyleParser(
         style: HTMLStyleElement,
         elementPrefixId: string
     ): string {
         let prefixedStyles: string[] = [];
 
-        const sheet: any = style.sheet;
+        let sheet: any = style.sheet;
+
+        // When the style element is detached (e.g. created via
+        // Range.createContextualFragment), style.sheet is null and the CSSOM is
+        // unavailable. Re-parse the CSS text through a throwaway DOMParser
+        // document to obtain a populated sheet so the CSSOM path below can run.
+        // This preserves modern CSS features such as nesting, which the regex
+        // fallback further down cannot handle.
+        if (!(sheet as CSSStyleSheet)?.cssRules) {
+            sheet = this.parseCssTextToSheet(style.textContent || style.innerText || "");
+        }
 
         // Try to use CSSOM if available (for live DOM elements)
         if ((sheet as CSSStyleSheet)?.cssRules) {
