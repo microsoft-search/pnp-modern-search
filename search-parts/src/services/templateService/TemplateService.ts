@@ -313,18 +313,77 @@ export class TemplateService implements ITemplateService {
         await this._customElementHelperPromise;
     }
 
+    /**
+     * Safely reads the CSS rules from a stylesheet. Accessing `cssRules` can
+     * throw (e.g. a SecurityError for a cross-origin stylesheet), which would
+     * otherwise abort template rendering. Returns null when the rules cannot be
+     * read so callers can fall back to text-based parsing.
+     */
+    private safeGetCssRules(sheet: CSSStyleSheet | null | undefined): CSSRuleList | null {
+        try {
+            return sheet?.cssRules ?? null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Re-parses raw CSS text through a throwaway, inert DOMParser document to
+     * obtain a populated CSSOM stylesheet. This is used when a style element is
+     * detached (e.g. created via Range.createContextualFragment) and therefore
+     * exposes a null `style.sheet`. Going through the browser's real CSS engine
+     * preserves modern features such as CSS nesting, which the regex fallback
+     * cannot handle. The document produced by DOMParser is inert (scripts never
+     * run) and the CSS text is assigned via textContent, so no markup breakout
+     * or code execution is possible.
+     */
+    private parseCssTextToSheet(cssText: string): CSSStyleSheet | null {
+        if (!cssText?.trim()) {
+            return null;
+        }
+
+        try {
+            // Build the throwaway <style> inside an inert DOMParser document. It
+            // is never attached to the live document, so it triggers no
+            // @import/url() network fetches and does not affect the page.
+            // Appending it to that document's head is what populates its sheet.
+            const doc = new DOMParser().parseFromString(
+                "<!DOCTYPE html><html><head></head><body></body></html>",
+                "text/html"
+            );
+            const styleEl = doc.createElement("style");
+            styleEl.textContent = cssText;
+            doc.head.appendChild(styleEl);
+
+            return (styleEl.sheet as CSSStyleSheet) ?? null;
+        } catch {
+            return null;
+        }
+    }
+
     public legacyStyleParser(
         style: HTMLStyleElement,
         elementPrefixId: string
     ): string {
         let prefixedStyles: string[] = [];
 
-        const sheet: any = style.sheet;
+        let sheet: CSSStyleSheet | null = style.sheet as CSSStyleSheet;
+
+        // When the style element is detached (e.g. created via
+        // Range.createContextualFragment), style.sheet is null and the CSSOM is
+        // unavailable. Re-parse the CSS text through a throwaway DOMParser
+        // document to obtain a populated sheet so the CSSOM path below can run.
+        // This preserves modern CSS features such as nesting, which the regex
+        // fallback further down cannot handle.
+        let cssRules = this.safeGetCssRules(sheet);
+
+        if (!cssRules) {
+            sheet = this.parseCssTextToSheet(style.textContent || style.innerText || "");
+            cssRules = this.safeGetCssRules(sheet);
+        }
 
         // Try to use CSSOM if available (for live DOM elements)
-        if ((sheet as CSSStyleSheet)?.cssRules) {
-            const cssRules = (sheet as CSSStyleSheet).cssRules;
-
+        if (cssRules) {
             for (let j = 0; j < cssRules.length; j++) {
                 const cssRule: CSSRule = cssRules.item(j);
 
@@ -1194,6 +1253,43 @@ export class TemplateService implements ITemplateService {
                 return Math.abs(dayCount);
             }
         );
+
+        const hb: any = this._handlebars;
+        const escapeFn = hb.Utils?.escapeExpression ?? String;
+
+        this.Handlebars.registerHelper("hierarchicalOperator", (filter: any, instanceId: string, theme: any) => {
+            if (!filter?.isMulti) {
+                return "";
+            }
+
+            return new hb.SafeString(`
+                <div class="filter--option">
+                    <pnp-filteroperator
+                        data-instance-id="${escapeFn(instanceId)}"
+                        data-filter-name="${escapeFn(filter.filterName)}"
+                        data-operator="${escapeFn(filter.operator)}"
+                        data-theme-variant="${escapeFn(JSON.stringify(theme))}"
+                    ></pnp-filteroperator>
+                </div>
+            `);
+        });
+
+        this.Handlebars.registerHelper("hierarchicalMultiselect", (filter: any, instanceId: string, theme: any) => {
+            if (!filter?.isMulti) {
+                return "";
+            }
+
+            return new hb.SafeString(`
+                <pnp-filtermultiselect
+                    data-instance-id="${escapeFn(instanceId)}"
+                    data-filter-name="${escapeFn(filter.filterName)}"
+                    data-apply-disabled="${filter.canApply ? 'false' : 'true'}"
+                    data-clear-disabled="${filter.canClear ? 'false' : 'true'}"
+                    data-theme-variant="${escapeFn(JSON.stringify(theme))}"
+                >
+                </pnp-filtermultiselect>
+            `);
+        });
     }
 
     private async _initAdaptiveCardsResources(): Promise<void> {

@@ -14,6 +14,15 @@
 			align-items: center;
 		}
 
+		.filter--value-hierarchical {
+			width: 100%;
+		}
+
+		.filter--value-hierarchical pnp-filterhierarchical {
+			display: block;
+			width: 100%;
+		}
+
 		.filter--values-list {
 			overflow: auto;
 			max-height: 400px;
@@ -226,7 +235,8 @@
 											</div>
 										{{else}}
 											{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
-												<div class="filter--value">
+												<div class="filter--value-hierarchical">
+													{{{hierarchicalOperator filter @root.instanceId @root.theme}}}
 													<pnp-filterhierarchical 
 														data-instance-id="{{@root.instanceId}}" 
 														data-filter="{{JSONstringify filter 2}}"
@@ -245,12 +255,24 @@
 
 						<template id="collapsible-footer">
 							{{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
-								{{#isnt filter.selectedTemplate 'HierarchicalFilterTemplate'}}
+								{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
+									{{{hierarchicalMultiselect filter @root.instanceId @root.theme}}}
+								{{else}}
 									{{#eq filter.values.length 0}}
 										<div class="filter--message">
 											{{@root.strings.FilterNoValuesMessage}}
 										</div>
 									{{else}}
+										{{#if filter.isMulti}}
+											<div class="filter--option">
+												<pnp-filteroperator 
+													data-instance-id="{{@root.instanceId}}"
+													data-filter-name="{{filter.filterName}}" 
+													data-operator="{{filter.operator}}" 
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												></pnp-filteroperator>
+											</div>
+										{{/if}}
 										{{#if filter.isMulti}}
 											<pnp-filtermultiselect 
 												data-instance-id="{{@root.instanceId}}" 
@@ -260,7 +282,7 @@
 											</pnp-filtermultiselect>
 										{{/if}}
 									{{/eq}}
-								{{/isnt}}
+								{{/eq}}
 							{{/isnt}}
 						</template>
 

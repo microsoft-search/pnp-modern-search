@@ -64,91 +64,89 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
         let renderSelectedFilterValues: JSX.Element = null;
         const filters = this.props.filters;
+        const renderableFilters = filters.filter(filter => filter.values.length > 0);
 
-        if (filters.length > 0) {
+        if (renderableFilters.length > 0) {
 
-            // Display only filter with values
-            const renderFilters = filters.map((filter: IDataFilter, i) => {
-                if (filter.values.length > 0) {
+            // Display only filters with values.
+            const renderFilters = renderableFilters.map((filter: IDataFilter, i) => {
+                let renderValues: JSX.Element[] = null;
+                const operator = this.getConditionOperatorString(filter.operator);
 
-                    let renderValues: JSX.Element[] = null;
-                    let operator = this.getConditionOperatorString(filter.operator);
+                // Get display name of the filter if specified 
+                let filterName = filter.filterName;
+                const currentFilterConfig = this.props.filtersConfiguration.filter(filterConfig => filterConfig.filterName === filter.filterName);
+                if (currentFilterConfig.length === 1) {
+                    filterName = currentFilterConfig[0].displayValue ? currentFilterConfig[0].displayValue : filterName;
+                }
 
-                    // Get display name of the filter if specified 
-                    let filterName = filter.filterName;
-                    const currentFilterConfig = this.props.filtersConfiguration.filter(filterConfig => filterConfig.filterName === filter.filterName);
-                    if (currentFilterConfig.length === 1) {
-                        filterName = currentFilterConfig[0].displayValue ? currentFilterConfig[0].displayValue : filterName;
+                const uniqueDisplayValues: Array<{ displayValue: string; operator: FilterComparisonOperator }> = [];
+                const seenDisplayValues = new Set<string>();
+
+                filter.values.forEach(value => {
+                    let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;
+
+                    // For taxonomy filters (GPP/GP0 tokens), extract the label if name is not set
+                    if (!displayValue || displayValue.indexOf("GPP|#") === 0 || displayValue.indexOf("GP0|#") === 0) {
+                        // Try to extract label from the token value field
+                        const labelFromToken = this.extractLabelFromToken(value.value);
+                        if (labelFromToken) {
+                            displayValue = labelFromToken;
+                        }
                     }
 
-                    const uniqueDisplayValues: Array<{ displayValue: string; operator: FilterComparisonOperator }> = [];
-                    const seenDisplayValues = new Set<string>();
+                    if (displayValue && displayValue.indexOf("i:0#") > -1) {
+                        //displayValue = displayValue.split("|")[1] + " (" + displayValue.split("|")[0] +")";  //like [PeopleCheckBox=" Lee Gu (LeeG@tcwlv.onmicrosoft.com )"]
+                        displayValue = displayValue.split("|")[1];  //like [PeopleCheckBox=" Lee Gu"]
+                    }
 
-                    filter.values.forEach(value => {
-                        let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;
+                    const normalizedDisplayValue = displayValue ? displayValue.trim().toLocaleLowerCase() : '';
+                    if (normalizedDisplayValue.length > 0 && !seenDisplayValues.has(normalizedDisplayValue)) {
+                        seenDisplayValues.add(normalizedDisplayValue);
+                        uniqueDisplayValues.push({
+                            displayValue,
+                            operator: value.operator
+                        });
+                    }
+                });
 
-                        // For taxonomy filters (GPP/GP0 tokens), extract the label if name is not set
-                        if (!displayValue || displayValue.indexOf("GPP|#") === 0 || displayValue.indexOf("GP0|#") === 0) {
-                            // Try to extract label from the token value field
-                            const labelFromToken = this.extractLabelFromToken(value.value);
-                            if (labelFromToken) {
-                                displayValue = labelFromToken;
-                            }
-                        }
+                renderValues = uniqueDisplayValues.map((entry, j) => {
+                    const filterString = `${filterName}${this.getComparisonOperatorString(entry.operator)}"${entry.displayValue}"`;
+                    let renderFilterValues = null;
 
-                        if (displayValue && displayValue.indexOf("i:0#") > -1) {
-                            //displayValue = displayValue.split("|")[1] + " (" + displayValue.split("|")[0] +")";  //like [PeopleCheckBox=" Lee Gu (LeeG@tcwlv.onmicrosoft.com )"]
-                            displayValue = displayValue.split("|")[1];  //like [PeopleCheckBox=" Lee Gu"]
-                        }
+                    if (j < uniqueDisplayValues.length - 1) {
+                        renderFilterValues = <span className={styles.operator} style={{ marginLeft: 5, marginRight: 5 }}>{`${operator}`}</span>;
+                    }
 
-                        const normalizedDisplayValue = displayValue ? displayValue.trim().toLocaleLowerCase() : '';
-                        if (normalizedDisplayValue.length > 0 && !seenDisplayValues.has(normalizedDisplayValue)) {
-                            seenDisplayValues.add(normalizedDisplayValue);
-                            uniqueDisplayValues.push({
-                                displayValue,
-                                operator: value.operator
-                            });
-                        }
-                    });
+                    return <React.Fragment key={`${filter.filterName}-${entry.displayValue}-${j}`}>
+                        {filterString}
+                        {renderFilterValues}
+                    </React.Fragment>;
+                });
 
-                    renderValues = uniqueDisplayValues.map((entry, j) => {
-                        const filterString = `${filterName}${this.getComparisonOperatorString(entry.operator)}"${entry.displayValue}"`;
-                        let renderFilterValues = null;
-
-                        if (j < uniqueDisplayValues.length - 1) {
-                            renderFilterValues = <span className={styles.operator} style={{ marginLeft: 5, marginRight: 5 }}>{`${operator}`}</span>;
-                        }
-
-                        return <>
-                            {filterString}
-                            {renderFilterValues}
-                        </>;
-                    });
-
-                    return <>
+                return <React.Fragment key={`${filter.filterName}-${i}`}>
+                    <div className={styles.filterRow}>
+                        <Label theme={(this.props.themeVariant as ITheme) || getTheme()}>
+                            <Icon iconName='ClearFilter'
+                                data-ui-test-id={TestConstants.SelectedFiltersClearFilter}
+                                theme={(this.props.themeVariant as ITheme) || getTheme()}
+                                onClick={() => {
+                                    // Remove all the values for that filter
+                                    this._onRemovefilter(filter.filterName, filter.values, this.props.instanceId);
+                                }}>
+                            </Icon>
+                        </Label>
+                        <Label className={styles.filterRowValues} style={{ minWidth: 0 }} theme={(this.props.themeVariant as ITheme) || getTheme()}>
+                            <div className={styles.ellipsis}>[{renderValues}]</div>
+                        </Label>
+                    </div>
+                    {i < renderableFilters.length - 1 ?
                         <div className={styles.filterRow}>
-                            <Label theme={(this.props.themeVariant as ITheme) || getTheme()}>
-                                <Icon iconName='ClearFilter'
-                                    data-ui-test-id={TestConstants.SelectedFiltersClearFilter}
-                                    theme={(this.props.themeVariant as ITheme) || getTheme()}
-                                    onClick={() => {
-                                        // Remove all the values for that filter
-                                        this._onRemovefilter(filter.filterName, filter.values, this.props.instanceId);
-                                    }}>
-                                </Icon>
-                            </Label>
-                            <Label className={styles.filterRowValues} style={{ minWidth: 0 }} theme={(this.props.themeVariant as ITheme) || getTheme()}>
-                                <div className={styles.ellipsis}>[{renderValues}]</div>
-                            </Label>
+                            <Label className={styles.operator} theme={(this.props.themeVariant as ITheme) || getTheme()}>{`${this.getConditionOperatorString(this.props.operator as FilterConditionOperator)}`}</Label>
                         </div>
-                        {i < filters.length - 1 && filter.values.length > 0 ?
-                            <div className={styles.filterRow}>
-                                <Label className={styles.operator} theme={(this.props.themeVariant as ITheme) || getTheme()}>{`${this.getConditionOperatorString(this.props.operator as FilterConditionOperator)}`}</Label>
-                            </div>
-                            : null
-                        }
-                    </>;
-                }
+                        : null
+                    }
+                </React.Fragment>;
             });
 
             renderSelectedFilterValues = <div className={styles.selectedFilters}>
