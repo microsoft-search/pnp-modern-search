@@ -314,6 +314,20 @@ export class TemplateService implements ITemplateService {
     }
 
     /**
+     * Safely reads the CSS rules from a stylesheet. Accessing `cssRules` can
+     * throw (e.g. a SecurityError for a cross-origin stylesheet), which would
+     * otherwise abort template rendering. Returns null when the rules cannot be
+     * read so callers can fall back to text-based parsing.
+     */
+    private safeGetCssRules(sheet: CSSStyleSheet | null | undefined): CSSRuleList | null {
+        try {
+            return sheet?.cssRules ?? null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
      * Re-parses raw CSS text through a throwaway, inert DOMParser document to
      * obtain a populated CSSOM stylesheet. This is used when a style element is
      * detached (e.g. created via Range.createContextualFragment) and therefore
@@ -324,19 +338,23 @@ export class TemplateService implements ITemplateService {
      * or code execution is possible.
      */
     private parseCssTextToSheet(cssText: string): CSSStyleSheet | null {
-        if (!cssText || !cssText.trim()) {
+        if (!cssText?.trim()) {
             return null;
         }
 
         try {
-            const doc = new DOMParser().parseFromString("<style></style>", "text/html");
-            const styleEl = doc.getElementsByTagName("style")[0];
-
-            if (!styleEl) {
-                return null;
-            }
-
+            // Build the throwaway <style> inside an inert DOMParser document. It
+            // is never attached to the live document, so it triggers no
+            // @import/url() network fetches and does not affect the page.
+            // Appending it to that document's head is what populates its sheet.
+            const doc = new DOMParser().parseFromString(
+                "<!DOCTYPE html><html><head></head><body></body></html>",
+                "text/html"
+            );
+            const styleEl = doc.createElement("style");
             styleEl.textContent = cssText;
+            doc.head.appendChild(styleEl);
+
             return (styleEl.sheet as CSSStyleSheet) ?? null;
         } catch {
             return null;
@@ -349,7 +367,7 @@ export class TemplateService implements ITemplateService {
     ): string {
         let prefixedStyles: string[] = [];
 
-        let sheet: any = style.sheet;
+        let sheet: CSSStyleSheet | null = style.sheet as CSSStyleSheet;
 
         // When the style element is detached (e.g. created via
         // Range.createContextualFragment), style.sheet is null and the CSSOM is
@@ -357,14 +375,15 @@ export class TemplateService implements ITemplateService {
         // document to obtain a populated sheet so the CSSOM path below can run.
         // This preserves modern CSS features such as nesting, which the regex
         // fallback further down cannot handle.
-        if (!(sheet as CSSStyleSheet)?.cssRules) {
+        let cssRules = this.safeGetCssRules(sheet);
+
+        if (!cssRules) {
             sheet = this.parseCssTextToSheet(style.textContent || style.innerText || "");
+            cssRules = this.safeGetCssRules(sheet);
         }
 
         // Try to use CSSOM if available (for live DOM elements)
-        if ((sheet as CSSStyleSheet)?.cssRules) {
-            const cssRules = (sheet as CSSStyleSheet).cssRules;
-
+        if (cssRules) {
             for (let j = 0; j < cssRules.length; j++) {
                 const cssRule: CSSRule = cssRules.item(j);
 
