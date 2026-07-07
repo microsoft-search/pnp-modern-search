@@ -820,9 +820,9 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             .filter(person => isMultiMode || !selectedUserKeys.has(this.getIdentityKey(person)));
         const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
         const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
-        const selectedPillBackgroundColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
-        const selectedPillBorderColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
-        const selectedPillTextColor = this.props.themeVariant?.palette?.white ?? '#ffffff';
+        const selectedPillBackgroundColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
+        const selectedPillBorderColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
+        const selectedPillTextColor = this.props.themeVariant?.semanticColors?.primaryButtonText ?? '#ffffff';
         const singleSelectOptions = isMultiMode ? [] : this.getSingleSelectOptions(filteredUsers, textColor);
         const selectedSingleUserKey = isMultiMode ? undefined : this.getSelectedSingleStaticUserKey(filteredUsers, selectedUserKeys, selectedDisplayNames);
 
