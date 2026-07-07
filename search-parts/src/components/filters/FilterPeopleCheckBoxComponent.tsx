@@ -411,7 +411,10 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         }
 
         const json = await response.json();
-        const digest = json?.d?.GetContextWebInformation?.FormDigestValue;
+        const digest = `${json?.d?.GetContextWebInformation?.FormDigestValue ?? ''}`.trim();
+        if (!digest) {
+            throw new Error('Failed to retrieve request digest: missing FormDigestValue.');
+        }
         const timeoutSeconds = Number(json?.d?.GetContextWebInformation?.FormDigestTimeoutSeconds ?? 1800);
 
         this.requestDigestToken = digest;
