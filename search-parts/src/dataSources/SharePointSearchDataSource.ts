@@ -40,6 +40,7 @@ import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
 import { AutoCalculatedDataSourceFields, SortableFields } from '../common/Constants';
 import { ObjectHelper } from '../helpers/ObjectHelper';
+import { BuiltinFilterTemplates } from '../layouts/AvailableTemplates';
 import commonStyles from '../styles/Common.module.scss';
 import { PnPClientStorage } from "@pnp/common/storage";
 
@@ -1004,7 +1005,9 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         if (!isEmpty(dataContext.filters)) {
 
             // Set list of refiners to retrieve
-            searchQuery.Refiners = dataContext.filters.filtersConfiguration.map(filterConfig => {
+            searchQuery.Refiners = dataContext.filters.filtersConfiguration.filter(filterConfig => {
+                return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople;
+            }).map(filterConfig => {
 
                 // Special case with Date managed properties
                 const regexExpr = "(RefinableDate\\d+)(?=,|$)|" +

@@ -224,29 +224,52 @@
 											{{/each}}
 										</div>
 									{{else}}
-										{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
-											<div class="filter--value">
-												<pnp-filterdateinterval 
-													data-instance-id="{{@root.instanceId}}" 
-													data-filter="{{JSONstringify filter 2}}"
+										{{#eq filter.selectedTemplate 'StaticPeopleTemplate'}}
+											{{#if filter.isMulti}}
+												<div class="filter--option">
+													<pnp-filteroperator 
+														data-instance-id="{{@root.instanceId}}"
+														data-filter-name="{{filter.filterName}}" 
+														data-operator="{{filter.operator}}" 
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													></pnp-filteroperator>
+												</div>
+											{{/if}}
+											<div class="filter--option">
+												<pnp-peoplefilter
+													data-instance-id="{{@root.instanceId}}"
+													data-filter-name="{{filter.filterName}}"
+													data-is-multi="{{filter.isMulti}}"
+													data-static-picker="true"
+													data-selected-values="{{JSONstringify filter.values 2}}"
 													data-theme-variant="{{JSONstringify @root.theme}}"
-												>
-											</pnp-filterdateinterval>
+												></pnp-peoplefilter>
 											</div>
 										{{else}}
-											{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
-												<div class="filter--value-hierarchical">
-													{{{hierarchicalOperator filter @root.instanceId @root.theme}}}
-													<pnp-filterhierarchical 
+											{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
+												<div class="filter--value">
+													<pnp-filterdateinterval 
 														data-instance-id="{{@root.instanceId}}" 
 														data-filter="{{JSONstringify filter 2}}"
-														data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
 														data-theme-variant="{{JSONstringify @root.theme}}"
 													>
-													</pnp-filterhierarchical>
+													</pnp-filterdateinterval>
 												</div>
-											{{/eq}}
-										{{/eq}}	
+											{{else}}
+												{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
+													<div class="filter--value-hierarchical">
+														{{{hierarchicalOperator filter @root.instanceId @root.theme}}}
+														<pnp-filterhierarchical 
+															data-instance-id="{{@root.instanceId}}" 
+															data-filter="{{JSONstringify filter 2}}"
+															data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
+															data-theme-variant="{{JSONstringify @root.theme}}"
+														>
+														</pnp-filterhierarchical>
+													</div>
+												{{/eq}}
+											{{/eq}}	
+										{{/eq}}
 									{{/eq}}
 								{{/eq}}
 							{{/eq}}
@@ -259,11 +282,14 @@
 									{{{hierarchicalMultiselect filter @root.instanceId @root.theme}}}
 								{{else}}
 									{{#eq filter.values.length 0}}
-										<div class="filter--message">
-											{{@root.strings.FilterNoValuesMessage}}
-										</div>
+										{{#isnt filter.selectedTemplate 'StaticPeopleTemplate'}}
+											<div class="filter--message">
+												{{@root.strings.FilterNoValuesMessage}}
+											</div>
+										{{/isnt}}
 									{{else}}
 										{{#if filter.isMulti}}
+											{{#isnt filter.selectedTemplate 'StaticPeopleTemplate'}}
 											<div class="filter--option">
 												<pnp-filteroperator 
 													data-instance-id="{{@root.instanceId}}"
@@ -272,6 +298,7 @@
 													data-theme-variant="{{JSONstringify @root.theme}}"
 												></pnp-filteroperator>
 											</div>
+											{{/isnt}}
 										{{/if}}
 										{{#if filter.isMulti}}
 											<pnp-filtermultiselect 

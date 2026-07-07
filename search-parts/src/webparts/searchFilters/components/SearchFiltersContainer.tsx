@@ -94,12 +94,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private _busyHideTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyWatchdogTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyPrimeTimer: ReturnType<typeof setTimeout> | null = null;
+    private _busyCursorAutoHideTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyStartedAt: number = 0;
     private _latestDeferredSubmittedFilters: IDataFilter[] | null = null;
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
     private static readonly _MIN_BUSY_VISIBLE_MS = 2000;
+    private static readonly _STATIC_PEOPLE_BUSY_VISIBLE_MS = 3000;
     private static readonly _MAX_BUSY_DURATION_MS = 10000;
     private static readonly _BUSY_PRIME_TIMEOUT_MS = 1500;
     private static readonly _GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
@@ -298,6 +300,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             this._busyHideTimer = null;
         }
 
+        if (this._busyCursorAutoHideTimer) {
+            clearTimeout(this._busyCursorAutoHideTimer);
+            this._busyCursorAutoHideTimer = null;
+        }
+
         if (this._busyWatchdogTimer) {
             clearTimeout(this._busyWatchdogTimer);
             this._busyWatchdogTimer = null;
@@ -318,6 +325,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 this.endResultsUpdate();
             }
         }, SearchFiltersContainer._MAX_BUSY_DURATION_MS);
+
+        if (this.isStaticPeopleFilter(sourceFilterName)) {
+            this._busyCursorAutoHideTimer = setTimeout(() => {
+                this._busyCursorAutoHideTimer = null;
+
+                if (this.state.isUpdatingResults) {
+                    this.setBusyCursor(false);
+                }
+            }, SearchFiltersContainer._STATIC_PEOPLE_BUSY_VISIBLE_MS);
+        }
 
         this.setState(prevState => ({
             isUpdatingResults: true,
@@ -420,6 +437,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private endResultsUpdate(): void {
         const elapsed = performance.now() - this._busyStartedAt;
         const remaining = SearchFiltersContainer._MIN_BUSY_VISIBLE_MS - elapsed;
+
+        if (this._busyCursorAutoHideTimer) {
+            clearTimeout(this._busyCursorAutoHideTimer);
+            this._busyCursorAutoHideTimer = null;
+        }
 
         if (this._busyHideTimer) {
             clearTimeout(this._busyHideTimer);
@@ -734,7 +756,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return false;
     }
 
-    private shouldShowPeopleTemplateMappingWarning(availableFilter: IDataFilterResult): boolean {
+    private shouldShowPeopleTemplateMappingWarning(availableFilter: IDataFilterResult, selectedTemplate?: string): boolean {
+        if (selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+            return false;
+        }
+
         const values = availableFilter?.values ?? [];
         if (values.length === 0) {
             return false;
@@ -820,7 +846,25 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return selectedFilterValues.findIndex(value => this.areFilterValuesEquivalent(`${value.value ?? ''}`, availableRawValue));
     }
 
-    private mergeAvailableValueWithSelection(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[], selectedValueIndexByRaw: Map<string, number>): IDataFilterValueInternal {
+    private getMatchingStaticPeopleSelectedValueIndex(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[]): number {
+        const availableLabel = this.resolveFilterDisplayName(`${availableValue?.name ?? ''}`, `${availableValue?.value ?? ''}`)
+            .trim()
+            .toLowerCase();
+
+        if (!availableLabel) {
+            return -1;
+        }
+
+        return selectedFilterValues.findIndex(selectedValue => {
+            const selectedLabel = this.resolveFilterDisplayName(`${selectedValue?.name ?? ''}`, `${selectedValue?.value ?? ''}`)
+                .trim()
+                .toLowerCase();
+
+            return selectedLabel === availableLabel;
+        });
+    }
+
+    private mergeAvailableValueWithSelection(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[], selectedValueIndexByRaw: Map<string, number>, selectedTemplate?: string): IDataFilterValueInternal {
         const filterValueInternal: IDataFilterValueInternal = {
             name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`),
             selected: false,
@@ -830,7 +874,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             count: availableValue.count
         };
 
-        const valueIdx = this.getMatchingSelectedValueIndex(`${availableValue.value}`, selectedValueIndexByRaw, selectedFilterValues);
+        let valueIdx = this.getMatchingSelectedValueIndex(`${availableValue.value}`, selectedValueIndexByRaw, selectedFilterValues);
+        if (valueIdx === -1 && selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+            valueIdx = this.getMatchingStaticPeopleSelectedValueIndex(availableValue, selectedFilterValues);
+        }
+
         if (valueIdx === -1) {
             return filterValueInternal;
         }
@@ -870,7 +918,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 };
             }
 
-            return this.mergeAvailableValueWithSelection(availableValue, selectedFilterValues, selectedValueIndexByRaw);
+            return this.mergeAvailableValueWithSelection(availableValue, selectedFilterValues, selectedValueIndexByRaw, filterConfiguration.selectedTemplate);
         });
     }
 
@@ -940,7 +988,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             : undefined;
         const showPeopleTemplateMappingWarning = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
             && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.People
-            && this.shouldShowPeopleTemplateMappingWarning(availableFilter);
+            && this.shouldShowPeopleTemplateMappingWarning(availableFilter, filterConfiguration.selectedTemplate);
         const peopleTemplateMappingWarningText = showPeopleTemplateMappingWarning
             ? (webPartStrings.PropertyPane.DataFilterCollection.PeopleTemplateQUserMappingWarning
                 || 'People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.')
@@ -1322,8 +1370,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             backgroundColor: this.props.filterBackgroundColor || undefined,
             borderStyle: this.props.filterBorderColor || this.props.filterBorderThickness ? 'solid' : undefined,
             borderColor: this.props.filterBorderColor || undefined,
-            borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`,
-            cursor: this.state.isUpdatingResults ? 'progress' : 'default'
+            borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`
         };
 
         return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
@@ -1347,11 +1394,15 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
         this.bindFilterValueOperatorUpdated();
 
-        // Initial state
-        this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+        const hasDeepLink = !!UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
 
-        // Process deep links
-        this.getFiltersDeepLink();
+        // Process deep links first so restored selections are not overwritten by an empty initial UI refresh.
+        if (hasDeepLink) {
+            this.getFiltersDeepLink();
+        } else {
+            // Initial state
+            this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+        }
 
         this._handleQueryStringChange();
     }
@@ -1516,6 +1567,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         this._latestDeferredSubmittedFilters = null;
     }
 
+    private isStaticPeopleFilter(filterName?: string): boolean {
+        if (!filterName) {
+            return false;
+        }
+
+        return this.props.filtersConfiguration.some(filter => filter.filterName === filterName && filter.selectedTemplate === BuiltinFilterTemplates.StaticPeople);
+    }
+
     /**
      * Gets only the selected filters from the UI and convert them to format sent to the data source
      * @param currentUiFilters the current UI filters (selected or not)
@@ -1537,6 +1596,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             });
 
             if (values.length > 0) {
+                const isStaticPeopleFilter = selectedFilter.selectedTemplate === BuiltinFilterTemplates.StaticPeople;
 
                 newSelectedFilter.values = values.map(value => {
 
@@ -1550,9 +1610,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     // 'Equals' by default
                     if (!newValue.operator) newValue.operator = FilterComparisonOperator.Eq;
 
-                    // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
-                    // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
-                    newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
+                    if (isStaticPeopleFilter) {
+                        const displayNameValue = `${newValue.name ?? newValue.value ?? ''}`.trim();
+                        newValue.value = displayNameValue;
+                        newValue.name = displayNameValue;
+                        newValue.operator = FilterComparisonOperator.Eq;
+                    } else {
+                        // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
+                        // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
+                        newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
+                    }
 
                     return newValue;
                 });
@@ -1921,6 +1988,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     currentUiFilters: currentUiFilters,
                     submittedFilters: dataFilters
                 }, () => {
+                    // Rebuild available values using restored deep-link selection state.
+                    // This ensures static people selection remains marked after reload.
+                    this.getFiltersToDisplay(this.props.availableFilters, currentUiFilters, this.props.filtersConfiguration);
+
                     // Update the connected data source only after UI state has been restored.
                     // This prevents a stale getFiltersToDisplay() pass from overwriting deep-link selections on refresh.
                     this.props.onUpdateFilters(dataFilters);

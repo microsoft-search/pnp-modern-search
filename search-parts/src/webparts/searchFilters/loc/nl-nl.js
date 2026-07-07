@@ -54,6 +54,7 @@ define([], function () {
                     ComboBoxTemplate: "Keuzelijst",
                     DateIntervalTemplate: "Datum interval",
                     PeopleTemplate: "Persoon sjabloon",
+                    StaticPeopleTemplate: "Statisch persoonssjabloon",
                     TaxonomyPickerTemplate: "Taxonomie picker",
                     HierarchicalFilterTemplate: "Hiërarchisch filter"
                 },
@@ -75,7 +76,13 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
             }
         },
-        Styling: {
+            WebPartDefaultTitle: "Zoekfilters webonderdeel",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "{0} verwijderen",
+                SearchUsersPlaceholder: "Zoek gebruikers",
+                LoadingTenantUsersLabel: "Tenantgebruikers laden...",
+                NoUsersFoundMessage: "Geen gebruikers gevonden."
+            }
             StylingOptionsGroupName: "Stijlopties",
             FilterBackgroundColorLabel: "Filter achtergrondkleur",
             FilterBorderColorLabel: "Filter randkleur",

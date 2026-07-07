@@ -54,6 +54,7 @@ define([], function () {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
+                    StaticPeopleTemplate: "Staattinen henkilömalli",
                     TaxonomyPickerTemplate: "Taksonomiavalinta",
                     HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },
@@ -75,7 +76,13 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
             }
         },
-        Styling: {
+            WebPartDefaultTitle: "Haun suodattimet webosa",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Poista {0}",
+                SearchUsersPlaceholder: "Hae käyttäjiä",
+                LoadingTenantUsersLabel: "Ladataan vuokraajan käyttäjiä...",
+                NoUsersFoundMessage: "Käyttäjiä ei löytynyt."
+            }
             StylingOptionsGroupName: "Tyyliasetukset",
             FilterBackgroundColorLabel: "Suodattimen taustav\u00e4ri",
             FilterBorderColorLabel: "Suodattimen reunav\u00e4ri",

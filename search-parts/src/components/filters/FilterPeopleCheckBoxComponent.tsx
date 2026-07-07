@@ -2,7 +2,10 @@ import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Spinner, SpinnerSize, Text, getTheme } from '@fluentui/react';
+import { IPersonaProps } from '@fluentui/react/lib/Persona';
+import { MSGraphClientFactory } from '@microsoft/sp-http';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
 export interface IFilterPeopleTemplateProps {
@@ -53,19 +56,68 @@ export interface IFilterPeopleTemplateProps {
     themeVariant?: IReadonlyTheme;
 
     /**
+     * Enables static people picker mode (tenant users suggestions)
+     */
+    staticPicker?: boolean | string;
+
+    /**
+     * Serialized selected values for static people picker mode
+     */
+    selectedValues?: string | Array<{ name?: string; value?: string; selected?: boolean }>;
+
+    /**
+     * Graph client factory for tenant-wide user suggestions
+     */
+    msGraphClientFactory?: MSGraphClientFactory;
+
+    /**
      * Handler when a filter value is selected
      */
-    onChecked: (filterName: string, filterValue: IDataFilterValueInfo) => void;
+    onChecked: (filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[]) => void;
 }
 
 export interface IFilterPeopleTemplateState {
     isSelectionInProgress: boolean;
+    pickerSelectedPeople: IPersonaProps[];
+    pickerSuggestedPeople: IPersonaProps[];
+    isPickerLoading: boolean;
+    pickerSearchText: string;
+    pickerSearchFilterText: string;
+}
+
+interface IPeoplePickerPrincipalEntity {
+    Key?: string;
+    DisplayText?: string;
+    EntityData?: {
+        Email?: string;
+        AccountName?: string;
+    };
+}
+
+interface IGraphUserEntity {
+    id?: string;
+    displayName?: string;
+    mail?: string;
+    userPrincipalName?: string;
 }
 
 export class FilterPeopleTemplateComponent extends React.Component<IFilterPeopleTemplateProps, IFilterPeopleTemplateState> {
     private static readonly SELECTION_FEEDBACK_DURATION_MS = 2500;
     private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+    private static tenantUsersCache: IPersonaProps[] | null = null;
+    private static tenantUsersLoadingPromise: Promise<IPersonaProps[]> | null = null;
     private selectionFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
+    private pickerSearchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private requestDigestToken: string = null;
+    private requestDigestExpiration: number = 0;
+
+    private static setTenantUsersCache(users: IPersonaProps[]): void {
+        FilterPeopleTemplateComponent.tenantUsersCache = users;
+    }
+
+    private static setTenantUsersLoadingPromise(promise: Promise<IPersonaProps[]> | null): void {
+        FilterPeopleTemplateComponent.tenantUsersLoadingPromise = promise;
+    }
 
     private _setImmediateProgressCursor(): void {
         if (!globalThis.document) {
@@ -97,19 +149,56 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     public constructor(props: IFilterPeopleTemplateProps) {
         super(props);
 
+        let selectedPeople: IPersonaProps[] = [];
+
+        if (this.isStaticPickerMode()) {
+            selectedPeople = this.parseSelectedPeopleFromProps();
+        }
+
         this.state = {
-            isSelectionInProgress: false
+            isSelectionInProgress: false,
+            pickerSelectedPeople: selectedPeople,
+            pickerSuggestedPeople: [],
+            isPickerLoading: false,
+            pickerSearchText: '',
+            pickerSearchFilterText: ''
         };
     }
 
     public componentDidMount(): void {
         this.restoreSelectionFeedback();
+
+        if (this.isStaticPickerMode()) {
+            this.loadInitialPickerSuggestions().catch(() => {
+                // Ignore initial suggestion lookup failures
+            });
+        }
+    }
+
+    public componentDidUpdate(prevProps: IFilterPeopleTemplateProps): void {
+        if (!this.isStaticPickerMode()) {
+            return;
+        }
+
+        if (prevProps.selectedValues === this.props.selectedValues) {
+            return;
+        }
+
+        const nextSelectedPeople = this.parseSelectedPeopleFromProps();
+        this.setState({
+            pickerSelectedPeople: nextSelectedPeople
+        });
     }
 
     public componentWillUnmount(): void {
         if (this.selectionFeedbackTimer !== null) {
             clearTimeout(this.selectionFeedbackTimer);
             this.selectionFeedbackTimer = null;
+        }
+
+        if (this.pickerSearchDebounceTimer !== null) {
+            clearTimeout(this.pickerSearchDebounceTimer);
+            this.pickerSearchDebounceTimer = null;
         }
     }
 
@@ -188,6 +277,379 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         }, FilterPeopleTemplateComponent.SELECTION_FEEDBACK_DURATION_MS);
     }
 
+    private isStaticPickerMode(): boolean {
+        return `${this.props.staticPicker ?? ''}`.toLowerCase() === 'true';
+    }
+
+    private isMultiSelectionMode(): boolean {
+        const rawValue = this.props.isMulti as unknown as boolean | string | undefined;
+
+        if (typeof rawValue === 'string') {
+            return rawValue.toLowerCase() === 'true';
+        }
+
+        return !!rawValue;
+    }
+
+    private parseSelectedPeopleFromProps(): IPersonaProps[] {
+        if (!this.props.selectedValues) {
+            return this.parseSelectedPeopleFromDeepLink();
+        }
+
+        try {
+            let selectedValues: Array<{ name?: string; value?: string; selected?: boolean }> = [];
+            const rawSelectedValues = this.props.selectedValues;
+
+            if (Array.isArray(rawSelectedValues)) {
+                selectedValues = rawSelectedValues;
+            } else if (typeof rawSelectedValues === 'string') {
+                try {
+                    selectedValues = JSON.parse(rawSelectedValues) as Array<{ name?: string; value?: string; selected?: boolean }>;
+                } catch {
+                    // Handle HTML-escaped JSON payloads coming from template attributes.
+                    const decodedPayload = rawSelectedValues
+                        .replaceAll('&quot;', '"')
+                        .replaceAll('&#34;', '"')
+                        .replaceAll('&apos;', "'")
+                        .replaceAll('&#39;', "'")
+                        .replaceAll('&amp;', '&');
+                    selectedValues = JSON.parse(decodedPayload) as Array<{ name?: string; value?: string; selected?: boolean }>;
+                }
+            }
+
+            if (!Array.isArray(selectedValues)) {
+                return this.parseSelectedPeopleFromDeepLink();
+            }
+
+            const selectedPeople = selectedValues
+                .filter(value => value?.selected === true || `${value?.selected ?? ''}`.toLowerCase() === 'true')
+                .map(value => {
+                    const displayName = this._resolveDisplayLabel(value.name, value.value);
+                    return {
+                        text: displayName,
+                        secondaryText: value.value,
+                        optionalText: value.value
+                    };
+                });
+
+            // If selectedValues is provided, trust it as the source of truth even when empty.
+            // Falling back to deep link here can resurrect stale selections after deselection.
+            return selectedPeople;
+        } catch {
+            return this.parseSelectedPeopleFromDeepLink();
+        }
+    }
+
+    private parseSelectedPeopleFromDeepLink(): IPersonaProps[] {
+        try {
+            const instanceId = `${this.props.instanceId ?? ''}`.trim();
+            const filterName = `${this.props.filterName ?? ''}`.trim();
+
+            if (!instanceId || !filterName || !globalThis?.location?.search) {
+                return [];
+            }
+
+            const queryParamName = `f_${instanceId}`;
+            const queryValue = new URLSearchParams(globalThis.location.search).get(queryParamName);
+            if (!queryValue) {
+                return [];
+            }
+
+            let parsedFilters: Array<{ filterName?: string; values?: Array<{ name?: string; value?: string }> }> = [];
+            try {
+                parsedFilters = JSON.parse(queryValue);
+            } catch {
+                parsedFilters = JSON.parse(decodeURIComponent(queryValue));
+            }
+
+            if (!Array.isArray(parsedFilters)) {
+                return [];
+            }
+
+            const matchingFilter = parsedFilters.find(filter => `${filter?.filterName ?? ''}` === filterName);
+            const values = matchingFilter?.values || [];
+
+            return values
+                .filter(value => !!`${value?.name ?? value?.value ?? ''}`.trim())
+                .map(value => {
+                    const displayName = this._resolveDisplayLabel(value?.name, value?.value);
+                    return {
+                        text: displayName,
+                        secondaryText: `${value?.value ?? ''}`,
+                        optionalText: `${value?.value ?? ''}`
+                    };
+                });
+        } catch {
+            return [];
+        }
+    }
+
+    private async getRequestDigest(): Promise<string> {
+        const now = Date.now();
+        if (this.requestDigestToken && now < this.requestDigestExpiration) {
+            return this.requestDigestToken;
+        }
+
+        const response = await fetch(`${globalThis.location.origin}/_api/contextinfo`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json;odata=verbose'
+            },
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve request digest. Status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        const digest = json?.d?.GetContextWebInformation?.FormDigestValue;
+        const timeoutSeconds = Number(json?.d?.GetContextWebInformation?.FormDigestTimeoutSeconds ?? 1800);
+
+        this.requestDigestToken = digest;
+        this.requestDigestExpiration = Date.now() + Math.max(60, timeoutSeconds - 30) * 1000;
+
+        return digest;
+    }
+
+    private async searchTenantUsersFromPeoplePicker(queryText: string, maxSuggestions: number = 20): Promise<IPersonaProps[]> {
+        const normalizedQuery = `${queryText ?? ''}`.trim();
+        if (!normalizedQuery) {
+            return [];
+        }
+
+        const digest = await this.getRequestDigest();
+        const response = await fetch(`${globalThis.location.origin}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json;odata=verbose',
+                'Content-Type': 'application/json;odata=verbose',
+                'X-RequestDigest': digest
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                queryParams: {
+                    QueryString: normalizedQuery,
+                    MaximumEntitySuggestions: maxSuggestions,
+                    PrincipalType: 1,
+                    PrincipalSource: 15,
+                    AllowEmailAddresses: true,
+                    AllowMultipleEntities: true,
+                    AllUrlZones: false
+                }
+            })
+        });
+
+        if (!response.ok) {
+            return [];
+        }
+
+        const json = await response.json();
+        const rawResult = json?.d?.ClientPeoplePickerSearchUser;
+        const entities = rawResult ? JSON.parse(rawResult) as IPeoplePickerPrincipalEntity[] : [];
+
+        return this.mapPrincipalEntitiesToPersonas(entities);
+    }
+
+    private mapPrincipalEntitiesToPersonas(entities: IPeoplePickerPrincipalEntity[]): IPersonaProps[] {
+        return (entities || []).map(entity => {
+            const email = entity?.EntityData?.Email;
+            const accountName = entity?.EntityData?.AccountName || entity?.Key;
+            const text = entity?.DisplayText || email || accountName || '';
+
+            return {
+                text,
+                secondaryText: email || accountName,
+                optionalText: accountName
+            };
+        }).filter(persona => !!persona.text);
+    }
+
+    private readonly getSeededTenantUsers = async (): Promise<IPersonaProps[]> => {
+        const seedQueries = ['a', 'e', 'i', 'o', 'u'];
+        const uniqueUsers = new Map<string, IPersonaProps>();
+
+        for (const query of seedQueries) {
+            const people = await this.searchTenantUsersFromPeoplePicker(query, 200);
+            people.forEach(person => {
+                const key = `${person.optionalText || person.secondaryText || person.text}`;
+                if (key && !uniqueUsers.has(key)) {
+                    uniqueUsers.set(key, person);
+                }
+            });
+
+            if (uniqueUsers.size >= 500) {
+                break;
+            }
+        }
+
+        return Array.from(uniqueUsers.values()).sort((left, right) => {
+            return `${left.text ?? ''}`.localeCompare(`${right.text ?? ''}`);
+        });
+    }
+
+    private readonly filterAllPreloadedUsers = (searchText: string): IPersonaProps[] => {
+        const normalizedSearchText = `${searchText ?? ''}`.trim().toLocaleLowerCase();
+        const source = this.state.pickerSuggestedPeople || [];
+
+        if (!normalizedSearchText) {
+            return source;
+        }
+
+        return source.filter(persona => {
+            const displayName = `${persona?.text ?? ''}`.toLocaleLowerCase();
+            const mail = `${persona?.secondaryText ?? ''}`.toLocaleLowerCase();
+            const principalName = `${persona?.optionalText ?? ''}`.toLocaleLowerCase();
+            return displayName.includes(normalizedSearchText)
+                || mail.includes(normalizedSearchText)
+                || principalName.includes(normalizedSearchText);
+        });
+    }
+
+    private readonly getIdentityKey = (person: IPersonaProps): string => {
+        return `${person?.optionalText || person?.secondaryText || person?.text || ''}`.trim().toLowerCase();
+    }
+
+    private readonly toggleStaticUserSelection = (person: IPersonaProps, checked: boolean): void => {
+        const personKey = this.getIdentityKey(person);
+        const currentSelection = this.state.pickerSelectedPeople || [];
+        let nextSelection: IPersonaProps[];
+        const isMultiMode = this.isMultiSelectionMode();
+
+        if (checked) {
+            if (isMultiMode) {
+                if (currentSelection.some(item => this.getIdentityKey(item) === personKey)) {
+                    nextSelection = currentSelection;
+                } else {
+                    nextSelection = [...currentSelection, person];
+                }
+            } else {
+                nextSelection = [person];
+            }
+        } else {
+            nextSelection = currentSelection.filter(item => this.getIdentityKey(item) !== personKey);
+        }
+
+        this.emitPickerSelection(nextSelection);
+        this.setState({
+            pickerSelectedPeople: nextSelection
+        });
+    }
+
+    private readonly loadInitialPickerSuggestions = async (): Promise<void> => {
+        if (Array.isArray(FilterPeopleTemplateComponent.tenantUsersCache)) {
+            this.setState({
+                pickerSuggestedPeople: FilterPeopleTemplateComponent.tenantUsersCache,
+                isPickerLoading: false
+            });
+            return;
+        }
+
+        this.setState({ isPickerLoading: true });
+
+        const existingLoadingPromise = FilterPeopleTemplateComponent.tenantUsersLoadingPromise;
+        const loadingPromise = existingLoadingPromise ?? this.getInitialTenantUsers();
+        FilterPeopleTemplateComponent.setTenantUsersLoadingPromise(loadingPromise);
+
+        try {
+            const pickerSuggestedPeople = await loadingPromise;
+            FilterPeopleTemplateComponent.setTenantUsersCache(pickerSuggestedPeople);
+
+            this.setState({
+                pickerSuggestedPeople,
+                isPickerLoading: false
+            });
+        } catch {
+            this.setState({ isPickerLoading: false });
+        } finally {
+            if (FilterPeopleTemplateComponent.tenantUsersLoadingPromise === loadingPromise) {
+                FilterPeopleTemplateComponent.setTenantUsersLoadingPromise(null);
+            }
+        }
+    }
+
+    private readonly getInitialTenantUsers = async (): Promise<IPersonaProps[]> => {
+        if (!this.props.msGraphClientFactory) {
+            return [];
+        }
+
+        try {
+            const client = await this.props.msGraphClientFactory.getClient('3');
+            let users: IGraphUserEntity[] = [];
+            let response = await client
+                .api('/users')
+                .version('v1.0')
+                .select('id,displayName,mail,userPrincipalName')
+                .top(999)
+                .get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
+
+            users = users.concat(Array.isArray(response?.value) ? response.value : []);
+
+            let nextLink = response?.['@odata.nextLink'];
+            let pageCount = 1;
+
+            while (nextLink && pageCount < 100) {
+                response = await client.api(nextLink).get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
+                users = users.concat(Array.isArray(response?.value) ? response.value : []);
+                nextLink = response?.['@odata.nextLink'];
+                pageCount++;
+            }
+
+            const uniqueUsers = new Map<string, IPersonaProps>();
+            users.forEach(user => {
+                const text = `${user.displayName || user.mail || user.userPrincipalName || ''}`.trim();
+                const secondaryText = `${user.mail || user.userPrincipalName || ''}`.trim();
+                const optionalText = `${user.userPrincipalName || ''}`.trim();
+                const key = `${optionalText || secondaryText || text}`;
+
+                if (text && !uniqueUsers.has(key)) {
+                    uniqueUsers.set(key, {
+                        text,
+                        secondaryText,
+                        optionalText
+                    });
+                }
+            });
+
+            return Array.from(uniqueUsers.values()).sort((left, right) => {
+                return `${left.text ?? ''}`.localeCompare(`${right.text ?? ''}`);
+            });
+        } catch {
+            try {
+                return await this.getSeededTenantUsers();
+            } catch {
+                return [];
+            }
+        }
+    }
+
+    private readonly emitPickerSelection = (selectedPeople: IPersonaProps[]): void => {
+        const previouslySelected = this.state.pickerSelectedPeople || [];
+        const selectedFilterValues: IDataFilterValueInfo[] = selectedPeople.map(person => {
+            const fallbackIdentity = this.getStaticPersonIdentityValue(person);
+            const displayName = `${person?.text || fallbackIdentity}`.trim();
+            return {
+                name: displayName,
+                value: fallbackIdentity,
+                selected: true
+            };
+        });
+
+        previouslySelected.forEach(previousPerson => {
+            const previousIdentity = this.getStaticPersonIdentityValue(previousPerson);
+            if (!selectedFilterValues.some(value => value.value === previousIdentity)) {
+                const previousDisplayName = `${previousPerson?.text || previousIdentity}`.trim();
+                selectedFilterValues.push({
+                    name: previousDisplayName,
+                    value: previousIdentity,
+                    selected: false
+                });
+            }
+        });
+
+        this.props.onChecked(this.props.filterName, selectedFilterValues);
+    }
+
     private _extractReadableLabel(value: string): string {
         const cleanedValue = `${value || ''}`.trim().replace(/^"+|"+$/g, '');
         if (!cleanedValue) {
@@ -248,7 +710,170 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         return rawLabel;
     }
 
+    private getStaticPersonIdentityValue(person: IPersonaProps): string {
+        return `${person?.optionalText || person?.secondaryText || person?.text || ''}`.trim();
+    }
+
     public render() {
+
+        if (this.isStaticPickerMode()) {
+            const staticPeoplePickerStrings = webPartStrings?.General?.StaticPeoplePicker;
+            const removeSelectedUserTitleTemplate = staticPeoplePickerStrings?.RemoveSelectedUserTitle || 'Remove {0}';
+            const searchUsersPlaceholder = staticPeoplePickerStrings?.SearchUsersPlaceholder || 'Search users';
+            const loadingTenantUsersLabel = staticPeoplePickerStrings?.LoadingTenantUsersLabel || 'Loading tenant users...';
+            const noUsersFoundMessage = staticPeoplePickerStrings?.NoUsersFoundMessage || 'No users found.';
+            const isMultiMode = this.isMultiSelectionMode();
+            const selectedPeople = this.state.pickerSelectedPeople || [];
+            const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
+            const filteredUsers = this.filterAllPreloadedUsers(this.state.pickerSearchFilterText)
+                .filter(person => isMultiMode || !selectedUserKeys.has(this.getIdentityKey(person)));
+
+            const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
+            const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
+
+            return <div>
+                {selectedPeople.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+                        {selectedPeople.map(person => {
+                            const personKey = this.getIdentityKey(person);
+
+                            return <button
+                                key={personKey}
+                                type="button"
+                                onClick={() => this.toggleStaticUserSelection(person, false)}
+                                style={{
+                                    alignItems: 'center',
+                                    backgroundColor: '#106ebe',
+                                    border: '1px solid #106ebe',
+                                    borderRadius: 16,
+                                    color: '#ffffff',
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    gap: 8,
+                                    padding: '4px 12px'
+                                }}
+                                title={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
+                            >
+                                <span style={{ lineHeight: 1 }}>{person.text}</span>
+                                <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>×</span>
+                            </button>;
+                        })}
+                    </div>
+                )}
+                <div style={{ marginBottom: 8 }}>
+                    <input
+                        type="text"
+                        value={this.state.pickerSearchText}
+                        onChange={(event) => {
+                            const nextSearchText = event.currentTarget.value;
+
+                            if (this.pickerSearchDebounceTimer !== null) {
+                                clearTimeout(this.pickerSearchDebounceTimer);
+                                this.pickerSearchDebounceTimer = null;
+                            }
+
+                            this.setState({ pickerSearchText: nextSearchText });
+
+                            this.pickerSearchDebounceTimer = setTimeout(() => {
+                                this.pickerSearchDebounceTimer = null;
+                                this.setState({ pickerSearchFilterText: nextSearchText });
+                            }, 120);
+                        }}
+                        placeholder={searchUsersPlaceholder}
+                        style={{ width: '100%', boxSizing: 'border-box', padding: '6px 8px' }}
+                    />
+                </div>
+                <div style={{ maxHeight: 260, minHeight: 260, overflowY: 'auto', position: 'relative' }}>
+                    {this.state.isPickerLoading && (
+                        <div style={{
+                            position: 'absolute',
+                            inset: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'rgba(255,255,255,0.45)',
+                            zIndex: 1
+                        }}>
+                            <Spinner size={SpinnerSize.small} label={loadingTenantUsersLabel} />
+                        </div>
+                    )}
+                    {!this.state.isPickerLoading && selectedPeople.length === 0 && filteredUsers.length === 0 && (
+                        <div style={{ color: '#605e5c', fontSize: 12 }}>
+                            {noUsersFoundMessage}
+                        </div>
+                    )}
+                    {filteredUsers.map(user => {
+                        const userKey = this.getIdentityKey(user);
+                        const normalizedDisplayName = `${user?.text || ''}`.trim().toLowerCase();
+                        const checked = selectedUserKeys.has(userKey) || selectedDisplayNames.has(normalizedDisplayName);
+
+                        if (isMultiMode) {
+                            return <div key={userKey} style={{ marginBottom: 6 }}>
+                                <Checkbox
+                                    styles={{
+                                        root: {
+                                            paddingRight: 10,
+                                            paddingLeft: 10,
+                                            paddingBottom: 7,
+                                            paddingTop: 7
+                                        },
+                                        label: {
+                                            width: '100%',
+                                        },
+                                        text: {
+                                            color: textColor
+                                        }
+                                    }}
+                                    theme={(this.props.themeVariant as ITheme) || getTheme()}
+                                    checked={checked}
+                                    label={user.text}
+                                    onChange={(ev, isChecked) => {
+                                        this.toggleStaticUserSelection(user, !!isChecked);
+                                    }}
+                                    title={user.text}
+                                    onRenderLabel={this._renderCheckboxLabel}
+                                />
+                            </div>;
+                        }
+
+                        return <ChoiceGroup
+                            key={userKey}
+                            selectedKey={checked ? userKey : undefined}
+                            styles={{
+                                root: {
+                                    position: 'relative',
+                                    display: 'flex',
+                                    paddingRight: 10,
+                                    paddingLeft: 10,
+                                    paddingBottom: 7,
+                                    paddingTop: 7,
+                                    selectors: {
+                                        '.ms-ChoiceField': {
+                                            marginTop: 0
+                                        }
+                                    }
+                                }
+                            }}
+                            options={[
+                                {
+                                    key: userKey,
+                                    text: user.text,
+                                    disabled: this.props.disabled,
+                                    styles: {
+                                        field: {
+                                            color: textColor
+                                        }
+                                    }
+                                }
+                            ]}
+                            onChange={() => {
+                                this.toggleStaticUserSelection(user, true);
+                            }}
+                        />;
+                    })}
+                </div>
+            </div>;
+        }
 
         let filterValue: IDataFilterValueInfo = {
             name: this.props.name,
@@ -262,7 +887,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         let textColor: string = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const labelValue = this._resolveDisplayLabel(filterValue.name, filterValue.value);
 
-        if (this.props.isMulti) {
+        if (this.isMultiSelectionMode()) {
             renderInput = <Checkbox
                 styles={{
                     root: {
@@ -352,18 +977,51 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
 
 export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
 
+    public static get observedAttributes(): string[] {
+        return [
+            'data-instance-id',
+            'data-filter-name',
+            'data-is-multi',
+            'data-static-picker',
+            'data-selected-values',
+            'data-theme-variant',
+            'data-name',
+            'data-value',
+            'data-selected',
+            'data-disabled',
+            'data-count'
+        ];
+    }
+
     public constructor() {
         super();
     }
 
+    public attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
+        if (oldValue === newValue || !this.isConnected) {
+            return;
+        }
+
+        this.renderComponent();
+    }
+
     public connectedCallback() {
 
-        let props = this.resolveAttributes();
-        const checkBox = <FilterPeopleTemplateComponent {...props} onChecked={(filterName: string, filterValue: IDataFilterValueInfo) => {
+        this.renderComponent();
+    }
+
+    private renderComponent(): void {
+
+        let props = this.resolveAttributes() as IFilterPeopleTemplateProps;
+        props.msGraphClientFactory = this._serviceScope.consume(MSGraphClientFactory.serviceKey);
+
+        const checkBox = <FilterPeopleTemplateComponent {...props} onChecked={(filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[]) => {
+            const selectedFilterValues = Array.isArray(filterValue) ? filterValue : [filterValue];
+
             // Bubble event through the DOM
             const detail: IDataFilterInfo = {
                 filterName: filterName,
-                filterValues: [filterValue],
+                filterValues: selectedFilterValues,
                 instanceId: props.instanceId
             };
             this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {

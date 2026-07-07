@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configure"
             },
             NoAvailableFilterMessage: "No available filter to display.",
-            WebPartDefaultTitle: "Search Filters Web Part"
+            WebPartDefaultTitle: "Search Filters Web Part",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Remove {0}",
+                SearchUsersPlaceholder: "Search users",
+                LoadingTenantUsersLabel: "Loading tenant users...",
+                NoUsersFoundMessage: "No users found."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -56,6 +62,7 @@ define([], function () {
                     ComboBoxTemplate: "Combo box",
                     DateIntervalTemplate: "Date interval",
                     PeopleTemplate: "People Template",
+                    StaticPeopleTemplate: "Static Person Template",
                     TaxonomyPickerTemplate: "Taxonomy picker",
                     HierarchicalFilterTemplate: "Hierarchical filter"
                 },

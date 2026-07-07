@@ -54,6 +54,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinasjonsboks",
                     DateIntervalTemplate: "Datointervall (faste intervaller)",
                     PeopleTemplate: "Person mal",
+                    StaticPeopleTemplate: "Statisk personmal",
                     TaxonomyPickerTemplate: "Taksonomivelger",
                     HierarchicalFilterTemplate: "Hierarkisk filter"
                 },
@@ -75,7 +76,13 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Rediger filtermal"
             }
         },
-        Styling: {
+            WebPartDefaultTitle: "Søkefilter",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Fjern {0}",
+                SearchUsersPlaceholder: "Søk etter brukere",
+                LoadingTenantUsersLabel: "Laster inn leierbrukere...",
+                NoUsersFoundMessage: "Ingen brukere funnet."
+            }
             StylingOptionsGroupName: "Stilalternativer",
             FilterBackgroundColorLabel: "Filter bakgrunnsfarge",
             FilterBorderColorLabel: "Filter kantfarge",

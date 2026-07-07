@@ -8,7 +8,7 @@
     "scripts": {
         "build": "heft test --clean --production && heft package-solution --production",
         "clean": "heft clean",
-        "start": "heft start --clean",
+        "start": "heft start",
         "eject-webpack": "heft eject-webpack"
     },
     "dependencies": {

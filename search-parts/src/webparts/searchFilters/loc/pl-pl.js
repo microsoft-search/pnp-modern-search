@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfiguruj"
             },
             NoAvailableFilterMessage: "Brak dostępnych filtrów do wyświetlenia.",
-            WebPartDefaultTitle: "Web Part Filtry Wyszukiwania"
+            WebPartDefaultTitle: "Web Part Filtry Wyszukiwania",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Usuń {0}",
+                SearchUsersPlaceholder: "Wyszukaj użytkowników",
+                LoadingTenantUsersLabel: "Ładowanie użytkowników dzierżawy...",
+                NoUsersFoundMessage: "Nie znaleziono użytkowników."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -54,6 +60,7 @@ define([], function () {
                     ComboBoxTemplate: "Pole rozwijalne",
                     DateIntervalTemplate: "Okres czasu",
                     PeopleTemplate: "Szablon osoby",
+                    StaticPeopleTemplate: "Statyczny szablon osoby",
                     TaxonomyPickerTemplate: "Wybór terminu",
                     HierarchicalFilterTemplate: "Filtr hierarchiczny"
                 },

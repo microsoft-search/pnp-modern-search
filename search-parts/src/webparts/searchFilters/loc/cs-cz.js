@@ -54,6 +54,7 @@ define([], function () {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
+                    StaticPeopleTemplate: "Statická šablona osoby",
                     TaxonomyPickerTemplate: "Výběr taxonomie",
                     HierarchicalFilterTemplate: "Hierarchický filtr"
                 },
@@ -75,7 +76,13 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Upravit šablonu filtrů"
             }
         },
-        Styling: {
+            WebPartDefaultTitle: "Webový díl filtrů vyhledávání",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Odebrat {0}",
+                SearchUsersPlaceholder: "Hledat uživatele",
+                LoadingTenantUsersLabel: "Načítání uživatelů tenanta...",
+                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé."
+            }
             StylingOptionsGroupName: "Možnosti stylu",
             FilterBackgroundColorLabel: "Barva pozadí filtru",
             FilterBorderColorLabel: "Barva okraje filtru",

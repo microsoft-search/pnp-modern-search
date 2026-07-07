@@ -54,6 +54,7 @@ define([], function () {
                     ComboBoxTemplate: "Caja combo",
                     DateIntervalTemplate: "Intervalo de fechas",
                     PeopleTemplate: "Plantilla de persona",
+                    StaticPeopleTemplate: "Plantilla de persona estática",
                     TaxonomyPickerTemplate: "Selector de taxonomía",
                     HierarchicalFilterTemplate: "Filtro jerárquico"
                 },
@@ -75,7 +76,13 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"
             }
         },
-        Styling: {
+            WebPartDefaultTitle: "Web Part de filtros de búsqueda",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Quitar {0}",
+                SearchUsersPlaceholder: "Buscar usuarios",
+                LoadingTenantUsersLabel: "Cargando usuarios del inquilino...",
+                NoUsersFoundMessage: "No se encontraron usuarios."
+            }
             StylingOptionsGroupName: "Opciones de estilo",
             FilterBackgroundColorLabel: "Color de fondo del filtro",
             FilterBorderColorLabel: "Color de borde del filtro",
