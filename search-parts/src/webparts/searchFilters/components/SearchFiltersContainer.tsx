@@ -407,7 +407,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return false;
         }
 
-        return !!target.closest('pnp-filtercheckbox, pnp-filtercombobox, pnp-filtersearchbox, pnp-filtermultiselect, pnp-filteroperator, pnp-filterdaterange, pnp-filterdateinterval, pnp-filterhierarchical');
+        return !!target.closest('pnp-filtercheckbox, pnp-filtercombobox, pnp-filtersearchbox, pnp-filtermultiselect, pnp-filteroperator, pnp-filterdaterange, pnp-filterdateinterval, pnp-filterhierarchical, pnp-peoplefilter');
     }
 
     private readonly primeBusyCursorFromInteraction = (event: React.PointerEvent<HTMLDivElement>): void => {

@@ -490,8 +490,11 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         const seedQueries = ['a', 'e', 'i', 'o', 'u'];
         const uniqueUsers = new Map<string, IPersonaProps>();
 
-        for (const query of seedQueries) {
-            const people = await this.searchTenantUsersFromPeoplePicker(query, 200);
+        const peopleResults = await Promise.all(seedQueries.map(query => {
+            return this.searchTenantUsersFromPeoplePicker(query, 200);
+        }));
+
+        for (const people of peopleResults) {
             people.forEach(person => {
                 const key = `${person.optionalText || person.secondaryText || person.text}`;
                 if (key && !uniqueUsers.has(key)) {
@@ -547,6 +550,32 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         const rightDisplayNameKey = this.getDisplayNameKey(right);
 
         return !!leftDisplayNameKey && leftDisplayNameKey === rightDisplayNameKey;
+    }
+
+    private readonly isStaticUserChecked = (user: IPersonaProps, selectedUserKeys: Set<string>, selectedDisplayNames: Set<string>): boolean => {
+        const userKey = this.getIdentityKey(user);
+        const normalizedDisplayName = `${user?.text || ''}`.trim().toLowerCase();
+        return selectedUserKeys.has(userKey) || selectedDisplayNames.has(normalizedDisplayName);
+    }
+
+    private readonly getSingleSelectOptions = (filteredUsers: IPersonaProps[], textColor: string): IChoiceGroupOption[] => {
+        return filteredUsers.map(user => {
+            return {
+                key: this.getIdentityKey(user),
+                text: user.text,
+                disabled: this.props.disabled,
+                styles: {
+                    field: {
+                        color: textColor
+                    }
+                }
+            };
+        });
+    }
+
+    private readonly getSelectedSingleStaticUserKey = (filteredUsers: IPersonaProps[], selectedUserKeys: Set<string>, selectedDisplayNames: Set<string>): string | undefined => {
+        const selectedUser = filteredUsers.find(user => this.isStaticUserChecked(user, selectedUserKeys, selectedDisplayNames));
+        return selectedUser ? this.getIdentityKey(selectedUser) : undefined;
     }
 
     private readonly toggleStaticUserSelection = (person: IPersonaProps, checked: boolean): void => {
@@ -758,178 +787,184 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         return `${person?.optionalText || person?.secondaryText || person?.text || ''}`.trim();
     }
 
-    public render() {
+    private readonly onStaticPickerSearchTextChanged = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        if (this.props.disabled) {
+            return;
+        }
 
-        if (this.isStaticPickerMode()) {
-            const staticPeoplePickerStrings = webPartStrings?.General?.StaticPeoplePicker;
-            const removeSelectedUserTitleTemplate = staticPeoplePickerStrings?.RemoveSelectedUserTitle || 'Remove {0}';
-            const searchUsersPlaceholder = staticPeoplePickerStrings?.SearchUsersPlaceholder || 'Search users';
-            const loadingTenantUsersLabel = staticPeoplePickerStrings?.LoadingTenantUsersLabel || 'Loading tenant users...';
-            const noUsersFoundMessage = staticPeoplePickerStrings?.NoUsersFoundMessage || 'No users found.';
-            const isMultiMode = this.isMultiSelectionMode();
-            const selectedPeople = this.state.pickerSelectedPeople || [];
-            const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
-            const filteredUsers = this.filterAllPreloadedUsers(this.state.pickerSearchFilterText)
-                .filter(person => isMultiMode || !selectedUserKeys.has(this.getIdentityKey(person)));
+        const nextSearchText = event.currentTarget.value;
 
-            const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
-            const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
-            const selectedPillBackgroundColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
-            const selectedPillBorderColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
-            const selectedPillTextColor = this.props.themeVariant?.palette?.white ?? '#ffffff';
+        if (this.pickerSearchDebounceTimer !== null) {
+            clearTimeout(this.pickerSearchDebounceTimer);
+            this.pickerSearchDebounceTimer = null;
+        }
 
-            return <div>
-                {selectedPeople.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
-                        {selectedPeople.map(person => {
-                            const personKey = this.getIdentityKey(person);
+        this.setState({ pickerSearchText: nextSearchText });
 
-                            return <button
-                                key={personKey}
-                                type="button"
-                                onClick={() => this.toggleStaticUserSelection(person, false)}
-                                disabled={this.props.disabled}
-                                style={{
-                                    alignItems: 'center',
-                                    backgroundColor: selectedPillBackgroundColor,
-                                    border: `1px solid ${selectedPillBorderColor}`,
-                                    borderRadius: 16,
-                                    color: selectedPillTextColor,
-                                    cursor: this.props.disabled ? 'not-allowed' : 'pointer',
-                                    display: 'inline-flex',
-                                    gap: 8,
-                                    opacity: this.props.disabled ? 0.6 : 1,
-                                    padding: '4px 12px'
-                                }}
-                                title={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
-                                aria-label={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
-                            >
-                                <span style={{ lineHeight: 1 }}>{person.text}</span>
-                                <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>×</span>
-                            </button>;
-                        })}
+        this.pickerSearchDebounceTimer = setTimeout(() => {
+            this.pickerSearchDebounceTimer = null;
+            this.setState({ pickerSearchFilterText: nextSearchText });
+        }, 120);
+    }
+
+    private renderStaticPeoplePicker(): JSX.Element {
+        const staticPeoplePickerStrings = webPartStrings?.General?.StaticPeoplePicker;
+        const removeSelectedUserTitleTemplate = staticPeoplePickerStrings?.RemoveSelectedUserTitle || 'Remove {0}';
+        const searchUsersPlaceholder = staticPeoplePickerStrings?.SearchUsersPlaceholder || 'Search users';
+        const loadingTenantUsersLabel = staticPeoplePickerStrings?.LoadingTenantUsersLabel || 'Loading tenant users...';
+        const noUsersFoundMessage = staticPeoplePickerStrings?.NoUsersFoundMessage || 'No users found.';
+        const isMultiMode = this.isMultiSelectionMode();
+        const selectedPeople = this.state.pickerSelectedPeople || [];
+        const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
+        const filteredUsers = this.filterAllPreloadedUsers(this.state.pickerSearchFilterText)
+            .filter(person => isMultiMode || !selectedUserKeys.has(this.getIdentityKey(person)));
+        const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
+        const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
+        const selectedPillBackgroundColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
+        const selectedPillBorderColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
+        const selectedPillTextColor = this.props.themeVariant?.palette?.white ?? '#ffffff';
+        const singleSelectOptions = isMultiMode ? [] : this.getSingleSelectOptions(filteredUsers, textColor);
+        const selectedSingleUserKey = isMultiMode ? undefined : this.getSelectedSingleStaticUserKey(filteredUsers, selectedUserKeys, selectedDisplayNames);
+
+        return <div>
+            {selectedPeople.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+                    {selectedPeople.map(person => {
+                        const personKey = this.getIdentityKey(person);
+
+                        return <button
+                            key={personKey}
+                            type="button"
+                            onClick={() => this.toggleStaticUserSelection(person, false)}
+                            disabled={this.props.disabled}
+                            style={{
+                                alignItems: 'center',
+                                backgroundColor: selectedPillBackgroundColor,
+                                border: `1px solid ${selectedPillBorderColor}`,
+                                borderRadius: 16,
+                                color: selectedPillTextColor,
+                                cursor: this.props.disabled ? 'not-allowed' : 'pointer',
+                                display: 'inline-flex',
+                                gap: 8,
+                                opacity: this.props.disabled ? 0.6 : 1,
+                                padding: '4px 12px'
+                            }}
+                            title={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
+                            aria-label={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
+                        >
+                            <span style={{ lineHeight: 1 }}>{person.text}</span>
+                            <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>x</span>
+                        </button>;
+                    })}
+                </div>
+            )}
+            <div style={{ marginBottom: 8 }}>
+                <input
+                    type="text"
+                    value={this.state.pickerSearchText}
+                    disabled={this.props.disabled}
+                    aria-label={searchUsersPlaceholder}
+                    onChange={this.onStaticPickerSearchTextChanged}
+                    placeholder={searchUsersPlaceholder}
+                    style={{ width: '100%', boxSizing: 'border-box', padding: '6px 8px' }}
+                />
+            </div>
+            <div style={{ maxHeight: 260, minHeight: 260, overflowY: 'auto', position: 'relative' }}>
+                {this.state.isPickerLoading && (
+                    <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(255,255,255,0.45)',
+                        zIndex: 1
+                    }}>
+                        <Spinner size={SpinnerSize.small} label={loadingTenantUsersLabel} />
                     </div>
                 )}
-                <div style={{ marginBottom: 8 }}>
-                    <input
-                        type="text"
-                        value={this.state.pickerSearchText}
-                        disabled={this.props.disabled}
-                        aria-label={searchUsersPlaceholder}
-                        onChange={(event) => {
-                            if (this.props.disabled) {
+                {!this.state.isPickerLoading && selectedPeople.length === 0 && filteredUsers.length === 0 && (
+                    <div style={{ color: '#605e5c', fontSize: 12 }}>
+                        {noUsersFoundMessage}
+                    </div>
+                )}
+                {filteredUsers.map(user => {
+                    const userKey = this.getIdentityKey(user);
+                    const checked = this.isStaticUserChecked(user, selectedUserKeys, selectedDisplayNames);
+
+                    if (isMultiMode) {
+                        return <div key={userKey} style={{ marginBottom: 6 }}>
+                            <Checkbox
+                                styles={{
+                                    root: {
+                                        paddingRight: 10,
+                                        paddingLeft: 10,
+                                        paddingBottom: 7,
+                                        paddingTop: 7
+                                    },
+                                    label: {
+                                        width: '100%',
+                                    },
+                                    text: {
+                                        color: textColor
+                                    }
+                                }}
+                                theme={(this.props.themeVariant as ITheme) || getTheme()}
+                                checked={checked}
+                                disabled={this.props.disabled}
+                                label={user.text}
+                                onChange={(ev, isChecked) => {
+                                    this.toggleStaticUserSelection(user, !!isChecked);
+                                }}
+                                title={user.text}
+                                onRenderLabel={this._renderCheckboxLabel}
+                            />
+                        </div>;
+                    }
+
+                    return null;
+                })}
+                {!isMultiMode && singleSelectOptions.length > 0 && (
+                    <ChoiceGroup
+                        selectedKey={selectedSingleUserKey}
+                        styles={{
+                            root: {
+                                position: 'relative',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                selectors: {
+                                    '.ms-ChoiceFieldGroup': {
+                                        width: '100%'
+                                    },
+                                    '.ms-ChoiceField': {
+                                        marginTop: 0,
+                                        paddingRight: 10,
+                                        paddingLeft: 10,
+                                        paddingBottom: 7,
+                                        paddingTop: 7
+                                    }
+                                }
+                            }
+                        }}
+                        options={singleSelectOptions}
+                        onChange={(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
+                            const selectedUser = filteredUsers.find(user => this.getIdentityKey(user) === option?.key);
+                            if (!selectedUser) {
                                 return;
                             }
 
-                            const nextSearchText = event.currentTarget.value;
-
-                            if (this.pickerSearchDebounceTimer !== null) {
-                                clearTimeout(this.pickerSearchDebounceTimer);
-                                this.pickerSearchDebounceTimer = null;
-                            }
-
-                            this.setState({ pickerSearchText: nextSearchText });
-
-                            this.pickerSearchDebounceTimer = setTimeout(() => {
-                                this.pickerSearchDebounceTimer = null;
-                                this.setState({ pickerSearchFilterText: nextSearchText });
-                            }, 120);
+                            this.toggleStaticUserSelection(selectedUser, true);
                         }}
-                        placeholder={searchUsersPlaceholder}
-                        style={{ width: '100%', boxSizing: 'border-box', padding: '6px 8px' }}
                     />
-                </div>
-                <div style={{ maxHeight: 260, minHeight: 260, overflowY: 'auto', position: 'relative' }}>
-                    {this.state.isPickerLoading && (
-                        <div style={{
-                            position: 'absolute',
-                            inset: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'rgba(255,255,255,0.45)',
-                            zIndex: 1
-                        }}>
-                            <Spinner size={SpinnerSize.small} label={loadingTenantUsersLabel} />
-                        </div>
-                    )}
-                    {!this.state.isPickerLoading && selectedPeople.length === 0 && filteredUsers.length === 0 && (
-                        <div style={{ color: '#605e5c', fontSize: 12 }}>
-                            {noUsersFoundMessage}
-                        </div>
-                    )}
-                    {filteredUsers.map(user => {
-                        const userKey = this.getIdentityKey(user);
-                        const normalizedDisplayName = `${user?.text || ''}`.trim().toLowerCase();
-                        const checked = selectedUserKeys.has(userKey) || selectedDisplayNames.has(normalizedDisplayName);
+                )}
+            </div>
+        </div>;
+    }
 
-                        if (isMultiMode) {
-                            return <div key={userKey} style={{ marginBottom: 6 }}>
-                                <Checkbox
-                                    styles={{
-                                        root: {
-                                            paddingRight: 10,
-                                            paddingLeft: 10,
-                                            paddingBottom: 7,
-                                            paddingTop: 7
-                                        },
-                                        label: {
-                                            width: '100%',
-                                        },
-                                        text: {
-                                            color: textColor
-                                        }
-                                    }}
-                                    theme={(this.props.themeVariant as ITheme) || getTheme()}
-                                    checked={checked}
-                                    disabled={this.props.disabled}
-                                    label={user.text}
-                                    onChange={(ev, isChecked) => {
-                                        this.toggleStaticUserSelection(user, !!isChecked);
-                                    }}
-                                    title={user.text}
-                                    onRenderLabel={this._renderCheckboxLabel}
-                                />
-                            </div>;
-                        }
+    public render() {
 
-                        return <ChoiceGroup
-                            key={userKey}
-                            selectedKey={checked ? userKey : undefined}
-                            styles={{
-                                root: {
-                                    position: 'relative',
-                                    display: 'flex',
-                                    paddingRight: 10,
-                                    paddingLeft: 10,
-                                    paddingBottom: 7,
-                                    paddingTop: 7,
-                                    selectors: {
-                                        '.ms-ChoiceField': {
-                                            marginTop: 0
-                                        }
-                                    }
-                                }
-                            }}
-                            options={[
-                                {
-                                    key: userKey,
-                                    text: user.text,
-                                    disabled: this.props.disabled,
-                                    styles: {
-                                        field: {
-                                            color: textColor
-                                        }
-                                    }
-                                }
-                            ]}
-                            onChange={() => {
-                                this.toggleStaticUserSelection(user, true);
-                            }}
-                        />;
-                    })}
-                </div>
-            </div>;
+        if (this.isStaticPickerMode()) {
+            return this.renderStaticPeoplePicker();
         }
 
         let filterValue: IDataFilterValueInfo = {
