@@ -117,7 +117,7 @@ Here are the list of all **reusable** web components you can use to customize yo
 - **Usage**
 ```html
 <pnp-panel
-    data-theme-variant='{{JSONstringify @root.theme}}'   
+    data-theme-variant="{{JSONstringify @root.theme}}"   
     data-is-open="false" 
     data-is-light-dismiss="true"
     data-is-blocking="true"
