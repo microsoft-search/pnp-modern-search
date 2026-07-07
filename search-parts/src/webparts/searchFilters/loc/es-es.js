@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configurar"
             },
             NoAvailableFilterMessage: "No hay ningún filtro disponible para mostrar.",
-            WebPartDefaultTitle: "Web Part de filtros de búsqueda"
+            WebPartDefaultTitle: "Web Part de filtros de búsqueda",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Quitar {0}",
+                SearchUsersPlaceholder: "Buscar usuarios",
+                LoadingTenantUsersLabel: "Cargando usuarios del inquilino...",
+                NoUsersFoundMessage: "No se encontraron usuarios."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -76,13 +82,7 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"
             }
         },
-            WebPartDefaultTitle: "Web Part de filtros de búsqueda",
-            StaticPeoplePicker: {
-                RemoveSelectedUserTitle: "Quitar {0}",
-                SearchUsersPlaceholder: "Buscar usuarios",
-                LoadingTenantUsersLabel: "Cargando usuarios del inquilino...",
-                NoUsersFoundMessage: "No se encontraron usuarios."
-            }
+        Styling: {
             StylingOptionsGroupName: "Opciones de estilo",
             FilterBackgroundColorLabel: "Color de fondo del filtro",
             FilterBorderColorLabel: "Color de borde del filtro",

@@ -741,18 +741,21 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                                 key={personKey}
                                 type="button"
                                 onClick={() => this.toggleStaticUserSelection(person, false)}
+                                disabled={this.props.disabled}
                                 style={{
                                     alignItems: 'center',
                                     backgroundColor: '#106ebe',
                                     border: '1px solid #106ebe',
                                     borderRadius: 16,
                                     color: '#ffffff',
-                                    cursor: 'pointer',
+                                    cursor: this.props.disabled ? 'not-allowed' : 'pointer',
                                     display: 'inline-flex',
                                     gap: 8,
+                                    opacity: this.props.disabled ? 0.6 : 1,
                                     padding: '4px 12px'
                                 }}
                                 title={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
+                                aria-label={removeSelectedUserTitleTemplate.replace('{0}', `${person.text ?? ''}`)}
                             >
                                 <span style={{ lineHeight: 1 }}>{person.text}</span>
                                 <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>×</span>
@@ -764,7 +767,13 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                     <input
                         type="text"
                         value={this.state.pickerSearchText}
+                        disabled={this.props.disabled}
+                        aria-label={searchUsersPlaceholder}
                         onChange={(event) => {
+                            if (this.props.disabled) {
+                                return;
+                            }
+
                             const nextSearchText = event.currentTarget.value;
 
                             if (this.pickerSearchDebounceTimer !== null) {
@@ -826,6 +835,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                                     }}
                                     theme={(this.props.themeVariant as ITheme) || getTheme()}
                                     checked={checked}
+                                    disabled={this.props.disabled}
                                     label={user.text}
                                     onChange={(ev, isChecked) => {
                                         this.toggleStaticUserSelection(user, !!isChecked);

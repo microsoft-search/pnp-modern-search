@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurovat"
             },
             NoAvailableFilterMessage: "Žádné dostupné filtry k zobrazení.",
-            WebPartDefaultTitle: "Webový díl filtrů vyhledávání"
+            WebPartDefaultTitle: "Webový díl filtrů vyhledávání",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Odebrat {0}",
+                SearchUsersPlaceholder: "Hledat uživatele",
+                LoadingTenantUsersLabel: "Načítání uživatelů tenanta...",
+                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -76,13 +82,7 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Upravit šablonu filtrů"
             }
         },
-            WebPartDefaultTitle: "Webový díl filtrů vyhledávání",
-            StaticPeoplePicker: {
-                RemoveSelectedUserTitle: "Odebrat {0}",
-                SearchUsersPlaceholder: "Hledat uživatele",
-                LoadingTenantUsersLabel: "Načítání uživatelů tenanta...",
-                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé."
-            }
+        Styling: {
             StylingOptionsGroupName: "Možnosti stylu",
             FilterBackgroundColorLabel: "Barva pozadí filtru",
             FilterBorderColorLabel: "Barva okraje filtru",

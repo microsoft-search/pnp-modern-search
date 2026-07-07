@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configureer"
             },
             NoAvailableFilterMessage: "Er zijn geen beschikbare filters.",
-            WebPartDefaultTitle: "Zoekfilters webonderdeel"
+            WebPartDefaultTitle: "Zoekfilters webonderdeel",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "{0} verwijderen",
+                SearchUsersPlaceholder: "Zoek gebruikers",
+                LoadingTenantUsersLabel: "Tenantgebruikers laden...",
+                NoUsersFoundMessage: "Geen gebruikers gevonden."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -76,13 +82,7 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
             }
         },
-            WebPartDefaultTitle: "Zoekfilters webonderdeel",
-            StaticPeoplePicker: {
-                RemoveSelectedUserTitle: "{0} verwijderen",
-                SearchUsersPlaceholder: "Zoek gebruikers",
-                LoadingTenantUsersLabel: "Tenantgebruikers laden...",
-                NoUsersFoundMessage: "Geen gebruikers gevonden."
-            }
+        Styling: {
             StylingOptionsGroupName: "Stijlopties",
             FilterBackgroundColorLabel: "Filter achtergrondkleur",
             FilterBorderColorLabel: "Filter randkleur",

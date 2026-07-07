@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfiguroi"
             },
             NoAvailableFilterMessage: "Ei suodattimia näytettäväksi.",
-            WebPartDefaultTitle: "Haun suodattimet webosa"
+            WebPartDefaultTitle: "Haun suodattimet webosa",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Poista {0}",
+                SearchUsersPlaceholder: "Hae käyttäjiä",
+                LoadingTenantUsersLabel: "Ladataan vuokraajan käyttäjiä...",
+                NoUsersFoundMessage: "Käyttäjiä ei löytynyt."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -76,13 +82,7 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
             }
         },
-            WebPartDefaultTitle: "Haun suodattimet webosa",
-            StaticPeoplePicker: {
-                RemoveSelectedUserTitle: "Poista {0}",
-                SearchUsersPlaceholder: "Hae käyttäjiä",
-                LoadingTenantUsersLabel: "Ladataan vuokraajan käyttäjiä...",
-                NoUsersFoundMessage: "Käyttäjiä ei löytynyt."
-            }
+        Styling: {
             StylingOptionsGroupName: "Tyyliasetukset",
             FilterBackgroundColorLabel: "Suodattimen taustav\u00e4ri",
             FilterBorderColorLabel: "Suodattimen reunav\u00e4ri",

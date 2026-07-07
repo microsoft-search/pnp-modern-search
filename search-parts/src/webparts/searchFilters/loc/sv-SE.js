@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurera"
             },
             NoAvailableFilterMessage: "Inget tillgängligt filter att visa.",
-            WebPartDefaultTitle: "Sökfilters webbdel"
+            WebPartDefaultTitle: "Sökfilters webbdel",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Ta bort {0}",
+                SearchUsersPlaceholder: "Sök användare",
+                LoadingTenantUsersLabel: "Läser in klientanvändare...",
+                NoUsersFoundMessage: "Inga användare hittades."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -76,13 +82,7 @@ define([], function () {
                 FiltersTemplatePanelHeader: "Redigera filtermall"
             }
         },
-            WebPartDefaultTitle: "Sökfilters webbdel",
-            StaticPeoplePicker: {
-                RemoveSelectedUserTitle: "Ta bort {0}",
-                SearchUsersPlaceholder: "Sök användare",
-                LoadingTenantUsersLabel: "Läser in klientanvändare...",
-                NoUsersFoundMessage: "Inga användare hittades."
-            }
+        Styling: {
             StylingOptionsGroupName: "Stilalternativ",
             FilterBackgroundColorLabel: "Filter bakgrundsfärg",
             FilterBorderColorLabel: "Filter kantfärg",
