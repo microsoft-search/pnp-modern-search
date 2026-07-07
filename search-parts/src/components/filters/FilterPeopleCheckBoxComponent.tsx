@@ -528,15 +528,32 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         return `${person?.optionalText || person?.secondaryText || person?.text || ''}`.trim().toLowerCase();
     }
 
+    private readonly getDisplayNameKey = (person: IPersonaProps): string => {
+        return `${person?.text || ''}`.trim().toLowerCase();
+    }
+
+    private readonly isSameStaticPerson = (left: IPersonaProps, right: IPersonaProps): boolean => {
+        const leftIdentityKey = this.getIdentityKey(left);
+        const rightIdentityKey = this.getIdentityKey(right);
+
+        if (leftIdentityKey && rightIdentityKey && leftIdentityKey === rightIdentityKey) {
+            return true;
+        }
+
+        const leftDisplayNameKey = this.getDisplayNameKey(left);
+        const rightDisplayNameKey = this.getDisplayNameKey(right);
+
+        return !!leftDisplayNameKey && leftDisplayNameKey === rightDisplayNameKey;
+    }
+
     private readonly toggleStaticUserSelection = (person: IPersonaProps, checked: boolean): void => {
-        const personKey = this.getIdentityKey(person);
         const currentSelection = this.state.pickerSelectedPeople || [];
         let nextSelection: IPersonaProps[];
         const isMultiMode = this.isMultiSelectionMode();
 
         if (checked) {
             if (isMultiMode) {
-                if (currentSelection.some(item => this.getIdentityKey(item) === personKey)) {
+                if (currentSelection.some(item => this.isSameStaticPerson(item, person))) {
                     nextSelection = currentSelection;
                 } else {
                     nextSelection = [...currentSelection, person];
@@ -545,7 +562,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                 nextSelection = [person];
             }
         } else {
-            nextSelection = currentSelection.filter(item => this.getIdentityKey(item) !== personKey);
+            nextSelection = currentSelection.filter(item => !this.isSameStaticPerson(item, person));
         }
 
         this.emitPickerSelection(nextSelection);
