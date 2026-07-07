@@ -50,7 +50,7 @@ Paste the following as the column value:
 
 ```html
 <pnp-panel
-    data-theme-variant='{{JSONstringify @root.theme}}' 
+    data-theme-variant="{{JSONstringify @root.theme}}"
     data-is-open="false" 
     data-is-light-dismiss="true"
     data-is-blocking="true"
