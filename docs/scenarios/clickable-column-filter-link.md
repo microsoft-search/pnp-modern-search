@@ -1,5 +1,5 @@
 !!! note
-The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
+    The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
 !!! warning
     This scenario requires **PnP Modern Search version 4.22.0 or later**. It uses the `stringToHex` Handlebars helper which was added in 4.22.0 and is not available in earlier versions. If you are on an older version the filter link column will not work correctly.
