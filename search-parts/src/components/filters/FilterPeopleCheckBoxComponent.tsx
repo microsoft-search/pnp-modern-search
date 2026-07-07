@@ -5,6 +5,7 @@ import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Spin
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
 import { MSGraphClientFactory } from '@microsoft/sp-http';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { PageContext } from '@microsoft/sp-page-context';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 
@@ -71,6 +72,11 @@ export interface IFilterPeopleTemplateProps {
     msGraphClientFactory?: MSGraphClientFactory;
 
     /**
+     * Current web absolute URL (for SharePoint REST endpoints)
+     */
+    webAbsoluteUrl?: string;
+
+    /**
      * Handler when a filter value is selected
      */
     onChecked: (filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[]) => void;
@@ -104,6 +110,8 @@ interface IGraphUserEntity {
 export class FilterPeopleTemplateComponent extends React.Component<IFilterPeopleTemplateProps, IFilterPeopleTemplateState> {
     private static readonly SELECTION_FEEDBACK_DURATION_MS = 2500;
     private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+    private static readonly MAX_INITIAL_GRAPH_USERS = 2000;
+    private static readonly GRAPH_PAGE_SIZE = 200;
     private static tenantUsersCache: IPersonaProps[] | null = null;
     private static tenantUsersLoadingPromise: Promise<IPersonaProps[]> | null = null;
     private selectionFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
@@ -390,7 +398,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             return this.requestDigestToken;
         }
 
-        const response = await fetch(`${globalThis.location.origin}/_api/contextinfo`, {
+        const response = await fetch(`${this.getCurrentWebAbsoluteUrl()}/_api/contextinfo`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json;odata=verbose'
@@ -419,7 +427,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         }
 
         const digest = await this.getRequestDigest();
-        const response = await fetch(`${globalThis.location.origin}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser`, {
+        const response = await fetch(`${this.getCurrentWebAbsoluteUrl()}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json;odata=verbose',
@@ -463,6 +471,16 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                 optionalText: accountName
             };
         }).filter(persona => !!persona.text);
+    }
+
+    private getCurrentWebAbsoluteUrl(): string {
+        const configuredWebAbsoluteUrl = `${this.props.webAbsoluteUrl ?? ''}`.trim();
+        if (configuredWebAbsoluteUrl) {
+            return configuredWebAbsoluteUrl.replace(/\/$/, '');
+        }
+
+        const globalOrigin = `${globalThis?.location?.origin ?? ''}`.trim();
+        return globalOrigin;
     }
 
     private readonly getSeededTenantUsers = async (): Promise<IPersonaProps[]> => {
@@ -580,17 +598,23 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                 .api('/users')
                 .version('v1.0')
                 .select('id,displayName,mail,userPrincipalName')
-                .top(999)
+                .top(FilterPeopleTemplateComponent.GRAPH_PAGE_SIZE)
                 .get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
 
             users = users.concat(Array.isArray(response?.value) ? response.value : []);
+            if (users.length > FilterPeopleTemplateComponent.MAX_INITIAL_GRAPH_USERS) {
+                users = users.slice(0, FilterPeopleTemplateComponent.MAX_INITIAL_GRAPH_USERS);
+            }
 
             let nextLink = response?.['@odata.nextLink'];
             let pageCount = 1;
 
-            while (nextLink && pageCount < 100) {
+            while (nextLink && pageCount < 100 && users.length < FilterPeopleTemplateComponent.MAX_INITIAL_GRAPH_USERS) {
                 response = await client.api(nextLink).get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
                 users = users.concat(Array.isArray(response?.value) ? response.value : []);
+                if (users.length > FilterPeopleTemplateComponent.MAX_INITIAL_GRAPH_USERS) {
+                    users = users.slice(0, FilterPeopleTemplateComponent.MAX_INITIAL_GRAPH_USERS);
+                }
                 nextLink = response?.['@odata.nextLink'];
                 pageCount++;
             }
@@ -730,6 +754,9 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
 
             const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
             const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
+            const selectedPillBackgroundColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
+            const selectedPillBorderColor = this.props.themeVariant?.palette?.themePrimary ?? '#106ebe';
+            const selectedPillTextColor = this.props.themeVariant?.palette?.white ?? '#ffffff';
 
             return <div>
                 {selectedPeople.length > 0 && (
@@ -744,10 +771,10 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                                 disabled={this.props.disabled}
                                 style={{
                                     alignItems: 'center',
-                                    backgroundColor: '#106ebe',
-                                    border: '1px solid #106ebe',
+                                    backgroundColor: selectedPillBackgroundColor,
+                                    border: `1px solid ${selectedPillBorderColor}`,
                                     borderRadius: 16,
-                                    color: '#ffffff',
+                                    color: selectedPillTextColor,
                                     cursor: this.props.disabled ? 'not-allowed' : 'pointer',
                                     display: 'inline-flex',
                                     gap: 8,
@@ -1024,6 +1051,7 @@ export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
 
         let props = this.resolveAttributes() as IFilterPeopleTemplateProps;
         props.msGraphClientFactory = this._serviceScope.consume(MSGraphClientFactory.serviceKey);
+        props.webAbsoluteUrl = this._serviceScope.consume(PageContext.serviceKey)?.web?.absoluteUrl;
 
         const checkBox = <FilterPeopleTemplateComponent {...props} onChecked={(filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[]) => {
             const selectedFilterValues = Array.isArray(filterValue) ? filterValue : [filterValue];
