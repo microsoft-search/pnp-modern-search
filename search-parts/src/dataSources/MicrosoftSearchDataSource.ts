@@ -23,6 +23,7 @@ import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
 import { AutoCalculatedDataSourceFields, SortableFields } from "../common/Constants";
 import LocalizationHelper from "../helpers/LocalizationHelper";
 import { ObjectHelper } from "../helpers/ObjectHelper";
+import { BuiltinFilterTemplates } from "../layouts/AvailableTemplates";
 
 export enum EntityType {
     Message = 'message',
@@ -1202,7 +1203,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private buildAggregations(dataContext: IDataContext): ISearchRequestAggregation[] {
-        return dataContext.filters.filtersConfiguration.map(filterConfig => {
+        return dataContext.filters.filtersConfiguration.filter(filterConfig => {
+            return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople;
+        }).map(filterConfig => {
             const aggregation: ISearchRequestAggregation = {
                 field: filterConfig.filterName,
                 bucketDefinition: {

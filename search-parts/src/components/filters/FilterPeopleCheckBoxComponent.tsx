@@ -816,15 +816,17 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         const isMultiMode = this.isMultiSelectionMode();
         const selectedPeople = this.state.pickerSelectedPeople || [];
         const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
-        const filteredUsers = this.filterAllPreloadedUsers(this.state.pickerSearchFilterText)
-            .filter(person => isMultiMode || !selectedUserKeys.has(this.getIdentityKey(person)));
+        const filteredUsers = this.filterAllPreloadedUsers(this.state.pickerSearchFilterText);
+        const selectableUsers = isMultiMode
+            ? filteredUsers.filter(person => !selectedUserKeys.has(this.getIdentityKey(person)))
+            : filteredUsers;
         const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
         const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const selectedPillBackgroundColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
         const selectedPillBorderColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
         const selectedPillTextColor = this.props.themeVariant?.semanticColors?.primaryButtonText ?? '#ffffff';
-        const singleSelectOptions = isMultiMode ? [] : this.getSingleSelectOptions(filteredUsers, textColor);
-        const selectedSingleUserKey = isMultiMode ? undefined : this.getSelectedSingleStaticUserKey(filteredUsers, selectedUserKeys, selectedDisplayNames);
+        const singleSelectOptions = isMultiMode ? [] : this.getSingleSelectOptions(selectableUsers, textColor);
+        const selectedSingleUserKey = isMultiMode ? undefined : this.getSelectedSingleStaticUserKey(selectableUsers, selectedUserKeys, selectedDisplayNames);
 
         return <div>
             {selectedPeople.length > 0 && (
@@ -888,7 +890,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         {noUsersFoundMessage}
                     </div>
                 )}
-                {filteredUsers.map(user => {
+                {selectableUsers.map(user => {
                     const userKey = this.getIdentityKey(user);
                     const checked = this.isStaticUserChecked(user, selectedUserKeys, selectedDisplayNames);
 
@@ -948,7 +950,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         }}
                         options={singleSelectOptions}
                         onChange={(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
-                            const selectedUser = filteredUsers.find(user => this.getIdentityKey(user) === option?.key);
+                            const selectedUser = selectableUsers.find(user => this.getIdentityKey(user) === option?.key);
                             if (!selectedUser) {
                                 return;
                             }
