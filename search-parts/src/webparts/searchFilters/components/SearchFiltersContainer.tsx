@@ -1998,6 +1998,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 });
 
             } catch {
+                this._lastProcessedDeepLink = '';
+
+                this.setState(prevState => ({
+                    currentUiFilters: this.resetSelectedFilterValues(prevState.currentUiFilters),
+                    submittedFilters: []
+                }), () => {
+                    this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+                    this.props.onUpdateFilters([]);
+                });
+
                 Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
             }
         }
