@@ -13,7 +13,7 @@ export class TaxonomyHelper {
     }
 
     private static containsReadableLetter(value: string): boolean {
-        return Array.from(value).some(char => char.toLocaleLowerCase() !== char.toLocaleUpperCase());
+        return /\p{L}/u.test(value);
     }
 
     public static normalizeReadableLabelCandidate(value: string): string {
