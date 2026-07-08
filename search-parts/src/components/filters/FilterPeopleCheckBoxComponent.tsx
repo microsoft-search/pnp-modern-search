@@ -111,6 +111,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     private static readonly SELECTION_FEEDBACK_DURATION_MS = 2500;
     private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
     private static readonly MAX_INITIAL_GRAPH_USERS = 2000;
+    private static readonly MAX_VISIBLE_STATIC_USERS = 200;
     private static readonly GRAPH_PAGE_SIZE = 200;
     private static tenantUsersCache: IPersonaProps[] | null = null;
     private static tenantUsersLoadingPromise: Promise<IPersonaProps[]> | null = null;
@@ -585,7 +586,9 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     private readonly getSelectableStaticUsers = (filteredUsers: IPersonaProps[], selectedPeople: IPersonaProps[], isMultiMode: boolean): IPersonaProps[] => {
         if (isMultiMode) {
             const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
-            return filteredUsers.filter(person => !selectedUserKeys.has(this.getIdentityKey(person)));
+            return filteredUsers
+                .filter(person => !selectedUserKeys.has(this.getIdentityKey(person)))
+                .slice(0, FilterPeopleTemplateComponent.MAX_VISIBLE_STATIC_USERS);
         }
 
         const visibleUsers = [...selectedPeople, ...filteredUsers];
@@ -597,7 +600,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             }
         });
 
-        return uniqueUsers;
+        return uniqueUsers.slice(0, FilterPeopleTemplateComponent.MAX_VISIBLE_STATIC_USERS);
     }
 
     private readonly toggleStaticUserSelection = (person: IPersonaProps, checked: boolean): void => {
