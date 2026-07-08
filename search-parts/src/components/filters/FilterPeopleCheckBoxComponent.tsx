@@ -180,6 +180,8 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     public componentDidMount(): void {
         this._isMounted = true;
         this.restoreSelectionFeedback();
+
+        this.ensureInitialPickerSuggestionsLoaded();
     }
 
     public componentDidUpdate(prevProps: IFilterPeopleTemplateProps): void {
