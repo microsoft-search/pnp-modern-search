@@ -321,11 +321,11 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                 } catch {
                     // Handle HTML-escaped JSON payloads coming from template attributes.
                     const decodedPayload = rawSelectedValues
+                        .replaceAll('&amp;', '&')
                         .replaceAll('&quot;', '"')
                         .replaceAll('&#34;', '"')
                         .replaceAll('&apos;', "'")
-                        .replaceAll('&#39;', "'")
-                        .replaceAll('&amp;', '&');
+                        .replaceAll('&#39;', "'");
                     selectedValues = JSON.parse(decodedPayload) as Array<{ name?: string; value?: string; selected?: boolean }>;
                 }
             }
@@ -547,8 +547,8 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         const leftIdentityKey = this.getIdentityKey(left);
         const rightIdentityKey = this.getIdentityKey(right);
 
-        if (leftIdentityKey && rightIdentityKey && leftIdentityKey === rightIdentityKey) {
-            return true;
+        if (leftIdentityKey && rightIdentityKey) {
+            return leftIdentityKey === rightIdentityKey;
         }
 
         const leftDisplayNameKey = this.getDisplayNameKey(left);
