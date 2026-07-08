@@ -8,6 +8,10 @@ export class TaxonomyHelper {
         return /^#?(?:[0-9a-fA-F]{24,}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})$/.test(value);
     }
 
+    private static isTaxonomyTokenPrefix(value: string): boolean {
+        return /^(?:L0|GP0|GPP)$/i.test(value);
+    }
+
     public static normalizeReadableLabelCandidate(value: string): string {
         return `${value || ''}`.trim().replace(/^"+|"+$/g, '');
     }
@@ -26,12 +30,12 @@ export class TaxonomyHelper {
             return '';
         }
 
-        const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#0?[0-9a-f-]{32,36}\|(.+)$/i.exec(cleanedValue);
+        const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#(?:0|0?[0-9a-f-]{32,36})\|(.+)$/i.exec(cleanedValue);
         if (taxonomyLabelMatch?.[1]?.trim()) {
             return taxonomyLabelMatch[1].trim();
         }
 
-        const genericGuidLabelMatch = /\|#0?[0-9a-f-]{32,36}\|([^|]+)$/i.exec(cleanedValue);
+        const genericGuidLabelMatch = /\|#(?:0|0?[0-9a-f-]{32,36})\|([^|]+)$/i.exec(cleanedValue);
         if (genericGuidLabelMatch?.[1]?.trim()) {
             return genericGuidLabelMatch[1].trim();
         }
@@ -78,6 +82,7 @@ export class TaxonomyHelper {
         const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
         const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part)
             && !this.containsEncodedTokenMarker(part)
+            && !this.isTaxonomyTokenPrefix(part)
             && !this.isGuidLikeToken(part));
         return firstReadablePart || '';
     }
