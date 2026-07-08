@@ -118,6 +118,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     private pickerSearchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
     private requestDigestToken: string = null;
     private requestDigestExpiration: number = 0;
+    private _isMounted: boolean = false;
 
     private static setTenantUsersCache(users: IPersonaProps[]): void {
         FilterPeopleTemplateComponent.tenantUsersCache = users;
@@ -174,6 +175,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     }
 
     public componentDidMount(): void {
+        this._isMounted = true;
         this.restoreSelectionFeedback();
 
         if (this.isStaticPickerMode()) {
@@ -199,6 +201,8 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     }
 
     public componentWillUnmount(): void {
+        this._isMounted = false;
+
         if (this.selectionFeedbackTimer !== null) {
             clearTimeout(this.selectionFeedbackTimer);
             this.selectionFeedbackTimer = null;
@@ -623,14 +627,19 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
 
     private readonly loadInitialPickerSuggestions = async (): Promise<void> => {
         if (Array.isArray(FilterPeopleTemplateComponent.tenantUsersCache)) {
-            this.setState({
-                pickerSuggestedPeople: FilterPeopleTemplateComponent.tenantUsersCache,
-                isPickerLoading: false
-            });
+            if (this._isMounted) {
+                this.setState({
+                    pickerSuggestedPeople: FilterPeopleTemplateComponent.tenantUsersCache,
+                    isPickerLoading: false
+                });
+            }
+
             return;
         }
 
-        this.setState({ isPickerLoading: true });
+        if (this._isMounted) {
+            this.setState({ isPickerLoading: true });
+        }
 
         const existingLoadingPromise = FilterPeopleTemplateComponent.tenantUsersLoadingPromise;
         const loadingPromise = existingLoadingPromise ?? this.getInitialTenantUsers();
@@ -640,12 +649,16 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             const pickerSuggestedPeople = await loadingPromise;
             FilterPeopleTemplateComponent.setTenantUsersCache(pickerSuggestedPeople);
 
-            this.setState({
-                pickerSuggestedPeople,
-                isPickerLoading: false
-            });
+            if (this._isMounted) {
+                this.setState({
+                    pickerSuggestedPeople,
+                    isPickerLoading: false
+                });
+            }
         } catch {
-            this.setState({ isPickerLoading: false });
+            if (this._isMounted) {
+                this.setState({ isPickerLoading: false });
+            }
         } finally {
             if (FilterPeopleTemplateComponent.tenantUsersLoadingPromise === loadingPromise) {
                 FilterPeopleTemplateComponent.setTenantUsersLoadingPromise(null);

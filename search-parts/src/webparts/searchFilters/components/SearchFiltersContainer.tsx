@@ -95,6 +95,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private _busyWatchdogTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyPrimeTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyCursorAutoHideTimer: ReturnType<typeof setTimeout> | null = null;
+    private _isMounted: boolean = false;
     private _busyStartedAt: number = 0;
     private _latestDeferredSubmittedFilters: IDataFilter[] | null = null;
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
@@ -330,7 +331,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             this._busyCursorAutoHideTimer = setTimeout(() => {
                 this._busyCursorAutoHideTimer = null;
 
-                if (this.state.isUpdatingResults) {
+                if (this._isMounted && this.state.isUpdatingResults) {
                     this.setBusyCursor(false);
                 }
             }, SearchFiltersContainer._STATIC_PEOPLE_BUSY_VISIBLE_MS);
@@ -1380,6 +1381,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     public componentDidMount() {
+        this._isMounted = true;
 
         // Bind events when filter values are selected
         this.bindFilterEvents();
@@ -1542,6 +1544,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     public componentWillUnmount(): void {
+        this._isMounted = false;
+
         if (this._deferredSubmittedUpdateTimer) {
             clearTimeout(this._deferredSubmittedUpdateTimer);
             this._deferredSubmittedUpdateTimer = null;
@@ -1560,6 +1564,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         if (this._busyHideTimer) {
             clearTimeout(this._busyHideTimer);
             this._busyHideTimer = null;
+        }
+
+        if (this._busyCursorAutoHideTimer) {
+            clearTimeout(this._busyCursorAutoHideTimer);
+            this._busyCursorAutoHideTimer = null;
         }
 
         this.setBusyCursor(false);
