@@ -209,7 +209,7 @@ export class DataFilterHelper {
                     }
 
                     // Enclose the expression with quotes if the value contains spaces, or number only
-                    if ((/\s/.test(value) && value.indexOf('range') === -1) || (filter.filterName.indexOf("RefinableString") && /^\d+$/.test(value))) {
+                    if ((/\s/.test(value) && value.indexOf('range') === -1) || (filter.filterName.includes("RefinableString") && /^\d+$/.test(value))) {
                         value = DataFilterHelper.quoteStringRefinementValue(value);
                     }
 
