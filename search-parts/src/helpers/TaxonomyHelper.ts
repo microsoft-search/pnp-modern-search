@@ -1,12 +1,19 @@
 export class TaxonomyHelper {
 
+    private static containsEncodedTokenMarker(value: string): boolean {
+        return value.includes('ǂ');
+    }
+
     public static normalizeReadableLabelCandidate(value: string): string {
         return `${value || ''}`.trim().replace(/^"+|"+$/g, '');
     }
 
     public static isReadablePlainLabel(value: string): boolean {
         const cleanedValue = this.normalizeReadableLabelCandidate(value);
-        return !!cleanedValue && !cleanedValue.includes('|') && !/^#?[0-9a-fA-F]{24,}$/.test(cleanedValue);
+        return !!cleanedValue
+            && !this.containsEncodedTokenMarker(cleanedValue)
+            && !cleanedValue.includes('|')
+            && !/^#?[0-9a-fA-F]{24,}$/.test(cleanedValue);
     }
 
     public static extractTaxonomyLabel(value: string): string {
@@ -65,7 +72,9 @@ export class TaxonomyHelper {
         }
 
         const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
-        const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part) && !/^#?[0-9a-fA-F]{24,}$/.test(part));
+        const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part)
+            && !this.containsEncodedTokenMarker(part)
+            && !/^#?[0-9a-fA-F]{24,}$/.test(part));
         return firstReadablePart || '';
     }
 
