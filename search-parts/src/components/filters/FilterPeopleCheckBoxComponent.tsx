@@ -775,44 +775,33 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     }
 
     private _extractReadableLabel(value: string): string {
-        const cleanedValue = `${value || ''}`.trim().replace(/^"+|"+$/g, '');
+        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(value);
         if (!cleanedValue) {
             return '';
         }
 
-        const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#0?[0-9a-f-]{32,36}\|(.+)$/i.exec(cleanedValue);
-        if (taxonomyLabelMatch?.[1]?.trim()) {
-            return taxonomyLabelMatch[1].trim();
+        const taxonomyLabel = TaxonomyHelper.extractTaxonomyLabel(cleanedValue);
+        if (taxonomyLabel) {
+            return taxonomyLabel;
         }
 
-        const genericGuidLabelMatch = /\|#0?[0-9a-f-]{32,36}\|([^|]+)$/i.exec(cleanedValue);
-        if (genericGuidLabelMatch?.[1]?.trim()) {
-            return genericGuidLabelMatch[1].trim();
+        const claimsLabel = TaxonomyHelper.extractClaimsLabel(cleanedValue);
+        if (claimsLabel) {
+            return claimsLabel;
         }
 
-        const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
-        if (claimsLabelMatch?.[1]?.trim()) {
-            return claimsLabelMatch[1].trim();
-        }
-
-        if (!cleanedValue.includes('|') && !/^#?[0-9a-fA-F]{24,}$/.test(cleanedValue)) {
+        if (TaxonomyHelper.isReadablePlainLabel(cleanedValue)) {
             return cleanedValue;
         }
 
-        const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
-        if (personLikeLabelMatch?.[1]?.trim()) {
-            return personLikeLabelMatch[1].trim();
+        const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
+        if (personLikeLabel) {
+            return personLikeLabel;
         }
 
-        const segments = cleanedValue.split('|').map(segment => segment.trim()).filter(Boolean);
-        if (segments.length > 0) {
-            for (const segment of segments) {
-                const isGuidLike = /^#?[-0-9a-fA-F]{32,36}$/.test(segment);
-                const isLongHexLike = segment.length > 16 && /^[0-9a-fA-F]+$/.test(segment);
-                if (!isGuidLike && !isLongHexLike) {
-                    return segment;
-                }
-            }
+        const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (firstReadablePipeSegment) {
+            return firstReadablePipeSegment;
         }
 
         return '';
