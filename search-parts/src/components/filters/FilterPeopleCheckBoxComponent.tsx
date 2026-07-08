@@ -871,6 +871,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         const selectedPillBackgroundColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
         const selectedPillBorderColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
         const selectedPillTextColor = this.props.themeVariant?.semanticColors?.primaryButtonText ?? '#ffffff';
+        const loadingOverlayBackgroundColor = this.props.themeVariant?.isInverted ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.45)';
         const singleSelectOptions = isMultiMode ? [] : this.getSingleSelectOptions(selectableUsers, textColor);
         const selectedSingleUserKey = isMultiMode ? undefined : this.getSelectedSingleStaticUserKey(selectableUsers, selectedUserKeys, selectedDisplayNames);
 
@@ -926,7 +927,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: 'rgba(255,255,255,0.45)',
+                        backgroundColor: loadingOverlayBackgroundColor,
                         zIndex: 1
                     }}>
                         <Spinner size={SpinnerSize.small} label={loadingTenantUsersLabel} />
