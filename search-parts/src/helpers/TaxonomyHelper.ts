@@ -4,6 +4,10 @@ export class TaxonomyHelper {
         return value.includes('ǂ');
     }
 
+    private static isGuidLikeToken(value: string): boolean {
+        return /^#?(?:[0-9a-fA-F]{24,}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})$/.test(value);
+    }
+
     public static normalizeReadableLabelCandidate(value: string): string {
         return `${value || ''}`.trim().replace(/^"+|"+$/g, '');
     }
@@ -13,7 +17,7 @@ export class TaxonomyHelper {
         return !!cleanedValue
             && !this.containsEncodedTokenMarker(cleanedValue)
             && !cleanedValue.includes('|')
-            && !/^#?[0-9a-fA-F]{24,}$/.test(cleanedValue);
+            && !this.isGuidLikeToken(cleanedValue);
     }
 
     public static extractTaxonomyLabel(value: string): string {
@@ -74,7 +78,7 @@ export class TaxonomyHelper {
         const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
         const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part)
             && !this.containsEncodedTokenMarker(part)
-            && !/^#?[0-9a-fA-F]{24,}$/.test(part));
+            && !this.isGuidLikeToken(part));
         return firstReadablePart || '';
     }
 
