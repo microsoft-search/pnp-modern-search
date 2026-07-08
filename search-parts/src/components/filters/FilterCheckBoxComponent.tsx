@@ -171,6 +171,10 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
             return claimsLabelMatch[1].trim();
         }
 
+        if (!cleanedValue.includes('|') && !/^#?[0-9a-fA-F]{24,}$/.test(cleanedValue)) {
+            return cleanedValue;
+        }
+
         const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
         if (personLikeLabelMatch?.[1]?.trim()) {
             return personLikeLabelMatch[1].trim();
