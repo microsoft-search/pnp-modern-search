@@ -578,6 +578,24 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         return selectedUser ? this.getIdentityKey(selectedUser) : undefined;
     }
 
+    private readonly getSelectableStaticUsers = (filteredUsers: IPersonaProps[], selectedPeople: IPersonaProps[], isMultiMode: boolean): IPersonaProps[] => {
+        if (isMultiMode) {
+            const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
+            return filteredUsers.filter(person => !selectedUserKeys.has(this.getIdentityKey(person)));
+        }
+
+        const visibleUsers = [...selectedPeople, ...filteredUsers];
+        const uniqueUsers: IPersonaProps[] = [];
+
+        visibleUsers.forEach(person => {
+            if (!uniqueUsers.some(existingPerson => this.isSameStaticPerson(existingPerson, person))) {
+                uniqueUsers.push(person);
+            }
+        });
+
+        return uniqueUsers;
+    }
+
     private readonly toggleStaticUserSelection = (person: IPersonaProps, checked: boolean): void => {
         const currentSelection = this.state.pickerSelectedPeople || [];
         let nextSelection: IPersonaProps[];
@@ -817,9 +835,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         const selectedPeople = this.state.pickerSelectedPeople || [];
         const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
         const filteredUsers = this.filterAllPreloadedUsers(this.state.pickerSearchFilterText);
-        const selectableUsers = isMultiMode
-            ? filteredUsers.filter(person => !selectedUserKeys.has(this.getIdentityKey(person)))
-            : filteredUsers;
+        const selectableUsers = this.getSelectableStaticUsers(filteredUsers, selectedPeople, isMultiMode);
         const selectedDisplayNames = new Set(selectedPeople.map(person => `${person?.text || ''}`.trim().toLowerCase()).filter(Boolean));
         const textColor = this.props.themeVariant?.isInverted ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130' : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
         const selectedPillBackgroundColor = this.props.themeVariant?.semanticColors?.primaryButtonBackground ?? '#106ebe';
@@ -885,7 +901,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         <Spinner size={SpinnerSize.small} label={loadingTenantUsersLabel} />
                     </div>
                 )}
-                {!this.state.isPickerLoading && selectedPeople.length === 0 && filteredUsers.length === 0 && (
+                {!this.state.isPickerLoading && selectableUsers.length === 0 && (
                     <div style={{ color: '#605e5c', fontSize: 12 }}>
                         {noUsersFoundMessage}
                     </div>
