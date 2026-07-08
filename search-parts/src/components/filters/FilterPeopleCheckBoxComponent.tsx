@@ -87,6 +87,7 @@ export interface IFilterPeopleTemplateState {
     pickerSelectedPeople: IPersonaProps[];
     pickerSuggestedPeople: IPersonaProps[];
     isPickerLoading: boolean;
+    hasLoadedInitialPickerSuggestions: boolean;
     pickerSearchText: string;
     pickerSearchFilterText: string;
 }
@@ -170,6 +171,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             pickerSelectedPeople: selectedPeople,
             pickerSuggestedPeople: [],
             isPickerLoading: false,
+            hasLoadedInitialPickerSuggestions: false,
             pickerSearchText: '',
             pickerSearchFilterText: ''
         };
@@ -178,12 +180,6 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     public componentDidMount(): void {
         this._isMounted = true;
         this.restoreSelectionFeedback();
-
-        if (this.isStaticPickerMode()) {
-            this.loadInitialPickerSuggestions().catch(() => {
-                // Ignore initial suggestion lookup failures
-            });
-        }
     }
 
     public componentDidUpdate(prevProps: IFilterPeopleTemplateProps): void {
@@ -633,7 +629,8 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             if (this._isMounted) {
                 this.setState({
                     pickerSuggestedPeople: FilterPeopleTemplateComponent.tenantUsersCache,
-                    isPickerLoading: false
+                    isPickerLoading: false,
+                    hasLoadedInitialPickerSuggestions: true
                 });
             }
 
@@ -655,18 +652,36 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             if (this._isMounted) {
                 this.setState({
                     pickerSuggestedPeople,
-                    isPickerLoading: false
+                    isPickerLoading: false,
+                    hasLoadedInitialPickerSuggestions: true
                 });
             }
         } catch {
             if (this._isMounted) {
-                this.setState({ isPickerLoading: false });
+                this.setState({
+                    isPickerLoading: false,
+                    hasLoadedInitialPickerSuggestions: true
+                });
             }
         } finally {
             if (FilterPeopleTemplateComponent.tenantUsersLoadingPromise === loadingPromise) {
                 FilterPeopleTemplateComponent.setTenantUsersLoadingPromise(null);
             }
         }
+    }
+
+    private readonly ensureInitialPickerSuggestionsLoaded = (): void => {
+        if (!this.isStaticPickerMode()) {
+            return;
+        }
+
+        if (this.state.isPickerLoading || this.state.hasLoadedInitialPickerSuggestions) {
+            return;
+        }
+
+        this.loadInitialPickerSuggestions().catch(() => {
+            // Ignore initial suggestion lookup failures
+        });
     }
 
     private readonly getInitialTenantUsers = async (): Promise<IPersonaProps[]> => {
@@ -842,11 +857,10 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     }
 
     private renderStaticPeoplePicker(): JSX.Element {
-        const staticPeoplePickerStrings = webPartStrings?.General?.StaticPeoplePicker;
-        const removeSelectedUserTitleTemplate = staticPeoplePickerStrings?.RemoveSelectedUserTitle || 'Remove {0}';
-        const searchUsersPlaceholder = staticPeoplePickerStrings?.SearchUsersPlaceholder || 'Search users';
-        const loadingTenantUsersLabel = staticPeoplePickerStrings?.LoadingTenantUsersLabel || 'Loading tenant users...';
-        const noUsersFoundMessage = staticPeoplePickerStrings?.NoUsersFoundMessage || 'No users found.';
+        const { RemoveSelectedUserTitle: removeSelectedUserTitleTemplate,
+            SearchUsersPlaceholder: searchUsersPlaceholder,
+            LoadingTenantUsersLabel: loadingTenantUsersLabel,
+            NoUsersFoundMessage: noUsersFoundMessage } = webPartStrings.General.StaticPeoplePicker;
         const isMultiMode = this.isMultiSelectionMode();
         const selectedPeople = this.state.pickerSelectedPeople || [];
         const selectedUserKeys = new Set(selectedPeople.map(person => this.getIdentityKey(person)));
@@ -898,6 +912,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                     value={this.state.pickerSearchText}
                     disabled={this.props.disabled}
                     aria-label={searchUsersPlaceholder}
+                    onFocus={this.ensureInitialPickerSuggestionsLoaded}
                     onChange={this.onStaticPickerSearchTextChanged}
                     placeholder={searchUsersPlaceholder}
                     style={{ width: '100%', boxSizing: 'border-box', padding: '6px 8px' }}
@@ -917,7 +932,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                         <Spinner size={SpinnerSize.small} label={loadingTenantUsersLabel} />
                     </div>
                 )}
-                {!this.state.isPickerLoading && selectableUsers.length === 0 && (
+                {!this.state.isPickerLoading && this.state.hasLoadedInitialPickerSuggestions && selectableUsers.length === 0 && (
                     <div style={{ color: textColor, fontSize: 12 }}>
                         {noUsersFoundMessage}
                     </div>
