@@ -1,5 +1,111 @@
 export class TaxonomyHelper {
 
+    private static containsEncodedTokenMarker(value: string): boolean {
+        return value.includes('ǂ');
+    }
+
+    private static isGuidLikeToken(value: string): boolean {
+        return /^#?(?:[0-9a-fA-F]{17,}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})$/.test(value);
+    }
+
+    private static isTaxonomyTokenPrefix(value: string): boolean {
+        return /^(?:L0|GP0|GPP)$/i.test(value);
+    }
+
+    private static containsReadableLetter(value: string): boolean {
+        return /\p{L}/u.test(value);
+    }
+
+    public static normalizeReadableLabelCandidate(value: string): string {
+        return `${value || ''}`.trim().replace(/^"+|"+$/g, '');
+    }
+
+    public static isReadablePlainLabel(value: string): boolean {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        return !!cleanedValue
+            && !this.containsEncodedTokenMarker(cleanedValue)
+            && !cleanedValue.includes('|')
+            && !this.isGuidLikeToken(cleanedValue);
+    }
+
+    public static extractTaxonomyLabel(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const getSafeExtractedLabel = (candidate?: string): string => {
+            const normalizedCandidate = this.normalizeReadableLabelCandidate(candidate || '');
+            if (!normalizedCandidate) {
+                return '';
+            }
+
+            if (this.containsEncodedTokenMarker(normalizedCandidate) || this.isGuidLikeToken(normalizedCandidate)) {
+                return '';
+            }
+
+            return normalizedCandidate;
+        };
+
+        const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#(?:0|0?[0-9a-f-]{32,36})\|(.+)$/i.exec(cleanedValue);
+        const taxonomyLabel = getSafeExtractedLabel(taxonomyLabelMatch?.[1]);
+        if (taxonomyLabel) {
+            return taxonomyLabel;
+        }
+
+        const genericGuidLabelMatch = /\|#(?:0|0?[0-9a-f-]{32,36})\|([^|]+)$/i.exec(cleanedValue);
+        const genericGuidLabel = getSafeExtractedLabel(genericGuidLabelMatch?.[1]);
+        if (genericGuidLabel) {
+            return genericGuidLabel;
+        }
+
+        return '';
+    }
+
+    public static extractClaimsLabel(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
+        return claimsLabelMatch?.[1]?.trim() || '';
+    }
+
+    public static extractPersonLikeLabel(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
+        return personLikeLabelMatch?.[1]?.trim() || '';
+    }
+
+    public static extractEmailLikeLabel(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const emailMatch = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/.exec(cleanedValue);
+        return emailMatch?.[1] || '';
+    }
+
+    public static extractFirstReadablePipeSegment(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
+        const firstReadablePart = parts.find(part => this.containsReadableLetter(part)
+            && !this.containsEncodedTokenMarker(part)
+            && !this.isTaxonomyTokenPrefix(part)
+            && !this.isGuidLikeToken(part));
+        return firstReadablePart || '';
+    }
+
     public static normalizeGuid(rawGuid: string): string {
         return rawGuid ? rawGuid.replace(/^#/, '').replaceAll('-', '').toLowerCase() : '';
     }
