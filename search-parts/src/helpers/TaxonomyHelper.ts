@@ -34,14 +34,29 @@ export class TaxonomyHelper {
             return '';
         }
 
+        const getSafeExtractedLabel = (candidate?: string): string => {
+            const normalizedCandidate = this.normalizeReadableLabelCandidate(candidate || '');
+            if (!normalizedCandidate) {
+                return '';
+            }
+
+            if (this.containsEncodedTokenMarker(normalizedCandidate) || this.isGuidLikeToken(normalizedCandidate)) {
+                return '';
+            }
+
+            return normalizedCandidate;
+        };
+
         const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#(?:0|0?[0-9a-f-]{32,36})\|(.+)$/i.exec(cleanedValue);
-        if (taxonomyLabelMatch?.[1]?.trim()) {
-            return taxonomyLabelMatch[1].trim();
+        const taxonomyLabel = getSafeExtractedLabel(taxonomyLabelMatch?.[1]);
+        if (taxonomyLabel) {
+            return taxonomyLabel;
         }
 
         const genericGuidLabelMatch = /\|#(?:0|0?[0-9a-f-]{32,36})\|([^|]+)$/i.exec(cleanedValue);
-        if (genericGuidLabelMatch?.[1]?.trim()) {
-            return genericGuidLabelMatch[1].trim();
+        const genericGuidLabel = getSafeExtractedLabel(genericGuidLabelMatch?.[1]);
+        if (genericGuidLabel) {
+            return genericGuidLabel;
         }
 
         return '';
