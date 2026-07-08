@@ -18,6 +18,18 @@ export class DataFilterHelper {
     }
 
     /**
+     * Escapes a string value so it can be safely wrapped in double quotes for KQL/FQL refinements.
+     */
+    private static quoteStringRefinementValue(value: string): string {
+        const normalizedValue = `${value ?? ''}`;
+        const escapedValue = normalizedValue
+            .replaceAll('\\', String.raw`\\`)
+            .replaceAll('"', String.raw`\"`);
+
+        return `"${escapedValue}"`;
+    }
+
+    /**
      * Returns the configuration for a specific filter
      * @param filter the filter
      * @param filtersConfiguration the filtes configuraton 
@@ -121,7 +133,7 @@ export class DataFilterHelper {
                             }
                         }
                         else {
-                            return `${filterName}:"${refinement.name}"`;
+                            return `${filterName}:${DataFilterHelper.quoteStringRefinementValue(refinement.name)}`;
                         }
                     }).filter(c => c);
 
@@ -198,7 +210,7 @@ export class DataFilterHelper {
 
                     // Enclose the expression with quotes if the value contains spaces, or number only
                     if ((/\s/.test(value) && value.indexOf('range') === -1) || (filter.filterName.indexOf("RefinableString") && /^\d+$/.test(value))) {
-                        value = `"${value}"`;
+                        value = DataFilterHelper.quoteStringRefinementValue(value);
                     }
 
                     return /ǂǂ/.test(value) && encodeTokens ? encodeURIComponent(value) : value;
@@ -257,7 +269,7 @@ export class DataFilterHelper {
 
                     // Enclose the expression with quotes if the value contains spaces
                     if (/\s/.test(refinementToken) && refinementToken.indexOf('range') === -1) {
-                        refinementToken = `"${refinementToken}"`;
+                        refinementToken = DataFilterHelper.quoteStringRefinementValue(refinementToken);
                     }
 
                     refinementQueryConditions.push(`${filter.filterName}:${refinementToken}`);
