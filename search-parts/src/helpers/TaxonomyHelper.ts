@@ -5,11 +5,15 @@ export class TaxonomyHelper {
     }
 
     private static isGuidLikeToken(value: string): boolean {
-        return /^#?(?:[0-9a-fA-F]{24,}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})$/.test(value);
+        return /^#?(?:[0-9a-fA-F]{17,}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})$/.test(value);
     }
 
     private static isTaxonomyTokenPrefix(value: string): boolean {
         return /^(?:L0|GP0|GPP)$/i.test(value);
+    }
+
+    private static containsReadableLetter(value: string): boolean {
+        return Array.from(value).some(char => char.toLocaleLowerCase() !== char.toLocaleUpperCase());
     }
 
     public static normalizeReadableLabelCandidate(value: string): string {
@@ -80,7 +84,7 @@ export class TaxonomyHelper {
         }
 
         const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
-        const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part)
+        const firstReadablePart = parts.find(part => this.containsReadableLetter(part)
             && !this.containsEncodedTokenMarker(part)
             && !this.isTaxonomyTokenPrefix(part)
             && !this.isGuidLikeToken(part));
