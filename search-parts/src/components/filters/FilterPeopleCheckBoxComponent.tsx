@@ -915,7 +915,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
                     </div>
                 )}
                 {!this.state.isPickerLoading && selectableUsers.length === 0 && (
-                    <div style={{ color: '#605e5c', fontSize: 12 }}>
+                    <div style={{ color: textColor, fontSize: 12 }}>
                         {noUsersFoundMessage}
                     </div>
                 )}
