@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurera"
             },
             NoAvailableFilterMessage: "Inget tillgängligt filter att visa.",
-            WebPartDefaultTitle: "Sökfilters webbdel"
+            WebPartDefaultTitle: "Sökfilters webbdel",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Ta bort {0}",
+                SearchUsersPlaceholder: "Sök användare",
+                LoadingTenantUsersLabel: "Läser in klientanvändare...",
+                NoUsersFoundMessage: "Inga användare hittades."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -54,6 +60,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinationsruta",
                     DateIntervalTemplate: "Datumintervall (fasta intervall)",
                     PeopleTemplate: "Person mall",
+                    StaticPeopleTemplate: "Statisk personmall",
                     TaxonomyPickerTemplate: "Taxonomiväljare",
                     HierarchicalFilterTemplate: "Hierarkiskt filter"
                 },

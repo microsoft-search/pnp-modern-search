@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurovat"
             },
             NoAvailableFilterMessage: "Žádné dostupné filtry k zobrazení.",
-            WebPartDefaultTitle: "Webový díl filtrů vyhledávání"
+            WebPartDefaultTitle: "Webový díl filtrů vyhledávání",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Odebrat {0}",
+                SearchUsersPlaceholder: "Hledat uživatele",
+                LoadingTenantUsersLabel: "Načítání uživatelů tenanta...",
+                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -54,6 +60,7 @@ define([], function () {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
+                    StaticPeopleTemplate: "Statická šablona osoby",
                     TaxonomyPickerTemplate: "Výběr taxonomie",
                     HierarchicalFilterTemplate: "Hierarchický filtr"
                 },

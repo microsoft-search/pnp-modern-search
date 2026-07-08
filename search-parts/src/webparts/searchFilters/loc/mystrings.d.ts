@@ -8,6 +8,12 @@ declare interface ISearchFiltersWebPartStrings {
         },
         NoAvailableFilterMessage: string;
         WebPartDefaultTitle: string;
+        StaticPeoplePicker: {
+            RemoveSelectedUserTitle: string;
+            SearchUsersPlaceholder: string;
+            LoadingTenantUsersLabel: string;
+            NoUsersFoundMessage: string;
+        };
     },
     PropertyPane: {
         ConnectionsPage: {
@@ -54,6 +60,7 @@ declare interface ISearchFiltersWebPartStrings {
                 DateRangeTemplate: string;
                 ComboBoxTemplate: string;
                 PeopleTemplate: string;
+                StaticPeopleTemplate: string;
                 DateIntervalTemplate: string;
                 TaxonomyPickerTemplate: string;
                 HierarchicalFilterTemplate: string;

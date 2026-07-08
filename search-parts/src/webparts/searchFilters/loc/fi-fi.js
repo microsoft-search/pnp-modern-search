@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfiguroi"
             },
             NoAvailableFilterMessage: "Ei suodattimia näytettäväksi.",
-            WebPartDefaultTitle: "Haun suodattimet webosa"
+            WebPartDefaultTitle: "Haun suodattimet webosa",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Poista {0}",
+                SearchUsersPlaceholder: "Hae käyttäjiä",
+                LoadingTenantUsersLabel: "Ladataan vuokraajan käyttäjiä...",
+                NoUsersFoundMessage: "Käyttäjiä ei löytynyt."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -54,6 +60,7 @@ define([], function () {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
+                    StaticPeopleTemplate: "Staattinen henkilömalli",
                     TaxonomyPickerTemplate: "Taksonomiavalinta",
                     HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },

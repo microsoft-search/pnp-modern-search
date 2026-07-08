@@ -570,6 +570,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.operator = FilterConditionOperator.AND;
                 }
 
+                if (configuration.selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+                    configuration.maxBuckets = undefined;
+                    configuration.showLimitExceededWarning = false;
+                }
+
                 // Preserve hierarchical settings set through custom fields.
                 const correspondingNewConfig = nextConfigurations.find(c => c.filterName === configuration.filterName);
                 if (correspondingNewConfig) {
@@ -928,6 +933,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 key: `${field.id}-${itemId}`,
                                 type: 'number',
                                 value: value ? value.toString() : '',
+                                disabled: item.selectedTemplate === BuiltinFilterTemplates.StaticPeople,
                                 errorMessage: errorMessage,
                                 onChange: (ev, newValue) => {
                                     const parsedValue = newValue && newValue.trim() !== '' ? parseInt(newValue, 10) : undefined;
@@ -945,7 +951,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
                                     defaultChecked: item.showLimitExceededWarning ?? false,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople,
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
@@ -974,6 +980,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             {
                                 key: BuiltinFilterTemplates.People,
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.PeopleTemplate
+                            },
+                            {
+                                key: BuiltinFilterTemplates.StaticPeople,
+                                text: webPartStrings.PropertyPane.DataFilterCollection.Templates.StaticPeopleTemplate
                             },
                             {
                                 key: BuiltinFilterTemplates.ComboBox,
