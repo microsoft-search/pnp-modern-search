@@ -116,7 +116,14 @@ export class ExtensibilityUsageHelper {
             return { usesCustomExtensibility: true, reason: "an external template that cannot be inspected" };
         }
 
-        const templates = this.collectResultsTemplates(input);
+        const { templates, truncated } = this.collectResultsTemplates(input);
+
+        // If the configuration was too large or deeply nested to fully inspect, we can't be certain
+        // the templates are free of custom components/helpers — conservatively load (bias to a false
+        // positive) rather than risk a false skip.
+        if (truncated) {
+            return { usesCustomExtensibility: true, reason: "a configuration too large to fully inspect" };
+        }
 
         // 5. Adaptive Cards action handler (invokeCardAction). Adaptive Card actions are inert
         // without a library handler, so a card that declares actions needs the library.
@@ -187,9 +194,10 @@ export class ExtensibilityUsageHelper {
      * Gathers every inline template / field snippet configured on the Web Part so it can be
      * inspected for custom components, helpers or partials.
      */
-    private static collectResultsTemplates(input: IResultsExtensibilityInput): string[] {
+    private static collectResultsTemplates(input: IResultsExtensibilityInput): { templates: string[]; truncated: boolean } {
 
         const templates: string[] = [];
+        const state = { truncated: false };
 
         if (input.inlineTemplateContent) {
             templates.push(input.inlineTemplateContent);
@@ -198,7 +206,7 @@ export class ExtensibilityUsageHelper {
         // Column / field templates live under layoutProperties (e.g. Details List columns,
         // Cards fields, People fields). Their exact shape varies per layout, so collect every
         // string value defensively.
-        this.collectStrings(input.layoutProperties, templates, 0);
+        this.collectStrings(input.layoutProperties, templates, 0, state);
 
         (input.resultTypes || []).forEach(rt => {
             if (rt && rt.inlineTemplateContent) {
@@ -206,15 +214,22 @@ export class ExtensibilityUsageHelper {
             }
         });
 
-        return templates;
+        return { templates, truncated: state.truncated };
     }
 
     /**
      * Recursively collects string values from an arbitrary object/array, bounded in depth and count.
+     * Sets `state.truncated` when a bound is hit so the caller can treat the inspection as
+     * inconclusive and conservatively load rather than risk a false skip.
      */
-    private static collectStrings(value: any, acc: string[], depth: number): void {
+    private static collectStrings(value: any, acc: string[], depth: number, state: { truncated: boolean }): void {
 
-        if (value === null || value === undefined || depth > this.MAX_COLLECT_DEPTH || acc.length >= this.MAX_COLLECTED_STRINGS) {
+        if (value === null || value === undefined) {
+            return;
+        }
+
+        if (depth > this.MAX_COLLECT_DEPTH || acc.length >= this.MAX_COLLECTED_STRINGS) {
+            state.truncated = true;
             return;
         }
 
@@ -227,16 +242,16 @@ export class ExtensibilityUsageHelper {
 
         if (Array.isArray(value)) {
             for (const item of value) {
-                if (acc.length >= this.MAX_COLLECTED_STRINGS) { return; }
-                this.collectStrings(item, acc, depth + 1);
+                if (acc.length >= this.MAX_COLLECTED_STRINGS) { state.truncated = true; return; }
+                this.collectStrings(item, acc, depth + 1, state);
             }
             return;
         }
 
         if (typeof value === "object") {
             for (const key of Object.keys(value)) {
-                if (acc.length >= this.MAX_COLLECTED_STRINGS) { return; }
-                this.collectStrings(value[key], acc, depth + 1);
+                if (acc.length >= this.MAX_COLLECTED_STRINGS) { state.truncated = true; return; }
+                this.collectStrings(value[key], acc, depth + 1, state);
             }
         }
     }

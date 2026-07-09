@@ -1191,7 +1191,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 if (!usage.usesCustomExtensibility) {
                     librariesToLoad = [];
                     const message = `Skipping load of ${enabledCount} enabled extensibility library/libraries — not used by this Web Part (${usage.reason}).`;
-                    Log.info(LogSource, message, this.context.serviceScope);
+                    Log.verbose(LogSource, message, this.context.serviceScope);
                     ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
                 } else {
                     const message = `Loading ${enabledCount} enabled extensibility library/libraries — the Web Part uses ${usage.reason}.`;
