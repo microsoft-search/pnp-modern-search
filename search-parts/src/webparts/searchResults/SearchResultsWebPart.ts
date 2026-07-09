@@ -41,6 +41,7 @@ import { DynamicDataService } from '../../services/dynamicDataService/DynamicDat
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
+import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
@@ -1004,7 +1005,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.properties.queryModifierConfiguration = [];
             this.extensionsLoaded = false;
 
-            await this.loadExtensions(cleanConfiguration);
+            await this.loadExtensions(cleanConfiguration, true);
         }
 
         if (this.properties.queryTextSource === QueryTextSource.StaticValue || !this.properties.useDefaultQueryText || !this.properties.useInputQueryText) {
@@ -1151,7 +1152,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     /**
      * Loads extensions from registered extensibility libraries
      */
-    private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
+    private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[], forceLoad: boolean = false) {
 
         const { AvailableComponents } = await import(
             /* webpackChunkName: 'pnp-modern-search-web-components' */
@@ -1159,8 +1160,50 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         );
         this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
 
+        const extResolveStart = performance.now();
+
+        // Only attempt to load extensibility libraries when the Web Part actually uses something
+        // provided by one (custom data source, layout, query modifier, web component, Handlebars
+        // customization or Adaptive Card action handler). This early-exit avoids the slow
+        // retry/backoff load of a registered-but-undeployed library — the root cause of slow
+        // rendering for installs that left the default library enabled but never used it.
+        // The property-pane configuration path passes forceLoad=true so that enabling a library
+        // makes its extensions selectable even before anything custom has been applied.
+        let librariesToLoad = librariesConfiguration;
+        const enabledCount = librariesConfiguration.filter(c => c.enabled).length;
+        if (!forceLoad && enabledCount > 0) {
+            try {
+                const usage = await ExtensibilityUsageHelper.getResultsUsage({
+                    dataSourceKey: this.properties.dataSourceKey,
+                    selectedLayoutKey: this.properties.selectedLayoutKey,
+                    layoutRenderType: this.properties.layoutRenderType,
+                    queryModifierConfiguration: this.properties.queryModifierConfiguration,
+                    inlineTemplateContent: this.properties.inlineTemplateContent,
+                    externalTemplateUrl: this.properties.externalTemplateUrl,
+                    layoutProperties: this.properties.layoutProperties,
+                    resultTypes: this.properties.resultTypes,
+                    templateService: this.templateService
+                });
+
+                if (!usage.usesCustomExtensibility) {
+                    librariesToLoad = [];
+                    const message = `[${LogSource}] Skipping load of ${enabledCount} enabled extensibility library/libraries — not used by this Web Part (${usage.reason}).`;
+                    Log.info(LogSource, message, this.context.serviceScope);
+                    ExtensibilityUsageHelper.debugLog(message);
+                } else {
+                    const message = `[${LogSource}] Loading ${enabledCount} enabled extensibility library/libraries — the Web Part uses ${usage.reason}.`;
+                    Log.verbose(LogSource, message, this.context.serviceScope);
+                    ExtensibilityUsageHelper.debugLog(message);
+                }
+            } catch (error) {
+                // If usage can't be determined, fall back to loading so nothing custom is missed.
+                Log.warn(LogSource, `Could not evaluate extensibility usage; loading libraries as a fallback. Details: ${error}`, this.context.serviceScope);
+            }
+        }
+
         // Load extensibility library if present
-        const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
+        const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesToLoad);
+        ExtensibilityUsageHelper.debugLog(`[${LogSource}] extensibility resolution took ${(performance.now() - extResolveStart).toFixed(0)}ms (requested ${librariesToLoad.length}, loaded ${extensibilityLibraries.length}).`);
         const customQueryModifierConfiguration: IQueryModifierConfiguration[] = [];
 
         // Load extensibility additions
@@ -1216,7 +1259,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // extensions are loaded (not just once in onInit) so that newly-enabled extension
         // components are upgraded in the DOM. Safe to call repeatedly — the underlying
         // customElements.define() is guarded so already-registered components are skipped.
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+        // Use the guarded instanceId getter: during transient lifecycle phases (e.g. a property
+        // pane change that triggers a reload) the underlying SPFx getter can throw, which would
+        // otherwise reject this async method with "Cannot read properties of undefined (reading
+        // 'instanceId')". When it's unavailable we skip registration — the components are already
+        // defined globally from the initial render, so this call is redundant in that phase.
+        const instanceId = this.tryGetInstanceId();
+        if (instanceId) {
+            await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, instanceId);
+        } else {
+            Log.verbose(LogSource, `Skipping web component registration because the instanceId is unavailable during the current lifecycle phase.`, this.context?.serviceScope);
+        }
 
         this.extensionsLoaded = true;
     }

@@ -37,6 +37,7 @@ export interface ITemplateService {
     context?: ISearchResultsTemplateContext | any
   ): T;
   registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
+  ensureHandlebarsHelpersLoaded(): Promise<void>;
   replaceDisambiguatedMgtElementNames(template: Document): Promise<void>;
   legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string;
   applyDisambiguatedMgtPrefixIfNeeded(elementName: string): string;

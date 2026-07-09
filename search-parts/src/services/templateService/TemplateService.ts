@@ -98,6 +98,13 @@ export class TemplateService implements ITemplateService {
     private _customElementHelper;
     private _customElementHelperPromise: Promise<void>;
 
+    // Resolves once the async service initialization (Handlebars namespace creation and
+    // out-of-the-box helper/partial registration) has completed. Declaration order matters:
+    // `_initResolve` must be declared before `_initPromise` so the promise executor can assign
+    // it without a later field initializer resetting it to undefined.
+    private _initResolve: () => void;
+    private _initPromise: Promise<void> = new Promise<void>((resolve) => { this._initResolve = resolve; });
+
     get Handlebars(): typeof Handlebars {
         return this._handlebars;
     }
@@ -266,7 +273,21 @@ export class TemplateService implements ITemplateService {
                 initializeFileTypeIcons(FileTypeIconHelper.getBaseUrl());
                 GlobalSettings.setValue("fileTypeIconsInitialized", true);
             }
+
+            // Signal that the Handlebars namespace and out-of-the-box helpers are ready.
+            this._initResolve();
         });
+    }
+
+    /**
+     * Ensures the Handlebars namespace is initialized and every out-of-the-box helper
+     * (base, custom and the lazily-loaded extended set) and partial is registered.
+     * Used to reliably tell out-of-the-box Handlebars customizations apart from those
+     * contributed by an extensibility library before deciding whether to load one.
+     */
+    public async ensureHandlebarsHelpersLoaded(): Promise<void> {
+        await this._initPromise;
+        await this._ensureExtendedHelpers();
     }
 
     /**
