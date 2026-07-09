@@ -982,13 +982,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const reachedEditModeRefinerCap = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
             && filterWithLimitInfo.isMaxBucketsExceeded
             && filterWithLimitInfo.configuredMaxBuckets === 100;
-        const showLimitExceededWarning = Boolean(filterWithLimitInfo.isMaxBucketsExceeded && (filterConfiguration.showLimitExceededWarning || reachedEditModeRefinerCap));
-        const limitExceededWarningMessage = reachedEditModeRefinerCap
-            ? webPartStrings.PropertyPane.DataFilterCollection.EditModeRefinerLimitReachedWarningMessage
-            : webPartStrings.PropertyPane.DataFilterCollection.FilterLimitReachedWarningMessage;
+        const showLimitExceededWarning = Boolean(filterWithLimitInfo.isMaxBucketsExceeded && filterConfiguration.showLimitExceededWarning);
         const limitExceededWarningText = showLimitExceededWarning
             ? this.formatLocalizedString(
-                limitExceededWarningMessage,
+                webPartStrings.PropertyPane.DataFilterCollection.FilterLimitReachedWarningMessage,
+                [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
+            )
+            : undefined;
+        const editModeRefinerLimitWarningText = reachedEditModeRefinerCap
+            ? this.formatLocalizedString(
+                webPartStrings.PropertyPane.DataFilterCollection.EditModeRefinerLimitReachedWarningMessage,
                 [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
             )
             : undefined;
@@ -999,9 +1002,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             ? (webPartStrings.PropertyPane.DataFilterCollection.PeopleTemplateQUserMappingWarning
                 || 'People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.')
             : undefined;
-        const warningMessages = [limitExceededWarningText, peopleTemplateMappingWarningText].filter(Boolean);
-        const warningMarkerTooltipText = warningMessages.join('\n');
-        const showWarningMarker = Boolean(showPeopleTemplateMappingWarning || showLimitExceededWarning);
+        const warningMessages = [editModeRefinerLimitWarningText, peopleTemplateMappingWarningText].filter(Boolean);
+        const warningMarkerTooltipText = [limitExceededWarningText, ...warningMessages].filter(Boolean).join('\n');
+        const showWarningMarker = Boolean(showPeopleTemplateMappingWarning || showLimitExceededWarning || reachedEditModeRefinerCap);
 
         return {
             displayName: filterConfiguration.displayValue?.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
