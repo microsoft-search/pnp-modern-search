@@ -36,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Maksymalna liczba wartości to 1000",
                 FilterLimitReachedWarningToggle: "Pokaż ostrzeżenie po osiągnięciu limitu",
                 FilterLimitReachedWarningMessage: "Osiągnięto limit wyników — nie wszystkie pasujące elementy są wyświetlane. Doprecyzuj wyszukiwanie, aby zawęzić listę.",
+                EditModeRefinerLimitReachedWarningMessage: "W trybie edycji filtry są ograniczone do maksymalnie 100 elementów.",
                 PeopleTemplateQUserMappingWarning: "Ostrzeżenie szablonu osób: wartości nie wyglądają jak tożsamości użytkowników. Ta właściwość prawdopodobnie nie jest mapowana do przeszukiwanej właściwości Q_USER.",
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",

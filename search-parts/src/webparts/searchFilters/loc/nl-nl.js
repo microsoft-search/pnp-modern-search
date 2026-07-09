@@ -36,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",
                 FilterLimitReachedWarningToggle: "Waarschuwing tonen wanneer de limiet is bereikt",
                 FilterLimitReachedWarningMessage: "Resultaatlimiet bereikt — niet alle overeenkomende items worden weergegeven. Verfijn uw zoekopdracht om de lijst te beperken.",
+                EditModeRefinerLimitReachedWarningMessage: "In de bewerkingsmodus zijn verfijningen beperkt tot maximaal 100 items.",
                 PeopleTemplateQUserMappingWarning: "Waarschuwing voor personen-sjabloon: waarden lijken geen gebruikersidentiteiten te zijn. Deze eigenschap is waarschijnlijk niet toegewezen aan een Q_USER-crawled property.",
                 FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",

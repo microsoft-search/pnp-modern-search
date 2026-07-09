@@ -45,6 +45,7 @@ import commonStyles from '../styles/Common.module.scss';
 import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
+const EDIT_MODE_REFINER_LIMIT = 100;
 
 export enum BuiltinSourceIds {
     Documents = 'e7ec8cee-ded8-43c9-beb5-436b54b31e84',
@@ -281,7 +282,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
         filters.forEach((filter) => {
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
-            const configuredLimit = filterConfiguration?.maxBuckets ?? defaultRefinerSize;
+            const configuredLimit = this.getEffectiveRefinerLimit(filterConfiguration?.maxBuckets ?? defaultRefinerSize);
             const returnedCount = filter.values?.length ?? 0;
             const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
 
@@ -299,6 +300,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             console.info(`[PnP Modern Search][SharePoint Search] Refiner '${filter.filterName}' returned ${returnedCount} item(s) from the API (limit ${configuredLimit}).`);
         });
+    }
+
+    private getEffectiveRefinerLimit(configuredLimit: number = 100): number {
+        return this.editMode ? Math.min(configuredLimit, EDIT_MODE_REFINER_LIMIT) : configuredLimit;
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -1051,16 +1056,20 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     const pastMonth = this.dayjs(todayDate).subtract(1, 'months').subtract(1, 'minute').toISOString();
                     const pastWeek = this.dayjs(todayDate).subtract(1, 'week').subtract(1, 'minute').toISOString();
                     const past24hours = this.dayjs(todayDate).subtract(24, 'hours').subtract(1, 'minute').toISOString();
-                    // const today = new Date().toISOString();
 
                     return `${filterConfig.filterName}(discretize=manual/${pastYear}/${past3Months}/${pastMonth}/${pastWeek}/${past24hours}/${today})`;
 
                 } else if (filterConfig.maxBuckets) {
                     const sort = filterConfig.sortBy == FilterSortType.ByName ? "name" : "frequency";
                     const direction = filterConfig.sortDirection == FilterSortDirection.Ascending ? "ascending" : "descending";
-                    return `${filterConfig.filterName}(filter=${filterConfig.maxBuckets}/0/*,sort=${sort}/${direction},deephits=1000000)`;
+                    const effectiveLimit = this.getEffectiveRefinerLimit(filterConfig.maxBuckets);
+                    return `${filterConfig.filterName}(filter=${effectiveLimit}/0/*,sort=${sort}/${direction},deephits=1000000)`;
                 }
                 else {
+                    if (this.editMode) {
+                        return `${filterConfig.filterName}(filter=${this.getEffectiveRefinerLimit()}/0/*,deephits=1000000)`;
+                    }
+
                     return filterConfig.filterName + "(deephits=1000000)";
                 }
 

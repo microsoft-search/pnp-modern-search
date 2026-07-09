@@ -25,6 +25,8 @@ import LocalizationHelper from "../helpers/LocalizationHelper";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import { BuiltinFilterTemplates } from "../layouts/AvailableTemplates";
 
+const EDIT_MODE_AGGREGATION_LIMIT = 100;
+
 export enum EntityType {
     Message = 'message',
     Event = 'event',
@@ -272,7 +274,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         filters.forEach((filter) => {
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
-            const configuredLimit = filterConfiguration?.maxBuckets ?? defaultAggregationSize;
+            const configuredLimit = this.getEffectiveAggregationLimit(filterConfiguration?.maxBuckets ?? defaultAggregationSize);
             const returnedCount = filter.values?.length ?? 0;
             const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
 
@@ -290,6 +292,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
             console.info(`[PnP Modern Search][Microsoft Search] Aggregation '${filter.filterName}' returned ${returnedCount} item(s) from the API (limit ${configuredLimit}).`);
         });
+    }
+
+    private getEffectiveAggregationLimit(configuredLimit: number = 10): number {
+        return this.editMode ? Math.min(configuredLimit, EDIT_MODE_AGGREGATION_LIMIT) : configuredLimit;
     }
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
@@ -1213,7 +1219,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     minimumCount: 1,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
-                size: filterConfig?.maxBuckets ?? 10
+                size: this.getEffectiveAggregationLimit(filterConfig?.maxBuckets ?? 10)
             };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {

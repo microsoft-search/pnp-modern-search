@@ -35,6 +35,7 @@ declare interface ISearchFiltersWebPartStrings {
             FilterMaxBucketsWarning: string;
             FilterLimitReachedWarningToggle: string;
             FilterLimitReachedWarningMessage: string;
+            EditModeRefinerLimitReachedWarningMessage: string;
             PeopleTemplateQUserMappingWarning: string;
             FilterDisplayName: string;
             FilterTemplate: string;

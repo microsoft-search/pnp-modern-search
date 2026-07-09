@@ -141,6 +141,11 @@
 						</template>
 
 						<template id="collapsible-content" item-class="filter--value">
+							{{#if filter.warningMessages.length}}
+								{{#each filter.warningMessages}}
+									<div class="filter--message">{{this}}</div>
+								{{/each}}
+							{{/if}}
 
 							{{#eq filter.selectedTemplate 'DateRangeFilterTemplate'}}
 								<div class="filter--value">
@@ -194,9 +199,6 @@
 									</div>
 								{{else}}
 									{{#eq filter.selectedTemplate 'PeopleTemplate'}}
-									{{#if filter.showPeopleTemplateMappingWarning}}
-										<div class="filter--message">{{filter.peopleTemplateMappingWarningText}}</div>
-									{{/if}}
 									{{#if filter.isMulti}}
 										<div class="filter--option">
 											<pnp-filteroperator 
