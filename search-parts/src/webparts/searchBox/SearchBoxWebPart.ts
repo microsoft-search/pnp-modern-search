@@ -42,6 +42,7 @@ import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
 import commonStyles from '../../styles/Common.module.scss';
 
@@ -430,7 +431,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             // Reset existing definitions to default
             this.availableCustomProviders = AvailableSuggestionProviders.BuiltinSuggestionProviders;
 
-            await this.loadExtensions(cleanConfiguration);
+            await this.loadExtensions(cleanConfiguration, true);
         }
 
         this._bindHashChange();
@@ -1036,12 +1037,36 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     /**
      * Loads extensions from registered extensibility libraries
      */
-    private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[]) {
+    private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[], forceLoad: boolean = false) {
 
         const customSuggestionProviderConfiguration: ISuggestionProviderConfiguration[] = [];
 
+        // Only attempt to load extensibility libraries when the Search Box actually uses something
+        // provided by one (a custom suggestions provider). This early-exit avoids the slow
+        // retry/backoff load of a registered-but-undeployed library. The property-pane
+        // configuration path passes forceLoad=true so enabling a library makes its providers
+        // selectable even before one has been enabled.
+        let librariesToLoad = librariesConfiguration;
+        const enabledCount = librariesConfiguration.filter(c => c.enabled).length;
+        if (!forceLoad && enabledCount > 0) {
+            const usage = ExtensibilityUsageHelper.getSearchBoxUsage({
+                suggestionProviderConfiguration: this.properties.suggestionProviderConfiguration,
+                builtinSuggestionProviderKeys: AvailableSuggestionProviders.BuiltinSuggestionProviders.map(p => p.key)
+            });
+            if (!usage.usesCustomExtensibility) {
+                librariesToLoad = [];
+                const message = `Skipping load of ${enabledCount} enabled extensibility library/libraries — not used by this Web Part (${usage.reason}).`;
+                Log.verbose(LogSource, message, this.context.serviceScope);
+                ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
+            } else {
+                const message = `Loading ${enabledCount} enabled extensibility library/libraries — the Web Part uses ${usage.reason}.`;
+                Log.verbose(LogSource, message, this.context.serviceScope);
+                ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
+            }
+        }
+
         // Load extensibility library if present
-        const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesConfiguration);
+        const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesToLoad);
 
         // Load extensibility additions
         if (extensibilityLibraries.length > 0) {
