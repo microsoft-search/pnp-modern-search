@@ -1,10 +1,12 @@
 import { LayoutRenderType } from "@pnp/modern-search-extensibility";
-import { BuiltinLayoutsKeys } from "../layouts/AvailableLayouts";
-import { BuiltinDataSourceProviderKeys } from "../dataSources/AvailableDataSources";
-import { BuiltinSuggestionProviderKeys } from "../providers/AvailableSuggestionProviders";
-import { AvailableComponents } from "../components/AvailableComponents";
 import { IDataResultType } from "../models/common/IDataResultType";
 import { ITemplateService } from "../services/templateService/ITemplateService";
+
+// NOTE: this helper intentionally does not import the built-in layout / data source / component /
+// suggestions modules. Those pull in heavy runtime dependencies (all the web component classes and
+// the layout HTML templates) that would bloat every Web Part bundle importing this helper (notably
+// the Search Box) and defeat the Search Results Web Part's dynamic import of AvailableComponents.
+// The caller passes the built-in key/name sets in instead.
 
 /**
  * Outcome of an extensibility usage evaluation.
@@ -39,6 +41,14 @@ export interface IResultsExtensibilityInput {
     layoutProperties: { [key: string]: any };
     resultTypes: IDataResultType[];
     templateService: ITemplateService;
+
+    /**
+     * Built-in ("out-of-the-box") identifiers, passed in by the caller so this helper does not have
+     * to eagerly import the heavy modules that define them.
+     */
+    builtinDataSourceKeys: string[];
+    builtinLayoutKeys: string[];
+    builtinComponentNames: string[];
 }
 
 /**
@@ -47,6 +57,9 @@ export interface IResultsExtensibilityInput {
  */
 export interface ISearchBoxExtensibilityInput {
     suggestionProviderConfiguration: { key: string; enabled: boolean }[];
+
+    /** Built-in suggestions provider keys, passed in to avoid eager heavy imports. */
+    builtinSuggestionProviderKeys: string[];
 }
 
 /**
@@ -83,12 +96,12 @@ export class ExtensibilityUsageHelper {
     public static async getResultsUsage(input: IResultsExtensibilityInput): Promise<IExtensibilityUsageResult> {
 
         // 1. Custom data source (getCustomDataSources)
-        if (input.dataSourceKey && !this.isBuiltinDataSource(input.dataSourceKey)) {
+        if (input.dataSourceKey && input.builtinDataSourceKeys.indexOf(input.dataSourceKey) === -1) {
             return { usesCustomExtensibility: true, reason: `custom data source '${input.dataSourceKey}'` };
         }
 
         // 2. Custom layout (getCustomLayouts)
-        if (input.selectedLayoutKey && !this.isBuiltinLayout(input.selectedLayoutKey)) {
+        if (input.selectedLayoutKey && input.builtinLayoutKeys.indexOf(input.selectedLayoutKey) === -1) {
             return { usesCustomExtensibility: true, reason: `custom layout '${input.selectedLayoutKey}'` };
         }
 
@@ -115,7 +128,7 @@ export class ExtensibilityUsageHelper {
         }
 
         // 6. Custom web components (getCustomWebComponents) referenced in a template.
-        const oobComponents = this.getBuiltinComponentNames();
+        const oobComponents = new Set((input.builtinComponentNames || []).map(n => (n || "").toLowerCase()));
         const customComponent = this.findCustomComponent(templates, oobComponents);
         if (customComponent) {
             return { usesCustomExtensibility: true, reason: `custom web component '<${customComponent}>'` };
@@ -143,7 +156,7 @@ export class ExtensibilityUsageHelper {
     public static getSearchBoxUsage(input: ISearchBoxExtensibilityInput): IExtensibilityUsageResult {
 
         const enabledCustom = (input.suggestionProviderConfiguration || []).some(
-            p => p && p.enabled && !this.isBuiltinSuggestionProvider(p.key)
+            p => p && p.enabled && (input.builtinSuggestionProviderKeys || []).indexOf(p.key) === -1
         );
 
         if (enabledCustom) {
@@ -168,22 +181,6 @@ export class ExtensibilityUsageHelper {
         } catch {
             // Location may be unavailable in some hosts; diagnostics are best-effort.
         }
-    }
-
-    private static isBuiltinDataSource(key: string): boolean {
-        return Object.keys(BuiltinDataSourceProviderKeys).map(k => BuiltinDataSourceProviderKeys[k]).indexOf(key) !== -1;
-    }
-
-    private static isBuiltinLayout(key: string): boolean {
-        return Object.keys(BuiltinLayoutsKeys).map(k => BuiltinLayoutsKeys[k]).indexOf(key) !== -1;
-    }
-
-    private static isBuiltinSuggestionProvider(key: string): boolean {
-        return Object.keys(BuiltinSuggestionProviderKeys).map(k => BuiltinSuggestionProviderKeys[k]).indexOf(key) !== -1;
-    }
-
-    private static getBuiltinComponentNames(): Set<string> {
-        return new Set(AvailableComponents.BuiltinComponents.map(c => (c.componentName || "").toLowerCase()));
     }
 
     /**

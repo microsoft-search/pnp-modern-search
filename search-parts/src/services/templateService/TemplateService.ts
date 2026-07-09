@@ -139,6 +139,9 @@ export class TemplateService implements ITemplateService {
         this.serviceScope = serviceScope;
 
         serviceScope.whenFinished(async () => {
+            // Wrapped in try/finally so the readiness promise is always settled — even if a step
+            // below throws — and callers awaiting ensureHandlebarsHelpersLoaded() never hang.
+            try {
             // Consume from the root scope
             this.pageContext = serviceScope.consume<PageContext>(
                 PageContext.serviceKey
@@ -273,9 +276,10 @@ export class TemplateService implements ITemplateService {
                 initializeFileTypeIcons(FileTypeIconHelper.getBaseUrl());
                 GlobalSettings.setValue("fileTypeIconsInitialized", true);
             }
-
-            // Signal that the Handlebars namespace and out-of-the-box helpers are ready.
-            this._initResolve();
+            } finally {
+                // Signal that initialization has completed (or failed) so awaiters never hang.
+                this._initResolve();
+            }
         });
     }
 

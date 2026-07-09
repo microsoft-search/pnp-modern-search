@@ -1050,7 +1050,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const enabledCount = librariesConfiguration.filter(c => c.enabled).length;
         if (!forceLoad && enabledCount > 0) {
             const usage = ExtensibilityUsageHelper.getSearchBoxUsage({
-                suggestionProviderConfiguration: this.properties.suggestionProviderConfiguration
+                suggestionProviderConfiguration: this.properties.suggestionProviderConfiguration,
+                builtinSuggestionProviderKeys: AvailableSuggestionProviders.BuiltinSuggestionProviders.map(p => p.key)
             });
             if (!usage.usesCustomExtensibility) {
                 librariesToLoad = [];

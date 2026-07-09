@@ -1182,7 +1182,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     externalTemplateUrl: this.properties.externalTemplateUrl,
                     layoutProperties: this.properties.layoutProperties,
                     resultTypes: this.properties.resultTypes,
-                    templateService: this.templateService
+                    templateService: this.templateService,
+                    builtinDataSourceKeys: AvailableDataSources.BuiltinDataSources.map(d => d.key),
+                    builtinLayoutKeys: AvailableLayouts.BuiltinLayouts.map(l => l.key),
+                    builtinComponentNames: this.availableWebComponentDefinitions.map(c => c.componentName)
                 });
 
                 if (!usage.usesCustomExtensibility) {
@@ -1197,7 +1200,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 }
             } catch (error) {
                 // If usage can't be determined, fall back to loading so nothing custom is missed.
-                Log.warn(LogSource, `Could not evaluate extensibility usage; loading libraries as a fallback. Details: ${error}`, this.context.serviceScope);
+                const details = error instanceof Error ? error.message : String(error);
+                Log.warn(LogSource, `Could not evaluate extensibility usage; loading libraries as a fallback. Details: ${details}`, this.context.serviceScope);
             }
         }
 
