@@ -284,11 +284,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
             const configuredLimit = this.getEffectiveRefinerLimit(filterConfiguration?.maxBuckets ?? defaultRefinerSize);
             const returnedCount = filter.values?.length ?? 0;
-            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
+            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; isEditModeCapApplied?: boolean; };
 
             filterWithLimitInfo.isMaxBucketsExceeded = returnedCount >= configuredLimit;
             filterWithLimitInfo.configuredMaxBuckets = configuredLimit;
             filterWithLimitInfo.returnedValueCount = returnedCount;
+            filterWithLimitInfo.isEditModeCapApplied = this.editMode && (!filterConfiguration?.maxBuckets || filterConfiguration.maxBuckets > EDIT_MODE_REFINER_LIMIT);
 
             if (returnedCount >= configuredLimit) {
                 console.warn(
@@ -302,7 +303,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
     }
 
-    private getEffectiveRefinerLimit(configuredLimit: number = 100): number {
+    private getEffectiveRefinerLimit(configuredLimit: number = EDIT_MODE_REFINER_LIMIT): number {
         return this.editMode ? Math.min(configuredLimit, EDIT_MODE_REFINER_LIMIT) : configuredLimit;
     }
 

@@ -276,11 +276,12 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
             const configuredLimit = this.getEffectiveAggregationLimit(filterConfiguration?.maxBuckets ?? defaultAggregationSize);
             const returnedCount = filter.values?.length ?? 0;
-            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; };
+            const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; isEditModeCapApplied?: boolean; };
 
             filterWithLimitInfo.isMaxBucketsExceeded = returnedCount >= configuredLimit;
             filterWithLimitInfo.configuredMaxBuckets = configuredLimit;
             filterWithLimitInfo.returnedValueCount = returnedCount;
+            filterWithLimitInfo.isEditModeCapApplied = this.editMode && Boolean(filterConfiguration?.maxBuckets && filterConfiguration.maxBuckets > EDIT_MODE_AGGREGATION_LIMIT);
 
             if (returnedCount >= configuredLimit) {
                 console.warn(

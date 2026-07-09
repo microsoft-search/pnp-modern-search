@@ -44,6 +44,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     isMaxBucketsExceeded?: boolean;
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
+    isEditModeCapApplied?: boolean;
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
@@ -981,7 +982,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const filterOperator = selectedFilterIdx === -1 ? filterConfiguration.operator : currentUiFilters[selectedFilterIdx].operator;
         const reachedEditModeRefinerCap = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
             && filterWithLimitInfo.isMaxBucketsExceeded
-            && filterWithLimitInfo.configuredMaxBuckets === 100;
+            && filterWithLimitInfo.isEditModeCapApplied;
         const showLimitExceededWarning = Boolean(filterWithLimitInfo.isMaxBucketsExceeded && filterConfiguration.showLimitExceededWarning);
         const limitExceededWarningText = showLimitExceededWarning
             ? this.formatLocalizedString(
