@@ -1190,13 +1190,13 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 if (!usage.usesCustomExtensibility) {
                     librariesToLoad = [];
-                    const message = `[${LogSource}] Skipping load of ${enabledCount} enabled extensibility library/libraries — not used by this Web Part (${usage.reason}).`;
+                    const message = `Skipping load of ${enabledCount} enabled extensibility library/libraries — not used by this Web Part (${usage.reason}).`;
                     Log.info(LogSource, message, this.context.serviceScope);
-                    ExtensibilityUsageHelper.debugLog(message);
+                    ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
                 } else {
-                    const message = `[${LogSource}] Loading ${enabledCount} enabled extensibility library/libraries — the Web Part uses ${usage.reason}.`;
+                    const message = `Loading ${enabledCount} enabled extensibility library/libraries — the Web Part uses ${usage.reason}.`;
                     Log.verbose(LogSource, message, this.context.serviceScope);
-                    ExtensibilityUsageHelper.debugLog(message);
+                    ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
                 }
             } catch (error) {
                 // If usage can't be determined, fall back to loading so nothing custom is missed.
