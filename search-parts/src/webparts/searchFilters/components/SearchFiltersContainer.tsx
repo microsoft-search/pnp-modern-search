@@ -44,6 +44,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     isMaxBucketsExceeded?: boolean;
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
+    isEditModeCapApplied?: boolean;
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
@@ -52,6 +53,7 @@ interface IFilterInternalWithWarning extends IDataFilterInternal {
     limitExceededWarningText?: string;
     showPeopleTemplateMappingWarning?: boolean;
     peopleTemplateMappingWarningText?: string;
+    warningMessages?: string[];
     warningMarkerTooltipText?: string;
 }
 
@@ -978,10 +980,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } {
         const filterOperator = selectedFilterIdx === -1 ? filterConfiguration.operator : currentUiFilters[selectedFilterIdx].operator;
-        const showLimitExceededWarning = Boolean(filterConfiguration.showLimitExceededWarning && filterWithLimitInfo.isMaxBucketsExceeded);
+        const reachedEditModeRefinerCap = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
+            && filterWithLimitInfo.isMaxBucketsExceeded
+            && filterWithLimitInfo.isEditModeCapApplied;
+        const showLimitExceededWarning = Boolean(filterWithLimitInfo.isMaxBucketsExceeded && filterConfiguration.showLimitExceededWarning);
         const limitExceededWarningText = showLimitExceededWarning
             ? this.formatLocalizedString(
                 webPartStrings.PropertyPane.DataFilterCollection.FilterLimitReachedWarningMessage,
+                [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
+            )
+            : undefined;
+        const editModeRefinerLimitWarningText = reachedEditModeRefinerCap
+            ? this.formatLocalizedString(
+                webPartStrings.PropertyPane.DataFilterCollection.EditModeRefinerLimitReachedWarningMessage,
                 [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
             )
             : undefined;
@@ -992,8 +1003,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             ? (webPartStrings.PropertyPane.DataFilterCollection.PeopleTemplateQUserMappingWarning
                 || 'People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.')
             : undefined;
-        const warningMarkerTooltipText = peopleTemplateMappingWarningText || limitExceededWarningText;
-        const showWarningMarker = Boolean(showPeopleTemplateMappingWarning || showLimitExceededWarning);
+        const warningMessages = [editModeRefinerLimitWarningText, peopleTemplateMappingWarningText].filter(Boolean);
+        const warningMarkerTooltipText = [limitExceededWarningText, ...warningMessages].filter(Boolean).join('\n');
+        const showWarningMarker = Boolean(showPeopleTemplateMappingWarning || showLimitExceededWarning || reachedEditModeRefinerCap);
 
         return {
             displayName: filterConfiguration.displayValue?.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
@@ -1006,6 +1018,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             limitExceededWarningText,
             showPeopleTemplateMappingWarning,
             peopleTemplateMappingWarningText,
+            warningMessages,
             warningMarkerTooltipText,
             selectedOnce: selectionState.selectedOnce,
             selectedTemplate: filterConfiguration.selectedTemplate,
@@ -1965,6 +1978,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         limitExceededWarningText: undefined,
                         showPeopleTemplateMappingWarning: false,
                         peopleTemplateMappingWarningText: undefined,
+                        warningMessages: undefined,
                         warningMarkerTooltipText: undefined,
                         selectedOnce: true,
                         operator: filter.operator,

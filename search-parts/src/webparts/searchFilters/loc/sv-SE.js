@@ -36,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Det maximala antalet värden är 1000",
                 FilterLimitReachedWarningToggle: "Visa varning när gränsen uppnås",
                 FilterLimitReachedWarningMessage: "Resultatgränsen har nåtts — alla matchande objekt visas inte. Förfina sökningen för att begränsa listan.",
+                EditModeRefinerLimitReachedWarningMessage: "I redigeringsläge är filtren begränsade till högst 100 objekt.",
                 PeopleTemplateQUserMappingWarning: "Varning för personmall: värdena ser inte ut som användaridentiteter. Den här egenskapen är troligen inte mappad till en Q_USER-genomsökt egenskap.",
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",

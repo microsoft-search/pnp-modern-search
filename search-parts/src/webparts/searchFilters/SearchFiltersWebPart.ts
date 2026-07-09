@@ -66,6 +66,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     isMaxBucketsExceeded?: boolean;
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
+    isEditModeCapApplied?: boolean;
 }
 
 /**
@@ -1903,6 +1904,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 allMergedFilters[mergedFilterIdx].isMaxBucketsExceeded = Boolean(allMergedFilters[mergedFilterIdx].isMaxBucketsExceeded || filterResult.isMaxBucketsExceeded);
                 allMergedFilters[mergedFilterIdx].configuredMaxBuckets = allMergedFilters[mergedFilterIdx].configuredMaxBuckets ?? filterResult.configuredMaxBuckets;
                 allMergedFilters[mergedFilterIdx].returnedValueCount = Math.max(allMergedFilters[mergedFilterIdx].returnedValueCount ?? 0, filterResult.returnedValueCount ?? 0);
+                allMergedFilters[mergedFilterIdx].isEditModeCapApplied = Boolean(allMergedFilters[mergedFilterIdx].isEditModeCapApplied || filterResult.isEditModeCapApplied);
             }
         });
 

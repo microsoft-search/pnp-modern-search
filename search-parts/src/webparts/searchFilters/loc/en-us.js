@@ -36,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "The maximum number of values is 1000",
                 FilterLimitReachedWarningToggle: "Show warning when limit is reached",
                 FilterLimitReachedWarningMessage: "Result limit reached — not all matching items are shown. Refine your search to narrow the list",
+                EditModeRefinerLimitReachedWarningMessage: "In Edit mode, refiners are limited to a maximum of 100 items.",
                 PeopleTemplateQUserMappingWarning: "People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",

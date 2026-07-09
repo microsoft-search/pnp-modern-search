@@ -145,6 +145,11 @@
                             <div class="filter">
                                 {{#eq filter.selectedTemplate 'ComboBoxFilterTemplate'}}
                                         <div class="filter--name">{{filter.displayName}}{{#if filter.showLimitExceededWarning}} <button type="button" class="filter--limit-warning-button" title="{{filter.limitExceededWarningText}}" data-tooltip="{{filter.limitExceededWarningText}}" aria-label="{{filter.limitExceededWarningText}}" aria-describedby="filter-limit-warning-{{@root.instanceId}}-{{@index}}">i</button><span id="filter-limit-warning-{{@root.instanceId}}-{{@index}}" class="filter--limit-warning-sr-only">{{filter.limitExceededWarningText}}</span>{{/if}}</div>
+                                        {{#if filter.warningMessages.length}}
+                                            {{#each filter.warningMessages}}
+                                                <div class="filter--message">{{this}}</div>
+                                            {{/each}}
+                                        {{/if}}
                                         <div class="filter--value">
                                             <pnp-filtercombobox 
                                                 data-instance-id="{{@root.instanceId}}" 
@@ -163,6 +168,11 @@
                                     <pnp-collapsible data-group-name="{{filter.displayName}}" data-group-storage-key="{{@root.instanceId}}::{{filter.filterName}}" data-show-warning-marker="{{filter.showWarningMarker}}" data-warning-marker-tooltip="{{filter.warningMarkerTooltipText}}" data-default-collapsed="{{#or filter.hasSelectedValues filter.expandByDefault}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
                                             
                                         <template id="collapsible-content" item-class="filter--value">
+                                            {{#if filter.warningMessages.length}}
+                                                {{#each filter.warningMessages}}
+                                                    <div class="filter--message">{{this}}</div>
+                                                {{/each}}
+                                            {{/if}}
                 
                                             {{#eq filter.selectedTemplate 'DateRangeFilterTemplate'}}
                                                 <div class="filter--value">
@@ -216,9 +226,6 @@
                                                     </div>
                                                 {{else}}
                                                     {{#eq filter.selectedTemplate 'PeopleTemplate'}}
-                                                        {{#if filter.showPeopleTemplateMappingWarning}}
-                                                            <div class="filter--message">{{filter.peopleTemplateMappingWarningText}}</div>
-                                                        {{/if}}
                                                         {{#if filter.isMulti}}
                                                             <div class="filter--option">
                                                                 <pnp-filteroperator 
