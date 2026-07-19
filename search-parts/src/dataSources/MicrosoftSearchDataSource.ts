@@ -788,7 +788,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         });
 
         if (!response.ok) {
-            throw new Error(`${response['statusMessage']}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const searchResponse = await response.json() as any;
@@ -1461,7 +1461,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes ?? [EntityType.DriveItem];
 
-        this.properties.fields = this.properties.fields ?? this._defaultDriveItemFields;
+        this.properties.fields = (this.properties.fields ?? this._defaultDriveItemFields)
+            .map((field) => this.normalizeFieldName(field))
+            .filter((field, index, fields) => fields.indexOf(field) === index);
         this.properties.sortProperties = this.properties.sortProperties ?? [];
         this.properties.sortList = this.properties.sortProperties;
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds ?? [];
@@ -1926,24 +1928,18 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             return;
         }
 
-        target[fieldName] = value;
+        const normalizedFieldName = this.normalizeFieldName(fieldName);
+        const aliases = new Set<string>([
+            normalizedFieldName,
+            normalizedFieldName.charAt(0).toUpperCase() + normalizedFieldName.slice(1),
+            normalizedFieldName.charAt(0).toLowerCase() + normalizedFieldName.slice(1)
+        ]);
 
-        const normalizedFieldName = fieldName.trim();
-        const pascalCaseFieldName = normalizedFieldName.charAt(0).toUpperCase() + normalizedFieldName.slice(1);
-        const lowerCaseFieldName = normalizedFieldName.charAt(0).toLowerCase() + normalizedFieldName.slice(1);
-        const camelCaseFieldName = normalizedFieldName.charAt(0).toLowerCase() + normalizedFieldName.slice(1);
-
-        if (!(pascalCaseFieldName in target)) {
-            target[pascalCaseFieldName] = value;
-        }
-
-        if (!(lowerCaseFieldName in target)) {
-            target[lowerCaseFieldName] = value;
-        }
-
-        if (!(camelCaseFieldName in target)) {
-            target[camelCaseFieldName] = value;
-        }
+        aliases.forEach((alias) => {
+            if (alias && !(alias in target)) {
+                target[alias] = value;
+            }
+        });
     }
 
     private buildAuthorOWSUSER(hit: any): void {
