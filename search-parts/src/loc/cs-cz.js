@@ -146,7 +146,7 @@ define([], function () {
                 ContentSourcesFieldDescriptionLabel: "ID připojení definovaných v administračním portálu konektorů Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "např.: 'MyCustomConnectorId'",
                 ExternalMetadataPermissionWarning: "Nepodařilo se načíst metadata konektoru z Microsoft Graph. Udělte oprávnění ExternalConnection.Read.All, aby bylo možné automatické zjišťování. Hodnoty můžete stále zadat ručně.",
-                ExternalMetadataLoadWarning: "Nepodařilo se načíst metadata konektoru z Microsoft Graph. Zkontrolujte připojení a zkuste to znovu. Hodnoty můžete stále zadat ručně.",
+                ExternalMetadataLoadWarning: "Nepodařilo se načíst metadata konektoru z Microsoft Graph. Požadované delegované oprávnění Graph pravděpodobně nebylo uděleno. Hodnoty můžete stále zadat ručně do pole Vybraná pole.",
                 EnableSuggestionLabel: "Povolit návrhy pravopisu",
                 EnableModificationLabel: "Povolit úpravy pravopisu",
                 QueryTemplateFieldLabel: "Šablona dotazu",

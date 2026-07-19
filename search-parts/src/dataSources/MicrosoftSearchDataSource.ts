@@ -664,11 +664,13 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             const hadExternalItem = previousEntityTypes.includes(EntityType.ExternalItem);
             const hasExternalItem = this.properties.entityTypes.includes(EntityType.ExternalItem);
 
+            this._availableFieldsFromResults.clear();
+
             if (hasExternalItem) {
                 // Reset result types
                 this.properties.enableResultTypes = false;
             } else if (hadExternalItem) {
-                this.properties.fields = ["title", "name", "webUrl", "filetype", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department", "contentTypeId", "siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId", "owstaxidmetadataalltagsinfo"];
+                this.properties.fields = [...this._defaultDriveItemFields];
                 this.resetExternalMetadataLoadState();
             }
 

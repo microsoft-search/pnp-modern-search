@@ -146,7 +146,7 @@ define([], function () {
                 ContentSourcesFieldDescriptionLabel: "IDs de conexões definidos no portal de administração de conectores do Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MeuIdDeConectorPersonalizado'",
                 ExternalMetadataPermissionWarning: "Não foi possível carregar os metadados do conector do Microsoft Graph. Conceda ExternalConnection.Read.All para habilitar a descoberta automática. Você ainda pode inserir valores manualmente.",
-                ExternalMetadataLoadWarning: "Não foi possível carregar os metadados do conector do Microsoft Graph. Verifique a conexão e tente novamente. Você ainda pode inserir valores manualmente.",
+                ExternalMetadataLoadWarning: "Não foi possível carregar os metadados do conector do Microsoft Graph. A permissão delegada do Graph necessária talvez não tenha sido concedida. Você ainda pode inserir valores manualmente na caixa Campos selecionados.",
                 EnableSuggestionLabel: "Ativar sugestões de ortografia",
                 EnableModificationLabel: "Ativar modificações de ortografia",
                 QueryTemplateFieldLabel: "Modelo de consulta",

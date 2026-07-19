@@ -146,7 +146,7 @@ define([], function () {
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
                 ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
                 ExternalMetadataPermissionWarning: "Kan connectormetadata niet laden vanuit Microsoft Graph. Verleen ExternalConnection.Read.All om automatische detectie in te schakelen. Je kunt waarden nog steeds handmatig invoeren.",
-                ExternalMetadataLoadWarning: "Kan connectormetadata niet laden vanuit Microsoft Graph. Controleer de verbinding en probeer het opnieuw. Je kunt waarden nog steeds handmatig invoeren.",
+                ExternalMetadataLoadWarning: "Kan connectormetadata niet laden vanuit Microsoft Graph. De vereiste gedelegeerde Graph-machtiging is mogelijk niet verleend. Je kunt waarden nog steeds handmatig invoeren in het vak Geselecteerde velden.",
                 EnableSuggestionLabel: "Spellingsuggesties inschakelen",
                 EnableModificationLabel: "Spellingaanpassingen inschakelen",
                 QueryTemplateFieldLabel: "Query-modifier",
