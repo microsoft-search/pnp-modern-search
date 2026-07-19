@@ -146,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Źródła zawartości",
                 ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Nie można załadować metadanych łącznika z Microsoft Graph. Udziel uprawnienia ExternalConnection.Read.All, aby włączyć automatyczne wykrywanie. Nadal możesz wpisywać wartości ręcznie.",
+                ExternalMetadataLoadWarning: "Nie można załadować metadanych łącznika z Microsoft Graph. Sprawdź połączenie i spróbuj ponownie. Nadal możesz wpisywać wartości ręcznie.",
                 EnableSuggestionLabel: "Włącz sugestie pisowni",
                 EnableModificationLabel: "Włącz modyfikacje pisowni",
                 QueryTemplateFieldLabel: "Modyfikator zapytania",

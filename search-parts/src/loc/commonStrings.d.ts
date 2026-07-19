@@ -143,6 +143,8 @@ declare interface ICommonStrings {
         ContentSourcesFieldLabel: string;
         ContentSourcesFieldDescriptionLabel: string;
         ContentSourcesFieldPlaceholderLabel: string;
+        ExternalMetadataPermissionWarning: string;
+        ExternalMetadataLoadWarning: string;
         EnableTopResultsLabel: string;
         EnableSuggestionLabel: string;
         EnableModificationLabel: string;

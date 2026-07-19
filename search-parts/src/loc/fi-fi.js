@@ -143,6 +143,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Sisältölähteet",
                 ContentSourcesFieldDescriptionLabel: "Microsoft Search yhdistimien hallintaportaalissa määritettyjen yhteyksien ID:t.",
                 ContentSourcesFieldPlaceholderLabel: "esimerkki: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Yhdistimen metatietojen lataaminen Microsoft Graphista epäonnistui. Myönnä ExternalConnection.Read.All, jotta automaattinen tunnistus voidaan ottaa käyttöön. Voit silti syöttää arvot manuaalisesti.",
+                ExternalMetadataLoadWarning: "Yhdistimen metatietojen lataaminen Microsoft Graphista epäonnistui. Tarkista yhteys ja yritä uudelleen. Voit silti syöttää arvot manuaalisesti.",
                 EnableSuggestionLabel: "Salli kirjoitusasun ehdotukset",
                 EnableModificationLabel: "Salli kirjoitusasun muutokset",
                 QueryTemplateFieldLabel: "Kyselytemplaatti",

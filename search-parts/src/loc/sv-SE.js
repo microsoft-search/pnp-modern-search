@@ -146,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Innehållskällor",
                 ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Det gick inte att läsa in anslutningsmetadata från Microsoft Graph. Bevilja ExternalConnection.Read.All för att aktivera automatisk identifiering. Du kan fortfarande ange värden manuellt.",
+                ExternalMetadataLoadWarning: "Det gick inte att läsa in anslutningsmetadata från Microsoft Graph. Kontrollera anslutningen och försök igen. Du kan fortfarande ange värden manuellt.",
                 EnableSuggestionLabel: "Aktivera stavningsförslag",
                 EnableModificationLabel: "Aktivera stavningsändringar",
                 QueryTemplateFieldLabel: "Frågemodifierare",

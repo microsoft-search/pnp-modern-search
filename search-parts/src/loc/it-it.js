@@ -147,6 +147,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Fonti di contenuto",
                 ContentSourcesFieldDescriptionLabel: "ID delle connessioni definite nel portale di amministrazione dei connettori di Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "es: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Impossibile caricare i metadati del connettore da Microsoft Graph. Concedi ExternalConnection.Read.All per abilitare il rilevamento automatico. Puoi comunque inserire i valori manualmente.",
+                ExternalMetadataLoadWarning: "Impossibile caricare i metadati del connettore da Microsoft Graph. Controlla la connessione e riprova. Puoi comunque inserire i valori manualmente.",
                 EnableSuggestionLabel: "Abilita suggerimenti ortografici",
                 EnableModificationLabel: "Abilita modifiche ortografiche",
                 QueryTemplateFieldLabel: "Modello di query",

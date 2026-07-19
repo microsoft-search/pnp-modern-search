@@ -1,9 +1,10 @@
 import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IDataSourceData, SortFieldDirection } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
-import { MSGraphClientFactory } from "@microsoft/sp-http";
+import { MSGraphClientFactory, SPHttpClient } from "@microsoft/sp-http";
 import { TokenService } from "../services/tokenService/TokenService";
 import { ServiceScope } from '@microsoft/sp-core-library';
+import { PageContext } from '@microsoft/sp-page-context';
 import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField } from '@fluentui/react';
 import { PropertyPaneAsyncCombo } from "../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo";
 import * as commonStrings from 'CommonStrings';
@@ -121,8 +122,17 @@ export interface IMicrosoftSearchDataSourceProperties {
 export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDataSourceProperties> {
 
     private _tokenService: ITokenService;
+    private _spHttpClient: SPHttpClient;
+    private _pageContext: PageContext;
     private _propertyPaneWebPartInformation: any = null;
     private _availableFields: IComboBoxOption[] = [];
+    private _availableSharePointSchemaFields: IComboBoxOption[] = [];
+    private _availableExternalConnectionIds: IComboBoxOption[] = [];
+    private readonly _availableFieldsFromResults = new Set<string>();
+    private _externalConnectionsLoadPermissionError = false;
+    private _externalConnectionsLoadGenericError = false;
+    private _externalSchemaLoadPermissionError = false;
+    private _externalSchemaLoadGenericError = false;
     private _microsoftSearchUrl: string;
     private _sortableFields: IComboBoxOption[] = SortableFields.map(field => {
         return {
@@ -201,6 +211,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
     private _propertyFieldCollectionData: any = null;
     private _customCollectionFieldType: any = null;
+    private readonly _defaultDriveItemFields: string[] = ["title", "name", "webUrl", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department", "contentTypeId", "siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId", "owstaxidmetadataalltagsinfo"];
     props: any;
 
     public constructor(serviceScope: ServiceScope) {
@@ -208,6 +219,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         serviceScope.whenFinished(() => {
             this._tokenService = serviceScope.consume<ITokenService>(TokenService.ServiceKey);
+            this._spHttpClient = serviceScope.consume<SPHttpClient>(SPHttpClient.serviceKey);
+            this._pageContext = serviceScope.consume<PageContext>(PageContext.serviceKey);
         });
     }
 
@@ -364,6 +377,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                 description: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldDescription,
                 label: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPropertiesFieldLabel,
                 placeholder: commonStrings.DataSources.MicrosoftSearch.SelectedFieldsPlaceholderLabel,
+                onLoadOptions: this.getAvailableFields.bind(this),
                 searchAsYouType: false,
                 defaultSelectedKeys: this.properties.fields,
                 onPropertyChange: this.onCustomPropertyUpdate.bind(this),
@@ -555,17 +569,30 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         if (this.properties.entityTypes.includes(EntityType.ExternalItem)) {
             contentSourceConnectionIdsFields.push(
                 new PropertyPaneAsyncCombo('dataSourceProperties.contentSourceConnectionIds', {
-                    availableOptions: [],
+                    availableOptions: this._availableExternalConnectionIds,
                     allowMultiSelect: true,
                     allowFreeform: true,
                     description: commonStrings.DataSources.MicrosoftSearch.ContentSourcesFieldDescriptionLabel,
                     label: commonStrings.DataSources.MicrosoftSearch.ContentSourcesFieldLabel,
                     placeholder: commonStrings.DataSources.MicrosoftSearch.ContentSourcesFieldPlaceholderLabel,
+                    onLoadOptions: this.getAvailableExternalConnectionIds.bind(this),
                     searchAsYouType: false,
                     defaultSelectedKeys: this.properties.contentSourceConnectionIds,
-                    onPropertyChange: this.onCustomPropertyUpdate.bind(this)
+                    onPropertyChange: this.onCustomPropertyUpdate.bind(this),
+                    onUpdateOptions: (options: IComboBoxOption[]) => {
+                        this._availableExternalConnectionIds = options;
+                    }
                 })
             );
+
+            const metadataWarningMessage = this.getExternalMetadataWarningMessage();
+            if (metadataWarningMessage) {
+                contentSourceConnectionIdsFields.push(
+                    PropertyPaneLabel('externalMetadataWarning', {
+                        text: metadataWarningMessage
+                    })
+                );
+            }
         }
 
         if (this.properties.entityTypes.includes(EntityType.Message) && this.properties.entityTypes.length === 1) {
@@ -632,11 +659,17 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
 
         if (propertyPath.localeCompare('dataSourceProperties.entityTypes') === 0) {
+            const previousEntityTypes = [...this.properties.entityTypes];
             this.properties.entityTypes = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as EntityType; });
+            const hadExternalItem = previousEntityTypes.includes(EntityType.ExternalItem);
+            const hasExternalItem = this.properties.entityTypes.includes(EntityType.ExternalItem);
 
-            if (this.properties.entityTypes.includes(EntityType.ExternalItem)) {
+            if (hasExternalItem) {
                 // Reset result types
                 this.properties.enableResultTypes = false;
+            } else if (hadExternalItem) {
+                this.properties.fields = ["title", "name", "webUrl", "filetype", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department", "contentTypeId", "siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId", "owstaxidmetadataalltagsinfo"];
+                this.resetExternalMetadataLoadState();
             }
 
             // Reset and set appropriate fields for Bookmark, Acronym, or Person
@@ -672,9 +705,310 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         if (propertyPath.localeCompare('dataSourceProperties.contentSourceConnectionIds') === 0) {
             this.properties.contentSourceConnectionIds = (cloneDeep(newValue) as IComboBoxOption[]).map(v => { return v.key as string; });
+
+            // Force schema fields to be recomputed when selected external connections change.
+            this._availableFields = [];
             this.context.propertyPane.refresh();
             this.render();
         }
+    }
+
+    private async getAvailableFields(): Promise<IComboBoxOption[]> {
+        const defaultFields = this.getDefaultFieldOptions();
+        const resultFields = this.getResultFieldOptions();
+        const sharePointSchemaFields = await this.getSharePointSchemaFieldOptions();
+
+        if (!this.properties.entityTypes.includes(EntityType.ExternalItem) || this.properties.contentSourceConnectionIds.length === 0) {
+            // Prefer live Microsoft Search payload fields first, then keep defaults,
+            // and finally append schema candidates for broader discoverability.
+            return this.mergeFieldOptions(resultFields, defaultFields, sharePointSchemaFields);
+        }
+
+        const schemaOptions = await this.getExternalConnectionSchemaFieldOptions(this.properties.contentSourceConnectionIds);
+        return this.mergeFieldOptions(schemaOptions, resultFields, defaultFields, sharePointSchemaFields);
+    }
+
+    private async getSharePointSchemaFieldOptions(): Promise<IComboBoxOption[]> {
+        if (!this.hasSharePointSchemaEntityType()) {
+            return [];
+        }
+
+        if (this._availableSharePointSchemaFields.length > 0) {
+            return this._availableSharePointSchemaFields;
+        }
+
+        try {
+            const managedProperties = await this.getAvailableSharePointManagedProperties();
+            this._availableSharePointSchemaFields = managedProperties
+                .map((managedProperty) => ({
+                    key: managedProperty.name,
+                    text: managedProperty.name
+                } as IComboBoxOption))
+                .filter((option) => option.key);
+
+            return this._availableSharePointSchemaFields;
+        } catch (error) {
+            console.warn('[PnP Modern Search][Microsoft Search] Unable to load SharePoint-backed schema fields from SharePoint search schema.', error);
+            return [];
+        }
+    }
+
+    private hasSharePointSchemaEntityType(): boolean {
+        return this.properties.entityTypes.some((entityType) =>
+            entityType === EntityType.Drive ||
+            entityType === EntityType.DriveItem ||
+            entityType === EntityType.List ||
+            entityType === EntityType.ListItem ||
+            entityType === EntityType.Site
+        );
+    }
+
+    private async getAvailableSharePointManagedProperties(): Promise<Array<{ name: string }>> {
+        const searchEndpointUrl = `${this._pageContext.web.absoluteUrl}/_api/search/postquery`;
+        const searchQuery = {
+            Querytext: '*',
+            Refiners: 'ManagedProperties(filter=50000/0/*,deephits=50000,sort=name/ascending)',
+            RowLimit: 1,
+            SortList: [
+                {
+                    Property: '[DocId]',
+                    Direction: 0
+                }
+            ]
+        };
+
+        const response = await this._spHttpClient.post(searchEndpointUrl, SPHttpClient.configurations.v1, {
+            body: this.buildSharePointSearchRequestPayload(searchQuery),
+            headers: {
+                'odata-version': '3.0',
+                'accept': 'application/json;odata=nometadata'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${response['statusMessage']}`);
+        }
+
+        const searchResponse = await response.json() as any;
+        const refiners = searchResponse?.PrimaryQueryResult?.RefinementResults?.Refiners || [];
+        const managedProperties: Array<{ name: string }> = [];
+
+        refiners.forEach((refiner) => {
+            (refiner?.Entries || []).forEach((entry) => {
+                if (entry?.RefinementName) {
+                    managedProperties.push({
+                        name: entry.RefinementName
+                    });
+                }
+            });
+        });
+
+        return managedProperties;
+    }
+
+    private buildSharePointSearchRequestPayload(searchQuery: any): string {
+        const queryPayload = cloneDeep(searchQuery);
+        queryPayload.HitHighlightedProperties = this.fixSharePointSearchArrayProperty(queryPayload.HitHighlightedProperties);
+        queryPayload.Properties = this.fixSharePointSearchArrayProperty(queryPayload.Properties);
+        queryPayload.RefinementFilters = this.fixSharePointSearchArrayProperty(queryPayload.RefinementFilters);
+        queryPayload.ReorderingRules = this.fixSharePointSearchArrayProperty(queryPayload.ReorderingRules);
+        queryPayload.SelectProperties = this.fixSharePointSearchArrayProperty(queryPayload.SelectProperties);
+        queryPayload.SortList = this.fixSharePointSearchArrayProperty(queryPayload.SortList);
+
+        return JSON.stringify({
+            request: {
+                '__metadata': {
+                    'type': 'Microsoft.Office.Server.Search.REST.SearchRequest'
+                },
+                ...queryPayload
+            }
+        });
+    }
+
+    private fixSharePointSearchArrayProperty(property: any): { results: any[] } {
+        if (property == null) {
+            return { results: [] };
+        }
+
+        return { results: Array.isArray(property) ? property : [property] };
+    }
+
+    private getDefaultFieldOptions(): IComboBoxOption[] {
+        return this.properties.fields
+            .filter(Boolean)
+            .map((field) => ({
+                key: field,
+                text: field
+            } as IComboBoxOption));
+    }
+
+    private getResultFieldOptions(): IComboBoxOption[] {
+        return Array.from(this._availableFieldsFromResults)
+            .map((field) => this.normalizeFieldName(field))
+            .map((field) => ({
+            key: field,
+            text: field
+        } as IComboBoxOption));
+    }
+
+    private mergeFieldOptions(...optionGroups: IComboBoxOption[][]): IComboBoxOption[] {
+        const merged = new Map<string, IComboBoxOption>();
+
+        optionGroups.filter(Boolean).forEach((options) => {
+            options.forEach((option) => {
+                if (option?.key !== undefined && option?.key !== null) {
+                    const normalizedKey = this.normalizeFieldName(option.key.toString());
+                    merged.set(normalizedKey, {
+                        key: normalizedKey,
+                        text: normalizedKey
+                    });
+                }
+            });
+        });
+
+        return Array.from(merged.values());
+    }
+
+    private async getAvailableExternalConnectionIds(): Promise<IComboBoxOption[]> {
+        const selectedConnectionOptions = (this.properties.contentSourceConnectionIds || []).map((id) => ({
+            key: id,
+            text: id
+        } as IComboBoxOption));
+
+        try {
+            const msGraphClientFactory: MSGraphClientFactory = this.serviceScope.consume(MSGraphClientFactory.serviceKey);
+            const msGraphClient = await msGraphClientFactory.getClient('3');
+
+            let nextLink = '/external/connections?$top=200';
+            const connections: IComboBoxOption[] = [];
+
+            while (nextLink) {
+                const response = await msGraphClient.api(nextLink).get() as { value?: Array<{ id?: string; name?: string; description?: string }>; '@odata.nextLink'?: string; };
+
+                (response.value || []).forEach((connection) => {
+                    if (connection.id) {
+                        const connectionName = connection.name || connection.description || connection.id;
+                        connections.push({
+                            key: connection.id,
+                            text: connectionName
+                        });
+                    }
+                });
+
+                nextLink = response['@odata.nextLink'] || null;
+            }
+
+            const deduped = new Map<string, IComboBoxOption>();
+            [...selectedConnectionOptions, ...connections].forEach((option) => {
+                deduped.set(option.key.toString(), option);
+            });
+
+            this.setExternalMetadataLoadState('connections', 'none');
+
+            return Array.from(deduped.values());
+        } catch (error) {
+            // Expected until ExternalConnection.Read.All has been granted or when Graph external
+            // connections are not available in the tenant. Keep manual/freeform entry working.
+            const statusCode = this.getGraphErrorStatusCode(error);
+            this.setExternalMetadataLoadState('connections', statusCode === 401 || statusCode === 403 ? 'permission' : 'generic');
+            console.warn('[PnP Modern Search][Microsoft Search] Unable to load external connections from Microsoft Graph.', error);
+            return selectedConnectionOptions;
+        }
+    }
+
+    private async getExternalConnectionSchemaFieldOptions(connectionIds: string[]): Promise<IComboBoxOption[]> {
+        const schemaFields = new Map<string, IComboBoxOption>();
+
+        try {
+            const msGraphClientFactory: MSGraphClientFactory = this.serviceScope.consume(MSGraphClientFactory.serviceKey);
+            const msGraphClient = await msGraphClientFactory.getClient('3');
+
+            for (const connectionId of connectionIds) {
+                const response = await msGraphClient.api(`/external/connections/${connectionId}/schema`).get() as { properties?: Array<{ name?: string }>; };
+
+                (response.properties || []).forEach((property) => {
+                    if (property.name) {
+                        schemaFields.set(property.name, {
+                            key: property.name,
+                            text: property.name
+                        });
+                    }
+                });
+            }
+
+            this.setExternalMetadataLoadState('schema', 'none');
+        } catch (error) {
+            // Keep default fields available when permission isn't granted yet.
+            const statusCode = this.getGraphErrorStatusCode(error);
+            this.setExternalMetadataLoadState('schema', statusCode === 401 || statusCode === 403 ? 'permission' : 'generic');
+            console.warn('[PnP Modern Search][Microsoft Search] Unable to load external connection schema properties from Microsoft Graph.', error);
+        }
+
+        return Array.from(schemaFields.values());
+    }
+
+    private getGraphErrorStatusCode(error: any): number | undefined {
+        const status = error?.statusCode ?? error?.status ?? error?.response?.status;
+
+        if (typeof status === 'number') {
+            return status;
+        }
+
+        if (typeof status === 'string') {
+            const parsedStatus = Number(status);
+            return Number.isNaN(parsedStatus) ? undefined : parsedStatus;
+        }
+
+        return undefined;
+    }
+
+    private setExternalMetadataLoadState(scope: 'connections' | 'schema', state: 'none' | 'permission' | 'generic'): void {
+        let hasChanged = false;
+
+        if (scope === 'connections') {
+            hasChanged = this._externalConnectionsLoadPermissionError !== (state === 'permission')
+                || this._externalConnectionsLoadGenericError !== (state === 'generic');
+
+            this._externalConnectionsLoadPermissionError = state === 'permission';
+            this._externalConnectionsLoadGenericError = state === 'generic';
+        } else {
+            hasChanged = this._externalSchemaLoadPermissionError !== (state === 'permission')
+                || this._externalSchemaLoadGenericError !== (state === 'generic');
+
+            this._externalSchemaLoadPermissionError = state === 'permission';
+            this._externalSchemaLoadGenericError = state === 'generic';
+        }
+
+        if (hasChanged) {
+            this.context.propertyPane.refresh();
+        }
+    }
+
+    private resetExternalMetadataLoadState(): void {
+        this._externalConnectionsLoadPermissionError = false;
+        this._externalConnectionsLoadGenericError = false;
+        this._externalSchemaLoadPermissionError = false;
+        this._externalSchemaLoadGenericError = false;
+    }
+
+    private getExternalMetadataWarningMessage(): string | undefined {
+        if (this._externalConnectionsLoadPermissionError) {
+            return commonStrings.DataSources.MicrosoftSearch.ExternalMetadataPermissionWarning;
+        }
+
+        if (this._externalConnectionsLoadGenericError) {
+            return commonStrings.DataSources.MicrosoftSearch.ExternalMetadataLoadWarning;
+        }
+
+        // Schema metadata retrieval can still fail for specific connections even when
+        // the connection list itself loaded successfully. If users already have selected
+        // fields configured, the warning is not actionable and creates noise.
+        const hasSelectedFields = (this.properties.fields || []).some(Boolean);
+        if (!hasSelectedFields && (this._externalSchemaLoadPermissionError || this._externalSchemaLoadGenericError)) {
+            return commonStrings.DataSources.MicrosoftSearch.ExternalMetadataLoadWarning;
+        }
+
+        return undefined;
     }
 
     public getTemplateSlots(): ITemplateSlot[] {
@@ -1125,9 +1459,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private initProperties(): void {
         this.properties.entityTypes = this.properties.entityTypes ?? [EntityType.DriveItem];
 
-        const CommonFields = ["title", "name", "webUrl", "filetype", "fileType", "createdBy", "createdDateTime", "lastModifiedDateTime", "parentReference", "size", "description", "file", "folder", "subject", "bodyPreview", "replyTo", "from", "sender", "start", "end", "displayName", "givenName", "surname", "userPrincipalName", "mail", "phones", "department", "contentTypeId", "siteId", "webId", "contentClass", "siteTitle", "sitePath", "AuthorOWSUSER", "listId", "listItemId", "listItemUniqueId", "driveId", "owstaxidmetadataalltagsinfo"];
-
-        this.properties.fields = this.properties.fields ?? CommonFields;
+        this.properties.fields = this.properties.fields ?? this._defaultDriveItemFields;
         this.properties.sortProperties = this.properties.sortProperties ?? [];
         this.properties.sortList = this.properties.sortProperties;
         this.properties.contentSourceConnectionIds = this.properties.contentSourceConnectionIds ?? [];
@@ -1421,8 +1753,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private applyResultTemplateOptions(searchRequest: IMicrosoftSearchRequest): void {
-        const supportedTypes = [EntityType.ExternalItem, EntityType.ListItem];
-        if (this.properties.enableResultTypes && this.properties.entityTypes.every(e => supportedTypes.includes(e))) {
+        const supportedTypes = new Set([EntityType.ExternalItem, EntityType.ListItem]);
+        if (this.properties.enableResultTypes && this.properties.entityTypes.every(e => supportedTypes.has(e))) {
             searchRequest.resultTemplateOptions = {
                 enableResultTemplate: true
             };
@@ -1441,6 +1773,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             filters: []
         };
         let aggregationResults: IDataFilterResult[] = [];
+        this._availableFieldsFromResults.clear();
 
         // Get an instance to the MSGraphClient
         const msGraphClientFactory: MSGraphClientFactory = this.serviceScope.consume(MSGraphClientFactory.serviceKey);
@@ -1492,11 +1825,64 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private processSearchHit(hit: any): any {
+        this.collectAvailableFields(hit);
         this.flattenResourceProperties(hit);
         this.flattenListItemFields(hit);
         this.buildAuthorOWSUSER(hit);
         this.createFileTypeAlias(hit);
         return hit;
+    }
+
+    private collectAvailableFields(hit: any): void {
+        if (this.isExternalItemHit(hit)) {
+            return;
+        }
+
+        const sources = this.getAvailableFieldSources(hit);
+
+        sources.forEach((source) => {
+            if (!source || typeof source !== 'object') {
+                return;
+            }
+
+            Object.keys(source).forEach((field) => {
+                if (field !== '@odata.type' && field !== 'listItem' && field !== 'fields' && field !== 'properties') {
+                    this._availableFieldsFromResults.add(this.normalizeFieldName(field));
+                }
+            });
+        });
+    }
+
+    private isExternalItemHit(hit: any): boolean {
+        const resourceType = hit?.resource?.['@odata.type'];
+        return typeof resourceType === 'string' && resourceType.toLowerCase().includes('externalitem');
+    }
+
+    private getAvailableFieldSources(hit: any): any[] {
+        const resource = hit?.resource;
+        const sources: any[] = [];
+
+        if (resource?.listItem?.fields) {
+            sources.push(resource.listItem.fields);
+        }
+
+        if (resource?.fields) {
+            sources.push(resource.fields);
+        } else if (!resource?.properties && resource) {
+            // Site, Drive, List and similar entities expose their values directly on resource.
+            sources.push(resource);
+        }
+
+        return sources;
+    }
+
+    private normalizeFieldName(fieldName: string): string {
+        const normalized = (fieldName || '').trim();
+        if (normalized.toLowerCase() === 'filetype') {
+            return 'fileType';
+        }
+
+        return normalized;
     }
 
     private flattenResourceProperties(hit: any): void {
@@ -1511,14 +1897,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
         if (propertiesFieldName) {
             Object.keys(hit.resource[propertiesFieldName]).forEach(field => {
-                hit[field] = hit.resource[propertiesFieldName][field];
+                this.copyFieldWithAliases(hit, field, hit.resource[propertiesFieldName][field]);
             });
         } else {
             // For entity types without properties or fields (bookmark, acronym, person, etc.), 
             // flatten root properties from resource directly
             Object.keys(hit.resource).forEach(field => {
                 if (field !== '@odata.type' && !(field in hit)) {
-                    hit[field] = hit.resource[field];
+                    this.copyFieldWithAliases(hit, field, hit.resource[field]);
                 }
             });
         }
@@ -1528,8 +1914,33 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         // Also flatten listItem.fields for driveItem entities backed by SharePoint
         if (hit.resource?.listItem?.fields) {
             Object.keys(hit.resource.listItem.fields).forEach(field => {
-                hit[field] = hit.resource.listItem.fields[field];
+                this.copyFieldWithAliases(hit, field, hit.resource.listItem.fields[field]);
             });
+        }
+    }
+
+    private copyFieldWithAliases(target: any, fieldName: string, value: any): void {
+        if (!target || !fieldName) {
+            return;
+        }
+
+        target[fieldName] = value;
+
+        const normalizedFieldName = fieldName.trim();
+        const pascalCaseFieldName = normalizedFieldName.charAt(0).toUpperCase() + normalizedFieldName.slice(1);
+        const lowerCaseFieldName = normalizedFieldName.charAt(0).toLowerCase() + normalizedFieldName.slice(1);
+        const camelCaseFieldName = normalizedFieldName.charAt(0).toLowerCase() + normalizedFieldName.slice(1);
+
+        if (!(pascalCaseFieldName in target)) {
+            target[pascalCaseFieldName] = value;
+        }
+
+        if (!(lowerCaseFieldName in target)) {
+            target[lowerCaseFieldName] = value;
+        }
+
+        if (!(camelCaseFieldName in target)) {
+            target[camelCaseFieldName] = value;
         }
     }
 

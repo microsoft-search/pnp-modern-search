@@ -145,6 +145,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Content sources",
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Could not load connector metadata from Microsoft Graph. Grant ExternalConnection.Read.All to enable automatic discovery. You can still enter values manually.",
+                ExternalMetadataLoadWarning: "Could not load connector metadata from Microsoft Graph. The required delegated Graph permission might not be granted. You can still enter values manually in the Selected Fields box.",
                 EnableSuggestionLabel: "Enable spelling suggestions",
                 EnableModificationLabel: "Enable spelling modifications",
                 QueryTemplateFieldLabel: "Query template",
