@@ -145,6 +145,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Sources du contenu",
                 ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
                 ContentSourcesFieldPlaceholderLabel: "Exemple: « MyCustomConnectorID » ",
+                ExternalMetadataPermissionWarning: "Impossible de charger les métadonnées du connecteur depuis Microsoft Graph. Accordez ExternalConnection.Read.All pour activer la découverte automatique. Vous pouvez toujours saisir les valeurs manuellement.",
+                ExternalMetadataLoadWarning: "Impossible de charger les métadonnées du connecteur depuis Microsoft Graph. L’autorisation Graph déléguée requise n’a peut-être pas été accordée. Vous pouvez toujours saisir les valeurs manuellement dans la zone Champs sélectionnés.",
                 EnableSuggestionLabel: "Activer les suggestions orthographiques",
                 EnableModificationLabel: "Activer les modifications orthographiques",
                 QueryTemplateFieldLabel: "Modèle de requête",

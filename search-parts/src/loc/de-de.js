@@ -145,6 +145,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Inhaltsquellen",
                 ContentSourcesFieldDescriptionLabel: "IDs von Verbindungen, die im Verwaltungsportal von Microsoft Search Connectors definiert sind.",
                 ContentSourcesFieldPlaceholderLabel: "Bspw.: 'MeineAngepassteVerbindungsId'",
+                ExternalMetadataPermissionWarning: "Die Connectormetadaten konnten nicht aus Microsoft Graph geladen werden. Erteilen Sie ExternalConnection.Read.All, um die automatische Ermittlung zu aktivieren. Sie können Werte weiterhin manuell eingeben.",
+                ExternalMetadataLoadWarning: "Die Connectormetadaten konnten nicht aus Microsoft Graph geladen werden. Die erforderliche delegierte Graph-Berechtigung wurde möglicherweise nicht erteilt. Sie können Werte weiterhin manuell im Feld Ausgewählte Felder eingeben.",
                 EnableSuggestionLabel: "Rechtschreibevorschläge aktivieren",
                 EnableModificationLabel: "Rechtschreibemodifikationen aktivieren",
                 QueryTemplateFieldLabel: "Query Vorlage",

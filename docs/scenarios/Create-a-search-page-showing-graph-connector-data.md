@@ -35,7 +35,9 @@ In most cases we are using SharePoint as the source of our data. But in this cas
 
 Set the Entity type to External Items and set the Content sources to the name of the Graph Connector you are using. In this case we are using the AzureSqlConnector3.
 
-Unfortunately we are unable to read the Properties from the Graph Connector, so you will have to type ( or copy and paste) from the schema.
+If you want the solution to read Graph connector definitions and schema metadata, approve the Microsoft Graph permission _ExternalConnection.Read.All_ for the package in addition to _ExternalItem.Read.All_.
+
+With _ExternalConnection.Read.All_ approved, the Content sources and schema properties can be loaded automatically from Microsoft Graph in the property pane. Without this permission, you can still type or paste values manually.
 
 ![SelectedProperties](../scenarios/assets/Create-a-search-page-showing-graph-connector-data/SelectedProperties.png "Selected Properties")
 

@@ -50,6 +50,10 @@
             },
             {
                 "resource": "Microsoft Graph",
+                "scope": "ExternalConnection.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
                 "scope": "Chat.Read"
             },
             {

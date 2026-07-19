@@ -145,6 +145,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Innholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID for de tilkoblinger som er definert i admin-portalen for Microsoft Search Connectors",
                 ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Kunne ikke laste inn tilkoblingsmetadata fra Microsoft Graph. Gi ExternalConnection.Read.All for å aktivere automatisk oppdagelse. Du kan fortsatt skrive inn verdier manuelt.",
+                ExternalMetadataLoadWarning: "Kunne ikke laste inn tilkoblingsmetadata fra Microsoft Graph. Den nødvendige delegerte Graph-tillatelsen er kanskje ikke gitt. Du kan fortsatt skrive inn verdier manuelt i boksen Valgte felt.",
                 EnableSuggestionLabel: "Aktiver staveforslag",
                 EnableModificationLabel: "Aktiver stavemåtendringer",
                 QueryTemplateFieldLabel: "Forespørselsmal",

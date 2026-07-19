@@ -471,9 +471,8 @@ export class DetailsListComponent extends React.Component<
                 }
               } else {
                 // A field has been selected
-                value = ObjectHelper.byPath(item, column.value);
+                value = this._resolveColumnValue(item, column.value);
               }
-
               const tempColumnValueAsHtml = new DOMParser().parseFromString(
                 `<span>${value ?? ""}</span>`,
                 "text/html"
@@ -1109,6 +1108,33 @@ export class DetailsListComponent extends React.Component<
     }
 
     return groups;
+  }
+
+  private _resolveColumnValue(item: any, columnValue: string): any {
+    if (!columnValue) {
+      return undefined;
+    }
+
+    const exactValue = ObjectHelper.byPath(item, columnValue);
+    if (this._hasRenderableValue(exactValue)) {
+      return exactValue;
+    }
+
+    const externalItemValue = this._resolveExternalItemFieldValue(item, columnValue);
+    if (this._hasRenderableValue(externalItemValue)) {
+      return externalItemValue;
+    }
+  }
+
+  private _resolveExternalItemFieldValue(item: any, fieldName: string): any {
+    return ObjectHelper.byPath(item, `resource.fields.${fieldName}`)
+      ?? ObjectHelper.byPath(item, `resource.properties.${fieldName}`)
+      ?? ObjectHelper.byPath(item, `resource.${fieldName}`)
+      ?? ObjectHelper.byPath(item, fieldName);
+  }
+
+  private _hasRenderableValue(value: any): boolean {
+    return value !== undefined && value !== null && value !== '';
   }
 
   private _processHandleBarsExprValue(columnValue: string, item: any): string {
