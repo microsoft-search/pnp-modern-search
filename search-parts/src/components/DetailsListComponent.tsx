@@ -616,9 +616,9 @@ export class DetailsListComponent extends React.Component<
 
       return (
         <Fabric>
-          <div 
-            style={{ 
-              height: containerHeight, 
+          <div
+            style={{
+              height: containerHeight,
               position: "relative"
             }}
           >
@@ -1056,6 +1056,7 @@ export class DetailsListComponent extends React.Component<
       }
     );
   };
+
 
   private _buildGroups(
     items: any[],

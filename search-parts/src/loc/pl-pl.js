@@ -247,6 +247,10 @@ define([], function () {
                 EnableStickyHeader: "Włącz lepką nagłówkę",
                 StickyListViewHeight: "Wysokość listy ze szczegółami (px)",
                 EnableDownload: "Włącz pobieranie",
+                EnableDetails: "Włącz szczegóły",
+                DetailsButtonLabel: "Szczegóły",
+                DetailsPanelHeader: "Szczegóły",
+                DetailsUnavailableLabel: "Szczegóły są niedostępne",
                 UseAlternatingBackgroundColor: "Użyj naprzemiennego koloru tła"
             },
             Cards: {

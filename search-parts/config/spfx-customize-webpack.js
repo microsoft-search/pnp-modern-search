@@ -17,6 +17,20 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 module.exports = function (webpackConfig, taskSession, heftConfiguration, webpack) {
     const projectRoot = heftConfiguration.buildFolderPath;
 
+    if (!taskSession.parameters.production) {
+        webpackConfig.devServer = {
+            ...webpackConfig.devServer,
+            hot: false,
+            liveReload: false,
+            client: false,
+            webSocketServer: false,
+        };
+
+        webpackConfig.plugins = (webpackConfig.plugins || []).filter((plugin) => {
+            return plugin?.constructor?.name !== 'HotModuleReplacementPlugin';
+        });
+    }
+
     // ─── resolve.alias ─────────────────────────────────────────────────────────
     webpackConfig.resolve = webpackConfig.resolve || {};
     webpackConfig.resolve.alias = {

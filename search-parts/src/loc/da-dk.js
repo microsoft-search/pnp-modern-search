@@ -246,6 +246,10 @@ define([], function () {
                 EnableStickyHeader: "Aktivér fastgjort header",
                 StickyHeaderListViewHeight: "Listevisningshøjde (px)",
                 EnableDownload: "Aktivér download",
+                EnableDetails: "Aktivér detaljer",
+                DetailsButtonLabel: "Detaljer",
+                DetailsPanelHeader: "Detaljer",
+                DetailsUnavailableLabel: "Detaljer er ikke tilgængelige",
                 UseAlternatingBackgroundColor: "Vis skiftende baggrundsfarve"
             },
             Cards: {

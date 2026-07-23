@@ -244,6 +244,10 @@ define([], function () {
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
                 EnableDownload: "Povolit stažení",
+                EnableDetails: "Povolit podrobnosti",
+                DetailsButtonLabel: "Podrobnosti",
+                DetailsPanelHeader: "Podrobnosti",
+                DetailsUnavailableLabel: "Podrobnosti nejsou k dispozici",
                 UseAlternatingBackgroundColor: "Použijte střídající se barvu pozadí"
             },
             Cards: {

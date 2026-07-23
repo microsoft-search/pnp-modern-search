@@ -246,6 +246,10 @@ define([], function () {
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
                 StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
                 EnableDownload: "Download aktivieren",
+                EnableDetails: "Details aktivieren",
+                DetailsButtonLabel: "Details",
+                DetailsPanelHeader: "Details",
+                DetailsUnavailableLabel: "Details sind nicht verfügbar",
                 UseAlternatingBackgroundColor: "Verwenden Sie abwechselnde Hintergrundfarben"
             },
             Cards: {

@@ -245,6 +245,10 @@ declare interface ICommonStrings {
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
         EnableDownload: string;
+        EnableDetails: string;
+        DetailsButtonLabel: string;
+        DetailsPanelHeader: string;
+        DetailsUnavailableLabel: string;
         UseAlternatingBackgroundColor:string;
         ColumnDescriptionFieldLabel: string;
       };

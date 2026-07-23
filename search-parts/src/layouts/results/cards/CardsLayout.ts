@@ -43,6 +43,11 @@ export interface ICardsLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+
+    /**
+    * If the details action should be visible
+     */
+    enableDetails?: boolean;
 }
 
 export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
@@ -112,6 +117,8 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
         this.properties.enablePreview = this.properties.enablePreview ?? false; // Watch out performance issues if too many items displayed
         this.properties.preferedCardNumberPerRow = this.properties.preferedCardNumberPerRow ?? 3;
         this.properties.columnSizePercentage = this.properties.columnSizePercentage ?? 33;
+        const legacyEnableDetails = (this.properties as { enableLiveUpdate?: boolean }).enableLiveUpdate;
+        this.properties.enableDetails = this.properties.enableDetails ?? legacyEnableDetails ?? false;
 
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-results-cards-layout' */
@@ -229,6 +236,10 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
                 step: 1,
                 showValue: true,
                 value: this.properties.preferedCardNumberPerRow,
+            }),
+            PropertyPaneToggle('layoutProperties.enableDetails', {
+                label: strings.Layouts.DetailsList.EnableDetails,
+                checked: this.properties.enableDetails
             }),
             PropertyPaneToggle('layoutProperties.enableDownload', {
                 label: strings.Layouts.DetailsList.EnableDownload,

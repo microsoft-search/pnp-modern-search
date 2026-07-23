@@ -245,6 +245,10 @@ define([], function () {
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
                 EnableDownload: "Downloaden inschakelen",
+                EnableDetails: "Details inschakelen",
+                DetailsButtonLabel: "Details",
+                DetailsPanelHeader: "Details",
+                DetailsUnavailableLabel: "Details zijn niet beschikbaar",
                 UseAlternatingBackgroundColor: "Gebruik afwisselende achtergrondkleur"
 
             },
