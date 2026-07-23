@@ -7,8 +7,8 @@ import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import * as strings from "CommonStrings";
 
-const MIN_LIVE_UPDATE_PANEL_HEIGHT = 520;
-const LIVE_UPDATE_PANEL_RIGHT_OFFSET = 32;
+const MIN_DETAILS_PANEL_HEIGHT = 520;
+const DETAILS_PANEL_RIGHT_OFFSET = 32;
 const HEX_COLOR_REGEXP = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 const RGB_COLOR_REGEXP = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/i;
 
@@ -22,59 +22,55 @@ interface IDetailsSelectedItemButtonProps {
 }
 
 interface IDetailsSelectedItemButtonState {
-  activeLiveUpdateFormUrl?: string;
-  activeLiveUpdateItemTitle?: string;
-  isLiveUpdateFrameReady?: boolean;
+  activeDetailsFormUrl?: string;
+  activeDetailsItemTitle?: string;
+  isDetailsFrameReady?: boolean;
 }
 
-interface ILiveUpdatePanelSessionState {
+interface IDetailsPanelSessionState {
   isOpen: boolean;
-  activeLiveUpdateFormUrl?: string;
-  activeLiveUpdateItemTitle?: string;
+  activeDetailsFormUrl?: string;
+  activeDetailsItemTitle?: string;
 }
 
-const liveUpdatePanelSessionState: ILiveUpdatePanelSessionState = {
-  isOpen: false,
-  activeLiveUpdateFormUrl: null,
-  activeLiveUpdateItemTitle: null,
-};
+const detailsPanelSessionStates = new Map<string, IDetailsPanelSessionState>();
 
 export class DetailsSelectedItemButtonComponent extends React.Component<IDetailsSelectedItemButtonProps, IDetailsSelectedItemButtonState> {
   private _selectedItems: any[] = [];
-  private _liveUpdateLayoutAnimationFrame: number | null = null;
+  private _detailsLayoutAnimationFrame: number | null = null;
 
   constructor(props: IDetailsSelectedItemButtonProps) {
     super(props);
 
     this.state = {
-      activeLiveUpdateFormUrl: null,
-      activeLiveUpdateItemTitle: null,
-      isLiveUpdateFrameReady: false,
+      activeDetailsFormUrl: null,
+      activeDetailsItemTitle: null,
+      isDetailsFrameReady: false,
     };
   }
 
   public componentDidMount(): void {
-    window.addEventListener("resize", this._refreshLiveUpdatePanelLayout);
-    window.addEventListener("scroll", this._refreshLiveUpdatePanelLayout, { capture: true, passive: true });
+    window.addEventListener("resize", this._refreshDetailsPanelLayout);
+    window.addEventListener("scroll", this._refreshDetailsPanelLayout, { capture: true, passive: true });
     this._updateSelectedItems();
-    this._restoreLiveUpdatePanelIfNeeded();
+    this._restoreDetailsPanelIfNeeded();
   }
 
   public componentDidUpdate(prevProps: IDetailsSelectedItemButtonProps): void {
     if (prevProps.context?.selectedKeys !== this.props.context?.selectedKeys || prevProps.items !== this.props.items) {
       this._updateSelectedItems();
       this._syncOpenPanelWithSelection();
-      this._restoreLiveUpdatePanelIfNeeded();
+      this._restoreDetailsPanelIfNeeded();
     }
   }
 
   public componentWillUnmount(): void {
-    window.removeEventListener("resize", this._refreshLiveUpdatePanelLayout);
-    window.removeEventListener("scroll", this._refreshLiveUpdatePanelLayout, true);
+    window.removeEventListener("resize", this._refreshDetailsPanelLayout);
+    window.removeEventListener("scroll", this._refreshDetailsPanelLayout, true);
 
-    if (this._liveUpdateLayoutAnimationFrame !== null) {
-      window.cancelAnimationFrame(this._liveUpdateLayoutAnimationFrame);
-      this._liveUpdateLayoutAnimationFrame = null;
+    if (this._detailsLayoutAnimationFrame !== null) {
+      window.cancelAnimationFrame(this._detailsLayoutAnimationFrame);
+      this._detailsLayoutAnimationFrame = null;
     }
   }
 
@@ -82,9 +78,9 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     const detailsIcon: IIconProps = { iconName: "OpenPane" };
     const isMultiSelectEnabled = this.props.allowMulti === true;
     const selectedItem = this._selectedItems.length === 1 ? this._selectedItems[0] : null;
-    const liveUpdateFormUrl = selectedItem ? this._buildLiveUpdateFormUrl(selectedItem) : null;
-    const shouldRenderButton = this._selectedItems.length > 0 && (isMultiSelectEnabled || !!liveUpdateFormUrl);
-    const isButtonDisabled = isMultiSelectEnabled || !selectedItem || !liveUpdateFormUrl;
+    const detailsFormUrl = selectedItem ? this._buildDetailsFormUrl(selectedItem) : null;
+    const shouldRenderButton = this._selectedItems.length > 0 && (isMultiSelectEnabled || !!detailsFormUrl);
+    const isButtonDisabled = isMultiSelectEnabled || !selectedItem || !detailsFormUrl;
 
     return (
       <>
@@ -93,21 +89,23 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
             text={strings.Layouts.DetailsList.DetailsButtonLabel}
             iconProps={detailsIcon}
             disabled={isButtonDisabled}
-            onClick={(event) => this._openLiveUpdatePanel(event, selectedItem)}
+            onClick={(event) => this._openDetailsPanel(event, selectedItem)}
             theme={(this.props.themeVariant as ITheme) || getTheme()}
           />
         )}
-        {this._renderLiveUpdatePanel()}
+        {this._renderDetailsPanel()}
       </>
     );
   }
 
   private _updateSelectedItems(): void {
     if (this.props.context?.selectedKeys?.length > 0 && this.props.items?.length > 0) {
-      this._selectedItems = this.props.context.selectedKeys
-        .filter((key) => key.startsWith(this.props.context.paging.currentPageNumber.toString()))
-        .map((key) => this.props.items[key.replace(this.props.context.paging.currentPageNumber.toString(), "")])
-        .filter((item) => !!item);
+      const currentPageNumber = this.props.context.paging.currentPageNumber;
+      const selectedKeys = new Set(this.props.context.selectedKeys);
+
+      this._selectedItems = this.props.items.filter((item, index) => {
+        return selectedKeys.has(`${currentPageNumber}${index}`);
+      });
     } else {
       this._selectedItems = [];
     }
@@ -116,71 +114,75 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   }
 
   private _syncOpenPanelWithSelection(): void {
-    if (!this._getResolvedLiveUpdateFormUrl()) {
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
+
+    if (!this._getResolvedDetailsFormUrl()) {
       return;
     }
 
     const selectedItem = this._selectedItems.length === 1 ? this._selectedItems[0] : null;
-    const liveUpdateFormUrl = selectedItem ? this._buildLiveUpdateFormUrl(selectedItem) : null;
+    const detailsFormUrl = selectedItem ? this._buildDetailsFormUrl(selectedItem) : null;
 
-    if (!selectedItem || !liveUpdateFormUrl) {
+    if (!selectedItem || !detailsFormUrl) {
       return;
     }
 
-    if (liveUpdateFormUrl !== this.state.activeLiveUpdateFormUrl) {
-      liveUpdatePanelSessionState.activeLiveUpdateFormUrl = liveUpdateFormUrl;
-      liveUpdatePanelSessionState.activeLiveUpdateItemTitle = this._getLiveUpdateItemTitle(selectedItem);
+    if (detailsFormUrl !== this.state.activeDetailsFormUrl) {
+      detailsPanelSessionState.activeDetailsFormUrl = detailsFormUrl;
+      detailsPanelSessionState.activeDetailsItemTitle = this._getDetailsItemTitle(selectedItem);
 
       this.setState({
-        activeLiveUpdateFormUrl: liveUpdateFormUrl,
-        activeLiveUpdateItemTitle: this._getLiveUpdateItemTitle(selectedItem),
-        isLiveUpdateFrameReady: false,
+        activeDetailsFormUrl: detailsFormUrl,
+        activeDetailsItemTitle: this._getDetailsItemTitle(selectedItem),
+        isDetailsFrameReady: false,
       });
     }
   }
 
-  private _restoreLiveUpdatePanelIfNeeded(): void {
-    if (!liveUpdatePanelSessionState.isOpen || this.state.activeLiveUpdateFormUrl) {
+  private _restoreDetailsPanelIfNeeded(): void {
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
+
+    if (!detailsPanelSessionState.isOpen || this.state.activeDetailsFormUrl) {
       return;
     }
 
     const selectedItem = this._selectedItems.length === 1 ? this._selectedItems[0] : null;
-    const liveUpdateFormUrl = selectedItem ? this._buildLiveUpdateFormUrl(selectedItem) : null;
-    const restoredLiveUpdateFormUrl = liveUpdateFormUrl ?? liveUpdatePanelSessionState.activeLiveUpdateFormUrl;
-    const restoredLiveUpdateItemTitle = selectedItem
-      ? this._getLiveUpdateItemTitle(selectedItem)
-      : liveUpdatePanelSessionState.activeLiveUpdateItemTitle;
+    const detailsFormUrl = selectedItem ? this._buildDetailsFormUrl(selectedItem) : null;
+    const restoredDetailsFormUrl = detailsFormUrl ?? detailsPanelSessionState.activeDetailsFormUrl;
+    const restoredDetailsItemTitle = selectedItem
+      ? this._getDetailsItemTitle(selectedItem)
+      : detailsPanelSessionState.activeDetailsItemTitle;
 
-    if (!restoredLiveUpdateFormUrl) {
+    if (!restoredDetailsFormUrl) {
       return;
     }
 
     this.setState({
-      activeLiveUpdateFormUrl: restoredLiveUpdateFormUrl,
-      activeLiveUpdateItemTitle: restoredLiveUpdateItemTitle,
-      isLiveUpdateFrameReady: false,
+      activeDetailsFormUrl: restoredDetailsFormUrl,
+      activeDetailsItemTitle: restoredDetailsItemTitle,
+      isDetailsFrameReady: false,
     });
   }
 
-  private _renderLiveUpdatePanel(): JSX.Element {
-    const liveUpdatePanelTopOffset = this._getLiveUpdatePanelTopOffset();
-    const activeLiveUpdateFormUrl = this._getResolvedLiveUpdateFormUrl();
-    const panelSurfaceStyle = this._getLiveUpdatePanelSurfaceStyle();
+  private _renderDetailsPanel(): JSX.Element {
+    const detailsPanelTopOffset = this._getDetailsPanelTopOffset();
+    const activeDetailsFormUrl = this._getResolvedDetailsFormUrl();
+    const panelSurfaceStyle = this._getDetailsPanelSurfaceStyle();
 
     return (
       <Panel
-        isOpen={!!activeLiveUpdateFormUrl}
+        isOpen={!!activeDetailsFormUrl}
         isBlocking={false}
         type={PanelType.custom}
         customWidth="320px"
-        onDismiss={this._closeLiveUpdatePanel}
-        onRenderNavigation={this._renderLiveUpdatePanelNavigation}
-        onRenderBody={this._renderLiveUpdatePanelBody}
+        onDismiss={this._closeDetailsPanel}
+        onRenderNavigation={this._renderDetailsPanelNavigation}
+        onRenderBody={this._renderDetailsPanelBody}
         styles={{
           main: {
-            top: liveUpdatePanelTopOffset,
-            right: `${LIVE_UPDATE_PANEL_RIGHT_OFFSET}px`,
-            height: `calc(100vh - ${liveUpdatePanelTopOffset}px)`,
+            top: detailsPanelTopOffset,
+            right: `${DETAILS_PANEL_RIGHT_OFFSET}px`,
+            height: `calc(100vh - ${detailsPanelTopOffset}px)`,
             paddingTop: 0,
             backgroundColor: panelSurfaceStyle.backgroundColor,
             color: panelSurfaceStyle.color,
@@ -232,8 +234,8 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     );
   }
 
-  private readonly _renderLiveUpdatePanelNavigation = (): JSX.Element => {
-    const panelSurfaceStyle = this._getLiveUpdatePanelSurfaceStyle();
+  private readonly _renderDetailsPanelNavigation = (): JSX.Element => {
+    const panelSurfaceStyle = this._getDetailsPanelSurfaceStyle();
     const panelBackgroundColor = panelSurfaceStyle.backgroundColor as string | undefined;
     const panelTextColor = panelSurfaceStyle.color as string | undefined;
 
@@ -242,17 +244,17 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         <IconButton
           ariaLabel={strings.Layouts.PersonCard.CloseCardLabel}
           iconProps={{ iconName: "Cancel" }}
-          onClick={this._closeLiveUpdatePanel}
+          onClick={this._closeDetailsPanel}
           styles={{ root: { backgroundColor: panelBackgroundColor, color: panelTextColor } }}
         />
       </div>
     );
   };
 
-  private readonly _renderLiveUpdatePanelBody = (): JSX.Element => {
-    const activeLiveUpdateFormUrl = this._getResolvedLiveUpdateFormUrl();
-    const activeLiveUpdateItemTitle = this._getResolvedLiveUpdateItemTitle();
-    const panelSurfaceStyle = this._getLiveUpdatePanelSurfaceStyle();
+  private readonly _renderDetailsPanelBody = (): JSX.Element => {
+    const activeDetailsFormUrl = this._getResolvedDetailsFormUrl();
+    const activeDetailsItemTitle = this._getResolvedDetailsItemTitle();
+    const panelSurfaceStyle = this._getDetailsPanelSurfaceStyle();
 
     return (
       <div
@@ -268,7 +270,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
           width: "100%",
         }}
       >
-        {this.state.isLiveUpdateFrameReady === false && (
+        {this.state.isDetailsFrameReady === false && (
           <div
             style={{
               ...panelSurfaceStyle,
@@ -283,11 +285,11 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
             <Spinner label={strings.Layouts.DetailsList.DetailsPanelHeader} size={SpinnerSize.medium} />
           </div>
         )}
-        {activeLiveUpdateFormUrl && (
+        {activeDetailsFormUrl && (
           <iframe
-            src={activeLiveUpdateFormUrl}
-            title={activeLiveUpdateItemTitle || strings.Layouts.DetailsList.DetailsPanelHeader}
-            onLoad={this._onLiveUpdateFrameLoad}
+            src={activeDetailsFormUrl}
+            title={activeDetailsItemTitle || strings.Layouts.DetailsList.DetailsPanelHeader}
+            onLoad={this._onDetailsFrameLoad}
             style={{
               display: "block",
               flex: "1 1 auto",
@@ -296,7 +298,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
               height: "100%",
               border: 0,
               backgroundColor: panelSurfaceStyle.backgroundColor,
-              opacity: this.state.isLiveUpdateFrameReady === false ? 0 : 1,
+              opacity: this.state.isDetailsFrameReady === false ? 0 : 1,
             }}
           />
         )}
@@ -304,31 +306,50 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     );
   };
 
-  private readonly _refreshLiveUpdatePanelLayout = (): void => {
-    if (!this._getResolvedLiveUpdateFormUrl() || this._liveUpdateLayoutAnimationFrame !== null) {
+  private readonly _refreshDetailsPanelLayout = (): void => {
+    if (!this._getResolvedDetailsFormUrl() || this._detailsLayoutAnimationFrame !== null) {
       return;
     }
 
-    this._liveUpdateLayoutAnimationFrame = window.requestAnimationFrame(() => {
-      this._liveUpdateLayoutAnimationFrame = null;
+    this._detailsLayoutAnimationFrame = window.requestAnimationFrame(() => {
+      this._detailsLayoutAnimationFrame = null;
       this.forceUpdate();
     });
   };
 
-  private _getResolvedLiveUpdateFormUrl(): string | null {
-    return this.state.activeLiveUpdateFormUrl ?? liveUpdatePanelSessionState.activeLiveUpdateFormUrl ?? null;
+  private _getResolvedDetailsFormUrl(): string | null {
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
+    return this.state.activeDetailsFormUrl ?? detailsPanelSessionState.activeDetailsFormUrl ?? null;
   }
 
-  private _getResolvedLiveUpdateItemTitle(): string | null {
-    return this.state.activeLiveUpdateItemTitle ?? liveUpdatePanelSessionState.activeLiveUpdateItemTitle ?? null;
+  private _getResolvedDetailsItemTitle(): string | null {
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
+    return this.state.activeDetailsItemTitle ?? detailsPanelSessionState.activeDetailsItemTitle ?? null;
   }
 
-  private readonly _getLiveUpdatePanelTopOffset = (): number => {
+  private _getDetailsPanelSessionState(): IDetailsPanelSessionState {
+    const instanceId = this.props.context?.instanceId ?? "default";
+    let panelSessionState = detailsPanelSessionStates.get(instanceId);
+
+    if (!panelSessionState) {
+      panelSessionState = {
+        isOpen: false,
+        activeDetailsFormUrl: null,
+        activeDetailsItemTitle: null,
+      };
+
+      detailsPanelSessionStates.set(instanceId, panelSessionState);
+    }
+
+    return panelSessionState;
+  }
+
+  private readonly _getDetailsPanelTopOffset = (): number => {
     if (typeof window === "undefined" || typeof document === "undefined") {
       return 0;
     }
 
-    const maxTopOffset = Math.max(0, window.innerHeight - MIN_LIVE_UPDATE_PANEL_HEIGHT);
+    const maxTopOffset = Math.max(0, window.innerHeight - MIN_DETAILS_PANEL_HEIGHT);
 
     const resolveBottom = (selectors: string[]): number => {
       const bottoms = selectors
@@ -365,44 +386,47 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return Math.min(toolbarBottom, maxTopOffset);
   };
 
-  private readonly _openLiveUpdatePanel = (event: React.MouseEvent<any>, item: any): void => {
+  private readonly _openDetailsPanel = (event: React.MouseEvent<any>, item: any): void => {
     event.preventDefault();
     event.stopPropagation();
 
-    const liveUpdateFormUrl = this._buildLiveUpdateFormUrl(item);
+    const detailsFormUrl = this._buildDetailsFormUrl(item);
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
 
-    if (!liveUpdateFormUrl) {
+    if (!detailsFormUrl) {
       return;
     }
 
-    liveUpdatePanelSessionState.isOpen = true;
-    liveUpdatePanelSessionState.activeLiveUpdateFormUrl = liveUpdateFormUrl;
-    liveUpdatePanelSessionState.activeLiveUpdateItemTitle = this._getLiveUpdateItemTitle(item);
+    detailsPanelSessionState.isOpen = true;
+    detailsPanelSessionState.activeDetailsFormUrl = detailsFormUrl;
+    detailsPanelSessionState.activeDetailsItemTitle = this._getDetailsItemTitle(item);
 
     this.setState({
-      activeLiveUpdateFormUrl: liveUpdateFormUrl,
-      activeLiveUpdateItemTitle: this._getLiveUpdateItemTitle(item),
-      isLiveUpdateFrameReady: false,
+      activeDetailsFormUrl: detailsFormUrl,
+      activeDetailsItemTitle: this._getDetailsItemTitle(item),
+      isDetailsFrameReady: false,
     });
   };
 
-  private readonly _closeLiveUpdatePanel = (): void => {
-    liveUpdatePanelSessionState.isOpen = false;
-    liveUpdatePanelSessionState.activeLiveUpdateFormUrl = null;
-    liveUpdatePanelSessionState.activeLiveUpdateItemTitle = null;
+  private readonly _closeDetailsPanel = (): void => {
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
+
+    detailsPanelSessionState.isOpen = false;
+    detailsPanelSessionState.activeDetailsFormUrl = null;
+    detailsPanelSessionState.activeDetailsItemTitle = null;
 
     this.setState({
-      activeLiveUpdateFormUrl: null,
-      activeLiveUpdateItemTitle: null,
-      isLiveUpdateFrameReady: false,
+      activeDetailsFormUrl: null,
+      activeDetailsItemTitle: null,
+      isDetailsFrameReady: false,
     });
   };
 
-  private readonly _onLiveUpdateFrameLoad = (event: React.SyntheticEvent<HTMLIFrameElement>): void => {
-    this._enhanceLiveUpdateFrame(event.currentTarget, 0);
+  private readonly _onDetailsFrameLoad = (event: React.SyntheticEvent<HTMLIFrameElement>): void => {
+    this._enhanceDetailsFrame(event.currentTarget, 0);
   };
 
-  private readonly _enhanceLiveUpdateFrame = (iframe: HTMLIFrameElement, attempt: number): void => {
+  private readonly _enhanceDetailsFrame = (iframe: HTMLIFrameElement, attempt: number): void => {
     const iframeUrl = iframe.getAttribute("src") || "";
 
     try {
@@ -420,7 +444,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       }
 
       this._prepareEmbeddedFrame(iframeDocument);
-      this._setLiveUpdateFrameReady(true);
+      this._setDetailsFrameReady(true);
     } catch {
       // Ignore cross-origin or transient iframe access failures.
     }
@@ -431,18 +455,18 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return false;
     }
 
-    this._hideLiveUpdateEmbeddedCloseButton(iframeDocument);
-    this._hideLiveUpdateAccessSection(iframeDocument);
+    this._hideDetailsEmbeddedCloseButton(iframeDocument);
+    this._hideDetailsAccessSection(iframeDocument);
 
     const detailsPaneFrame = iframeDocument.querySelector('iframe[src*="modernFrame.aspx"][src*="scenario=detailsPane"]') as HTMLIFrameElement;
 
     if (detailsPaneFrame?.src) {
-      const normalizedDetailsPaneUrl = this._normalizeLiveUpdateDetailsPaneUrl(detailsPaneFrame.src);
+      const normalizedDetailsPaneUrl = this._normalizeDetailsPaneUrl(detailsPaneFrame.src);
 
       if (iframe.src !== normalizedDetailsPaneUrl) {
         iframe.src = normalizedDetailsPaneUrl;
       } else {
-        this._hideLiveUpdateNestedFrameSections(detailsPaneFrame);
+        this._hideDetailsNestedFrameSections(detailsPaneFrame);
       }
 
       return true;
@@ -451,9 +475,9 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     this._openViewerDetailsPane(iframe, iframeDocument, iframeUrl);
 
     if (attempt < 40) {
-      window.setTimeout(() => this._enhanceLiveUpdateFrame(iframe, attempt + 1), 150);
+      window.setTimeout(() => this._enhanceDetailsFrame(iframe, attempt + 1), 150);
     } else {
-      this._setLiveUpdateFrameReady(true);
+      this._setDetailsFrameReady(true);
     }
 
     return true;
@@ -464,7 +488,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return false;
     }
 
-    const normalizedIframeUrl = this._normalizeLiveUpdateDetailsPaneUrl(iframeUrl);
+    const normalizedIframeUrl = this._normalizeDetailsPaneUrl(iframeUrl);
 
     if (iframe.src !== normalizedIframeUrl) {
       iframe.src = normalizedIframeUrl;
@@ -473,25 +497,25 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
     this._prepareDetailsPaneFrame(iframeDocument);
 
-    const hasRenderableFrameContent = this._hasRenderableLiveUpdateFrameContent(iframeDocument);
-    const hasInitialFrameShell = this._hasInitialLiveUpdateFrameShell(iframeDocument);
+    const hasRenderableFrameContent = this._hasRenderableDetailsFrameContent(iframeDocument);
+    const hasInitialFrameShell = this._hasInitialDetailsFrameShell(iframeDocument);
 
-    this._setLiveUpdateFrameReady(hasRenderableFrameContent || hasInitialFrameShell || attempt >= 10);
+    this._setDetailsFrameReady(hasRenderableFrameContent || hasInitialFrameShell || attempt >= 10);
 
     if (attempt < 10) {
-      window.setTimeout(() => this._enhanceLiveUpdateFrame(iframe, attempt + 1), 300);
+      window.setTimeout(() => this._enhanceDetailsFrame(iframe, attempt + 1), 300);
     }
 
     return true;
   }
 
-  private _hideLiveUpdateNestedFrameSections(detailsPaneFrame: HTMLIFrameElement): void {
+  private _hideDetailsNestedFrameSections(detailsPaneFrame: HTMLIFrameElement): void {
     try {
       const detailsPaneDocument = detailsPaneFrame.contentDocument;
 
       if (detailsPaneDocument) {
-        this._hideLiveUpdateEmbeddedCloseButton(detailsPaneDocument);
-        this._hideLiveUpdateAccessSection(detailsPaneDocument);
+        this._hideDetailsEmbeddedCloseButton(detailsPaneDocument);
+        this._hideDetailsAccessSection(detailsPaneDocument);
       }
     } catch {
       // Ignore nested frame access timing issues.
@@ -503,13 +527,13 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     const overflowInfoButton = this._findViewerDetailsTrigger<HTMLElement>(iframeDocument, '[role="menuitem"]');
     const moreButton = this._findViewerMoreButton(iframeDocument);
 
-    if (overflowInfoButton && iframe.dataset.liveUpdateViewerMarker !== `${iframeUrl}:info`) {
-      iframe.dataset.liveUpdateViewerMarker = `${iframeUrl}:info`;
+    if (overflowInfoButton && iframe.dataset.detailsViewerMarker !== `${iframeUrl}:info`) {
+      iframe.dataset.detailsViewerMarker = `${iframeUrl}:info`;
       overflowInfoButton.click();
     }
 
-    if (infoButton && iframe.dataset.liveUpdateViewerMarker !== iframeUrl) {
-      iframe.dataset.liveUpdateViewerMarker = iframeUrl;
+    if (infoButton && iframe.dataset.detailsViewerMarker !== iframeUrl) {
+      iframe.dataset.detailsViewerMarker = iframeUrl;
       infoButton.click();
       return;
     }
@@ -540,17 +564,17 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   }
 
   private _prepareDetailsPaneFrame(iframeDocument: Document): void {
-    this._hideLiveUpdateEmbeddedCloseButton(iframeDocument);
-    this._hideLiveUpdateAccessSection(iframeDocument);
-    this._moveLiveUpdateCommandBarToBottom(iframeDocument);
+    this._hideDetailsEmbeddedCloseButton(iframeDocument);
+    this._hideDetailsAccessSection(iframeDocument);
+    this._moveDetailsCommandBarToBottom(iframeDocument);
     this._resetFrameScroll(iframeDocument);
   }
 
   private _prepareEmbeddedFrame(iframeDocument: Document): void {
-    this._moveLiveUpdateCommandBarToBottom(iframeDocument);
+    this._moveDetailsCommandBarToBottom(iframeDocument);
     this._ensureFrameStyle(
       iframeDocument,
-      "pnp-modern-search-live-update-frame-style",
+      "pnp-modern-search-details-frame-style",
       `
         .sp-skipToContent,
         .ms-accessible,
@@ -603,14 +627,14 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     iframeDocument.body.scrollTop = 0;
   }
 
-  private readonly _setLiveUpdateFrameReady = (isReady: boolean): void => {
-    if (this.state.isLiveUpdateFrameReady !== isReady) {
-      this.setState({ isLiveUpdateFrameReady: isReady });
+  private readonly _setDetailsFrameReady = (isReady: boolean): void => {
+    if (this.state.isDetailsFrameReady !== isReady) {
+      this.setState({ isDetailsFrameReady: isReady });
     }
   };
 
-  private readonly _hideLiveUpdateEmbeddedCloseButton = (iframeDocument: Document): void => {
-    this._ensureFrameStyle(iframeDocument, "pnp-modern-search-live-update-details-pane-style", `
+  private readonly _hideDetailsEmbeddedCloseButton = (iframeDocument: Document): void => {
+    this._ensureFrameStyle(iframeDocument, "pnp-modern-search-details-pane-style", `
       .od-DetailsPane-PrimaryPane-header-close,
       button[aria-label="Close the details pane"] {
         display: none !important;
@@ -618,8 +642,8 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     `);
   };
 
-  private readonly _hideLiveUpdateAccessSection = (iframeDocument: Document): void => {
-    this._ensureFrameStyle(iframeDocument, "pnp-modern-search-live-update-access-section-style", `
+  private readonly _hideDetailsAccessSection = (iframeDocument: Document): void => {
+    this._ensureFrameStyle(iframeDocument, "pnp-modern-search-details-access-section-style", `
         button[aria-label="Has access"],
         button[aria-label="Manage access"] {
           display: none !important;
@@ -643,7 +667,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     });
   };
 
-  private readonly _moveLiveUpdateCommandBarToBottom = (iframeDocument: Document): void => {
+  private readonly _moveDetailsCommandBarToBottom = (iframeDocument: Document): void => {
     const commandBar = Array.from(iframeDocument.querySelectorAll('div[role="menubar"]')).find((element) => {
       const htmlElement = element as HTMLElement;
 
@@ -658,11 +682,11 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return;
     }
 
-    commandBar.classList.add("pnp-modern-search-live-update-command-bar");
-    iframeDocument.body?.classList.add("pnp-modern-search-live-update-has-bottom-command-bar");
+    commandBar.classList.add("pnp-modern-search-details-command-bar");
+    iframeDocument.body?.classList.add("pnp-modern-search-has-details-bottom-command-bar");
 
-    this._ensureFrameStyle(iframeDocument, "pnp-modern-search-live-update-command-bar-style", `
-      .pnp-modern-search-live-update-command-bar {
+    this._ensureFrameStyle(iframeDocument, "pnp-modern-search-details-command-bar-style", `
+      .pnp-modern-search-details-command-bar {
         position: fixed !important;
         left: 0 !important;
         right: 0 !important;
@@ -674,13 +698,13 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         box-sizing: border-box !important;
       }
 
-      body.pnp-modern-search-live-update-has-bottom-command-bar {
+      body.pnp-modern-search-has-details-bottom-command-bar {
         padding-bottom: 72px !important;
       }
     `);
   };
 
-  private _hasRenderableLiveUpdateFrameContent(iframeDocument: Document): boolean {
+  private _hasRenderableDetailsFrameContent(iframeDocument: Document): boolean {
     const detailsRegion = iframeDocument.querySelector('[role="region"][aria-label="Details pane"]');
     const detailsTerms = iframeDocument.querySelectorAll("dt, dd");
     const detailsHeadings = Array.from(iframeDocument.querySelectorAll("h1, h2, h3")).filter((element) => {
@@ -690,7 +714,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return !!detailsRegion || detailsTerms.length > 0 || detailsHeadings.length > 0;
   }
 
-  private _hasInitialLiveUpdateFrameShell(iframeDocument: Document): boolean {
+  private _hasInitialDetailsFrameShell(iframeDocument: Document): boolean {
     const detailsHeadings = Array.from(iframeDocument.querySelectorAll("h1, h2, h3")).filter((element) => {
       return (element.textContent || "").trim().length > 0;
     });
@@ -700,7 +724,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return detailsHeadings.length > 0 && (hasSecondaryPane || hasCommandBar);
   }
 
-  private _getLiveUpdatePanelSurfaceStyle(): React.CSSProperties {
+  private _getDetailsPanelSurfaceStyle(): React.CSSProperties {
     const theme = (this.props.themeVariant as ITheme) || getTheme();
     const backgroundColor = theme.semanticColors?.bodyBackground ?? theme.semanticColors?.bodyStandoutBackground ?? theme.palette?.white;
     const color = theme.semanticColors?.bodyText ?? theme.palette?.neutralPrimary;
@@ -711,10 +735,10 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     };
   }
 
-  private _buildLiveUpdateFormUrl(item: any): string | null {
+  private _buildDetailsFormUrl(item: any): string | null {
     const webUrl = this._resolveExternalItemFieldValue(item, "SPWebUrl") ?? this._resolveExternalItemFieldValue(item, "SPSiteURL") ?? this._resolveExternalItemFieldValue(item, "SitePath");
     const listId = this._resolveExternalItemFieldValue(item, "ListId") ?? this._resolveExternalItemFieldValue(item, "NormListID") ?? this._resolveExternalItemFieldValue(item, "IdentityListId");
-    const listItemId = this._resolveLiveUpdateListItemId(item);
+    const listItemId = this._resolveDetailsListItemId(item);
 
     if (!webUrl) {
       return null;
@@ -727,7 +751,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         return null;
       }
 
-      if (this._isLiveUpdateDocumentItem(item)) {
+      if (this._isDetailsDocumentItem(item)) {
         return this._buildDocumentViewerUrl(item, baseUrl) ?? this._buildDocumentDetailsPaneUrl(item, baseUrl);
       }
 
@@ -735,14 +759,14 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         return null;
       }
 
-      if (!this._isLiveUpdateListItem(item, listItemId)) {
+      if (!this._isDetailsListItem(item, listItemId)) {
         return null;
       }
 
       const formUrl = new URL(baseUrl.origin);
       formUrl.pathname = `${baseUrl.pathname.replace(/\/$/, "")}/_layouts/15/listform.aspx`;
       formUrl.searchParams.set("PageType", "4");
-      formUrl.searchParams.set("ListId", this._normalizeLiveUpdateGuid(listId));
+      formUrl.searchParams.set("ListId", this._normalizeDetailsGuid(listId));
       formUrl.searchParams.set("ID", String(listItemId));
       formUrl.searchParams.set("env", "Embedded");
 
@@ -752,7 +776,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     }
   }
 
-  private _resolveLiveUpdateListItemId(item: any): string | number | null {
+  private _resolveDetailsListItemId(item: any): string | number | null {
     const explicitListItemId = this._resolveExternalItemFieldValue(item, "ListItemID") ?? this._resolveExternalItemFieldValue(item, "Id");
 
     if (this._hasRenderableValue(explicitListItemId)) {
@@ -779,7 +803,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
   private _buildDocumentDetailsPaneUrl(item: any, baseUrl: URL): string | null {
     const itemPath = this._resolveExternalItemFieldValue(item, "Path") ?? this._resolveExternalItemFieldValue(item, "OriginalPath") ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
-    const selectedItemId = this._resolveLiveUpdateListItemId(item);
+    const selectedItemId = this._resolveDetailsListItemId(item);
     const normalizedSelectedItemId = /^\d+$/.test(String(selectedItemId ?? "")) ? String(selectedItemId) : null;
 
     if (!itemPath) {
@@ -809,10 +833,10 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       detailsPaneUrl.searchParams.set("parent", parentPath);
       detailsPaneUrl.searchParams.set("listUrl", listUrl);
       detailsPaneUrl.searchParams.set("scenario", "detailsPane");
-      detailsPaneUrl.searchParams.set("channelId", this._getLiveUpdateChannelId());
+      detailsPaneUrl.searchParams.set("channelId", this._getDetailsChannelId());
       detailsPaneUrl.searchParams.set("app", "OneUp");
       detailsPaneUrl.searchParams.set("component", "detailsPane");
-      detailsPaneUrl.searchParams.set("isDarkMode", String(this._getLiveUpdateIsDarkMode()));
+      detailsPaneUrl.searchParams.set("isDarkMode", String(this._getDetailsIsDarkMode()));
       detailsPaneUrl.searchParams.set("options", JSON.stringify({
         itemIds: [`id=${encodeURIComponent(itemServerRelativePath)}`],
         isOD3UIEnabled: true,
@@ -848,7 +872,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     try {
       const viewerUrl = new URL(baseUrl.origin);
       viewerUrl.pathname = `${baseUrl.pathname.replace(/\/$/, "")}/_layouts/15/viewer.aspx`;
-      viewerUrl.searchParams.set("sourcedoc", `{${this._normalizeLiveUpdateGuid(String(documentUniqueId))}}`);
+      viewerUrl.searchParams.set("sourcedoc", `{${this._normalizeDetailsGuid(String(documentUniqueId))}}`);
 
       return viewerUrl.toString();
     } catch {
@@ -856,7 +880,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     }
   }
 
-  private _getLiveUpdateChannelId(): string {
+  private _getDetailsChannelId(): string {
     if (window.crypto?.randomUUID) {
       return window.crypto.randomUUID();
     }
@@ -864,7 +888,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return `pnp-modern-search-${Date.now()}`;
   }
 
-  private _getLiveUpdateIsDarkMode(): boolean {
+  private _getDetailsIsDarkMode(): boolean {
     const theme = (this.props.themeVariant as ITheme) || getTheme();
 
     if (theme.isInverted) {
@@ -911,13 +935,13 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return ((0.299 * red) + (0.587 * green) + (0.114 * blue)) / 255;
   }
 
-  private _normalizeLiveUpdateDetailsPaneUrl(rawUrl: string): string {
+  private _normalizeDetailsPaneUrl(rawUrl: string): string {
     const detailsPaneUrl = new URL(rawUrl, window.location.origin);
-    detailsPaneUrl.searchParams.set("isDarkMode", String(this._getLiveUpdateIsDarkMode()));
+    detailsPaneUrl.searchParams.set("isDarkMode", String(this._getDetailsIsDarkMode()));
     return detailsPaneUrl.toString();
   }
 
-  private _isLiveUpdateListItem(item: any, listItemId: any): boolean {
+  private _isDetailsListItem(item: any, listItemId: any): boolean {
     const contentClass = String(ObjectHelper.byPath(item, BuiltinTemplateSlots.ContentClass) ?? "").toLowerCase();
     const itemPath = this._resolveExternalItemFieldValue(item, "Path") ?? this._resolveExternalItemFieldValue(item, "OriginalPath") ?? this._resolveExternalItemFieldValue(item, "AutoPreviewUrl");
     const normalizedItemPath = typeof itemPath === "string" ? itemPath.toLowerCase() : "";
@@ -936,7 +960,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return /^\d+$/.test(String(listItemId ?? ""));
   }
 
-  private _isLiveUpdateDocumentItem(item: any): boolean {
+  private _isDetailsDocumentItem(item: any): boolean {
     const isContainer = this.props.isContainerField ? ObjectHelper.byPath(item, this.props.isContainerField) : this._resolveExternalItemFieldValue(item, "IsContainer");
 
     if (isContainer === true || String(isContainer).toLowerCase() === "true") {
@@ -972,11 +996,11 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return typeof fileName === "string" && /\.[^./\\]+$/.test(fileName);
   }
 
-  private _getLiveUpdateItemTitle(item: any): string {
+  private _getDetailsItemTitle(item: any): string {
     return this._resolveExternalItemFieldValue(item, "Title") ?? this._resolveExternalItemFieldValue(item, "Filename") ?? strings.Layouts.DetailsList.DetailsPanelHeader;
   }
 
-  private _normalizeLiveUpdateGuid(value: string): string {
+  private _normalizeDetailsGuid(value: string): string {
     return String(value).replace(/[{}]/g, "");
   }
 
