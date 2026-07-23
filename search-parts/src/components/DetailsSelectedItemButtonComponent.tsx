@@ -242,7 +242,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return (
       <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
         <IconButton
-          ariaLabel={strings.Layouts.PersonCard.CloseCardLabel}
+          ariaLabel={strings.Layouts.DetailsList.CloseDetailsPanelLabel}
           iconProps={{ iconName: "Cancel" }}
           onClick={this._closeDetailsPanel}
           styles={{ root: { backgroundColor: panelBackgroundColor, color: panelTextColor } }}

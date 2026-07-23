@@ -250,6 +250,7 @@ define([], function () {
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
                 DetailsUnavailableLabel: "Details sind nicht verfügbar",
+                CloseDetailsPanelLabel: "Detailbereich schließen",
                 UseAlternatingBackgroundColor: "Verwenden Sie abwechselnde Hintergrundfarben"
             },
             Cards: {

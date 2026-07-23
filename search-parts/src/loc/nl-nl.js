@@ -249,6 +249,7 @@ define([], function () {
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
                 DetailsUnavailableLabel: "Details zijn niet beschikbaar",
+                CloseDetailsPanelLabel: "Detailvenster sluiten",
                 UseAlternatingBackgroundColor: "Gebruik afwisselende achtergrondkleur"
 
             },

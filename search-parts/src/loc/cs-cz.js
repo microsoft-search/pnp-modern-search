@@ -248,6 +248,7 @@ define([], function () {
                 DetailsButtonLabel: "Podrobnosti",
                 DetailsPanelHeader: "Podrobnosti",
                 DetailsUnavailableLabel: "Podrobnosti nejsou k dispozici",
+                CloseDetailsPanelLabel: "Zavřít panel podrobností",
                 UseAlternatingBackgroundColor: "Použijte střídající se barvu pozadí"
             },
             Cards: {

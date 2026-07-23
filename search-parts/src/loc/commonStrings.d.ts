@@ -249,6 +249,7 @@ declare interface ICommonStrings {
         DetailsButtonLabel: string;
         DetailsPanelHeader: string;
         DetailsUnavailableLabel: string;
+        CloseDetailsPanelLabel: string;
         UseAlternatingBackgroundColor:string;
         ColumnDescriptionFieldLabel: string;
       };

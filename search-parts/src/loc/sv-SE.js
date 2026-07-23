@@ -251,6 +251,7 @@ define([], function () {
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",
                 DetailsUnavailableLabel: "Detaljer är inte tillgängliga",
+                CloseDetailsPanelLabel: "Stäng informationspanelen",
                 UseAlternatingBackgroundColor: "Använd alternerande bakgrundsfärg"
             },
             Cards: {

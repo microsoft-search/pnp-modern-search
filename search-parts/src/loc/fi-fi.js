@@ -248,6 +248,7 @@ define([], function () {
                 DetailsButtonLabel: "Tiedot",
                 DetailsPanelHeader: "Tiedot",
                 DetailsUnavailableLabel: "Tiedot eivät ole käytettävissä",
+                CloseDetailsPanelLabel: "Sulje tietopaneeli",
                 UseAlternatingBackgroundColor: "Käytä Vaihtelevaa taustaväriä"
             },
             Cards: {

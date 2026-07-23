@@ -250,6 +250,7 @@ define([], function () {
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
                 DetailsUnavailableLabel: "Details unavailable",
+                CloseDetailsPanelLabel: "Close details panel",
                 UseAlternatingBackgroundColor: "Use Alternating Background Color",
                 ColumnDescriptionFieldLabel: "Column description (tooltip)"
             },
