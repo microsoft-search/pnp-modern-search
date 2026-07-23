@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BaseLayout, IDataContext } from "@pnp/modern-search-extensibility";
-import strings from 'CommonStrings';
+import * as strings from 'CommonStrings';
 import { IComboBoxOption } from '@fluentui/react';
 import { IDetailsListColumnConfiguration } from '../../../components/DetailsListComponent';
 import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneDropdown, PropertyPaneHorizontalRule, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneTextField } from '@microsoft/sp-property-pane';

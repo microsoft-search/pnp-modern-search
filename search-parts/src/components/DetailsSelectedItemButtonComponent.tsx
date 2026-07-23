@@ -5,7 +5,7 @@ import { ActionButton, IIconProps, ITheme, getTheme, Panel, PanelType, IconButto
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
-import strings from "CommonStrings";
+import * as strings from "CommonStrings";
 
 const MIN_LIVE_UPDATE_PANEL_HEIGHT = 520;
 const LIVE_UPDATE_PANEL_RIGHT_OFFSET = 32;
@@ -41,6 +41,7 @@ const liveUpdatePanelSessionState: ILiveUpdatePanelSessionState = {
 
 export class DetailsSelectedItemButtonComponent extends React.Component<IDetailsSelectedItemButtonProps, IDetailsSelectedItemButtonState> {
   private _selectedItems: any[] = [];
+  private _liveUpdateLayoutAnimationFrame: number | null = null;
 
   constructor(props: IDetailsSelectedItemButtonProps) {
     super(props);
@@ -54,7 +55,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
   public componentDidMount(): void {
     window.addEventListener("resize", this._refreshLiveUpdatePanelLayout);
-    window.addEventListener("scroll", this._refreshLiveUpdatePanelLayout, true);
+    window.addEventListener("scroll", this._refreshLiveUpdatePanelLayout, { capture: true, passive: true });
     this._updateSelectedItems();
     this._restoreLiveUpdatePanelIfNeeded();
   }
@@ -70,6 +71,11 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   public componentWillUnmount(): void {
     window.removeEventListener("resize", this._refreshLiveUpdatePanelLayout);
     window.removeEventListener("scroll", this._refreshLiveUpdatePanelLayout, true);
+
+    if (this._liveUpdateLayoutAnimationFrame !== null) {
+      window.cancelAnimationFrame(this._liveUpdateLayoutAnimationFrame);
+      this._liveUpdateLayoutAnimationFrame = null;
+    }
   }
 
   public render(): JSX.Element {
@@ -299,9 +305,14 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   };
 
   private readonly _refreshLiveUpdatePanelLayout = (): void => {
-    if (this._getResolvedLiveUpdateFormUrl()) {
-      this.forceUpdate();
+    if (!this._getResolvedLiveUpdateFormUrl() || this._liveUpdateLayoutAnimationFrame !== null) {
+      return;
     }
+
+    this._liveUpdateLayoutAnimationFrame = window.requestAnimationFrame(() => {
+      this._liveUpdateLayoutAnimationFrame = null;
+      this.forceUpdate();
+    });
   };
 
   private _getResolvedLiveUpdateFormUrl(): string | null {
@@ -488,9 +499,9 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   }
 
   private _openViewerDetailsPane(iframe: HTMLIFrameElement, iframeDocument: Document, iframeUrl: string): void {
-    const infoButton = Array.from(iframeDocument.querySelectorAll("button")).find((button) => button.getAttribute("aria-label") === "Info, View file details") as HTMLButtonElement;
-    const overflowInfoButton = Array.from(iframeDocument.querySelectorAll('[role="menuitem"]')).find((item) => item.getAttribute("aria-label") === "Info, View file details") as HTMLElement;
-    const moreButton = Array.from(iframeDocument.querySelectorAll("button")).find((button) => button.getAttribute("aria-label") === "More") as HTMLButtonElement;
+    const infoButton = this._findViewerDetailsTrigger<HTMLButtonElement>(iframeDocument, "button");
+    const overflowInfoButton = this._findViewerDetailsTrigger<HTMLElement>(iframeDocument, '[role="menuitem"]');
+    const moreButton = this._findViewerMoreButton(iframeDocument);
 
     if (overflowInfoButton && iframe.dataset.liveUpdateViewerMarker !== `${iframeUrl}:info`) {
       iframe.dataset.liveUpdateViewerMarker = `${iframeUrl}:info`;
@@ -506,6 +517,26 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     if (!infoButton && moreButton && moreButton.getAttribute("aria-expanded") !== "true") {
       moreButton.click();
     }
+  }
+
+  private _findViewerDetailsTrigger<TElement extends Element>(iframeDocument: Document, selector: string): TElement | null {
+    return Array.from(iframeDocument.querySelectorAll(selector)).find((element) => {
+      const htmlElement = element as HTMLElement;
+      const ariaLabel = htmlElement.getAttribute("aria-label") || "";
+
+      return ariaLabel === "Info, View file details"
+        || !!htmlElement.querySelector('[data-icon-name="Info"], [data-icon-name="InfoSolid"], [data-icon-name="Info2"]');
+    }) as TElement | null;
+  }
+
+  private _findViewerMoreButton(iframeDocument: Document): HTMLButtonElement | null {
+    return Array.from(iframeDocument.querySelectorAll("button")).find((element) => {
+      const htmlElement = element as HTMLButtonElement;
+      const ariaLabel = htmlElement.getAttribute("aria-label") || "";
+
+      return ariaLabel === "More"
+        || !!htmlElement.querySelector('[data-icon-name="More"], [data-icon-name="MoreVertical"]');
+    }) as HTMLButtonElement | null;
   }
 
   private _prepareDetailsPaneFrame(iframeDocument: Document): void {
@@ -691,6 +722,10 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
     try {
       const baseUrl = new URL(webUrl, window.location.origin);
+
+      if (baseUrl.origin !== window.location.origin) {
+        return null;
+      }
 
       if (this._isLiveUpdateDocumentItem(item)) {
         return this._buildDocumentViewerUrl(item, baseUrl) ?? this._buildDocumentDetailsPaneUrl(item, baseUrl);
