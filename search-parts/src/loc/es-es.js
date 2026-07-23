@@ -247,6 +247,11 @@ define([], function () {
                 EnableStickyHeader: "Activar el encabezado fijo",
                 StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)",
                 EnableDownload: "Activar la descarga de archivos",
+                EnableDetails: "Habilitar detalles",
+                DetailsButtonLabel: "Detalles",
+                DetailsPanelHeader: "Detalles",
+                DetailsUnavailableLabel: "Los detalles no están disponibles",
+                CloseDetailsPanelLabel: "Cerrar panel de detalles",
                 UseAlternatingBackgroundColor: "Utilice colores de fondo alternos"
             },
             Cards: {

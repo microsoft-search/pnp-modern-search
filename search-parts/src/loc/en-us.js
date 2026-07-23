@@ -246,6 +246,11 @@ define([], function () {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
+                EnableDetails: "Enable details",
+                DetailsButtonLabel: "Details",
+                DetailsPanelHeader: "Details",
+                DetailsUnavailableLabel: "Details unavailable",
+                CloseDetailsPanelLabel: "Close details panel",
                 UseAlternatingBackgroundColor: "Use Alternating Background Color",
                 ColumnDescriptionFieldLabel: "Column description (tooltip)"
             },

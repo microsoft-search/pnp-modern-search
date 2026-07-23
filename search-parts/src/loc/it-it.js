@@ -246,6 +246,11 @@ define([], function () {
                 EnableStickyHeader: "Abilita intestazione fissa",
                 StickyHeaderListViewHeight: "Altezza vista elenco (in px)",
                 EnableDownload: "Abilita download",
+                EnableDetails: "Abilita dettagli",
+                DetailsButtonLabel: "Dettagli",
+                DetailsPanelHeader: "Dettagli",
+                DetailsUnavailableLabel: "I dettagli non sono disponibili",
+                CloseDetailsPanelLabel: "Chiudi riquadro dettagli",
                 UseAlternatingBackgroundColor: "Usa colori di sfondo alternati"
 
             },

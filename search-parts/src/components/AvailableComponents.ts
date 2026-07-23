@@ -26,6 +26,7 @@ import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorCo
 import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
 import { DownloadSelectedItemsButtonWebComponent } from './DownloadSelectedItemsButtonComponent';
+import { DetailsSelectedItemButtonWebComponent } from './DetailsSelectedItemButtonComponent';
 import { FilterHierarchicalWebComponent } from './filters/FilterHierarchicalComponent';
 
 export class AvailableComponents {
@@ -33,7 +34,7 @@ export class AvailableComponents {
     /**
      * Returns the list of builtin web components available for Handlebars templates
      */
-    public static BuiltinComponents: IComponentDefinition<any>[] = [
+    public static readonly BuiltinComponents: IComponentDefinition<any>[] = [
         {
             componentName: 'pnp-debugview',
             componentClass: DebugViewWebComponent
@@ -141,6 +142,10 @@ export class AvailableComponents {
         {
             componentName: "pnp-download-selected-items-button",
             componentClass: DownloadSelectedItemsButtonWebComponent
+        },
+        {
+            componentName: "pnp-details-selected-item-button",
+            componentClass: DetailsSelectedItemButtonWebComponent
         },
         {
             componentName: "pnp-filterhierarchical",

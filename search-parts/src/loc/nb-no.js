@@ -245,6 +245,11 @@ define([], function () {
                 EnableStickyHeader: "Aktiver klebrig overskrift",
                 StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
                 EnableDownload: "Aktiver nedlasting",
+                EnableDetails: "Aktiver detaljer",
+                DetailsButtonLabel: "Detaljer",
+                DetailsPanelHeader: "Detaljer",
+                DetailsUnavailableLabel: "Detaljer er ikke tilgjengelige",
+                CloseDetailsPanelLabel: "Lukk detaljpanelet",
                 UseAlternatingBackgroundColor: "Bruk vekslende bakgrunnsfarge"
             },
             Cards: {

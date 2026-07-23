@@ -246,6 +246,11 @@ define([], function () {
                 EnableStickyHeader: "Activer l’en-tête collant",
                 StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
                 EnableDownload: "Activer le téléchargement",
+                EnableDetails: "Activer les détails",
+                DetailsButtonLabel: "Détails",
+                DetailsPanelHeader: "Détails",
+                DetailsUnavailableLabel: "Les détails ne sont pas disponibles",
+                CloseDetailsPanelLabel: "Fermer le panneau des détails",
                 UseAlternatingBackgroundColor: "Utiliser une couleur d'arrière-plan alternée"
             },
             Cards: {

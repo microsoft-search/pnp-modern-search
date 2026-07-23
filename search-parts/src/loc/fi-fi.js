@@ -244,6 +244,11 @@ define([], function () {
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
                 EnableDownload: "Salli lataus",
+                EnableDetails: "Ota tiedot käyttöön",
+                DetailsButtonLabel: "Tiedot",
+                DetailsPanelHeader: "Tiedot",
+                DetailsUnavailableLabel: "Tiedot eivät ole käytettävissä",
+                CloseDetailsPanelLabel: "Sulje tietopaneeli",
                 UseAlternatingBackgroundColor: "Käytä Vaihtelevaa taustaväriä"
             },
             Cards: {

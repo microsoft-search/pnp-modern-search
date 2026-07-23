@@ -36,6 +36,17 @@
             </div>
 
             <div class="template--toolbar">
+                            {{#and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection}}
+                                <pnp-details-selected-item-button
+                                    data-items="{{JSONstringify data.items}}"
+                                    data-context="{{JSONstringify (truncateContext @root)}}"
+                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                    data-file-extension-field="{{@root.slots.FileType}}"
+                                    data-is-container-field="{{@root.slots.IsFolder}}"
+                                    data-allow-multi="{{properties.itemSelectionProps.allowMulti}}"
+                                >
+                                </pnp-details-selected-item-button>
+                            {{/and}}
               {{#and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection}}
                 <pnp-download-selected-items-button 
                   data-items="{{JSONstringify data.items}}" 

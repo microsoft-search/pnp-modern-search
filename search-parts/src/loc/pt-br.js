@@ -246,6 +246,11 @@ define([], function () {
                 EnableStickyHeader: "Cabeçalho fixo",
                 StickyHeaderListViewHeight: "Altura da lista de visualização (px)",
                 EnableDownload: "Habilitar download",
+                EnableDetails: "Habilitar detalhes",
+                DetailsButtonLabel: "Detalhes",
+                DetailsPanelHeader: "Detalhes",
+                DetailsUnavailableLabel: "Os detalhes não estão disponíveis",
+                CloseDetailsPanelLabel: "Fechar painel de detalhes",
                 UseAlternatingBackgroundColor: "Utilize cores de fundo alternadas"
             },
             Cards: {

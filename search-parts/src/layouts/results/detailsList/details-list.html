@@ -23,14 +23,25 @@
             </pnp-selectedfilters>
         {{/if}}
         
-        {{#or @root.properties.showResultsCount (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) }}
+        {{#or @root.properties.showResultsCount (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) (and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection) }}
           <div class="template--toolbar">
             <div class="template--resultCount">
               {{#if @root.properties.showResultsCount}}
-                <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
+                                <span class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</span>
               {{/if}}
             </div>
             <div>
+                            {{#and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection}}
+                                <pnp-details-selected-item-button
+                                    data-items="{{JSONstringify data.items}}"
+                                    data-context="{{JSONstringify (truncateContext @root)}}"
+                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                    data-file-extension-field="{{@root.slots.FileType}}"
+                                    data-is-container-field="{{@root.slots.IsFolder}}"
+                                    data-allow-multi="{{properties.itemSelectionProps.allowMulti}}"
+                                >
+                                </pnp-details-selected-item-button>
+                            {{/and}}
               {{#and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection}}
                 <pnp-download-selected-items-button 
                   data-items="{{JSONstringify data.items}}" 

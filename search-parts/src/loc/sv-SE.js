@@ -247,6 +247,11 @@ define([], function () {
                 EnableStickyHeader: "Aktivera fast rubrik",
                 StickyHeaderListViewHeight: "Höjd för listvy (px)",
                 EnableDownload: "Aktivera nedladdning",
+                EnableDetails: "Aktivera detaljer",
+                DetailsButtonLabel: "Detaljer",
+                DetailsPanelHeader: "Detaljer",
+                DetailsUnavailableLabel: "Detaljer är inte tillgängliga",
+                CloseDetailsPanelLabel: "Stäng informationspanelen",
                 UseAlternatingBackgroundColor: "Använd alternerande bakgrundsfärg"
             },
             Cards: {
