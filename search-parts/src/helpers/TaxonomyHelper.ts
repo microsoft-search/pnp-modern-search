@@ -16,11 +16,16 @@ export class TaxonomyHelper {
         return /\p{L}/u.test(value);
     }
 
+    private static isNonPrintableCodePoint(codePoint: number): boolean {
+        return codePoint < 0x20
+            || (codePoint >= 0x7f && codePoint <= 0x9f)
+            || (codePoint >= 0xd800 && codePoint <= 0xdfff);
+    }
+
     private static containsNonPrintableCharacter(value: string): boolean {
         for (let index = 0; index < value.length; index++) {
             const codePoint = value.codePointAt(index) ?? 0;
-
-            if (codePoint < 0x20 || (codePoint >= 0x7f && codePoint <= 0x9f)) {
+            if (this.isNonPrintableCodePoint(codePoint)) {
                 return true;
             }
 
