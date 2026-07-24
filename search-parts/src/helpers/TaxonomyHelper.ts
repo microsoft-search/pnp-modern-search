@@ -17,10 +17,19 @@ export class TaxonomyHelper {
     }
 
     private static containsNonPrintableCharacter(value: string): boolean {
-        return Array.from(value).some(char => {
-            const codePoint = char.codePointAt(0) ?? 0;
-            return codePoint < 0x20 || codePoint === 0x7f;
-        });
+        for (let index = 0; index < value.length; index++) {
+            const codePoint = value.codePointAt(index) ?? 0;
+
+            if (codePoint < 0x20 || (codePoint >= 0x7f && codePoint <= 0x9f)) {
+                return true;
+            }
+
+            if (codePoint > 0xffff) {
+                index++;
+            }
+        }
+
+        return false;
     }
 
     public static normalizeReadableLabelCandidate(value: string): string {
