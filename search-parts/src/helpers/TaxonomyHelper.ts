@@ -22,6 +22,13 @@ export class TaxonomyHelper {
             || (codePoint >= 0xd800 && codePoint <= 0xdfff);
     }
 
+    private static isHexCharacter(value: string, index: number): boolean {
+        const codePoint = value.codePointAt(index) ?? 0;
+        return (codePoint >= 0x30 && codePoint <= 0x39)
+            || (codePoint >= 0x41 && codePoint <= 0x46)
+            || (codePoint >= 0x61 && codePoint <= 0x66);
+    }
+
     private static containsNonPrintableCharacter(value: string): boolean {
         for (let index = 0; index < value.length; index++) {
             const codePoint = value.codePointAt(index) ?? 0;
@@ -222,7 +229,7 @@ export class TaxonomyHelper {
 
             const payloadChars: string[] = [];
 
-            while (payloadStart < value.length && /[0-9a-fA-F]/.test(value.charAt(payloadStart))) {
+            while (payloadStart < value.length && this.isHexCharacter(value, payloadStart)) {
                 payloadChars.push(value.charAt(payloadStart));
                 payloadStart++;
             }

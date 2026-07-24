@@ -39,9 +39,10 @@ export class SharePointSearchService implements ISharePointSearchService {
     private serviceScope: ServiceScope;
 
     private normalizeRefinementLabel(refinementValue: string): string {
-        const normalizedValue = `${refinementValue ?? ''}`.startsWith('string;#')
-            ? `${refinementValue ?? ''}`.substring('string;#'.length)
-            : `${refinementValue ?? ''}`;
+        const safeRefinementValue = `${refinementValue ?? ''}`;
+        const normalizedValue = safeRefinementValue.startsWith('string;#')
+            ? safeRefinementValue.substring('string;#'.length)
+            : safeRefinementValue;
 
         if (!normalizedValue.includes(';#')) {
             return normalizedValue;
