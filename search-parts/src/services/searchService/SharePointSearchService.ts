@@ -38,6 +38,23 @@ export class SharePointSearchService implements ISharePointSearchService {
      */
     private serviceScope: ServiceScope;
 
+    private normalizeRefinementLabel(refinementValue: string): string {
+        const safeRefinementValue = `${refinementValue ?? ''}`;
+        const normalizedValue = safeRefinementValue.startsWith('string;#')
+            ? safeRefinementValue.substring('string;#'.length)
+            : safeRefinementValue;
+
+        if (!normalizedValue.includes(';#')) {
+            return normalizedValue;
+        }
+
+        return normalizedValue
+            .split(';#')
+            .map(value => value.trim())
+            .filter(Boolean)
+            .join(', ');
+    }
+
     /**
      * The SPHttpClient instance
      */
@@ -120,8 +137,8 @@ export class SharePointSearchService implements ISharePointSearchService {
                         let values: IDataFilterResultValue[] = [];
                         refiner.Entries.forEach((item) => {
                             values.push({
-                                count: parseInt(item.RefinementCount, 10),
-                                name: item.RefinementValue.replace("string;#", ""), // Replace string;# for calculated columns https://github.com/SharePoint/sp-dev-solutions/issues/304
+                                count: Number.parseInt(item.RefinementCount, 10),
+                                name: this.normalizeRefinementLabel(item.RefinementValue),
                                 value: item.RefinementToken,
                                 operator: FilterComparisonOperator.Contains
                             } as IDataFilterResultValue);

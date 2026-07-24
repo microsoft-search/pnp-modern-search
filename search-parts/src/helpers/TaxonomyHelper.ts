@@ -16,13 +16,52 @@ export class TaxonomyHelper {
         return /\p{L}/u.test(value);
     }
 
+    private static isNonPrintableCodePoint(codePoint: number): boolean {
+        return codePoint < 0x20
+            || (codePoint >= 0x7f && codePoint <= 0x9f)
+            || (codePoint >= 0xd800 && codePoint <= 0xdfff);
+    }
+
+    private static isHexCharacter(value: string, index: number): boolean {
+        const codePoint = value.codePointAt(index) ?? 0;
+        return (codePoint >= 0x30 && codePoint <= 0x39)
+            || (codePoint >= 0x41 && codePoint <= 0x46)
+            || (codePoint >= 0x61 && codePoint <= 0x66);
+    }
+
+    private static containsNonPrintableCharacter(value: string): boolean {
+        for (let index = 0; index < value.length; index++) {
+            const codePoint = value.codePointAt(index) ?? 0;
+            if (this.isNonPrintableCodePoint(codePoint)) {
+                return true;
+            }
+
+            if (codePoint > 0xffff) {
+                index++;
+            }
+        }
+
+        return false;
+    }
+
     public static normalizeReadableLabelCandidate(value: string): string {
-        return `${value || ''}`.trim().replace(/^"+|"+$/g, '');
+        let normalizedValue = `${value || ''}`.trim();
+
+        while (normalizedValue.startsWith('"')) {
+            normalizedValue = normalizedValue.substring(1);
+        }
+
+        while (normalizedValue.endsWith('"')) {
+            normalizedValue = normalizedValue.substring(0, normalizedValue.length - 1);
+        }
+
+        return normalizedValue;
     }
 
     public static isReadablePlainLabel(value: string): boolean {
         const cleanedValue = this.normalizeReadableLabelCandidate(value);
         return !!cleanedValue
+            && !this.containsNonPrintableCharacter(cleanedValue)
             && !this.containsEncodedTokenMarker(cleanedValue)
             && !cleanedValue.includes('|')
             && !this.isGuidLikeToken(cleanedValue);
@@ -148,9 +187,7 @@ export class TaxonomyHelper {
             // If escaped quotes remain in the middle, normalize them.
             value = value.replaceAll(escapedQuote, '"');
 
-            value = value.replace(/^#?ǂ+/, '');
-
-            value = this.getLongestHexSegment(value);
+            value = this.extractEncodedHexPayload(value);
 
             if (value.length % 2 !== 0) {
                 value = value.substring(0, value.length - 1);
@@ -181,14 +218,28 @@ export class TaxonomyHelper {
         }
     }
 
-    private static getLongestHexSegment(value: string): string {
-        if (/^[0-9a-fA-F]+$/.test(value)) {
-            return value;
+    private static extractEncodedHexPayload(value: string): string {
+        const markerIndex = value.indexOf('ǂ');
+        if (markerIndex >= 0) {
+            let payloadStart = markerIndex;
+
+            while (value.charAt(payloadStart) === 'ǂ') {
+                payloadStart++;
+            }
+
+            const payloadChars: string[] = [];
+
+            while (payloadStart < value.length && this.isHexCharacter(value, payloadStart)) {
+                payloadChars.push(value.charAt(payloadStart));
+                payloadStart++;
+            }
+
+            if (payloadChars.length > 0) {
+                return payloadChars.join('');
+            }
         }
 
-        const hexSegments = value.match(/[0-9a-fA-F]+/g) || [];
-        const longestHexSegment = hexSegments.sort((left, right) => right.length - left.length)[0];
-        return longestHexSegment || '';
+        return '';
     }
 
     private static tryDecodeUtf8(hexPairs: string[]): string {
