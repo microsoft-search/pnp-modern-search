@@ -1,4 +1,4 @@
-import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, IDataSourceData, SortFieldDirection } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilter, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, FilterConditionOperator, IDataSourceData, SortFieldDirection } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory, SPHttpClient } from "@microsoft/sp-http";
@@ -129,6 +129,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     private _availableSharePointSchemaFields: IComboBoxOption[] = [];
     private _availableExternalConnectionIds: IComboBoxOption[] = [];
     private readonly _availableFieldsFromResults = new Set<string>();
+    private readonly _aggregationFieldAliases = new Map<string, string>();
     private _externalConnectionsLoadPermissionError = false;
     private _externalConnectionsLoadGenericError = false;
     private _externalSchemaLoadPermissionError = false;
@@ -1494,13 +1495,17 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const contentSources = this.buildContentSources();
         const sortProperties = this.buildSortProperties(dataContext);
         const { includeHiddenContent, queryTemplate: finalTemplate } = this.determineHiddenContentSettings(queryTemplate);
+        const effectiveQueryTemplate = [finalTemplate, filters.queryTemplate]
+            .filter(value => !isEmpty(value))
+            .join(' ')
+            .trim();
 
         const searchRequest = this.buildSearchRequest({
             queryText,
-            queryTemplate: finalTemplate.concat(` ${filters}`),
+            queryTemplate: effectiveQueryTemplate,
             from,
             aggregations,
-            aggregationFilters: [], // The aggregationFilters input cannot combine multiple filters under an OR relationship, so the queryTemplate field is used (issue #4813)
+            aggregationFilters: filters.aggregationFilters,
             contentSources,
             sortProperties,
             includeHiddenContent,
@@ -1546,11 +1551,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private buildAggregations(dataContext: IDataContext): ISearchRequestAggregation[] {
+        this._aggregationFieldAliases.clear();
+
         return dataContext.filters.filtersConfiguration.filter(filterConfig => {
             return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople;
         }).map(filterConfig => {
+            const normalizedFieldName = this.normalizeAggregationFieldName(filterConfig.filterName);
+            this._aggregationFieldAliases.set(normalizedFieldName.toLowerCase(), filterConfig.filterName);
+
             const aggregation: ISearchRequestAggregation = {
-                field: filterConfig.filterName,
+                field: normalizedFieldName,
                 bucketDefinition: {
                     isDescending: filterConfig.sortDirection !== FilterSortDirection.Ascending,
                     minimumCount: 1,
@@ -1565,6 +1575,16 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
             return aggregation;
         });
+    }
+
+    private normalizeAggregationFieldName(fieldName: string): string {
+        const normalized = (fieldName || '').trim();
+
+        if (normalized.toLowerCase() === 'lastmodifiedtime' || normalized.toLowerCase() === 'lastmodifieddatetime') {
+            return 'lastModifiedTime';
+        }
+
+        return this.normalizeFieldName(normalized);
     }
 
     private buildDateRanges(): any[] {
@@ -1586,19 +1606,79 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         ];
     }
 
-    private buildFilters(dataContext: IDataContext): string {
-        if (dataContext.filters.selectedFilters.length > 0) {
-            // The Microsoft Search API expects KQL-formatted refinement strings in aggregationFilters.
-            // Using FQL here causes multi-filter combinations to return 0 results (issue #4796).
-            const refinementString = DataFilterHelper.buildKqlRefinementString(
-                dataContext.filters.selectedFilters,
+    private buildFilters(dataContext: IDataContext): { queryTemplate: string; aggregationFilters: string[] } {
+        const selectedFilters = dataContext.filters.selectedFilters ?? [];
+
+        if (selectedFilters.length === 0) {
+            return {
+                queryTemplate: "",
+                aggregationFilters: []
+            };
+        }
+
+        const selectedDateFilters = selectedFilters.filter(filter => {
+            const configuration = DataFilterHelper.getConfigurationForFilter(filter, dataContext.filters.filtersConfiguration);
+            return configuration?.selectedTemplate === BuiltinFilterTemplates.DateRange || configuration?.selectedTemplate === BuiltinFilterTemplates.DateInterval;
+        });
+
+        const canUseAggregationFilters =
+            selectedDateFilters.length > 0 &&
+            !(dataContext.filters.filterOperator === FilterConditionOperator.OR && selectedFilters.length > 1);
+
+        const queryTemplateFilters = canUseAggregationFilters
+            ? selectedFilters.filter(filter => !selectedDateFilters.includes(filter))
+            : selectedFilters;
+
+        const queryTemplate = queryTemplateFilters.length > 0
+            ? DataFilterHelper.buildKqlRefinementString(
+                queryTemplateFilters,
                 this.dayjs,
                 dataContext.filters.filterOperator
-            );
+            )
+            : "";
 
-            if (!isEmpty(refinementString)) {
-                return refinementString;
+        const aggregationFilters = canUseAggregationFilters
+            ? selectedDateFilters
+                .map(filter => this.buildDateAggregationFilter(filter))
+                .filter(filter => !isEmpty(filter))
+            : [];
+
+        return {
+            queryTemplate,
+            aggregationFilters
+        };
+    }
+
+    private buildDateAggregationFilter(filter: IDataFilter): string {
+        if (!filter?.values?.length) {
+            return "";
+        }
+
+        let startDate: string = undefined;
+        let endDate: string = undefined;
+
+        filter.values.forEach(filterValue => {
+            if (!startDate && (filterValue.operator === FilterComparisonOperator.Geq || filterValue.operator === FilterComparisonOperator.Gt)) {
+                startDate = filterValue.value;
             }
+
+            if (!endDate && (filterValue.operator === FilterComparisonOperator.Leq || filterValue.operator === FilterComparisonOperator.Lt)) {
+                endDate = filterValue.value;
+            }
+        });
+
+        const normalizedFilterName = this.normalizeAggregationFieldName(filter.filterName);
+
+        if (startDate && endDate) {
+            return `${normalizedFilterName}:range(${startDate},${endDate})`;
+        }
+
+        if (startDate) {
+            return `${normalizedFilterName}:range(${startDate},max,to="le")`;
+        }
+
+        if (endDate) {
+            return `${normalizedFilterName}:range(min,${endDate})`;
         }
 
         return "";
@@ -1886,6 +1966,14 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             return 'fileType';
         }
 
+        if (normalized.toLowerCase() === 'lastmodifiedtime') {
+            return 'lastModifiedTime';
+        }
+
+        if (normalized.toLowerCase() === 'lastmodifieddatetime') {
+            return 'lastModifiedDateTime';
+        }
+
         return normalized;
     }
 
@@ -1985,8 +2073,10 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
 
     private processAggregationResults(aggregation: any, aggregationResults: IDataFilterResult[]): void {
         const values: IDataFilterResultValue[] = this.mapBucketValues(aggregation.buckets);
+        const originalFilterName = this._aggregationFieldAliases.get((aggregation.field || '').toLowerCase()) || aggregation.field;
+
         aggregationResults.push({
-            filterName: aggregation.field,
+            filterName: originalFilterName,
             values: values
         });
     }
