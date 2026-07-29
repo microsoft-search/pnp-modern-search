@@ -34,7 +34,7 @@ export class ThemeVariantHelper {
         }
 
         const serializedTheme = themeHost.getAttribute(THEME_VARIANT_ATTRIBUTE);
-        let themeVariant: IReadonlyTheme = undefined;
+        let themeVariant: IReadonlyTheme | undefined = undefined;
 
         try {
             themeVariant = serializedTheme ? JSON.parse(serializedTheme) : undefined;

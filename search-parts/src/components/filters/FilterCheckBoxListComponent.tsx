@@ -127,12 +127,35 @@ export class FilterCheckBoxList extends React.Component<IFilterCheckBoxListProps
         super(props);
 
         this.state = {
-            selectedValues: (props.values || []).filter(value => value.selected).map(value => value.value)
+            selectedValues: FilterCheckBoxList._getSelectedValues(props.values)
         };
 
         this._onRenderCheckBoxCell = this._onRenderCheckBoxCell.bind(this);
         this._onRenderCheckboxLabel = this._onRenderCheckboxLabel.bind(this);
         this._onShouldVirtualize = this._onShouldVirtualize.bind(this);
+    }
+
+    /**
+     * Takes over the selection whenever the host pushes a different one (ex: a filter reset, a
+     * deep link or a new set of results). Comparing the incoming selection instead of the props
+     * identity keeps selections the user made but hasn't applied yet on multi value filters.
+     */
+    public componentDidUpdate(previousProps: IFilterCheckBoxListProps): void {
+
+        const previousSelection = FilterCheckBoxList._getSelectedValues(previousProps.values);
+        const currentSelection = FilterCheckBoxList._getSelectedValues(this.props.values);
+
+        if (FilterCheckBoxList._getSignature(previousSelection) !== FilterCheckBoxList._getSignature(currentSelection)) {
+            this.setState({ selectedValues: currentSelection });
+        }
+    }
+
+    private static _getSelectedValues(values: IFilterCheckBoxListValue[]): string[] {
+        return (values || []).filter(value => value.selected).map(value => value.value);
+    }
+
+    private static _getSignature(selectedValues: string[]): string {
+        return [...selectedValues].sort((left, right) => left.localeCompare(right)).join('|');
     }
 
     public render(): JSX.Element {
