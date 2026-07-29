@@ -1,5 +1,5 @@
 !!! note
-The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
+    The PnP Modern Search Web Parts must be deployed to your App Catalog and activated on your site. See the [installation documentation](../installation.md) for details.
 
 This scenario builds a dedicated document viewer page in SharePoint that opens when a user clicks a view icon in a search results list. The viewer page displays the document in an embedded iframe alongside a metadata panel, giving users a rich in-context viewing experience without leaving SharePoint.
 
