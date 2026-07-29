@@ -71,6 +71,13 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     private headerDividerProps: IGroupDividerProps;
     private storageKey: string;
 
+    /**
+     * Sanitized templates, keyed by the raw template they were produced from. Sanitizing is
+     * proportional to the template size, so it must not happen on every React render (ex:
+     * collapsing/expanding a group) for what can be a very large content template.
+     */
+    private readonly sanitizedTemplates: Map<string, string> = new Map<string, string>();
+
     public constructor(props) {
         super(props);
 
@@ -132,6 +139,21 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
     }
 
 
+    /**
+     * Sanitizes a template once and reuses the result for subsequent renders.
+     */
+    private getSanitizedTemplate(template: string): string {
+        if (!template) {
+            return template;
+        }
+
+        if (!this.sanitizedTemplates.has(template)) {
+            this.sanitizedTemplates.set(template, DomPurifyHelper.instance.sanitize(template));
+        }
+
+        return this.sanitizedTemplates.get(template);
+    }
+
     public render() {
 
         const groups: IGroup[] = [
@@ -146,10 +168,14 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
             }
         ];
 
+        // A collapsed group never renders its cell, so the content template is only sanitized
+        // once the group is actually expanded.
+        const contentItem = this.state.isCollapsed
+            ? null
+            : <div key={'template'} dangerouslySetInnerHTML={{ __html: this.getSanitizedTemplate(this.props.contentTemplate) }}></div>;
+
         const groupedList = <GroupedList
-            items={[
-                <div key={'template'} dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.contentTemplate) }}></div>
-            ]}
+            items={[contentItem]}
             styles={{
                 root: {
                     selectors: {
@@ -169,7 +195,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     onRenderFooter: ((props) => {
 
                         if (!props.group.isCollapsed) {
-                            return <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.footerTemplate) }}></div>;
+                            return <div dangerouslySetInnerHTML={{ __html: this.getSanitizedTemplate(this.props.footerTemplate) }}></div>;
                         } else {
                             return null;
                         }
@@ -321,7 +347,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     </div>
                 </div>
                 {!props.group.isCollapsed ?
-                    <div dangerouslySetInnerHTML={{ __html: DomPurifyHelper.instance.sanitize(this.props.headerTemplate) }}></div>
+                    <div dangerouslySetInnerHTML={{ __html: this.getSanitizedTemplate(this.props.headerTemplate) }}></div>
                     :
                     null
                 }
@@ -346,13 +372,13 @@ export class CollapsibleContentWebComponent extends BaseWebComponent {
 
     public async connectedCallback() {
 
-        const domParser = new DOMParser();
-        const htmlContent: Document = domParser.parseFromString(this.innerHTML, 'text/html');
-
-        // Get the templates
-        const headerTemplateContent = htmlContent.getElementById('collapsible-header');
-        const contentTemplateContent = htmlContent.getElementById('collapsible-content');
-        const footerTemplateContent = htmlContent.getElementById('collapsible-footer');
+        // Read the templates straight from the live DOM. Serializing `this.innerHTML` and
+        // parsing it back with a DOMParser doubles the cost of every render for filters with
+        // a lot of values, and buys nothing: `<template>` content is inert, so the web
+        // components it contains are not upgraded while they sit there.
+        const headerTemplateContent = this.querySelector('#collapsible-header');
+        const contentTemplateContent = this.querySelector('#collapsible-content');
+        const footerTemplateContent = this.querySelector('#collapsible-footer');
 
         let contentTemplate = null;
         let footerTemplate = null;
