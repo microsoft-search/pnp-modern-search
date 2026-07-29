@@ -145,6 +145,57 @@ export class TaxonomyHelper {
         return firstReadablePart || '';
     }
 
+    /**
+     * Resolves the human readable label for a raw refiner value. Falls back to the decoded
+     * value (and eventually to the raw value) when no readable label can be extracted.
+     */
+    public static resolveDisplayLabel(rawValue: string): string {
+        const readableRawLabel = this.extractReadableLabel(rawValue);
+        if (readableRawLabel) {
+            return readableRawLabel;
+        }
+
+        const decodedValue = this.decodeHexString(rawValue);
+        if (decodedValue) {
+            const readableDecodedLabel = this.extractReadableLabel(decodedValue);
+            if (readableDecodedLabel) {
+                return readableDecodedLabel;
+            }
+
+            return decodedValue;
+        }
+
+        return rawValue;
+    }
+
+    private static extractReadableLabel(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const taxonomyLabel = this.extractTaxonomyLabel(cleanedValue);
+        if (taxonomyLabel) {
+            return taxonomyLabel;
+        }
+
+        const claimsLabel = this.extractClaimsLabel(cleanedValue);
+        if (claimsLabel) {
+            return claimsLabel;
+        }
+
+        if (this.isReadablePlainLabel(cleanedValue)) {
+            return cleanedValue;
+        }
+
+        const personLikeLabel = this.extractPersonLikeLabel(cleanedValue);
+        if (personLikeLabel) {
+            return personLikeLabel;
+        }
+
+        return this.extractFirstReadablePipeSegment(cleanedValue);
+    }
+
     public static normalizeGuid(rawGuid: string): string {
         return rawGuid ? rawGuid.replace(/^#/, '').replaceAll('-', '').toLowerCase() : '';
     }
