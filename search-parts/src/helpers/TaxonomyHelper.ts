@@ -117,7 +117,7 @@ export class TaxonomyHelper {
             return '';
         }
 
-        const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
+        const personLikeLabelMatch = /^([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*)+)$/.exec(cleanedValue);
         return personLikeLabelMatch?.[1]?.trim() || '';
     }
 
