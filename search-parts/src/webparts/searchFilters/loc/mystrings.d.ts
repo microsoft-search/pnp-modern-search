@@ -82,6 +82,12 @@ declare interface ISearchFiltersWebPartStrings {
             ErrorTemplateResolve: string;
             FiltersTemplateFieldLabel: string;
             FiltersTemplatePanelHeader: string;
+        },
+        InformationPage: {
+            Extensibility: {
+                PanelHeader: string;
+                PanelDescription: string;
+            }
         }
     },
     Styling: {

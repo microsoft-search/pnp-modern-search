@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Kan het opgegeven template niet inladen. Foutmelding: '{0}'",
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configureer inladen van uitbreidingsbibliotheken bij opstarten",
+                    PanelDescription: "Beheer hier je aangepaste uitbreidingsbibliotheek ID's. Je kan hier een weergavenaam specificeren en aangeven of de bibliotheek geladen moet worden. Alleen aangepaste filterindelingen, filtercontrols, web componenten en Handlebars helpers worden hier geladen."
+                }
             }
         },
         Styling: {

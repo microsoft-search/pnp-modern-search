@@ -2,7 +2,7 @@
 
 !["Custom layout"](../assets/extensibility/layout/custom_layout.png){: .center}
 
-> Custom layouts are only supported for the 'Search Results' Web Part. You can't add custom layout for the 'Search Filters' Web Part.
+> Custom layouts are supported for both the 'Search Results' and the 'Search Filters' Web Parts. Use the `type` property of the layout definition (`LayoutType.Results` or `LayoutType.Filter`) to decide where your layout shows up. The 'Search Filters' Web Part only renders Handlebars layouts (adaptive cards are not supported for filters).
 
 ## Layout creation process
 
@@ -99,7 +99,7 @@ The next step is to fill information about your new layout. In the library main 
 | `name` | The friendly name of your layout that will show up in tiles.
 | `iconName` | An Office UI Fabric icon for your layout.
 | `key` | An unique internal key for your layout.
-| `type` | The layout type (`LayoutType.Results` is for the 'Data Visualizer' Web Part, `LayoutType.Filter` for the 'Data Filter' Web Part). Only **`LayoutType.Results`** is supported for now. You can't add custom layout for the 'Data Filter' Web Part.
+| `type` | The layout type (`LayoutType.Results` is for the 'Search Results' Web Part, `LayoutType.Filter` for the 'Search Filters' Web Part).
 | `renderType` | The layout render type is used to define if your layout is based on HTML, CSS and Handlebars or JSON (adaptive cards).
 | `templateContent` | The template HTML content as string. Use a `require` statement to get the string content from your HTML file. If you reference a JSON file, you must use the stringified value (ex: `JSON.stringify(require('../custom-layout.json'), null, "\t")`)
 | `serviceKey` | A service key used to instanciate your layout class. Builtin or custom data layouts are instanciated dynamically using [SPFx service scopes](https://docs.microsoft.com/en-us/javascript/api/sp-core-library/servicescope?view=sp-typescript-latest).

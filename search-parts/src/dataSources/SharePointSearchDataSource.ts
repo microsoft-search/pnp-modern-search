@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection, FilterType } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
@@ -1012,7 +1012,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             // Set list of refiners to retrieve
             searchQuery.Refiners = dataContext.filters.filtersConfiguration.filter(filterConfig => {
-                return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople;
+                // 'filterType' is only set for filters using a custom filter control from an extensibility library
+                return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople && filterConfig.filterType !== FilterType.StaticFilter;
             }).map(filterConfig => {
 
                 // Special case with Date managed properties

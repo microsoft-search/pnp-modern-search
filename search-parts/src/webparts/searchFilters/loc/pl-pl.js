@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Nie można rozwiązać wskazanego szablonu. Szczegóły błędu: '{0}'",
                 FiltersTemplateFieldLabel: "Edytuj filtry szablonu",
                 FiltersTemplatePanelHeader: "Edytuj filtry szablonu"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfiguruj biblioteki rozszerzalności ładowane przy starcie.",
+                    PanelDescription: "Dodaj/Usuń identyfikatory niestandardowych bibliotek rozszerzalności. Wybierz nazwę i zdecyduj czy mają być ładowane przy starcie. Tylko niestandardowe układy filtrów, kontrolki filtrów, komponenty web i Handlebars będą tutaj ładowane."
+                }
             }
         },
         Styling: {

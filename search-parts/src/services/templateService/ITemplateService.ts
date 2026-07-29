@@ -1,6 +1,7 @@
 import {
   IComponentDefinition,
   IExtensibilityLibrary,
+  IFilterControlDefinition,
   LayoutRenderType,
 } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../../models/common/IDataResultType";
@@ -16,6 +17,7 @@ export interface ITemplateService {
   TEMPLATE_ID_PREFIX: string;
   Handlebars: typeof Handlebars;
   AdaptiveCardsExtensibilityLibraries: IExtensibilityLibrary[];
+  CustomFilterControls: IFilterControlDefinition[];
   MgtCustomElementHelper: any;
   getTemplateMarkup(templateContent: string): string;
   getPlaceholderMarkup(templateContent: string): string;
