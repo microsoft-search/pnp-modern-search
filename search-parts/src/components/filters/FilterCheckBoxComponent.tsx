@@ -4,6 +4,8 @@ import * as ReactDOM from 'react-dom';
 import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Text, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
+import { ThemeVariantHelper } from '../../helpers/ThemeVariantHelper';
+import { BusyCursorHelper } from '../../helpers/BusyCursorHelper';
 
 export interface IFilterCheckBoxProps {
 
@@ -77,29 +79,6 @@ export interface IFilterCheckBoxState {
 export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProps, IFilterCheckBoxState> {
 
     private readonly _rootRef: React.RefObject<HTMLDivElement> = React.createRef();
-    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
-
-    private _setImmediateProgressCursor(): void {
-        if (!globalThis.document) {
-            return;
-        }
-
-        if (globalThis.document.documentElement) {
-            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
-        }
-
-        if (globalThis.document.body) {
-            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
-        }
-
-        const styleId = FilterCheckBoxComponent.GLOBAL_BUSY_CURSOR_STYLE_ID;
-        if (!globalThis.document.getElementById(styleId)) {
-            const styleElement = globalThis.document.createElement('style');
-            styleElement.id = styleId;
-            styleElement.textContent = '* { cursor: progress !important; }';
-            globalThis.document.head.appendChild(styleElement);
-        }
-    }
 
     private _getTextColor(): string {
         if (this.props.themeVariant?.isInverted) {
@@ -150,58 +129,6 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         }
     }
 
-    private _extractReadableLabel(value: string): string {
-        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(value);
-        if (!cleanedValue) {
-            return '';
-        }
-
-        const taxonomyLabel = TaxonomyHelper.extractTaxonomyLabel(cleanedValue);
-        if (taxonomyLabel) {
-            return taxonomyLabel;
-        }
-
-        const claimsLabel = TaxonomyHelper.extractClaimsLabel(cleanedValue);
-        if (claimsLabel) {
-            return claimsLabel;
-        }
-
-        if (TaxonomyHelper.isReadablePlainLabel(cleanedValue)) {
-            return cleanedValue;
-        }
-
-        const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
-        if (personLikeLabel) {
-            return personLikeLabel;
-        }
-
-        const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-        if (firstReadablePipeSegment) {
-            return firstReadablePipeSegment;
-        }
-
-        return '';
-    }
-
-    private _resolveDisplayLabel(rawValue: string): string {
-        const readableRawLabel = this._extractReadableLabel(rawValue);
-        if (readableRawLabel) {
-            return readableRawLabel;
-        }
-
-        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
-        if (decodedValue) {
-            const readableDecodedLabel = this._extractReadableLabel(decodedValue);
-            if (readableDecodedLabel) {
-                return readableDecodedLabel;
-            }
-
-            return decodedValue;
-        }
-
-        return rawValue;
-    }
-
     public render() {
 
         let filterValue: IDataFilterValueInfo = {
@@ -215,7 +142,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         let renderInput: JSX.Element = null;
         const textColor = this._getTextColor();
         const rawLabelValue = `${filterValue.name ?? filterValue.value ?? ''}`;
-        const labelValue = this._resolveDisplayLabel(rawLabelValue);
+        const labelValue = TaxonomyHelper.resolveDisplayLabel(rawLabelValue);
 
 
         if (this.props.isMulti) {
@@ -239,7 +166,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 
 
                 onChange={(ev, checked: boolean) => {
-                    this._setImmediateProgressCursor();
+                    BusyCursorHelper.setImmediateProgressCursor();
                     filterValue.selected = checked;
                     filterValue.name = labelValue;
                     this.props.onChecked(this.props.filterName, filterValue);
@@ -278,7 +205,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                     }
                 ]}
                 onChange={(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
-                    this._setImmediateProgressCursor();
+                    BusyCursorHelper.setImmediateProgressCursor();
                     filterValue.selected = (ev.currentTarget as HTMLInputElement).checked;
                     filterValue.value = safeFilterValue;
                     filterValue.name = labelValue;
@@ -319,6 +246,15 @@ export class FilterCheckBoxWebComponent extends BaseWebComponent {
         />;
 
         ReactDOM.render(checkBox, this);
+    }
+
+    /**
+     * Serializing the theme on every single value is what made large refiners unusable, so
+     * templates can set it once on an enclosing element (ex: `pnp-collapsible` or the values
+     * list) and let every value resolve it from there.
+     */
+    protected getThemeVariant(): IReadonlyTheme {
+        return ThemeVariantHelper.resolveFromAncestors(this);
     }
 
     protected onDispose(): void {
