@@ -363,6 +363,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         } else if (this.templateContentToDisplay && this.properties.filtersConfiguration.length > 0) {
             // Display the Web Part only if a valid configuration is set
 
+            // The options a custom filter control doesn't support are only disabled in the property pane, so render
+            // the filters from the normalized configuration to always use the effective values of the control
+            const resolvedFiltersConfiguration = this.getResolvedFiltersConfiguration();
+
             // Get data from connected sources
             if (this._dataSourceDynamicProperties.length > 0) {
 
@@ -377,7 +381,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             // OR the data results don't contain this filter name. 
             // We create fake entries for those filters to be able to render them in the template
             // We do this by convenience to avoid refactoring the Handlebars templates
-            filterResults = this._initStaticFilters(filterResults, this.properties.filtersConfiguration);
+            filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration);
 
             renderRootElement = React.createElement(
                 React.Suspense,
@@ -387,11 +391,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     {
                         templateContent: this.templateContentToDisplay,
                         availableFilters: filterResults,
-                        filtersConfiguration: this.properties.filtersConfiguration,
+                        filtersConfiguration: resolvedFiltersConfiguration,
                         domElement: this.domElement,
                         instanceId: this.instanceId,
                         selectedLayoutKey: this.properties.selectedLayoutKey,
-                        properties: JSON.parse(JSON.stringify(this.properties)),
+                        properties: JSON.parse(JSON.stringify({ ...this.properties, filtersConfiguration: resolvedFiltersConfiguration })),
                         themeVariant: this._themeVariant,
                         context: this.context,
                         onUpdateFilters: (updatedFilters: IDataFilter[]) => {
@@ -525,29 +529,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     /**
-     * Returns the filters configuration to share with connected Web Parts, resolving the filter type of the
-     * filters using a custom filter control. Connected data sources don't know about the custom controls
-     * registered here, so they rely on that information to skip refiners/aggregations for static filters.
+     * Returns the effective filters configuration, resolving the filter type of the filters using a custom filter
+     * control and resetting the options their control doesn't support. Connected data sources don't know about the
+     * custom controls registered here, so they rely on the filter type to skip refiners/aggregations for static
+     * filters, and on the normalized options to not apply settings the selected control opted out from.
      */
     private getResolvedFiltersConfiguration(): IDataFilterConfiguration[] {
-
-        if (this.availableFilterControlDefinitions.length === 0) {
-            return this.properties.filtersConfiguration;
-        }
-
-        return this.properties.filtersConfiguration.map(configuration => {
-
-            const customControl = FilterControlHelper.getCustomControl(configuration.selectedTemplate, this.availableFilterControlDefinitions);
-
-            if (!customControl) {
-                return configuration;
-            }
-
-            return {
-                ...configuration,
-                filterType: customControl.filterType || FilterType.Refiner
-            };
-        });
+        return FilterControlHelper.normalizeConfigurations(this.properties.filtersConfiguration, this.availableFilterControlDefinitions);
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
@@ -642,7 +630,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             // Set correct default values according to the template
             const nextConfigurations = newValue as IHierarchicalFilterConfiguration[];
-            this.properties.filtersConfiguration = nextConfigurations.map(configuration => {
+            this.properties.filtersConfiguration = nextConfigurations.map(nextConfiguration => {
+
+                // The options unsupported by a custom filter control are disabled in the property pane, but a value
+                // configured before selecting the control could still be persisted, so reset them here as well
+                const configuration = FilterControlHelper.normalizeConfiguration(nextConfiguration, this.availableFilterControlDefinitions);
+
                 if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange
                     || configuration.selectedTemplate === BuiltinFilterTemplates.DateInterval) {
                     configuration.isMulti = false;

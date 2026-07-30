@@ -1,4 +1,4 @@
-import { FilterType, IFilterControlDefinition } from "@pnp/modern-search-extensibility";
+import { FilterConditionOperator, FilterType, IDataFilterConfiguration, IFilterControlDefinition } from "@pnp/modern-search-extensibility";
 import { BuiltinFilterTypes } from "../layouts/AvailableTemplates";
 
 /**
@@ -65,5 +65,62 @@ export class FilterControlHelper {
             default:
                 return true;
         }
+    }
+
+    /**
+     * Returns the filters configuration where the filters using a custom filter control get their resolved filter type
+     * and the options unsupported by their control reset to the default value.
+     *
+     * The property pane only disables the unsupported options, so a value persisted before the custom control was
+     * selected (or before the control opted out from an option) has to be normalized here to make sure everything
+     * relying on the configuration (rendering, connected data sources, ...) sees the effective values.
+     *
+     * @param configurations the filters configuration coming from the property pane
+     * @param customFilterControls the custom filter controls loaded from the extensibility libraries
+     */
+    public static normalizeConfigurations<T extends IDataFilterConfiguration>(configurations: T[], customFilterControls: IFilterControlDefinition[]): T[] {
+
+        if (!configurations || configurations.length === 0 || !customFilterControls || customFilterControls.length === 0) {
+            return configurations;
+        }
+
+        return configurations.map(configuration => this.normalizeConfiguration(configuration, customFilterControls));
+    }
+
+    /**
+     * Normalizes a single filter configuration. Configurations using a builtin control are returned untouched.
+     * @param configuration the filter configuration coming from the property pane
+     * @param customFilterControls the custom filter controls loaded from the extensibility libraries
+     */
+    public static normalizeConfiguration<T extends IDataFilterConfiguration>(configuration: T, customFilterControls: IFilterControlDefinition[]): T {
+
+        const customControl = configuration ? this.getCustomControl(configuration.selectedTemplate, customFilterControls) : undefined;
+
+        if (!customControl) {
+            return configuration;
+        }
+
+        const normalized: T & { showLimitExceededWarning?: boolean } = {
+            ...configuration,
+            filterType: customControl.filterType || FilterType.Refiner
+        };
+
+        if (customControl.supportsMultiValues === false) {
+            // Without multi values, the operator between values is meaningless
+            normalized.isMulti = false;
+            normalized.operator = FilterConditionOperator.AND;
+        }
+
+        if (customControl.supportsValuesCount === false) {
+            normalized.showCount = false;
+        }
+
+        if (customControl.supportsMaxBuckets === false) {
+            // Leaving it empty makes the data sources fall back to their default number of buckets
+            normalized.maxBuckets = undefined;
+            normalized.showLimitExceededWarning = false;
+        }
+
+        return normalized;
     }
 }
