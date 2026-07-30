@@ -100,7 +100,145 @@ public getCustomWebComponents(): IComponentDefinition<any>[] {
 }
 ```
 
-### Use the control in a custom filter layout
+## Complete example: a simple 'tags' filter control
+
+The following control renders the values of a filter as clickable pills instead of checkboxes. It is a full working example you can copy in your extensibility library: two files, no extra dependencies.
+
+!!! tip "Custom element naming"
+    The `componentName` must contain a dash (`my-tags-filter`, not `mytagsfilter`), otherwise the browser refuses to register the custom element.
+
+### 1. The web component
+
+Create `src/components/MyTagsFilterWebComponent.tsx`:
+
+```tsx
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { BaseWebComponent, ExtensibilityConstants, IDataFilterInfo, IDataFilterInternal } from '@pnp/modern-search-extensibility';
+import { IReadonlyTheme } from '@microsoft/sp-component-base';
+
+export interface IMyTagsFilterProps {
+
+    /** The whole filter (values, display name, etc.), from the 'data-filter' attribute */
+    filter?: IDataFilterInternal;
+
+    /** The filter internal name, from the 'data-filter-name' attribute */
+    filterName?: string;
+
+    /** 'true' when the filter shows the values count, from the 'data-show-count' attribute */
+    showCount?: boolean;
+
+    /** The current theme, from the 'data-theme-variant' attribute */
+    themeVariant?: IReadonlyTheme;
+
+    /** Called when a value is selected or unselected */
+    onValueUpdated: (name: string, value: string, selected: boolean) => void;
+}
+
+const MyTagsFilter: React.FunctionComponent<IMyTagsFilterProps> = (props) => {
+
+    const values = props.filter?.values || [];
+    const primaryColor = props.themeVariant?.palette?.themePrimary || '#0078d4';
+    const textColor = props.themeVariant?.semanticColors?.bodyText || '#323130';
+
+    return (
+        <div role='group' aria-label={props.filter?.displayName} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: 8 }}>
+            {values.map((filterValue) => (
+                <button
+                    key={filterValue.value}
+                    type='button'
+                    disabled={filterValue.disabled}
+                    aria-pressed={filterValue.selected}
+                    onClick={() => props.onValueUpdated(filterValue.name, filterValue.value, !filterValue.selected)}
+                    style={{
+                        cursor: filterValue.disabled ? 'default' : 'pointer',
+                        borderRadius: 16,
+                        padding: '4px 12px',
+                        border: `1px solid ${primaryColor}`,
+                        background: filterValue.selected ? primaryColor : 'transparent',
+                        color: filterValue.selected ? '#ffffff' : textColor
+                    }}
+                >
+                    {filterValue.name}{props.showCount && filterValue.count !== undefined ? ` (${filterValue.count})` : ''}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+export class MyTagsFilterWebComponent extends BaseWebComponent {
+
+    public connectedCallback(): void {
+
+        // Turns the 'data-*' attributes set by the filter layout into camelCase props
+        // (ex: 'data-filter-name' becomes 'filterName', 'data-filter' is JSON parsed)
+        const props = this.resolveAttributes();
+
+        const element = <MyTagsFilter
+            {...props}
+            onValueUpdated={(name: string, value: string, selected: boolean) => {
+
+                const detail: IDataFilterInfo = {
+                    filterName: props.filterName,
+                    filterValues: [{ name, value, selected }],
+                    instanceId: props.instanceId
+                };
+
+                // The 'Search Filters' Web Part listens to this event to update the filter
+                this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
+                    detail,
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }}
+        />;
+
+        ReactDOM.render(element, this);
+    }
+}
+```
+
+!!! note "No local state needed"
+    The Web Part re-renders the control with an updated `data-filter` after every selection, including pending (not yet applied) selections of a multi values filter. Reading `filterValue.selected` from the props is therefore enough, and the builtin 'Apply'/'Clear' buttons work out of the box thanks to `showApplyButtons: true` below. Keep in mind the Web Part moves the selected values first in the list of a multi values filter, so the pills reorder as the user selects them.
+
+### 2. Register it in the library
+
+In the class implementing `IExtensibilityLibrary`:
+
+```typescript
+import { IExtensibilityLibrary, IFilterControlDefinition, IComponentDefinition, FilterType } from '@pnp/modern-search-extensibility';
+import { MyTagsFilterWebComponent } from './components/MyTagsFilterWebComponent';
+
+export class MyExtensibilityLibrary implements IExtensibilityLibrary {
+
+    public getCustomFilterControls(): IFilterControlDefinition[] {
+        return [
+            {
+                key: 'MyTagsFilter',
+                name: 'Tags',
+                componentName: 'my-tags-filter',
+                filterType: FilterType.Refiner,
+                showApplyButtons: true
+            }
+        ];
+    }
+
+    public getCustomWebComponents(): IComponentDefinition<any>[] {
+        return [
+            {
+                componentName: 'my-tags-filter',
+                componentClass: MyTagsFilterWebComponent
+            }
+        ];
+    }
+
+    // ... the other IExtensibilityLibrary methods
+}
+```
+
+Deploy the library, register its manifest ID on the 'Search Filters' Web Part, and pick **'Tags'** in the 'Filter template' column of your filter. No template change is required: the builtin vertical, horizontal and panel layouts render it automatically.
+
+## Use the control in a custom filter layout
 
 The builtin layouts render custom filter controls automatically. If you write your own [filter layout](./custom_layout.md) or customize a builtin template, use the `customFilterControl` Handlebars helper to render whichever custom control is configured for a filter:
 
