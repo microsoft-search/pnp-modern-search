@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "This field cannot be empty",
             TagPickerStrings: {
                 NoResultsSearchMessage: "No results found",
-                SearchPlaceholder: "Search a value..."
+                SearchPlaceholder: "Search a value...",
+                RemoveButtonAriaLabel: "Remove"
             },
             CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode.",
             True: "Yes",
@@ -251,6 +252,11 @@ define([], function () {
                 DetailsPanelHeader: "Details",
                 DetailsUnavailableLabel: "Details unavailable",
                 CloseDetailsPanelLabel: "Close details panel",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} selected items can be edited",
+                SelectedItemsEditLoadingLabel: "Checking editable selected items and shared fields",
+                SelectedItemsEditNoEligibleItemsLabel: "None of the selected items can be edited.",
+                SelectedItemsEditNoCommonFieldsLabel: "No shared editable fields were found across the selected items.",
+                SelectedItemsEditFieldLabel: "Field",
                 UseAlternatingBackgroundColor: "Use Alternating Background Color",
                 ColumnDescriptionFieldLabel: "Column description (tooltip)"
             },

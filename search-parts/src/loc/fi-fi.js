@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Tämä kenttä ei voi olla tyhjä",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Tuloksia ei löytynyt",
-                SearchPlaceholder: "Hae arvoa..."
+                SearchPlaceholder: "Hae arvoa...",
+                RemoveButtonAriaLabel: "Poista"
             },
             CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa.",
             True: "Kyllä",
@@ -249,6 +250,11 @@ define([], function () {
                 DetailsPanelHeader: "Tiedot",
                 DetailsUnavailableLabel: "Tiedot eivät ole käytettävissä",
                 CloseDetailsPanelLabel: "Sulje tietopaneeli",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valittua kohdetta voidaan muokata",
+                SelectedItemsEditLoadingLabel: "Tarkistetaan muokattavat valitut kohteet ja yhteiset kentät",
+                SelectedItemsEditNoEligibleItemsLabel: "Yhtäkään valittua kohdetta ei voi muokata.",
+                SelectedItemsEditNoCommonFieldsLabel: "Valituista kohteista ei löytynyt yhteisiä muokattavia kenttiä.",
+                SelectedItemsEditFieldLabel: "Kenttä",
                 UseAlternatingBackgroundColor: "Käytä Vaihtelevaa taustaväriä"
             },
             Cards: {

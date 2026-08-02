@@ -94,6 +94,7 @@ declare interface ICommonStrings {
       TagPickerStrings: {
         NoResultsSearchMessage: string;
         SearchPlaceholder: string;
+        RemoveButtonAriaLabel: string;
       }
       CurrentVerticalNotSelectedMessage: string;
     },
@@ -250,6 +251,11 @@ declare interface ICommonStrings {
         DetailsPanelHeader: string;
         DetailsUnavailableLabel: string;
         CloseDetailsPanelLabel: string;
+        SelectedItemsEditEligibleItemsCountLabel: string;
+        SelectedItemsEditLoadingLabel: string;
+        SelectedItemsEditNoEligibleItemsLabel: string;
+        SelectedItemsEditNoCommonFieldsLabel: string;
+        SelectedItemsEditFieldLabel: string;
         UseAlternatingBackgroundColor:string;
         ColumnDescriptionFieldLabel: string;
       };

@@ -22,6 +22,7 @@ import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { Shimmer, ShimmerElementsGroup, ShimmerElementType } from '@fluentui/react/lib/Shimmer';
 
 const LogSource = "SearchResultsContainer";
+const RESET_RESULTS_SELECTION_EVENT = "resetResultsSelection";
 
 /**
  * Cached data structure for a data source
@@ -57,6 +58,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private _lastPageSelectedKeys: string[] = [];
 
     private _searchWebPartRef: HTMLElement;
+    private _resultsContainerRef: HTMLDivElement;
 
     public constructor(props: ISearchResultsContainerProps) {
 
@@ -73,6 +75,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         this.templateService = this.props.serviceScope.consume<ITemplateService>(TemplateService.ServiceKey);
 
         this._onSelectionChanged = this._onSelectionChanged.bind(this);
+        this._onResetResultsSelection = this._onResetResultsSelection.bind(this);
 
         this._selection = new Selection({
             onSelectionChanged: this._onSelectionChanged,
@@ -203,6 +206,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         return <main><div data-instance-id={this.props.instanceId}
             data-ui-test-id={TestConstants.SearchResultsWebPart}
+            ref={(ref) => { this._resultsContainerRef = ref; }}
             style={containerStyles}>
             <div tabIndex={-1} ref={(ref) => { this._searchWebPartRef = ref; }}></div>
             {renderOverlay}
@@ -214,7 +218,12 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     public async componentDidMount() {
+        this._resultsContainerRef?.addEventListener(RESET_RESULTS_SELECTION_EVENT, this._onResetResultsSelection as EventListener);
         await this.getDataFromDataSource(this.props.dataContext.pageNumber);
+    }
+
+    public componentWillUnmount(): void {
+        this._resultsContainerRef?.removeEventListener(RESET_RESULTS_SELECTION_EVENT, this._onResetResultsSelection as EventListener);
     }
 
     public async componentDidUpdate(prevProps: ISearchResultsContainerProps, prevState: ISearchResultsContainerState) {
@@ -514,5 +523,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             });
         }
 
+    }
+
+    private _onResetResultsSelection(): void {
+        this._lastPageSelectedKeys = [];
+        this._selection.setAllSelected(false);
+        this.props.onItemSelected([]);
+        this.setState({
+            selectedItemKeys: []
+        });
     }
 }

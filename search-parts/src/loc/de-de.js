@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dieses Feld darf nicht leer bleiben.",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
-                SearchPlaceholder: "Suche einen Wert..."
+                SearchPlaceholder: "Suche einen Wert...",
+                RemoveButtonAriaLabel: "Entfernen"
             },
             CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt.",
             True: "Ja",
@@ -251,6 +252,11 @@ define([], function () {
                 DetailsPanelHeader: "Details",
                 DetailsUnavailableLabel: "Details sind nicht verfügbar",
                 CloseDetailsPanelLabel: "Detailbereich schließen",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} ausgewählte Elemente können bearbeitet werden",
+                SelectedItemsEditLoadingLabel: "Bearbeitbare ausgewählte Elemente und gemeinsame Felder werden geprüft",
+                SelectedItemsEditNoEligibleItemsLabel: "Keines der ausgewählten Elemente kann bearbeitet werden.",
+                SelectedItemsEditNoCommonFieldsLabel: "Für die ausgewählten Elemente wurden keine gemeinsamen bearbeitbaren Felder gefunden.",
+                SelectedItemsEditFieldLabel: "Feld",
                 UseAlternatingBackgroundColor: "Verwenden Sie abwechselnde Hintergrundfarben"
             },
             Cards: {

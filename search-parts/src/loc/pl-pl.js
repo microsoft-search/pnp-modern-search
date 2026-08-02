@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "To pole nie może być puste",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Nie znaleziono wyników",
-                SearchPlaceholder: "Wyszukaj wartość..."
+                SearchPlaceholder: "Wyszukaj wartość...",
+                RemoveButtonAriaLabel: "Usuń"
             },
             CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste.",
             True: "Tak",
@@ -252,6 +253,11 @@ define([], function () {
                 DetailsPanelHeader: "Szczegóły",
                 DetailsUnavailableLabel: "Szczegóły są niedostępne",
                 CloseDetailsPanelLabel: "Zamknij panel szczegółów",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} wybranych elementów można edytować",
+                SelectedItemsEditLoadingLabel: "Sprawdzanie edytowalnych wybranych elementów i wspólnych pól",
+                SelectedItemsEditNoEligibleItemsLabel: "Żadnego z wybranych elementów nie można edytować.",
+                SelectedItemsEditNoCommonFieldsLabel: "Nie znaleziono wspólnych edytowalnych pól dla wybranych elementów.",
+                SelectedItemsEditFieldLabel: "Pole",
                 UseAlternatingBackgroundColor: "Użyj naprzemiennego koloru tła"
             },
             Cards: {

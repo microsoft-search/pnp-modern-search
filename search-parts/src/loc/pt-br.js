@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Esta campo não pode estar vazio",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Nenhum resultado encontrado",
-                SearchPlaceholder: "Procurar por..."
+                SearchPlaceholder: "Procurar por...",
+                RemoveButtonAriaLabel: "Remover"
             },
             CurrentVerticalNotSelectedMessage: "A vertical corrente não combina com as associadas para este Web Part ({0}). Ele permanecerá em branco no modo de exibição.",
             True: "Sim",
@@ -251,6 +252,11 @@ define([], function () {
                 DetailsPanelHeader: "Detalhes",
                 DetailsUnavailableLabel: "Os detalhes não estão disponíveis",
                 CloseDetailsPanelLabel: "Fechar painel de detalhes",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} itens selecionados podem ser editados",
+                SelectedItemsEditLoadingLabel: "Verificando itens selecionados editáveis e campos compartilhados",
+                SelectedItemsEditNoEligibleItemsLabel: "Nenhum dos itens selecionados pode ser editado.",
+                SelectedItemsEditNoCommonFieldsLabel: "Nenhum campo editável em comum foi encontrado entre os itens selecionados.",
+                SelectedItemsEditFieldLabel: "Campo",
                 UseAlternatingBackgroundColor: "Utilize cores de fundo alternadas"
             },
             Cards: {

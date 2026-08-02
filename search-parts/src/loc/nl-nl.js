@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Geen resultaten gevonden",
-                SearchPlaceholder: "Zoek een waarde..."
+                SearchPlaceholder: "Zoek een waarde...",
+                RemoveButtonAriaLabel: "Verwijderen"
             },
             CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus.",
             True: "Ja",
@@ -250,6 +251,11 @@ define([], function () {
                 DetailsPanelHeader: "Details",
                 DetailsUnavailableLabel: "Details zijn niet beschikbaar",
                 CloseDetailsPanelLabel: "Detailvenster sluiten",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} geselecteerde items kunnen worden bewerkt",
+                SelectedItemsEditLoadingLabel: "Bewerkbare geselecteerde items en gedeelde velden worden gecontroleerd",
+                SelectedItemsEditNoEligibleItemsLabel: "Geen van de geselecteerde items kan worden bewerkt.",
+                SelectedItemsEditNoCommonFieldsLabel: "Er zijn geen gemeenschappelijke bewerkbare velden gevonden voor de geselecteerde items.",
+                SelectedItemsEditFieldLabel: "Veld",
                 UseAlternatingBackgroundColor: "Gebruik afwisselende achtergrondkleur"
 
             },

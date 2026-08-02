@@ -1,16 +1,34 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { BaseWebComponent, BuiltinTemplateSlots } from "@pnp/modern-search-extensibility";
-import { ActionButton, IIconProps, ITheme, getTheme, Panel, PanelType, IconButton, Spinner, SpinnerSize } from "@fluentui/react";
+import { ActionButton, Checkbox, DatePicker, Dropdown, IIconProps, IDropdownOption, ITag, ITheme, getTheme, Panel, PanelType, IconButton, MessageBar, MessageBarType, PrimaryButton, Spinner, SpinnerSize, TagPicker, TextField } from "@fluentui/react";
+import type { IPickerTerms } from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
+import { PageContext } from "@microsoft/sp-page-context";
+import { SPHttpClient } from "@microsoft/sp-http";
+import { Text } from "@microsoft/sp-core-library";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
+import { TaxonomyHelper } from "../helpers/TaxonomyHelper";
 import * as strings from "CommonStrings";
+import { ISelectedItemsEditService, ISelectedItemsEditPreparationResult, IEditableFieldDescriptor } from "../services/selectedItemsEditService/ISelectedItemsEditService";
+import { SelectedItemsEditService } from "../services/selectedItemsEditService/SelectedItemsEditService";
+import { ITerm } from "../services/taxonomyService/ITaxonomyItems";
+import { ITaxonomyService } from "../services/taxonomyService/ITaxonomyService";
+import { TaxonomyService } from "../services/taxonomyService/TaxonomyService";
 
 const MIN_DETAILS_PANEL_HEIGHT = 520;
 const DETAILS_PANEL_RIGHT_OFFSET = 32;
 const HEX_COLOR_REGEXP = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 const RGB_COLOR_REGEXP = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/i;
+const RESET_RESULTS_SELECTION_EVENT = "resetResultsSelection";
+const LazyTaxonomyPicker = React.lazy(() =>
+  import(
+    /* webpackChunkName: "pnp-modern-search-taxonomy-picker" */ "@pnp/spfx-controls-react/lib/TaxonomyPicker"
+  ).then((module) => ({
+    default: module.TaxonomyPicker,
+  }))
+);
 
 interface IDetailsSelectedItemButtonProps {
   context?: ISearchResultsTemplateContext;
@@ -19,12 +37,44 @@ interface IDetailsSelectedItemButtonProps {
   fileExtensionField?: string;
   isContainerField?: string;
   allowMulti?: boolean;
+  hostElement?: HTMLElement;
+  selectedItemsEditService?: ISelectedItemsEditService;
+  taxonomyService?: ITaxonomyService;
+  webPartContext?: {
+    pageContext?: PageContext;
+    spHttpClient?: SPHttpClient;
+  };
+  webAbsoluteUrl?: string;
+  siteAbsoluteUrl?: string;
+}
+
+interface ISelectedEditTag extends ITag {
+  secondaryText?: string;
+}
+
+interface IPeoplePickerPrincipalEntity {
+  Key?: string;
+  DisplayText?: string;
+  EntityData?: {
+    Email?: string;
+    AccountName?: string;
+  };
 }
 
 interface IDetailsSelectedItemButtonState {
+  activePanelMode?: "details" | "editSelectedItems";
   activeDetailsFormUrl?: string;
   activeDetailsItemTitle?: string;
   isDetailsFrameReady?: boolean;
+  selectedItemsEditPreparationResult?: ISelectedItemsEditPreparationResult;
+  isSelectedItemsEditLoading?: boolean;
+  isSelectedItemsEditApplying?: boolean;
+  selectedItemsEditErrorMessage?: string;
+  selectedEditFieldValues?: Record<string, unknown>;
+  dirtySelectedEditFieldNames?: string[];
+  selectedEditFieldInternalName?: string;
+  selectedEditFieldValue?: unknown;
+  canApplySelectedEditValue?: boolean;
 }
 
 interface IDetailsPanelSessionState {
@@ -38,14 +88,27 @@ const detailsPanelSessionStates = new Map<string, IDetailsPanelSessionState>();
 export class DetailsSelectedItemButtonComponent extends React.Component<IDetailsSelectedItemButtonProps, IDetailsSelectedItemButtonState> {
   private _selectedItems: any[] = [];
   private _detailsLayoutAnimationFrame: number | null = null;
+  private _requestDigestToken: string | null = null;
+  private _requestDigestExpiration = 0;
+  private readonly _taxonomyTagsCache = new Map<string, Promise<ISelectedEditTag[]>>();
 
   constructor(props: IDetailsSelectedItemButtonProps) {
     super(props);
 
     this.state = {
+      activePanelMode: null,
       activeDetailsFormUrl: null,
       activeDetailsItemTitle: null,
       isDetailsFrameReady: false,
+      selectedItemsEditPreparationResult: null,
+      isSelectedItemsEditLoading: false,
+      isSelectedItemsEditApplying: false,
+      selectedItemsEditErrorMessage: null,
+      selectedEditFieldValues: {},
+      dirtySelectedEditFieldNames: [],
+      selectedEditFieldInternalName: null,
+      selectedEditFieldValue: undefined,
+      canApplySelectedEditValue: false,
     };
   }
 
@@ -57,7 +120,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   }
 
   public componentDidUpdate(prevProps: IDetailsSelectedItemButtonProps): void {
-    if (prevProps.context?.selectedKeys !== this.props.context?.selectedKeys || prevProps.items !== this.props.items) {
+    if (this._didSelectionInputsChange(prevProps)) {
       this._updateSelectedItems();
       this._syncOpenPanelWithSelection();
       this._restoreDetailsPanelIfNeeded();
@@ -78,9 +141,10 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     const detailsIcon: IIconProps = { iconName: "OpenPane" };
     const isMultiSelectEnabled = this.props.allowMulti === true;
     const selectedItem = this._selectedItems.length === 1 ? this._selectedItems[0] : null;
+    const hasMultipleSelectedItems = isMultiSelectEnabled && this._selectedItems.length > 1;
     const detailsFormUrl = selectedItem ? this._buildDetailsFormUrl(selectedItem) : null;
-    const shouldRenderButton = this._selectedItems.length > 0 && (isMultiSelectEnabled || !!detailsFormUrl);
-    const isButtonDisabled = isMultiSelectEnabled || !selectedItem || !detailsFormUrl;
+    const shouldRenderButton = hasMultipleSelectedItems || !!detailsFormUrl;
+    const isButtonDisabled = !hasMultipleSelectedItems && (!selectedItem || !detailsFormUrl);
 
     return (
       <>
@@ -89,7 +153,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
             text={strings.Layouts.DetailsList.DetailsButtonLabel}
             iconProps={detailsIcon}
             disabled={isButtonDisabled}
-            onClick={(event) => this._openDetailsPanel(event, selectedItem)}
+            onClick={(event) => this._openPanel(event, selectedItem)}
             theme={(this.props.themeVariant as ITheme) || getTheme()}
           />
         )}
@@ -113,7 +177,33 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     this.forceUpdate();
   }
 
+  private _didSelectionInputsChange(prevProps: IDetailsSelectedItemButtonProps): boolean {
+    return this._getSelectionSignature(prevProps) !== this._getSelectionSignature(this.props)
+      || prevProps.items !== this.props.items;
+  }
+
+  private _getSelectionSignature(props: IDetailsSelectedItemButtonProps): string {
+    const currentPageNumber = props.context?.paging?.currentPageNumber ?? 0;
+    const selectedKeys = (props.context?.selectedKeys ?? []).map((key) => `${key}`);
+    return `${currentPageNumber}::${selectedKeys.join("|")}`;
+  }
+
   private _syncOpenPanelWithSelection(): void {
+    if (this.state.activePanelMode === "editSelectedItems") {
+      if (this._selectedItems.length > 1) {
+        void this._prepareSelectedItemsEditPanel();
+      } else {
+        this._closeDetailsPanel();
+      }
+
+      return;
+    }
+
+    if (this.props.allowMulti === true && this._selectedItems.length > 1) {
+      void this._prepareSelectedItemsEditPanel(true);
+      return;
+    }
+
     const detailsPanelSessionState = this._getDetailsPanelSessionState();
 
     if (!this._getResolvedDetailsFormUrl()) {
@@ -142,7 +232,12 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   private _restoreDetailsPanelIfNeeded(): void {
     const detailsPanelSessionState = this._getDetailsPanelSessionState();
 
-    if (!detailsPanelSessionState.isOpen || this.state.activeDetailsFormUrl) {
+    if (this.state.activePanelMode === "editSelectedItems" || !detailsPanelSessionState.isOpen || this.state.activeDetailsFormUrl) {
+      return;
+    }
+
+    if (this.props.allowMulti === true && this._selectedItems.length > 1) {
+      void this._prepareSelectedItemsEditPanel(true);
       return;
     }
 
@@ -168,14 +263,15 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     const detailsPanelTopOffset = this._getDetailsPanelTopOffset();
     const activeDetailsFormUrl = this._getResolvedDetailsFormUrl();
     const panelSurfaceStyle = this._getDetailsPanelSurfaceStyle();
+    const isPanelOpen = !!activeDetailsFormUrl || this.state.activePanelMode === "editSelectedItems";
 
     return (
       <Panel
-        isOpen={!!activeDetailsFormUrl}
+        isOpen={isPanelOpen}
         isBlocking={false}
         type={PanelType.custom}
         customWidth="320px"
-        onDismiss={this._closeDetailsPanel}
+        onDismiss={this._dismissDetailsPanel}
         onRenderNavigation={this._renderDetailsPanelNavigation}
         onRenderBody={this._renderDetailsPanelBody}
         styles={{
@@ -244,7 +340,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         <IconButton
           ariaLabel={strings.Layouts.DetailsList.CloseDetailsPanelLabel}
           iconProps={{ iconName: "Cancel" }}
-          onClick={this._closeDetailsPanel}
+          onClick={this._dismissDetailsPanel}
           styles={{ root: { backgroundColor: panelBackgroundColor, color: panelTextColor } }}
         />
       </div>
@@ -252,6 +348,10 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   };
 
   private readonly _renderDetailsPanelBody = (): JSX.Element => {
+    if (this.state.activePanelMode === "editSelectedItems") {
+      return this._renderSelectedItemsEditPanelBody();
+    }
+
     const activeDetailsFormUrl = this._getResolvedDetailsFormUrl();
     const activeDetailsItemTitle = this._getResolvedDetailsItemTitle();
     const panelSurfaceStyle = this._getDetailsPanelSurfaceStyle();
@@ -307,7 +407,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   };
 
   private readonly _refreshDetailsPanelLayout = (): void => {
-    if (!this._getResolvedDetailsFormUrl() || this._detailsLayoutAnimationFrame !== null) {
+    if ((!this._getResolvedDetailsFormUrl() && this.state.activePanelMode !== "editSelectedItems") || this._detailsLayoutAnimationFrame !== null) {
       return;
     }
 
@@ -386,10 +486,19 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return Math.min(toolbarBottom, maxTopOffset);
   };
 
-  private readonly _openDetailsPanel = (event: React.MouseEvent<any>, item: any): void => {
+  private readonly _openPanel = (event: React.MouseEvent<any>, item: any): void => {
     event.preventDefault();
     event.stopPropagation();
 
+    if (this.props.allowMulti === true && this._selectedItems.length > 1) {
+      void this._prepareSelectedItemsEditPanel(true);
+      return;
+    }
+
+    this._openSingleItemDetailsPanel(item);
+  };
+
+  private readonly _openSingleItemDetailsPanel = (item: any): void => {
     const detailsFormUrl = this._buildDetailsFormUrl(item);
     const detailsPanelSessionState = this._getDetailsPanelSessionState();
 
@@ -402,13 +511,81 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     detailsPanelSessionState.activeDetailsItemTitle = this._getDetailsItemTitle(item);
 
     this.setState({
+      activePanelMode: "details",
       activeDetailsFormUrl: detailsFormUrl,
       activeDetailsItemTitle: this._getDetailsItemTitle(item),
       isDetailsFrameReady: false,
+      selectedItemsEditPreparationResult: null,
+      isSelectedItemsEditLoading: false,
+      isSelectedItemsEditApplying: false,
+      selectedItemsEditErrorMessage: null,
+      selectedEditFieldValues: {},
+      dirtySelectedEditFieldNames: [],
+      selectedEditFieldInternalName: null,
+      selectedEditFieldValue: undefined,
+      canApplySelectedEditValue: false,
     });
   };
 
-  private readonly _closeDetailsPanel = (): void => {
+  private async _prepareSelectedItemsEditPanel(forceOpen: boolean = false): Promise<void> {
+    if (this.props.selectedItemsEditService == null) {
+      return;
+    }
+
+    const shouldOpen = forceOpen || this.state.activePanelMode === "editSelectedItems";
+
+    if (!shouldOpen) {
+      return;
+    }
+
+    const detailsPanelSessionState = this._getDetailsPanelSessionState();
+    detailsPanelSessionState.isOpen = false;
+    detailsPanelSessionState.activeDetailsFormUrl = null;
+    detailsPanelSessionState.activeDetailsItemTitle = null;
+
+    this.setState({
+      activePanelMode: "editSelectedItems",
+      activeDetailsFormUrl: null,
+      activeDetailsItemTitle: null,
+      isDetailsFrameReady: false,
+      isSelectedItemsEditLoading: true,
+      isSelectedItemsEditApplying: false,
+      selectedItemsEditErrorMessage: null,
+      selectedItemsEditPreparationResult: null,
+      selectedEditFieldValues: {},
+      dirtySelectedEditFieldNames: [],
+      selectedEditFieldInternalName: null,
+      selectedEditFieldValue: undefined,
+      canApplySelectedEditValue: false,
+    });
+
+    try {
+      const selectedItemsEditPreparationResult = await this.props.selectedItemsEditService.prepareSelectedItemsEdit(this._selectedItems);
+
+      this.setState({
+        activePanelMode: "editSelectedItems",
+        selectedItemsEditPreparationResult,
+        selectedEditFieldValues: this._getInitialSelectedEditFieldValues(selectedItemsEditPreparationResult.commonEditableFields ?? []),
+        dirtySelectedEditFieldNames: [],
+        selectedEditFieldInternalName: null,
+        selectedEditFieldValue: undefined,
+        canApplySelectedEditValue: false,
+        isSelectedItemsEditLoading: false,
+      });
+    } catch (error) {
+      this.setState({
+        activePanelMode: "editSelectedItems",
+        selectedItemsEditErrorMessage: (error as Error).message,
+        isSelectedItemsEditLoading: false,
+      });
+    }
+  }
+
+  private readonly _dismissDetailsPanel = (): void => {
+    this._closeDetailsPanel(this.state.activePanelMode === "editSelectedItems");
+  };
+
+  private readonly _closeDetailsPanel = (shouldResetSelection: boolean = false): void => {
     const detailsPanelSessionState = this._getDetailsPanelSessionState();
 
     detailsPanelSessionState.isOpen = false;
@@ -416,11 +593,776 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     detailsPanelSessionState.activeDetailsItemTitle = null;
 
     this.setState({
+      activePanelMode: null,
       activeDetailsFormUrl: null,
       activeDetailsItemTitle: null,
       isDetailsFrameReady: false,
+      selectedItemsEditPreparationResult: null,
+      isSelectedItemsEditLoading: false,
+      isSelectedItemsEditApplying: false,
+      selectedItemsEditErrorMessage: null,
+      selectedEditFieldValues: {},
+      dirtySelectedEditFieldNames: [],
+      selectedEditFieldInternalName: null,
+      selectedEditFieldValue: undefined,
+      canApplySelectedEditValue: false,
     });
+
+    if (shouldResetSelection) {
+      this.props.hostElement?.dispatchEvent(new CustomEvent(RESET_RESULTS_SELECTION_EVENT, {
+        bubbles: true,
+      }));
+    }
   };
+
+  private _renderSelectedItemsEditPanelBody(): JSX.Element {
+    const selectedItemsEditPreparationResult = this.state.selectedItemsEditPreparationResult;
+    const fields = selectedItemsEditPreparationResult?.commonEditableFields ?? [];
+    const dirtyFieldNames = new Set(this.state.dirtySelectedEditFieldNames ?? []);
+    const panelSurfaceStyle = this._getDetailsPanelSurfaceStyle();
+
+    return (
+      <div
+        style={{
+          ...panelSurfaceStyle,
+          display: "flex",
+          flex: "1 1 auto",
+          flexDirection: "column",
+          minHeight: 0,
+          padding: "0 16px 16px",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
+        <div style={{ color: "#605e5c", fontSize: 12, marginBottom: 12 }}>
+          {Text.format(
+            strings.Layouts.DetailsList.SelectedItemsEditEligibleItemsCountLabel,
+            `${selectedItemsEditPreparationResult?.eligibleItems?.length ?? 0}`,
+            `${this._selectedItems.length}`
+          )}
+        </div>
+
+        {this.state.isSelectedItemsEditLoading && (
+          <Spinner label={strings.Layouts.DetailsList.SelectedItemsEditLoadingLabel} size={SpinnerSize.medium} />
+        )}
+
+        {!this.state.isSelectedItemsEditLoading && this.state.selectedItemsEditErrorMessage && (
+          <MessageBar messageBarType={MessageBarType.error}>{this.state.selectedItemsEditErrorMessage}</MessageBar>
+        )}
+
+        {!this.state.isSelectedItemsEditLoading && !this.state.selectedItemsEditErrorMessage && selectedItemsEditPreparationResult?.eligibleItems?.length === 0 && (
+          <MessageBar messageBarType={MessageBarType.warning}>{strings.Layouts.DetailsList.SelectedItemsEditNoEligibleItemsLabel}</MessageBar>
+        )}
+
+        {!this.state.isSelectedItemsEditLoading && !this.state.selectedItemsEditErrorMessage && selectedItemsEditPreparationResult?.eligibleItems?.length > 0 && fields.length === 0 && (
+          <MessageBar messageBarType={MessageBarType.warning}>{strings.Layouts.DetailsList.SelectedItemsEditNoCommonFieldsLabel}</MessageBar>
+        )}
+
+        {!this.state.isSelectedItemsEditLoading && !this.state.selectedItemsEditErrorMessage && fields.length > 0 && (
+          <>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>{strings.Layouts.DetailsList.SelectedItemsEditFieldLabel}</div>
+            <div style={{ overflowY: "auto", minHeight: 0, border: "1px solid #edebe9", borderRadius: 2, background: "#fff" }}>
+              {fields.map((field, index) => {
+                const isDirty = dirtyFieldNames.has(field.internalName);
+
+                return (
+                  <div
+                    key={field.internalName}
+                    style={{
+                      padding: "12px 14px",
+                      borderTop: index > 0 ? "1px solid #edebe9" : "none",
+                      background: isDirty ? "#faf9f8" : "transparent",
+                      color: "inherit",
+                    }}
+                  >
+                    <div id={this._getSelectedEditFieldLabelId(field)} style={{ fontSize: 14, fontWeight: 600 }}>{field.title}</div>
+                    <div style={{ marginTop: 12 }}>
+                      {this._renderSelectedEditFieldEditor(field)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+              <PrimaryButton
+                text={strings.Controls.TextFieldApplyButtonText}
+                onClick={this._applySelectedItemsEdit}
+                disabled={dirtyFieldNames.size === 0 || this.state.isSelectedItemsEditApplying}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  private readonly _applySelectedItemsEdit = async (): Promise<void> => {
+    const selectedItemsEditPreparationResult = this.state.selectedItemsEditPreparationResult;
+    const dirtyFieldNames = this.state.dirtySelectedEditFieldNames ?? [];
+    const selectedEditFieldValues = this.state.selectedEditFieldValues ?? {};
+    const fieldsToApply = selectedItemsEditPreparationResult?.commonEditableFields.filter((field) => dirtyFieldNames.includes(field.internalName)) ?? [];
+
+    if (!selectedItemsEditPreparationResult || fieldsToApply.length === 0 || !this.props.selectedItemsEditService) {
+      return;
+    }
+
+    this.setState({
+      isSelectedItemsEditApplying: true,
+      selectedItemsEditErrorMessage: null,
+    });
+
+    try {
+      for (const field of fieldsToApply) {
+        await this.props.selectedItemsEditService.applySelectedItemsEdit(
+          selectedItemsEditPreparationResult.eligibleItems,
+          field,
+          selectedEditFieldValues[field.internalName]
+        );
+      }
+
+      await this._prepareSelectedItemsEditPanel(true);
+    } catch (error) {
+      this.setState({
+        isSelectedItemsEditApplying: false,
+        selectedItemsEditErrorMessage: (error as Error).message,
+      });
+    }
+  };
+
+  private _renderSelectedEditFieldEditor(field: IEditableFieldDescriptor): JSX.Element {
+    const fieldValue = this._getSelectedEditFieldValue(field);
+
+    switch (field.typeAsString) {
+      case "Boolean":
+        return (
+          <Checkbox
+            ariaLabel={field.title}
+            checked={typeof fieldValue === "boolean" ? fieldValue : false}
+            indeterminate={typeof fieldValue !== "boolean"}
+            onChange={(_, checked) => this._setSelectedEditFieldValue(field, checked === true)}
+          />
+        );
+
+      case "Choice": {
+        const options: IDropdownOption[] = (field.choices ?? []).map((choice) => ({
+          key: choice,
+          text: choice,
+        }));
+
+        return (
+          <Dropdown
+            ariaLabel={field.title}
+            options={options}
+            selectedKey={typeof fieldValue === "string" ? fieldValue : undefined}
+            onChange={(_, option) => this._setSelectedEditFieldValue(field, option?.key as string | undefined)}
+          />
+        );
+      }
+
+      case "DateTime":
+        return (
+          <DatePicker
+            ariaLabel={field.title}
+            value={this._getSelectedEditDateValue(fieldValue)}
+            onSelectDate={(date) => this._setSelectedEditFieldValue(field, date ?? undefined)}
+            showGoToToday={true}
+            allowTextInput={true}
+            strings={strings.General.DatePickerStrings}
+          />
+        );
+
+      case "TaxonomyFieldType":
+      case "TaxonomyFieldTypeMulti":
+        return this._renderSelectedEditTaxonomyPicker(field);
+
+      case "User":
+      case "UserMulti":
+        return this._renderSelectedEditTagPicker(field);
+
+      case "Currency":
+      case "Number":
+        return this._renderSelectedEditTextField(field, fieldValue, { type: "number" });
+
+      case "Note":
+        return this._renderSelectedEditTextField(field, fieldValue, { multiline: true, autoAdjustHeight: true });
+
+      case "Text":
+      default:
+        return this._renderSelectedEditTextField(field, fieldValue);
+    }
+  }
+
+  private _renderSelectedEditTextField(
+    field: IEditableFieldDescriptor,
+    fieldValue: unknown,
+    props?: Partial<React.ComponentProps<typeof TextField>>
+  ): JSX.Element {
+    return (
+      <TextField
+        ariaLabel={field.title}
+        value={this._getSelectedEditTextValue(fieldValue)}
+        onChange={(_, value) => this._setSelectedEditFieldValue(field, value ?? "")}
+        {...props}
+      />
+    );
+  }
+
+  private _renderSelectedEditTaxonomyPicker(field: IEditableFieldDescriptor): JSX.Element {
+    const webPartContext = this.props.webPartContext;
+
+    if (!field.termSetId || !webPartContext?.pageContext || !webPartContext?.spHttpClient) {
+      return this._renderSelectedEditTagPicker(field);
+    }
+
+    return (
+      <React.Suspense fallback={<Spinner size={SpinnerSize.small} />}>
+        <LazyTaxonomyPicker
+          label={field.title}
+          panelTitle={field.title}
+          placeholder={strings.General.TagPickerStrings.SearchPlaceholder}
+          allowMultipleSelections={field.allowMultipleValues !== false}
+          termsetNameOrID={field.termSetId}
+          isTermSetSelectable={false}
+          context={webPartContext as any}
+          initialValues={this._getSelectedEditTaxonomyTerms(this._getSelectedEditFieldValue(field), field.termSetId)}
+          onChange={(nextSelectedItems?: IPickerTerms) => {
+            this._setSelectedEditFieldValue(field, (nextSelectedItems as ISelectedEditTag[]) ?? []);
+          }}
+        />
+      </React.Suspense>
+    );
+  }
+
+  private _renderSelectedEditTagPicker(field: IEditableFieldDescriptor): JSX.Element {
+    const selectedItems = this._getSelectedEditTags(this._getSelectedEditFieldValue(field));
+
+    return (
+      <TagPicker
+        itemLimit={field.allowMultipleValues ? undefined : 1}
+        selectedItems={selectedItems}
+        removeButtonAriaLabel={strings.General.TagPickerStrings.RemoveButtonAriaLabel}
+        inputProps={{
+          "aria-label": field.title,
+          placeholder: selectedItems.length === 0 ? strings.General.TagPickerStrings.SearchPlaceholder : "",
+        }}
+        pickerSuggestionsProps={{
+          noResultsFoundText: strings.General.TagPickerStrings.NoResultsSearchMessage,
+        }}
+        onResolveSuggestions={async (filterText: string, currentSelectedItems?: ITag[]) => {
+          return this._resolveSelectedEditTagSuggestions(field, filterText, (currentSelectedItems as ISelectedEditTag[]) ?? []);
+        }}
+        onChange={(nextSelectedItems?: ITag[]) => {
+          this._setSelectedEditFieldValue(field, (nextSelectedItems as ISelectedEditTag[]) ?? []);
+        }}
+      />
+    );
+  }
+
+  private async _resolveSelectedEditTagSuggestions(field: IEditableFieldDescriptor, filterText: string, currentSelectedItems: ISelectedEditTag[]): Promise<ISelectedEditTag[]> {
+    switch (field.typeAsString) {
+      case "User":
+      case "UserMulti":
+        return this._searchSelectedEditUsers(filterText, currentSelectedItems);
+
+      case "TaxonomyFieldType":
+      case "TaxonomyFieldTypeMulti":
+        return this._searchSelectedEditTerms(field, filterText, currentSelectedItems);
+
+      default:
+        return [];
+    }
+  }
+
+  private async _searchSelectedEditUsers(filterText: string, currentSelectedItems: ISelectedEditTag[]): Promise<ISelectedEditTag[]> {
+    const normalizedFilterText = `${filterText ?? ""}`.trim();
+
+    if (!normalizedFilterText) {
+      return [];
+    }
+
+    const digest = await this._getRequestDigest();
+    const response = await fetch(`${this._getCurrentWebAbsoluteUrl()}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "X-RequestDigest": digest,
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        queryParams: {
+          QueryString: normalizedFilterText,
+          MaximumEntitySuggestions: 20,
+          PrincipalType: 1,
+          PrincipalSource: 15,
+          AllowEmailAddresses: true,
+          AllowMultipleEntities: true,
+          AllUrlZones: false,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const json = await response.json();
+    const rawResult = json?.d?.ClientPeoplePickerSearchUser;
+    const entities = rawResult ? JSON.parse(rawResult) as IPeoplePickerPrincipalEntity[] : [];
+
+    return entities
+      .map((entity) => {
+        const key = entity?.Key || entity?.EntityData?.AccountName || entity?.EntityData?.Email || "";
+        const name = entity?.DisplayText || entity?.EntityData?.Email || entity?.EntityData?.AccountName || key;
+
+        return {
+          key,
+          name,
+          secondaryText: entity?.EntityData?.Email || entity?.EntityData?.AccountName || "",
+        };
+      })
+      .filter((entry) => !!entry.key && !!entry.name)
+      .filter((entry) => !currentSelectedItems.some((selectedItem) => `${selectedItem.key}` === `${entry.key}`));
+  }
+
+  private async _searchSelectedEditTerms(field: IEditableFieldDescriptor, filterText: string, currentSelectedItems: ISelectedEditTag[]): Promise<ISelectedEditTag[]> {
+    if (!field.termSetId || !this.props.taxonomyService) {
+      return [];
+    }
+
+    const normalizedFilterText = `${filterText ?? ""}`.trim().toLocaleLowerCase();
+    const availableTerms = await this._getTaxonomyTags(field.termSetId, field.internalName, field.availableTags);
+
+    return availableTerms
+      .filter((term) => normalizedFilterText.length === 0 || `${term.name ?? ""}`.toLocaleLowerCase().includes(normalizedFilterText))
+      .filter((term) => !currentSelectedItems.some((selectedItem) => `${selectedItem.key}` === `${term.key}`));
+  }
+
+  private async _getTaxonomyTags(termSetId: string, fieldInternalName?: string, fieldAvailableTags?: Array<{ key: string; name: string }>): Promise<ISelectedEditTag[]> {
+    const normalizedTermSetId = `${termSetId ?? ""}`.trim().toLocaleLowerCase();
+    const cacheKey = `${normalizedTermSetId}::${fieldInternalName ?? ""}`;
+
+    if (!normalizedTermSetId || !this.props.taxonomyService) {
+      return [];
+    }
+
+    if (!this._taxonomyTagsCache.has(cacheKey)) {
+      this._taxonomyTagsCache.set(cacheKey, this.props.taxonomyService.getTermsByTermSetId(this._getCurrentSiteAbsoluteUrl(), termSetId, "").then((terms) => {
+        const taxonomyTags = this._mapTermsToSelectedEditTags(terms);
+
+        if (taxonomyTags.length > 0) {
+          return taxonomyTags;
+        }
+
+        const fieldTags = this._mapAvailableTagsToSelectedEditTags(fieldAvailableTags);
+        if (fieldTags.length > 0) {
+          return fieldTags;
+        }
+
+        return this._getTaxonomyTagsFromCurrentItems(fieldInternalName);
+      }));
+    }
+
+    return this._taxonomyTagsCache.get(cacheKey)!;
+  }
+
+  private _getSelectedEditFieldLabelId(field: IEditableFieldDescriptor): string {
+    return `details-selected-edit-field-${field.internalName}`;
+  }
+
+  private _mapTermsToSelectedEditTags(terms: ITerm[]): ISelectedEditTag[] {
+    return (terms ?? [])
+      .filter((term) => term?.IsDeprecated !== true && term?.IsAvailableForTagging !== false)
+      .map((term) => ({
+        key: `${term.Id ?? ""}`.replace(/[{}]/g, ""),
+        name: term.Name || "",
+      }))
+      .filter((term) => !!term.key && !!term.name)
+      .sort((left, right) => `${left.name}`.localeCompare(`${right.name}`));
+  }
+
+  private _mapAvailableTagsToSelectedEditTags(tags?: Array<{ key: string; name: string }>): ISelectedEditTag[] {
+    return (tags ?? [])
+      .filter((tag) => !!tag?.key && !!tag?.name)
+      .map((tag) => ({ key: tag.key, name: tag.name }))
+      .sort((left, right) => `${left.name}`.localeCompare(`${right.name}`));
+  }
+
+  private _getTaxonomyTagsFromCurrentItems(fieldInternalName?: string): ISelectedEditTag[] {
+    if (!fieldInternalName || !this.props.items?.length) {
+      return [];
+    }
+
+    const tagsByKey = new Map<string, ISelectedEditTag>();
+
+    for (const item of this.props.items) {
+      const rawValue = this._resolveExternalItemFieldValue(item, fieldInternalName);
+      this._addTaxonomyTagsFromRawValue(rawValue, tagsByKey);
+    }
+
+    return Array.from(tagsByKey.values()).sort((left, right) => `${left.name}`.localeCompare(`${right.name}`));
+  }
+
+  private _addTaxonomyTagsFromRawValue(rawValue: unknown, tagsByKey: Map<string, ISelectedEditTag>): void {
+    if (!this._hasRenderableValue(rawValue)) {
+      return;
+    }
+
+    if (Array.isArray(rawValue)) {
+      rawValue.forEach((entry) => this._addTaxonomyTagsFromRawValue(entry, tagsByKey));
+      return;
+    }
+
+    if (typeof rawValue === "object") {
+      this._addTaxonomyTagsFromObject(rawValue as { Label?: string; TermGuid?: string; id?: string; name?: string }, tagsByKey);
+      return;
+    }
+
+    const primitiveValue = this._toPrimitiveString(rawValue);
+
+    if (!primitiveValue) {
+      return;
+    }
+
+    this._addTaxonomyTagsFromString(primitiveValue.trim(), tagsByKey);
+  }
+
+  private _addTaxonomyTagsFromObject(rawValue: { Label?: string; TermGuid?: string; id?: string; name?: string }, tagsByKey: Map<string, ISelectedEditTag>): void {
+    const key = this._toNormalizedTaxonomyKey(rawValue.TermGuid ?? rawValue.id);
+    const name = this._toTrimmedString(rawValue.Label ?? rawValue.name);
+
+    if (key && name && !tagsByKey.has(key)) {
+      tagsByKey.set(key, { key, name });
+    }
+  }
+
+  private _addTaxonomyTagsFromString(rawStringValue: string, tagsByKey: Map<string, ISelectedEditTag>): void {
+    if (!rawStringValue) {
+      return;
+    }
+
+    const initialTagCount = tagsByKey.size;
+    const decodedValue = TaxonomyHelper.decodeHexString(rawStringValue);
+    const candidateValues = [rawStringValue, decodedValue].filter((value): value is string => !!value);
+    const termPattern = /(?:GP0|GPP|L0)\|#0?([-0-9a-fA-F]{32,36})\|([^;]+)/g;
+
+    for (const candidateValue of candidateValues) {
+      let match: RegExpExecArray | null;
+      while ((match = termPattern.exec(candidateValue)) !== null) {
+        const key = TaxonomyHelper.normalizeGuid(match[1]);
+        const name = this._toTrimmedString(match[2]);
+
+        if (key && name && !tagsByKey.has(key)) {
+          tagsByKey.set(key, { key, name });
+        }
+      }
+    }
+
+    if (tagsByKey.size > initialTagCount) {
+      return;
+    }
+
+    const fallbackGuids = TaxonomyHelper.extractGuidsFromFilterValue(rawStringValue);
+    const fallbackLabel = TaxonomyHelper.extractTaxonomyLabel(rawStringValue);
+
+    if (fallbackGuids.length > 0 && fallbackLabel && !tagsByKey.has(fallbackGuids[0])) {
+      tagsByKey.set(fallbackGuids[0], { key: fallbackGuids[0], name: fallbackLabel });
+    }
+  }
+
+  private _toNormalizedTaxonomyKey(value: unknown): string {
+    return this._toTrimmedString(value)?.replace(/[{}-]/g, "").toLowerCase() ?? "";
+  }
+
+  private _toTrimmedString(value: unknown): string {
+    return this._toPrimitiveString(value)?.trim() ?? "";
+  }
+
+  private _toPrimitiveString(value: unknown): string | undefined {
+    if (typeof value === "string") {
+      return value;
+    }
+
+    if (typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+
+    return undefined;
+  }
+
+  private _getInitialSelectedEditFieldValue(field?: IEditableFieldDescriptor | null): unknown {
+    if (!field) {
+      return undefined;
+    }
+
+    switch (field.typeAsString) {
+      case "Boolean":
+        return this._selectedEditFieldHasSharedValue(field)
+          ? field.sharedValueRaw === true || field.sharedValueRaw === "true" || field.sharedValueRaw === 1 || field.sharedValueRaw === "1"
+          : undefined;
+
+      case "DateTime":
+        return this._selectedEditFieldHasSharedValue(field) ? this._getSelectedEditDateValue(field.sharedValueRaw) : undefined;
+
+      case "TaxonomyFieldType":
+      case "TaxonomyFieldTypeMulti":
+        return this._selectedEditFieldHasSharedValue(field) ? this._getInitialTaxonomyFieldValue(field.sharedValueRaw) : [];
+
+      case "User":
+      case "UserMulti":
+        return this._selectedEditFieldHasSharedValue(field) ? this._getInitialUserFieldValue(field.sharedValueRaw) : [];
+
+      case "Currency":
+      case "Number":
+      case "Note":
+      case "Text":
+      case "Choice":
+      default:
+        return this._selectedEditFieldHasSharedValue(field) ? field.sharedValueRaw ?? "" : undefined;
+    }
+  }
+
+  private _selectedEditFieldHasSharedValue(field?: IEditableFieldDescriptor | null): boolean {
+    return field?.sharedValue !== undefined;
+  }
+
+  private _getSelectedEditTextValue(value: unknown): string {
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") {
+      return `${value}`;
+    }
+
+    if (typeof value === "symbol") {
+      return value.description ?? value.toString();
+    }
+
+    return JSON.stringify(value);
+  }
+
+  private _getSelectedEditDateValue(value: unknown): Date | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    if (value instanceof Date) {
+      return value;
+    }
+
+    if (typeof value !== "string" && typeof value !== "number") {
+      return undefined;
+    }
+
+    const parsedDate = new Date(value);
+    return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+  }
+
+  private _getSelectedEditTags(value: unknown): ISelectedEditTag[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value.filter((entry): entry is ISelectedEditTag => {
+      return !!entry
+        && typeof entry === "object"
+        && Object.prototype.hasOwnProperty.call(entry, "key")
+        && Object.prototype.hasOwnProperty.call(entry, "name");
+    });
+  }
+
+  private _getSelectedEditTaxonomyTerms(value: unknown, termSetId: string): IPickerTerms {
+    return this._getSelectedEditTags(value).map((term) => ({
+      key: `${term.key ?? ""}`,
+      name: `${term.name ?? ""}`,
+      path: `${term.name ?? ""}`,
+      termSet: `${termSetId ?? ""}`,
+    }));
+  }
+
+  private _getInitialSelectedEditFieldValues(fields: IEditableFieldDescriptor[]): Record<string, unknown> {
+    return fields.reduce<Record<string, unknown>>((accumulator, field) => {
+      accumulator[field.internalName] = this._getInitialSelectedEditFieldValue(field);
+      return accumulator;
+    }, {});
+  }
+
+  private _getSelectedEditFieldValue(field: IEditableFieldDescriptor): unknown {
+    return this.state.selectedEditFieldValues?.[field.internalName];
+  }
+
+  private _setSelectedEditFieldValue(field: IEditableFieldDescriptor, value: unknown): void {
+    const initialValue = this._getInitialSelectedEditFieldValue(field);
+    const isDirty = !this._areSelectedEditFieldValuesEqual(initialValue, value);
+    const dirtyFieldNames = new Set(this.state.dirtySelectedEditFieldNames ?? []);
+
+    if (isDirty) {
+      dirtyFieldNames.add(field.internalName);
+    } else {
+      dirtyFieldNames.delete(field.internalName);
+    }
+
+    this.setState((currentState) => ({
+      selectedEditFieldValues: currentState.selectedEditFieldValues
+        ? {
+            ...currentState.selectedEditFieldValues,
+            [field.internalName]: value,
+          }
+        : { [field.internalName]: value },
+      dirtySelectedEditFieldNames: Array.from(dirtyFieldNames),
+    }));
+  }
+
+  private _areSelectedEditFieldValuesEqual(left: unknown, right: unknown): boolean {
+    return this._serializeSelectedEditComparisonValue(left) === this._serializeSelectedEditComparisonValue(right);
+  }
+
+  private _serializeSelectedEditComparisonValue(value: unknown): string {
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+
+    if (Array.isArray(value)) {
+      return JSON.stringify(
+        value
+          .map((entry) => this._serializeSelectedEditComparisonValue(entry))
+          .sort((left, right) => left.localeCompare(right))
+      );
+    }
+
+    if (typeof value === "object") {
+      const objectValue = value as { key?: string; name?: string; id?: string; Label?: string; TermGuid?: string; };
+
+      if (objectValue.key || objectValue.name) {
+        return JSON.stringify({ key: objectValue.key ?? "", name: objectValue.name ?? "" });
+      }
+
+      if (objectValue.id || objectValue.Label || objectValue.TermGuid) {
+        return JSON.stringify({ id: objectValue.id ?? objectValue.TermGuid ?? "", name: objectValue.Label ?? "" });
+      }
+
+      return JSON.stringify(objectValue);
+    }
+
+    if (typeof value === "string") {
+      return value;
+    }
+
+    if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") {
+      return value.toString();
+    }
+
+    if (typeof value === "symbol") {
+      return value.description ?? value.toString();
+    }
+
+    return Object.prototype.toString.call(value);
+  }
+
+  private _getInitialTaxonomyFieldValue(rawValue: unknown): ISelectedEditTag[] {
+    const tagsByKey = new Map<string, ISelectedEditTag>();
+    this._addTaxonomyTagsFromRawValue(rawValue, tagsByKey);
+    return Array.from(tagsByKey.values());
+  }
+
+  private _getInitialUserFieldValue(rawValue: unknown): ISelectedEditTag[] {
+    const tagsByKey = new Map<string, ISelectedEditTag>();
+    this._addUserTagsFromRawValue(rawValue, tagsByKey);
+    return Array.from(tagsByKey.values());
+  }
+
+  private _addUserTagsFromRawValue(rawValue: unknown, tagsByKey: Map<string, ISelectedEditTag>): void {
+    if (rawValue === null || rawValue === undefined || rawValue === "") {
+      return;
+    }
+
+    if (Array.isArray(rawValue)) {
+      rawValue.forEach((entry) => this._addUserTagsFromRawValue(entry, tagsByKey));
+      return;
+    }
+
+    if (typeof rawValue === "object") {
+      const userValue = rawValue as { Key?: string; Email?: string; AccountName?: string; Title?: string; Name?: string; DisplayText?: string; };
+      const key = `${userValue.Key ?? userValue.Email ?? userValue.AccountName ?? ""}`.trim();
+      const name = `${userValue.Title ?? userValue.Name ?? userValue.DisplayText ?? userValue.Email ?? userValue.AccountName ?? key}`.trim();
+
+      if (key && name && !tagsByKey.has(key)) {
+        tagsByKey.set(key, { key, name });
+      }
+
+      return;
+    }
+
+    if (typeof rawValue !== "string") {
+      return;
+    }
+
+    const rawStringValue = rawValue.trim();
+    if (!rawStringValue) {
+      return;
+    }
+
+    try {
+      const parsedValue = JSON.parse(rawStringValue) as Array<{ Key?: string; DisplayText?: string; }>;
+      if (Array.isArray(parsedValue)) {
+        parsedValue.forEach((entry) => this._addUserTagsFromRawValue(entry, tagsByKey));
+        return;
+      }
+    } catch {
+      // Ignore non-JSON user field values.
+    }
+
+    const segments = rawStringValue.split(/[;,]/).map((segment) => segment.trim()).filter(Boolean);
+    segments.forEach((segment) => {
+      if (!tagsByKey.has(segment)) {
+        tagsByKey.set(segment, { key: segment, name: segment });
+      }
+    });
+  }
+
+  private async _getRequestDigest(): Promise<string> {
+    if (this._requestDigestToken && Date.now() < this._requestDigestExpiration) {
+      return this._requestDigestToken;
+    }
+
+    const response = await fetch(`${this._getCurrentWebAbsoluteUrl()}/_api/contextinfo`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json;odata=verbose",
+      },
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to retrieve request digest. ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    const digest = `${json?.d?.GetContextWebInformation?.FormDigestValue ?? ""}`;
+    const timeoutSeconds = Number(json?.d?.GetContextWebInformation?.FormDigestTimeoutSeconds ?? 1800);
+
+    this._requestDigestToken = digest;
+    this._requestDigestExpiration = Date.now() + Math.max(60, timeoutSeconds - 30) * 1000;
+
+    return digest;
+  }
+
+  private _getCurrentWebAbsoluteUrl(): string {
+    return `${this.props.webAbsoluteUrl ?? this.props.siteAbsoluteUrl ?? globalThis.location?.origin ?? ""}`.replace(/\/$/, "");
+  }
+
+  private _getCurrentSiteAbsoluteUrl(): string {
+    return `${this.props.siteAbsoluteUrl ?? this.props.webAbsoluteUrl ?? globalThis.location?.origin ?? ""}`.replace(/\/$/, "");
+  }
 
   private readonly _onDetailsFrameLoad = (event: React.SyntheticEvent<HTMLIFrameElement>): void => {
     this._enhanceDetailsFrame(event.currentTarget, 0);
@@ -863,16 +1805,18 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       }
     }
 
-    const documentUniqueId = this._resolveExternalItemFieldValue(item, "UniqueID") ?? this._resolveExternalItemFieldValue(item, "NormUniqueID") ?? this._resolveExternalItemFieldValue(item, "IdentityListItemId") ?? this._resolveExternalItemFieldValue(item, "ListItemID") ?? this._resolveExternalItemFieldValue(item, "Id");
+    const documentUniqueId = this._resolveExternalItemFieldValue(item, "UniqueID") ?? this._resolveExternalItemFieldValue(item, "NormUniqueID");
 
-    if (!documentUniqueId) {
+    const normalizedDocumentGuid = documentUniqueId ? this._tryNormalizeDetailsGuid(String(documentUniqueId)) : null;
+
+    if (!normalizedDocumentGuid) {
       return null;
     }
 
     try {
       const viewerUrl = new URL(baseUrl.origin);
       viewerUrl.pathname = `${baseUrl.pathname.replace(/\/$/, "")}/_layouts/15/viewer.aspx`;
-      viewerUrl.searchParams.set("sourcedoc", `{${this._normalizeDetailsGuid(String(documentUniqueId))}}`);
+      viewerUrl.searchParams.set("sourcedoc", `{${normalizedDocumentGuid}}`);
 
       return viewerUrl.toString();
     } catch {
@@ -1004,6 +1948,14 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return String(value).replace(/[{}]/g, "");
   }
 
+  private _tryNormalizeDetailsGuid(value: string): string | null {
+    const normalizedGuid = this._normalizeDetailsGuid(value);
+
+    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(normalizedGuid)
+      ? normalizedGuid
+      : null;
+  }
+
   private _resolveExternalItemFieldValue(item: any, fieldName: string): any {
     return ObjectHelper.byPath(item, `resource.fields.${fieldName}`)
       ?? ObjectHelper.byPath(item, `resource.properties.${fieldName}`)
@@ -1017,8 +1969,41 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 }
 
 export class DetailsSelectedItemButtonWebComponent extends BaseWebComponent {
+  public static get observedAttributes(): string[] {
+    return [
+      "data-items",
+      "data-context",
+      "data-theme-variant",
+      "data-file-extension-field",
+      "data-is-container-field",
+      "data-allow-multi",
+    ];
+  }
+
+  public attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
+    if (oldValue === newValue || !this.isConnected) {
+      return;
+    }
+
+    this.renderComponent();
+  }
+
   public connectedCallback() {
+    this.renderComponent();
+  }
+
+  private renderComponent(): void {
     const props = this.resolveAttributes();
+    props.hostElement = this;
+    props.selectedItemsEditService = this._serviceScope.consume(SelectedItemsEditService.ServiceKey);
+    props.taxonomyService = this._serviceScope.consume(TaxonomyService.ServiceKey);
+    const pageContext = this._serviceScope.consume(PageContext.serviceKey);
+    props.webPartContext = {
+      pageContext,
+      spHttpClient: this._serviceScope.consume(SPHttpClient.serviceKey),
+    };
+    props.webAbsoluteUrl = pageContext?.web?.absoluteUrl;
+    props.siteAbsoluteUrl = pageContext?.site?.absoluteUrl;
     ReactDOM.render(<DetailsSelectedItemButtonComponent {...props} />, this);
   }
 
