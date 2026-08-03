@@ -74,6 +74,12 @@ interface IUpdateDebugContext {
     lastMarkAt: number;
 }
 
+interface IGraphUserEntity {
+    displayName?: string;
+    mail?: string;
+    userPrincipalName?: string;
+}
+
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
 
     private readonly componentRef: React.RefObject<any>;
@@ -98,6 +104,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private _busyPrimeTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyCursorAutoHideTimer: ReturnType<typeof setTimeout> | null = null;
     private _isMounted: boolean = false;
+    private _hasAttemptedPeopleDisplayNameLookup: boolean = false;
     private _busyStartedAt: number = 0;
     private _latestDeferredSubmittedFilters: IDataFilter[] | null = null;
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
@@ -108,6 +115,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private static readonly _MAX_BUSY_DURATION_MS = 10000;
     private static readonly _BUSY_PRIME_TIMEOUT_MS = 1500;
     private static readonly _GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+    private static readonly _GRAPH_PAGE_SIZE = 200;
+    private static readonly _MAX_INITIAL_GRAPH_USERS = 2000;
+    private static _tenantPeopleDisplayNameCache: Map<string, string> | null = null;
+    private static _tenantPeopleDisplayNameLoadingPromise: Promise<Map<string, string>> | null = null;
+
+    private static setTenantPeopleDisplayNameCache(cache: Map<string, string> | null): void {
+        SearchFiltersContainer._tenantPeopleDisplayNameCache = cache;
+    }
+
+    private static setTenantPeopleDisplayNameLoadingPromise(promise: Promise<Map<string, string>> | null): void {
+        SearchFiltersContainer._tenantPeopleDisplayNameLoadingPromise = promise;
+    }
 
     public constructor(props: ISearchFiltersContainerProps) {
 
@@ -261,6 +280,125 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         cache.set(key, value);
+    }
+
+    private hasPeopleTemplateConfigured(filtersConfiguration: IDataFilterConfiguration[] = this.props.filtersConfiguration): boolean {
+        return (filtersConfiguration || []).some(filter => filter.selectedTemplate === BuiltinFilterTemplates.People);
+    }
+
+    private applyTenantPeopleDisplayNameCache(cache: Map<string, string>): boolean {
+        let cacheChanged = false;
+
+        cache.forEach((displayName, normalizedIdentity) => {
+            if (!displayName || !normalizedIdentity) {
+                return;
+            }
+
+            if (this._peopleDisplayNameByValue.get(normalizedIdentity) !== displayName) {
+                this.setDisplayNameCacheEntry(this._peopleDisplayNameByValue, normalizedIdentity, displayName);
+                cacheChanged = true;
+            }
+
+            if (this._peopleDisplayNameByName.get(normalizedIdentity) !== displayName) {
+                this.setDisplayNameCacheEntry(this._peopleDisplayNameByName, normalizedIdentity, displayName);
+                cacheChanged = true;
+            }
+        });
+
+        return cacheChanged;
+    }
+
+    private async loadTenantPeopleDisplayNameCache(): Promise<Map<string, string>> {
+        const msGraphClientFactory = this.props.context?.msGraphClientFactory;
+        if (!msGraphClientFactory) {
+            return new Map<string, string>();
+        }
+
+        const client = await msGraphClientFactory.getClient('3');
+        const displayNameCache = new Map<string, string>();
+        let users: IGraphUserEntity[] = [];
+        let response = await client
+            .api('/users')
+            .version('v1.0')
+            .select('displayName,mail,userPrincipalName')
+            .top(SearchFiltersContainer._GRAPH_PAGE_SIZE)
+            .get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
+
+        users = users.concat(Array.isArray(response?.value) ? response.value : []);
+        if (users.length > SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS) {
+            users = users.slice(0, SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS);
+        }
+
+        let nextLink = response?.['@odata.nextLink'];
+        let pageCount = 1;
+
+        while (nextLink && pageCount < 100 && users.length < SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS) {
+            response = await client.api(nextLink).get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
+            users = users.concat(Array.isArray(response?.value) ? response.value : []);
+
+            if (users.length > SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS) {
+                users = users.slice(0, SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS);
+            }
+
+            nextLink = response?.['@odata.nextLink'];
+            pageCount++;
+        }
+
+        users.forEach(user => {
+            const displayName = `${user.displayName || ''}`.trim();
+            if (!displayName) {
+                return;
+            }
+
+            const normalizedMail = this.normalizeDisplayCacheKey(user.mail);
+            const normalizedUserPrincipalName = this.normalizeDisplayCacheKey(user.userPrincipalName);
+
+            if (normalizedMail) {
+                displayNameCache.set(normalizedMail, displayName);
+            }
+
+            if (normalizedUserPrincipalName) {
+                displayNameCache.set(normalizedUserPrincipalName, displayName);
+            }
+        });
+
+        return displayNameCache;
+    }
+
+    private async ensurePeopleDisplayNameCacheLoaded(): Promise<void> {
+        if (this._hasAttemptedPeopleDisplayNameLookup || !this.hasPeopleTemplateConfigured()) {
+            return;
+        }
+
+        this._hasAttemptedPeopleDisplayNameLookup = true;
+
+        const existingCache = SearchFiltersContainer._tenantPeopleDisplayNameCache;
+        if (existingCache) {
+            const cacheChanged = this.applyTenantPeopleDisplayNameCache(existingCache);
+            if (cacheChanged && this._isMounted) {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+            }
+            return;
+        }
+
+        const loadingPromise = SearchFiltersContainer._tenantPeopleDisplayNameLoadingPromise ?? this.loadTenantPeopleDisplayNameCache();
+        SearchFiltersContainer.setTenantPeopleDisplayNameLoadingPromise(loadingPromise);
+
+        try {
+            const tenantPeopleDisplayNameCache = await loadingPromise;
+            SearchFiltersContainer.setTenantPeopleDisplayNameCache(tenantPeopleDisplayNameCache);
+
+            const cacheChanged = this.applyTenantPeopleDisplayNameCache(tenantPeopleDisplayNameCache);
+            if (cacheChanged && this._isMounted) {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+            }
+        } catch {
+            // Ignore People display-name lookup failures and keep raw identities.
+        } finally {
+            if (SearchFiltersContainer._tenantPeopleDisplayNameLoadingPromise === loadingPromise) {
+                SearchFiltersContainer.setTenantPeopleDisplayNameLoadingPromise(null);
+            }
+        }
     }
 
     private getHierarchyCacheKey(filterName: string, termSetId: string, termGroupId: string): string {
@@ -487,7 +625,46 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
     }
 
-    private resolveFilterDisplayName(name: string, value: string): string {
+    private shouldPreferPeopleValueDisplayName(rawName: string, rawValue: string, selectedTemplate?: string): boolean {
+        if (selectedTemplate !== BuiltinFilterTemplates.People) {
+            return false;
+        }
+
+        const readableRawValue = this.extractReadableLabelFromString(rawValue);
+        if (!readableRawValue) {
+            return false;
+        }
+
+        const readableRawName = this.extractReadableLabelFromString(rawName);
+        return readableRawName === rawName && readableRawValue !== rawValue;
+    }
+
+    private extractPreferredPeopleValueDisplayName(rawValue: string): string {
+        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (firstReadablePipeSegment) {
+            return firstReadablePipeSegment;
+        }
+
+        const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
+        const readableDecodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
+        if (readableDecodedPipeSegment) {
+            return readableDecodedPipeSegment;
+        }
+
+        const readableCleanedValue = this.extractReadableLabelFromString(cleanedValue);
+        if (readableCleanedValue) {
+            return readableCleanedValue;
+        }
+
+        return this.extractReadableLabelFromString(decodedValue);
+    }
+
+    private resolveFilterDisplayName(name: string, value: string, selectedTemplate?: string): string {
         const rawName = `${name ?? ''}`;
         const rawValue = `${value ?? ''}`;
         const cacheKey = `${this.normalizeDisplayCacheKey(rawName)}::${this.normalizeDisplayCacheKey(rawValue)}`;
@@ -507,6 +684,21 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         if (resolvedFromPeopleNameCache) {
             this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, resolvedFromPeopleNameCache);
             return resolvedFromPeopleNameCache;
+        }
+
+        if (this.shouldPreferPeopleValueDisplayName(rawName, rawValue, selectedTemplate)) {
+            const readableRawValue = this.extractPreferredPeopleValueDisplayName(rawValue);
+            if (readableRawValue) {
+                this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableRawValue);
+                return readableRawValue;
+            }
+
+            const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
+            const readableDecodedValue = this.extractPreferredPeopleValueDisplayName(decodedValue);
+            if (readableDecodedValue) {
+                this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableDecodedValue);
+                return readableDecodedValue;
+            }
         }
 
         const readableRawName = this.extractReadableLabelFromString(rawName);
@@ -867,7 +1059,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private mergeAvailableValueWithSelection(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[], selectedValueIndexByRaw: Map<string, number>, selectedTemplate?: string): IDataFilterValueInternal {
         const filterValueInternal: IDataFilterValueInternal = {
-            name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`),
+            name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, selectedTemplate),
             selected: false,
             selectedOnce: false,
             disabled: false,
@@ -887,7 +1079,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const updatedValue = selectedFilterValues[valueIdx];
         updatedValue.count = availableValue.count;
 
-        const resolvedAvailableName = this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`);
+        const resolvedAvailableName = this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, selectedTemplate);
         const currentNameIsToken = this.isTokenDisplayName(updatedValue.name);
         const availableNameIsToken = this.isTokenDisplayName(availableValue.name);
 
@@ -910,7 +1102,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return availableFilter.values.map(availableValue => {
             if (selectedFilterIdx === -1) {
                 return {
-                    name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`),
+                    name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, filterConfiguration.selectedTemplate),
                     selected: false,
                     selectedOnce: false,
                     disabled: false,
@@ -1169,10 +1361,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return filterResultInternal;
     }
 
-    private buildFilterValueInternal(filterValue: IDataFilterValueInfo): IDataFilterValueInternal {
+    private buildFilterValueInternal(filterValue: IDataFilterValueInfo, selectedTemplate?: string): IDataFilterValueInternal {
         return {
             selected: filterValue.selected,
-            name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`),
+            name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`, selectedTemplate),
             value: filterValue.value,
             operator: filterValue.operator,
             selectedOnce: true
@@ -1183,7 +1375,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const filterValuesInternal: IDataFilterValueInternal[] = filterInfo.filterValues.map(filterValue => {
             return {
                 selected: filterValue.selected,
-                name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`),
+                name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`, filterConfiguration.selectedTemplate),
                 value: filterValue.value,
                 selectedOnce: true
             };
@@ -1220,7 +1412,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         filterInfo.filterValues.forEach(filterValue => {
-            const filterValueInternal = this.buildFilterValueInternal(filterValue);
+            const filterValueInternal = this.buildFilterValueInternal(filterValue, filterConfiguration.selectedTemplate);
             const valueIdx = updatedUiFilters[filterIdx].values.findIndex(value => value.value === filterValue.value);
 
             if (valueIdx === -1) {
@@ -1417,10 +1609,20 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
         }
 
+        this.ensurePeopleDisplayNameCacheLoaded().catch(() => {
+            // Ignore People display-name lookup failures and keep raw identities.
+        });
+
         this._handleQueryStringChange();
     }
 
     public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
+
+        if (!this._hasAttemptedPeopleDisplayNameLookup && this.hasPeopleTemplateConfigured(this.props.filtersConfiguration)) {
+            this.ensurePeopleDisplayNameCacheLoaded().catch(() => {
+                // Ignore People display-name lookup failures and keep raw identities.
+            });
+        }
 
         const availableFiltersChanged = !isEqual(prevProps.availableFilters, this.props.availableFilters);
         const currentUiFiltersChanged = !isEqual(prevState.currentUiFilters, this.state.currentUiFilters) && prevState.currentUiFilters.length > 0;

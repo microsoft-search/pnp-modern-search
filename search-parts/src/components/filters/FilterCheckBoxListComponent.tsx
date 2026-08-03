@@ -19,6 +19,11 @@ export interface IFilterCheckBoxListValue {
     name: string;
 
     /**
+     * An optional display label already normalized by the template.
+     */
+    displayLabel?: string;
+
+    /**
      * The value to use when selected
      */
     value: string;
@@ -316,7 +321,21 @@ export class FilterCheckBoxList extends React.Component<IFilterCheckBoxListProps
     }
 
     private _getDisplayLabel(value: IFilterCheckBoxListValue): string {
-        const rawLabel = `${value.name ?? value.value ?? ''}`;
+        const preferredDisplayLabel = value.displayLabel?.trim();
+        const rawName = `${value.name ?? ''}`;
+        const rawValue = `${value.value ?? ''}`;
+        const resolvedValueLabel = rawValue ? TaxonomyHelper.resolveDisplayLabel(rawValue) : '';
+        const resolvedNameLabel = rawName ? TaxonomyHelper.resolveDisplayLabel(rawName) : '';
+        const nameLooksLikeEmail = !!TaxonomyHelper.extractEmailLikeLabel(rawName);
+        const shouldPreferValueLabel = !preferredDisplayLabel
+            && !!resolvedValueLabel
+            && resolvedValueLabel !== rawValue
+            && (!resolvedNameLabel || resolvedNameLabel === rawName)
+            && nameLooksLikeEmail;
+        const rawLabel = preferredDisplayLabel
+            || (shouldPreferValueLabel ? rawValue : '')
+            || rawName
+            || rawValue;
 
         if (!this._displayLabels.has(rawLabel)) {
             this._displayLabels.set(rawLabel, TaxonomyHelper.resolveDisplayLabel(rawLabel));
@@ -366,6 +385,7 @@ export class FilterCheckBoxListWebComponent extends BaseWebComponent {
         this.querySelectorAll('option').forEach((htmlOption: HTMLOptionElement) => {
             values.push({
                 name: htmlOption.text,
+                displayLabel: htmlOption.dataset.displayLabel,
                 value: htmlOption.value,
                 selected: this.toBoolean(htmlOption.getAttribute('data-selected')),
                 disabled: this.toBoolean(htmlOption.getAttribute('data-disabled')),
