@@ -320,28 +320,38 @@ export class FilterCheckBoxList extends React.Component<IFilterCheckBoxListProps
         return value.count === undefined ? '' : `${value.count}`;
     }
 
-    private _getDisplayLabel(value: IFilterCheckBoxListValue): string {
-        const preferredDisplayLabel = value.displayLabel?.trim();
-        const rawName = `${value.name ?? ''}`;
-        const rawValue = `${value.value ?? ''}`;
-        const resolvedValueLabel = rawValue ? TaxonomyHelper.resolveDisplayLabel(rawValue) : '';
-        const resolvedNameLabel = rawName ? TaxonomyHelper.resolveDisplayLabel(rawName) : '';
-        const nameLooksLikeEmail = !!TaxonomyHelper.extractEmailLikeLabel(rawName);
-        const shouldPreferValueLabel = !preferredDisplayLabel
-            && !!resolvedValueLabel
-            && resolvedValueLabel !== rawValue
-            && (!resolvedNameLabel || resolvedNameLabel === rawName)
-            && nameLooksLikeEmail;
-        const rawLabel = preferredDisplayLabel
-            || (shouldPreferValueLabel ? rawValue : '')
-            || rawName
-            || rawValue;
-
-        if (!this._displayLabels.has(rawLabel)) {
-            this._displayLabels.set(rawLabel, TaxonomyHelper.resolveDisplayLabel(rawLabel));
+    private _resolveDisplayLabel(label: string): string {
+        if (!label) {
+            return '';
         }
 
-        return this._displayLabels.get(rawLabel);
+        if (!this._displayLabels.has(label)) {
+            this._displayLabels.set(label, TaxonomyHelper.resolveDisplayLabel(label));
+        }
+
+        return this._displayLabels.get(label) ?? label;
+    }
+
+    private _getDisplayLabel(value: IFilterCheckBoxListValue): string {
+        const preferredDisplayLabel = value.displayLabel?.trim();
+        if (preferredDisplayLabel) {
+            return this._resolveDisplayLabel(preferredDisplayLabel);
+        }
+
+        const rawName = `${value.name ?? ''}`;
+        const rawValue = `${value.value ?? ''}`;
+        const nameLooksLikeEmail = !!TaxonomyHelper.extractEmailLikeLabel(rawName);
+        if (nameLooksLikeEmail && rawValue) {
+            const resolvedValueLabel = this._resolveDisplayLabel(rawValue);
+            if (resolvedValueLabel && resolvedValueLabel !== rawValue) {
+                const resolvedNameLabel = rawName ? this._resolveDisplayLabel(rawName) : '';
+                if (!resolvedNameLabel || resolvedNameLabel === rawName) {
+                    return resolvedValueLabel;
+                }
+            }
+        }
+
+        return this._resolveDisplayLabel(rawName || rawValue);
     }
 
     private _getValueTitle(value: IFilterCheckBoxListValue, label: string): string {

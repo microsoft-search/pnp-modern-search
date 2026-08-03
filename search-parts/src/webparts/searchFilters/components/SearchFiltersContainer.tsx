@@ -305,6 +305,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
         });
 
+        if (cacheChanged) {
+            this._resolvedDisplayNameCache.clear();
+        }
+
         return cacheChanged;
     }
 
