@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Ce champ ne doit pas être vide.",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Aucun résultat trouvé",
-                SearchPlaceholder: "Rechercher une valeur..."
+                SearchPlaceholder: "Rechercher une valeur...",
+                RemoveButtonAriaLabel: "Supprimer"
             },
             CurrentVerticalNotSelectedMessage: "La verticale actuellement sélectionnée ne correspond pas à celles associées à ce composant WebPart ({0}). Il restera vide en mode d'affichage.",
             True: "Oui",
@@ -251,6 +252,11 @@ define([], function () {
                 DetailsPanelHeader: "Détails",
                 DetailsUnavailableLabel: "Les détails ne sont pas disponibles",
                 CloseDetailsPanelLabel: "Fermer le panneau des détails",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} éléments sélectionnés peuvent être modifiés",
+                SelectedItemsEditLoadingLabel: "Vérification des éléments sélectionnés modifiables et des champs communs",
+                SelectedItemsEditNoEligibleItemsLabel: "Aucun des éléments sélectionnés ne peut être modifié.",
+                SelectedItemsEditNoCommonFieldsLabel: "Aucun champ modifiable commun n’a été trouvé pour les éléments sélectionnés.",
+                SelectedItemsEditFieldLabel: "Champ",
                 UseAlternatingBackgroundColor: "Utiliser une couleur d'arrière-plan alternée"
             },
             Cards: {

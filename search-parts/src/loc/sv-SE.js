@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Inga resultat funna",
-                SearchPlaceholder: "Sök efter ett värde..."
+                SearchPlaceholder: "Sök efter ett värde...",
+                RemoveButtonAriaLabel: "Ta bort"
             },
             CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge.",
             True: "Ja",
@@ -252,6 +253,11 @@ define([], function () {
                 DetailsPanelHeader: "Detaljer",
                 DetailsUnavailableLabel: "Detaljer är inte tillgängliga",
                 CloseDetailsPanelLabel: "Stäng informationspanelen",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valda objekt kan redigeras",
+                SelectedItemsEditLoadingLabel: "Kontrollerar redigerbara valda objekt och gemensamma fält",
+                SelectedItemsEditNoEligibleItemsLabel: "Inga av de valda objekten kan redigeras.",
+                SelectedItemsEditNoCommonFieldsLabel: "Inga gemensamma redigerbara fält hittades för de valda objekten.",
+                SelectedItemsEditFieldLabel: "Fält",
                 UseAlternatingBackgroundColor: "Använd alternerande bakgrundsfärg"
             },
             Cards: {

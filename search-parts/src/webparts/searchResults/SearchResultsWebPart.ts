@@ -58,6 +58,7 @@ import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { IQueryModifierConfiguration } from '../../queryModifier/IQueryModifierConfiguration';
 import { loadMsGraphToolkit } from '../../helpers/GraphToolKitHelper';
+import { SelectedItemsEditService } from '../../services/selectedItemsEditService/SelectedItemsEditService';
 import type { DataSourcePropertyPaneBuilder as DataSourcePropertyPaneBuilderType } from './propertyPane/DataSourcePropertyPaneBuilder';
 import type { AboutPropertyPaneBuilder as AboutPropertyPaneBuilderType } from './propertyPane/AboutPropertyPaneBuilder';
 import type { ConnectionsPropertyPaneBuilder as ConnectionsPropertyPaneBuilderType } from './propertyPane/ConnectionsPropertyPaneBuilder';
@@ -2117,6 +2118,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.webPartInstanceServiceScope = this.context.serviceScope.startNewChild();
         this.templateService = this.webPartInstanceServiceScope.createAndProvide(TemplateService.ServiceKey, TemplateService);
         this.dynamicDataService = this.webPartInstanceServiceScope.createAndProvide(DynamicDataService.ServiceKey, DynamicDataService);
+        this.webPartInstanceServiceScope.createAndProvide(SelectedItemsEditService.ServiceKey, SelectedItemsEditService);
+        this.webPartInstanceServiceScope.createAndProvide(TaxonomyService.ServiceKey, TaxonomyService);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();
     }

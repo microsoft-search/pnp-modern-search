@@ -23,7 +23,7 @@
             </pnp-selectedfilters>
         {{/if}}
         
-        {{#or @root.properties.showResultsCount (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) (and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection) }}
+        {{#or @root.properties.showResultsCount (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) (and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection) (and @root.properties.itemSelectionProps.allowItemSelection properties.itemSelectionProps.allowMulti) }}
           <div class="template--toolbar">
             <div class="template--resultCount">
               {{#if @root.properties.showResultsCount}}

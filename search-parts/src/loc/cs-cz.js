@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Toto pole nemůže být prázdné",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Nebyla nalezena žádná shoda",
-                SearchPlaceholder: "Hledat hodnotu..."
+                SearchPlaceholder: "Hledat hodnotu...",
+                RemoveButtonAriaLabel: "Odebrat"
             },
             CurrentVerticalNotSelectedMessage: "Aktuálně vybraná vertikála neodpovídá těm, které jsou přiřazeny k této webové části ({0}). V režimu zobrazení zůstane prázdná.",
             True: "Ano",
@@ -249,6 +250,11 @@ define([], function () {
                 DetailsPanelHeader: "Podrobnosti",
                 DetailsUnavailableLabel: "Podrobnosti nejsou k dispozici",
                 CloseDetailsPanelLabel: "Zavřít panel podrobností",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} vybraných položek lze upravit",
+                SelectedItemsEditLoadingLabel: "Kontrola upravitelných vybraných položek a společných polí",
+                SelectedItemsEditNoEligibleItemsLabel: "Žádnou z vybraných položek nelze upravit.",
+                SelectedItemsEditNoCommonFieldsLabel: "Ve vybraných položkách nebyla nalezena žádná společná upravitelná pole.",
+                SelectedItemsEditFieldLabel: "Pole",
                 UseAlternatingBackgroundColor: "Použijte střídající se barvu pozadí"
             },
             Cards: {

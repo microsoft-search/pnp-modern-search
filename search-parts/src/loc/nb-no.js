@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dette feltet kan ikke være tomt",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Ingen resultater",
-                SearchPlaceholder: "Søk etter en verdi..."
+                SearchPlaceholder: "Søk etter en verdi...",
+                RemoveButtonAriaLabel: "Fjern"
             },
             CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus.",
             True: "Ja",
@@ -250,6 +251,11 @@ define([], function () {
                 DetailsPanelHeader: "Detaljer",
                 DetailsUnavailableLabel: "Detaljer er ikke tilgjengelige",
                 CloseDetailsPanelLabel: "Lukk detaljpanelet",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valgte elementer kan redigeres",
+                SelectedItemsEditLoadingLabel: "Kontrollerer redigerbare valgte elementer og felles felt",
+                SelectedItemsEditNoEligibleItemsLabel: "Ingen av de valgte elementene kan redigeres.",
+                SelectedItemsEditNoCommonFieldsLabel: "Fant ingen felles redigerbare felt på tvers av de valgte elementene.",
+                SelectedItemsEditFieldLabel: "Felt",
                 UseAlternatingBackgroundColor: "Bruk vekslende bakgrunnsfarge"
             },
             Cards: {

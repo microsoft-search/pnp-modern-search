@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dette felt må ikke stå tomt",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Ingen resultater fundet",
-                SearchPlaceholder: "Søg efter en værdi..."
+                SearchPlaceholder: "Søg efter en værdi...",
+                RemoveButtonAriaLabel: "Fjern"
             },
             CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand.",
             True: "Ja",
@@ -251,6 +252,11 @@ define([], function () {
                 DetailsPanelHeader: "Detaljer",
                 DetailsUnavailableLabel: "Detaljer er ikke tilgængelige",
                 CloseDetailsPanelLabel: "Luk detaljepanel",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valgte elementer kan redigeres",
+                SelectedItemsEditLoadingLabel: "Kontrollerer redigerbare valgte elementer og fælles felter",
+                SelectedItemsEditNoEligibleItemsLabel: "Ingen af de valgte elementer kan redigeres.",
+                SelectedItemsEditNoCommonFieldsLabel: "Der blev ikke fundet fælles redigerbare felter på tværs af de valgte elementer.",
+                SelectedItemsEditFieldLabel: "Felt",
                 UseAlternatingBackgroundColor: "Vis skiftende baggrundsfarve"
             },
             Cards: {
