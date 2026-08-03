@@ -176,7 +176,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
     }
 
     private readonly onRenderSelectedItem = (props: { item: ITag; index: number }): JSX.Element => {
-        const itemName = this.getDisplayName(`${props.item.name ?? ''}`);
+        const itemName = this.getDisplayName(`${props.item.name ?? ''}`, `${props.item.key ?? ''}`);
 
         return <li
             className={styles.tagItem}
@@ -212,7 +212,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
     }
 
     private readonly onRenderSuggestionItem = (itemProps: ITag): JSX.Element => {
-        return <span>{this.getDisplayName(itemProps.name)}</span>;
+        return <span>{this.getDisplayName(itemProps.name, `${itemProps.key ?? ''}`)}</span>;
     }
 
     public componentDidUpdate(prevProps: IFilterSearchBoxProps): void {
@@ -257,7 +257,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
         return values.map(filterValue => {
             return {
                 key: `${filterValue?.value ?? ''}`,
-                name: this.getDisplayName(filterValue?.name ?? filterValue?.value)
+                name: this.getDisplayName(`${filterValue?.name ?? filterValue?.value ?? ''}`, `${filterValue?.value ?? ''}`)
             };
         });
     }
@@ -271,7 +271,27 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
         return (this.props.filter as any)?.selectedTemplate === 'PeopleTemplate';
     }
 
-    private readonly getDisplayName = (rawName: string): string => {
+    private readonly getPreferredPeopleValueLabel = (rawValue: string): string => {
+        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const readablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (readablePipeSegment) {
+            return readablePipeSegment;
+        }
+
+        const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
+        const decodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
+        if (decodedPipeSegment) {
+            return decodedPipeSegment;
+        }
+
+        return '';
+    }
+
+    private readonly getDisplayName = (rawName: string, rawValue?: string): string => {
         if (!this.isPeopleTemplate()) {
             return `${rawName ?? ''}`;
         }
@@ -308,6 +328,11 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
 
             return '';
         };
+
+        const preferredValueLabel = this.getPreferredPeopleValueLabel(`${rawValue ?? ''}`);
+        if (preferredValueLabel) {
+            return preferredValueLabel;
+        }
 
         const readableRawName = extractReadableLabel(rawName);
         if (readableRawName) {

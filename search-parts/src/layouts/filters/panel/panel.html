@@ -215,7 +215,7 @@
                                                             data-show-count="{{filter.showCount}}"
                                                         >
                                                             {{#each filter.values}}
-                                                                <option value="{{value}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
+                                                                <option value="{{value}}" data-display-label="{{#with (split name '|')}}{{[1]}}{{/with}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
                                                             {{/each}}
                                                         </pnp-filtercheckboxlist>
                                                     </div>
