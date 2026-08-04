@@ -45,6 +45,7 @@ import commonStyles from '../styles/Common.module.scss';
 import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
+const HIDDEN_TAXONOMY_REFINER_VALUE_REGEX = /^(GT0|GP0|GTSet|GPP)\|#/i;
 const EDIT_MODE_REFINER_LIMIT = 100;
 
 export enum BuiltinSourceIds {
@@ -289,7 +290,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     private isHiddenTaxonomyRefinerValueName(valueName: string): boolean {
         const candidate = `${valueName ?? ''}`.trim();
-        return /^(GT0|GP0|GTSet|GPP)\|#/i.test(candidate);
+        return HIDDEN_TAXONOMY_REFINER_VALUE_REGEX.test(candidate);
     }
 
     private logRefinerCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
