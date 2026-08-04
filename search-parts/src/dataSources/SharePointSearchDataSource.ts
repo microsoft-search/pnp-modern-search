@@ -260,6 +260,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             promotedResults: results.promotedResults
         };
 
+        if (!this.properties.enableLocalization) {
+            data.filters = this.removeHiddenTaxonomyRefinerValues(data.filters || []);
+        }
+
         this.logRefinerCounts(dataContext, data.filters || []);
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
@@ -274,6 +278,18 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this._itemsCount = results.totalRows;
 
         return data;
+    }
+
+    private removeHiddenTaxonomyRefinerValues(filters: IDataFilterResult[]): IDataFilterResult[] {
+        return (filters || []).map((filter) => ({
+            ...filter,
+            values: (filter.values || []).filter((value) => !this.isHiddenTaxonomyRefinerValueName(value?.name))
+        }));
+    }
+
+    private isHiddenTaxonomyRefinerValueName(valueName: string): boolean {
+        const candidate = `${valueName ?? ''}`.trim();
+        return /^(GT0|GP0|GTSet|GPP)\|#/i.test(candidate);
     }
 
     private logRefinerCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
