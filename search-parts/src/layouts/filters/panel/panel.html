@@ -285,14 +285,16 @@
                                                             {{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
                                                                 <div class="filter--value-hierarchical">
                                                                     {{{hierarchicalOperator filter @root.instanceId @root.theme}}}
-                                                                    <pnp-filterhierarchical 
-                                                                        data-instance-id="{{@root.instanceId}}" 
+                                                                    <pnp-filterhierarchical
+                                                                        data-instance-id="{{@root.instanceId}}"
                                                                         data-filter="{{JSONstringify filter 2}}"
                                                                         data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
                                                                         data-theme-variant="{{JSONstringify @root.theme}}"
                                                                     >
                                                                     </pnp-filterhierarchical>
                                                                 </div>
+                                                            {{else}}
+                                                                {{{customFilterControl filter @root.instanceId @root.theme @root.selectedFilters}}}
                                                             {{/eq}}
                                                         {{/eq}}
 														{{/eq}}
@@ -303,6 +305,9 @@
                                         </template>
                 
                                         <template id="collapsible-footer">
+                                            {{#isCustomFilterControl filter}}
+                                                {{{customFilterControlFooter filter @root.instanceId @root.theme}}}
+                                            {{else}}
                                             {{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
                                                 {{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
                                                     {{{hierarchicalMultiselect filter @root.instanceId @root.theme}}}
@@ -329,6 +334,7 @@
                                                     {{/isnt}}
                                                 {{/eq}}
                                             {{/isnt}}
+                                            {{/isCustomFilterControl}}
                                         </template>
                 
                                     </pnp-collapsible>

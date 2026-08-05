@@ -41,7 +41,7 @@ Each Web Part type in the solution supports several extensions or no extension a
 | Web Part type | Supported extensions |
 | ------------- | -------------------- |
 | **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li><li>Custom Data Sources</li><li>Custom query modifier</li></ul>
-| **Search Filters** |  <ul><li>Custom web components (_not directly but via the 'Search Results' Web Part extensibility library registration_).</li></ul>
+| **Search Filters** |  <ul><li>Custom filter layouts.</li><li>Custom [filter controls](./custom_filter_control.md).</li><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials, etc.).</li></ul>
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
 
@@ -196,6 +196,7 @@ The extensibility library requires `html-loader` to load Handlebars templates fr
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
 6. Implement your extension(s) depending of the type:
     - [Layout](./custom_layout.md)
+    - [Filter control](./custom_filter_control.md)
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
     - [Handlebars customizations](./handlebars_customizations.md)    
@@ -290,6 +291,10 @@ export class MyCustomLibraryComponent implements IExtensibilityLibrary {
   }
 
   public getCustomWebComponents(): IComponentDefinition<any>[] {
+    return [];
+  }
+
+  public getCustomFilterControls(): IFilterControlDefinition[] {
     return [];
   }
 

@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Não foi possível resolver o modelo especificado. Detalhes do erro: '{0}'",
                 FiltersTemplateFieldLabel: "Modelo de edição de filtros",
                 FiltersTemplatePanelHeader: "Modelo de edição de filtros"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configurar bibliotecas de extensibilidade para carregar no início.",
+                    PanelDescription: "Adicione/Remove os IDs de suas bibliotecas de extensibilidade aqui. Você pode especificar um nome de exibição e decidir se a biblioteca deve ser carregada ou não no início. Apenas layouts de filtros, controles de filtro, componentes web e funções para marcadores entre chaves customizados serão carregados aqui."
+                }
             }
         },
         Styling: {

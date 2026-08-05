@@ -6,6 +6,7 @@ import * as Handlebars from 'handlebars';
 import { IAdaptiveCardAction } from './IAdaptiveCardAction';
 import { IQueryModifierDefinition } from './queryModifier/IQueryModifierDefinition';
 import { IDataSourceDefinition } from './dataSources/IDataSourceDefinition';
+import { IFilterControlDefinition } from './filters/IFilterControlDefinition';
 
 export interface IExtensibilityLibrary {
 
@@ -45,4 +46,9 @@ export interface IExtensibilityLibrary {
      * Returns custom data sources
      */
     getCustomDataSources?(): IDataSourceDefinition[];
+
+    /**
+     * Returns custom filter controls to use in the 'Search Filters' Web Part filters configuration
+     */
+    getCustomFilterControls?(): IFilterControlDefinition[];
 }

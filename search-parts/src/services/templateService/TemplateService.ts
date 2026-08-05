@@ -25,6 +25,7 @@ import { PageContext } from "@microsoft/sp-page-context";
 import {
     IComponentDefinition,
     IExtensibilityLibrary,
+    IFilterControlDefinition,
     IResultTemplates,
     LayoutRenderType,
 } from "@pnp/modern-search-extensibility";
@@ -120,6 +121,19 @@ export class TemplateService implements ITemplateService {
 
     set AdaptiveCardsExtensibilityLibraries(value: IExtensibilityLibrary[]) {
         this._adaptiveCardsExtensibilityLibraries = value;
+    }
+
+    /**
+     * Custom filter controls coming from extensibility libraries, if any
+     */
+    private _customFilterControls: IFilterControlDefinition[] = [];
+
+    get CustomFilterControls(): IFilterControlDefinition[] {
+        return this._customFilterControls;
+    }
+
+    set CustomFilterControls(value: IFilterControlDefinition[]) {
+        this._customFilterControls = value || [];
     }
 
     get TEMPLATE_ID_PREFIX(): string {
@@ -1315,6 +1329,90 @@ export class TemplateService implements ITemplateService {
                 </pnp-filtermultiselect>
             `);
         });
+
+        // Block helper used by the builtin filter layouts to branch on filters rendered by a custom
+        // filter control coming from an extensibility library.
+        // Usage: {{#isCustomFilterControl filter}} custom {{else}} builtin {{/isCustomFilterControl}}
+        const getCustomFilterControls = () => this._customFilterControls;
+        this.Handlebars.registerHelper("isCustomFilterControl", function (this: unknown, filter: any, options: any) {
+            const isCustom = !!TemplateService.getFilterControlDefinition(filter, getCustomFilterControls());
+            return isCustom ? options.fn(this) : options.inverse(this);
+        });
+
+        // Renders the custom filter control registered for a filter, optionally prefixed by the
+        // builtin AND/OR operator control when the control opted in for it.
+        this.Handlebars.registerHelper("customFilterControl", (filter: any, instanceId: string, theme: any, selectedFilters: any) => {
+
+            const definition = TemplateService.getFilterControlDefinition(filter, this._customFilterControls);
+
+            if (!definition) {
+                return "";
+            }
+
+            const serializedTheme = escapeFn(JSON.stringify(theme));
+
+            const operatorMarkup = definition.showOperator && filter.isMulti ? `
+                <div class="filter--option">
+                    <pnp-filteroperator
+                        data-instance-id="${escapeFn(instanceId)}"
+                        data-filter-name="${escapeFn(filter.filterName)}"
+                        data-operator="${escapeFn(filter.operator)}"
+                        data-theme-variant="${serializedTheme}"
+                    ></pnp-filteroperator>
+                </div>
+            ` : "";
+
+            const componentName = escapeFn(definition.componentName);
+
+            return new hb.SafeString(`
+                ${operatorMarkup}
+                <div class="filter--value">
+                    <${componentName}
+                        data-instance-id="${escapeFn(instanceId)}"
+                        data-filter-name="${escapeFn(filter.filterName)}"
+                        data-filter="${escapeFn(JSON.stringify(filter))}"
+                        data-selected-filters="${escapeFn(JSON.stringify(selectedFilters))}"
+                        data-is-multi="${filter.isMulti ? 'true' : 'false'}"
+                        data-show-count="${filter.showCount ? 'true' : 'false'}"
+                        data-operator="${escapeFn(filter.operator)}"
+                        data-theme-variant="${serializedTheme}"
+                    ></${componentName}>
+                </div>
+            `);
+        });
+
+        // Renders the builtin 'Apply'/'Clear' buttons for a custom filter control which opted in for them.
+        this.Handlebars.registerHelper("customFilterControlFooter", (filter: any, instanceId: string, theme: any) => {
+
+            const definition = TemplateService.getFilterControlDefinition(filter, this._customFilterControls);
+
+            if (!definition || !definition.showApplyButtons || !filter.isMulti) {
+                return "";
+            }
+
+            return new hb.SafeString(`
+                <pnp-filtermultiselect
+                    data-instance-id="${escapeFn(instanceId)}"
+                    data-filter-name="${escapeFn(filter.filterName)}"
+                    data-apply-disabled="${filter.canApply ? 'false' : 'true'}"
+                    data-clear-disabled="${filter.canClear ? 'false' : 'true'}"
+                    data-theme-variant="${escapeFn(JSON.stringify(theme))}"
+                >
+                </pnp-filtermultiselect>
+            `);
+        });
+    }
+
+    /**
+     * Resolves the custom filter control definition matching the template selected for a filter, if any.
+     */
+    private static getFilterControlDefinition(filter: any, customFilterControls: IFilterControlDefinition[]): IFilterControlDefinition {
+
+        if (!filter || !filter.selectedTemplate || !customFilterControls || customFilterControls.length === 0) {
+            return undefined;
+        }
+
+        return customFilterControls.filter(control => control && control.key === filter.selectedTemplate && control.componentName)[0];
     }
 
     private async _initAdaptiveCardsResources(): Promise<void> {

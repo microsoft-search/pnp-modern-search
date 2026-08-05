@@ -52,6 +52,27 @@ export interface IResultsExtensibilityInput {
 }
 
 /**
+ * Inputs required to evaluate whether a Search Filters Web Part instance uses any
+ * custom extensibility feature.
+ */
+export interface IFiltersExtensibilityInput {
+    selectedLayoutKey: string;
+    filtersConfiguration: { selectedTemplate: string }[];
+    inlineTemplateContent: string;
+    externalTemplateUrl: string;
+    layoutProperties: { [key: string]: any };
+    templateService: ITemplateService;
+
+    /**
+     * Built-in ("out-of-the-box") identifiers, passed in by the caller so this helper does not have
+     * to eagerly import the heavy modules that define them.
+     */
+    builtinLayoutKeys: string[];
+    builtinFilterTemplateKeys: string[];
+    builtinComponentNames: string[];
+}
+
+/**
  * Inputs required to evaluate whether a Search Box Web Part instance uses any
  * custom extensibility feature.
  */
@@ -143,6 +164,65 @@ export class ExtensibilityUsageHelper {
 
         // 7. Custom Handlebars helpers / partials (registerHandlebarsCustomizations). Ensure the
         // out-of-the-box helpers/partials are registered first so custom ones can be told apart.
+        await input.templateService.ensureHandlebarsHelpersLoaded();
+        const handlebars: any = input.templateService.Handlebars;
+        if (!handlebars || typeof handlebars.parse !== "function") {
+            return { usesCustomExtensibility: true, reason: "Handlebars namespace unavailable (conservative)" };
+        }
+
+        const customHandlebars = this.findCustomHandlebars(templates, handlebars);
+        if (customHandlebars) {
+            return { usesCustomExtensibility: true, reason: `custom Handlebars ${customHandlebars}` };
+        }
+
+        return { usesCustomExtensibility: false, reason: "only out-of-the-box features are used" };
+    }
+
+    /**
+     * Evaluates whether a Search Filters Web Part instance uses any custom extensibility feature.
+     */
+    public static async getFiltersUsage(input: IFiltersExtensibilityInput): Promise<IExtensibilityUsageResult> {
+
+        // 1. Custom filter layout (getCustomLayouts)
+        if (input.selectedLayoutKey && input.builtinLayoutKeys.indexOf(input.selectedLayoutKey) === -1) {
+            return { usesCustomExtensibility: true, reason: `custom layout '${input.selectedLayoutKey}'` };
+        }
+
+        // 2. Custom filter control (getCustomFilterControls)
+        const customControl = (input.filtersConfiguration || []).filter(
+            configuration => configuration && configuration.selectedTemplate && input.builtinFilterTemplateKeys.indexOf(configuration.selectedTemplate) === -1
+        )[0];
+
+        if (customControl) {
+            return { usesCustomExtensibility: true, reason: `custom filter control '${customControl.selectedTemplate}'` };
+        }
+
+        // 3. External templates cannot be inspected up front — be conservative and load.
+        if (input.externalTemplateUrl) {
+            return { usesCustomExtensibility: true, reason: "an external template that cannot be inspected" };
+        }
+
+        const templates: string[] = [];
+        const state = { truncated: false };
+
+        if (input.inlineTemplateContent) {
+            templates.push(input.inlineTemplateContent);
+        }
+
+        this.collectStrings(input.layoutProperties, templates, 0, state);
+
+        if (state.truncated) {
+            return { usesCustomExtensibility: true, reason: "a configuration too large to fully inspect" };
+        }
+
+        // 4. Custom web components (getCustomWebComponents) referenced in the template.
+        const oobComponents = new Set((input.builtinComponentNames || []).map(n => (n || "").toLowerCase()));
+        const customComponent = this.findCustomComponent(templates, oobComponents);
+        if (customComponent) {
+            return { usesCustomExtensibility: true, reason: `custom web component '<${customComponent}>'` };
+        }
+
+        // 5. Custom Handlebars helpers / partials (registerHandlebarsCustomizations).
         await input.templateService.ensureHandlebarsHelpersLoaded();
         const handlebars: any = input.templateService.Handlebars;
         if (!handlebars || typeof handlebars.parse !== "function") {
