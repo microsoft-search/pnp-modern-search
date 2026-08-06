@@ -40,6 +40,14 @@ interface IPreparedItemValues {
     values: Record<string, unknown>;
 }
 
+interface IContentTypeFieldOrderEntry {
+    StringId?: string;
+    FieldLinks?: Array<{
+        Name?: string;
+        Hidden?: boolean;
+    }>;
+}
+
 export class SelectedItemsEditService implements ISelectedItemsEditService {
 
     public static readonly ServiceKey: ServiceKey<ISelectedItemsEditService> = ServiceKey.create(SelectedItemsEditServiceKey, SelectedItemsEditService);
@@ -47,6 +55,7 @@ export class SelectedItemsEditService implements ISelectedItemsEditService {
     private pageContext: PageContext;
     private spHttpClient: SPHttpClient;
     private readonly fieldCache = new Map<string, Promise<IEditableFieldDescriptor[]>>();
+    private readonly contentTypeFieldOrderCache = new Map<string, Promise<string[]>>();
 
     constructor(private readonly serviceScope: ServiceScope) {
         serviceScope.whenFinished(() => {
@@ -125,6 +134,7 @@ export class SelectedItemsEditService implements ISelectedItemsEditService {
             : [];
 
         if (eligibleItems.length > 0 && commonEditableFields.length > 0) {
+            commonEditableFields = await this.sortEditableFieldsByContentTypeOrder(commonEditableFields, eligibleItems);
             const preparedItemValues = await Promise.all(eligibleItems.map(async (item) => this.getItemFieldValues(item, commonEditableFields)));
             commonEditableFields = this.withAvailableTags(commonEditableFields, preparedItemValues);
             commonEditableFields = this.withSharedValues(commonEditableFields, preparedItemValues);
@@ -608,6 +618,82 @@ export class SelectedItemsEditService implements ISelectedItemsEditService {
         });
 
         return Array.from(tagsByKey.values()).sort((left, right) => left.name.localeCompare(right.name));
+    }
+
+    private async sortEditableFieldsByContentTypeOrder(fields: IEditableFieldDescriptor[], eligibleItems: ISelectedSharePointItemRef[]): Promise<IEditableFieldDescriptor[]> {
+        if (fields.length <= 1 || eligibleItems.length === 0) {
+            return fields;
+        }
+
+        const primaryItem = eligibleItems.find((item) => !!item.contentTypeId) ?? eligibleItems[0];
+
+        if (!primaryItem?.contentTypeId) {
+            return fields;
+        }
+
+        const orderedFieldNames = await this.getContentTypeFieldOrder(primaryItem.webUrl, primaryItem.listId, primaryItem.contentTypeId);
+
+        if (orderedFieldNames.length === 0) {
+            return fields;
+        }
+
+        const fieldOrderByName = new Map<string, number>();
+        orderedFieldNames.forEach((fieldName, index) => {
+            if (!fieldOrderByName.has(fieldName)) {
+                fieldOrderByName.set(fieldName, index);
+            }
+        });
+
+        return [...fields].sort((left, right) => {
+            const leftOrder = fieldOrderByName.get(left.internalName) ?? Number.MAX_SAFE_INTEGER;
+            const rightOrder = fieldOrderByName.get(right.internalName) ?? Number.MAX_SAFE_INTEGER;
+
+            if (leftOrder !== rightOrder) {
+                return leftOrder - rightOrder;
+            }
+
+            return left.title.localeCompare(right.title);
+        });
+    }
+
+    private async getContentTypeFieldOrder(webUrl: string, listId: string, contentTypeId: string): Promise<string[]> {
+        const cacheKey = `${this.getScopeKey(webUrl, listId)}::${contentTypeId.toLowerCase()}`;
+
+        if (!this.contentTypeFieldOrderCache.has(cacheKey)) {
+            this.contentTypeFieldOrderCache.set(cacheKey, this.fetchContentTypeFieldOrder(webUrl, listId, contentTypeId));
+        }
+
+        return this.contentTypeFieldOrderCache.get(cacheKey)!;
+    }
+
+    private async fetchContentTypeFieldOrder(webUrl: string, listId: string, contentTypeId: string): Promise<string[]> {
+        try {
+            const endpoint = `${webUrl.replace(/\/$/, '')}/_api/web/lists/GetById('${this.normalizeGuid(listId)}')/ContentTypes?$select=StringId,Name&$expand=FieldLinks`;
+            const response = await this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1);
+
+            if (!response.ok) {
+                return [];
+            }
+
+            const payload = await response.json();
+            const contentTypes = (payload?.value ?? []) as IContentTypeFieldOrderEntry[];
+            const normalizedContentTypeId = `${contentTypeId ?? ''}`.toLowerCase();
+            const matchingContentType = contentTypes.find((contentType) => `${contentType?.StringId ?? ''}`.toLowerCase() === normalizedContentTypeId)
+                ?? contentTypes
+                    .filter((contentType) => normalizedContentTypeId.startsWith(`${contentType?.StringId ?? ''}`.toLowerCase()))
+                    .sort((left, right) => (`${right?.StringId ?? ''}`.length - `${left?.StringId ?? ''}`.length))[0];
+
+            if (!matchingContentType?.FieldLinks?.length) {
+                return [];
+            }
+
+            return matchingContentType.FieldLinks
+                .filter((fieldLink) => !!fieldLink?.Name && fieldLink.Hidden !== true)
+                .map((fieldLink) => `${fieldLink.Name}`);
+        } catch (error) {
+            Log.warn(LogSource, `Failed to resolve content type field order for '${contentTypeId}'. Falling back to default field ordering. ${(error as Error)?.message ?? ''}`, this.serviceScope);
+            return [];
+        }
     }
 
     private addTaxonomyTagsFromRawValue(rawValue: unknown, tagsByKey: Map<string, { key: string; name: string }>): void {

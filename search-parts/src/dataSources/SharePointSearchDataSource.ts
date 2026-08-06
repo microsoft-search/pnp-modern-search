@@ -776,6 +776,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'AuthorOWSUSER',
                 'owstaxidmetadataalltagsinfo',
                 'Created',
+                'ListItemID',
                 'UniqueID',
                 'NormSiteID',
                 'NormWebID',
@@ -1140,7 +1141,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
         }
 
-        searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
+        const selectProperties = Array.from(new Set([
+            ...this.properties.selectedProperties.filter(Boolean),
+            'ListItemID',
+        ]));
+
+        searchQuery.SelectProperties = selectProperties;
 
         // Audience targeting
         if (this.properties.enableAudienceTargeting) {

@@ -22,6 +22,7 @@ const DETAILS_PANEL_RIGHT_OFFSET = 32;
 const HEX_COLOR_REGEXP = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 const RGB_COLOR_REGEXP = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/i;
 const RESET_RESULTS_SELECTION_EVENT = "resetResultsSelection";
+const SELECTED_EDIT_TAXONOMY_PICKER_CLASS = "pnp-modern-search-selected-edit-taxonomy-picker";
 const LazyTaxonomyPicker = React.lazy(() =>
   import(
     /* webpackChunkName: "pnp-modern-search-taxonomy-picker" */ "@pnp/spfx-controls-react/lib/TaxonomyPicker"
@@ -660,6 +661,23 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
         {!this.state.isSelectedItemsEditLoading && !this.state.selectedItemsEditErrorMessage && fields.length > 0 && (
           <>
+            <style>{`
+              .${SELECTED_EDIT_TAXONOMY_PICKER_CLASS} {
+                position: relative;
+              }
+
+              .${SELECTED_EDIT_TAXONOMY_PICKER_CLASS} > label {
+                border: 0;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                white-space: nowrap;
+                width: 1px;
+              }
+            `}</style>
             <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>{strings.Layouts.DetailsList.SelectedItemsEditFieldLabel}</div>
             <div style={{ overflowY: "auto", minHeight: 0, border: "1px solid #edebe9", borderRadius: 2, background: "#fff" }}>
               {fields.map((field, index) => {
@@ -815,21 +833,23 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     }
 
     return (
-      <React.Suspense fallback={<Spinner size={SpinnerSize.small} />}>
-        <LazyTaxonomyPicker
-          label={field.title}
-          panelTitle={field.title}
-          placeholder={strings.General.TagPickerStrings.SearchPlaceholder}
-          allowMultipleSelections={field.allowMultipleValues !== false}
-          termsetNameOrID={field.termSetId}
-          isTermSetSelectable={false}
-          context={webPartContext as any}
-          initialValues={this._getSelectedEditTaxonomyTerms(this._getSelectedEditFieldValue(field), field.termSetId)}
-          onChange={(nextSelectedItems?: IPickerTerms) => {
-            this._setSelectedEditFieldValue(field, (nextSelectedItems as ISelectedEditTag[]) ?? []);
-          }}
-        />
-      </React.Suspense>
+      <div className={SELECTED_EDIT_TAXONOMY_PICKER_CLASS}>
+        <React.Suspense fallback={<Spinner size={SpinnerSize.small} />}>
+          <LazyTaxonomyPicker
+            label={field.title}
+            panelTitle={field.title}
+            placeholder={strings.General.TagPickerStrings.SearchPlaceholder}
+            allowMultipleSelections={field.allowMultipleValues !== false}
+            termsetNameOrID={field.termSetId}
+            isTermSetSelectable={false}
+            context={webPartContext as any}
+            initialValues={this._getSelectedEditTaxonomyTerms(this._getSelectedEditFieldValue(field), field.termSetId)}
+            onChange={(nextSelectedItems?: IPickerTerms) => {
+              this._setSelectedEditFieldValue(field, (nextSelectedItems as ISelectedEditTag[]) ?? []);
+            }}
+          />
+        </React.Suspense>
+      </div>
     );
   }
 

@@ -11,6 +11,7 @@ export interface ISharePointSearchResult {
     AuthorOWSUSER?: string;
     owstaxidmetadataalltagsinfo?: string;
     Created?: string;
+    ListItemID?: string;
     UniqueID?: string;
     NormSiteID?: string;
     NormWebID?: string;
