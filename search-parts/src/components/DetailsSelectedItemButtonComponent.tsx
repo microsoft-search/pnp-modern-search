@@ -666,7 +666,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
                 position: relative;
               }
 
-              .${SELECTED_EDIT_TAXONOMY_PICKER_CLASS} > label {
+              .${SELECTED_EDIT_TAXONOMY_PICKER_CLASS} label {
                 border: 0;
                 clip: rect(0 0 0 0);
                 height: 1px;
