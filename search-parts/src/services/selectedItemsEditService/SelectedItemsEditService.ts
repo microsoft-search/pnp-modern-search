@@ -129,15 +129,23 @@ export class SelectedItemsEditService implements ISelectedItemsEditService {
         });
 
         const eligibleScopeKeys = Array.from(new Set(eligibleItems.map((item) => this.getScopeKey(item.webUrl, item.listId))));
-        let commonEditableFields = eligibleScopeKeys.length > 0
+            const commonEditableFields = eligibleScopeKeys.length > 0
             ? this.intersectEditableFields(eligibleScopeKeys.map((scopeKey) => fieldsByScope.get(scopeKey) ?? []))
             : [];
 
         if (eligibleItems.length > 0 && commonEditableFields.length > 0) {
-            commonEditableFields = await this.sortEditableFieldsByContentTypeOrder(commonEditableFields, eligibleItems);
-            const preparedItemValues = await Promise.all(eligibleItems.map(async (item) => this.getItemFieldValues(item, commonEditableFields)));
-            commonEditableFields = this.withAvailableTags(commonEditableFields, preparedItemValues);
-            commonEditableFields = this.withSharedValues(commonEditableFields, preparedItemValues);
+                const sortedEditableFields = await this.sortEditableFieldsByContentTypeOrder(commonEditableFields, eligibleItems);
+                const preparedItemValues = await Promise.all(eligibleItems.map(async (item) => this.getItemFieldValues(item, sortedEditableFields)));
+                const commonEditableFieldsWithTags = this.withAvailableTags(sortedEditableFields, preparedItemValues);
+                const commonEditableFieldsWithSharedValues = this.withSharedValues(commonEditableFieldsWithTags, preparedItemValues);
+
+                return {
+                    eligibleItems,
+                    ineligibleItems,
+                    commonEditableFields: commonEditableFieldsWithSharedValues,
+                    requiresSingleList: listScopes.length > 1,
+                    listScopes,
+                };
         }
 
         return {
