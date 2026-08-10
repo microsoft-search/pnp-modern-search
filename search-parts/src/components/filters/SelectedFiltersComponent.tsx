@@ -249,21 +249,13 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
     }
 
     private extractPeopleDisplayValue(rawValue: string): string {
+        const preferredDisplayLabel = TaxonomyHelper.extractPreferredPeopleDisplayLabel(rawValue);
+        if (preferredDisplayLabel) {
+            return preferredDisplayLabel;
+        }
+
         const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
-        if (!cleanedValue) {
-            return '';
-        }
-
-        const readablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-        if (readablePipeSegment) {
-            return readablePipeSegment;
-        }
-
         const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
-        const decodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
-        if (decodedPipeSegment) {
-            return decodedPipeSegment;
-        }
 
         const claimsLabel = TaxonomyHelper.extractClaimsLabel(decodedValue || cleanedValue);
         if (claimsLabel) {

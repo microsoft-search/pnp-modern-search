@@ -729,21 +729,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private extractPreferredPeopleValueDisplayName(rawValue: string): string {
+        const preferredDisplayLabel = TaxonomyHelper.extractPreferredPeopleDisplayLabel(rawValue);
+        if (preferredDisplayLabel) {
+            return preferredDisplayLabel;
+        }
+
         const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
-        if (!cleanedValue) {
-            return '';
-        }
-
-        const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-        if (firstReadablePipeSegment) {
-            return firstReadablePipeSegment;
-        }
-
         const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
-        const readableDecodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
-        if (readableDecodedPipeSegment) {
-            return readableDecodedPipeSegment;
-        }
 
         const readableCleanedValue = this.extractReadableLabelFromString(cleanedValue);
         if (readableCleanedValue) {

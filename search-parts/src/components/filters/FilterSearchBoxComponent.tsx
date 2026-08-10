@@ -272,23 +272,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
     }
 
     private readonly getPreferredPeopleValueLabel = (rawValue: string): string => {
-        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
-        if (!cleanedValue) {
-            return '';
-        }
-
-        const readablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-        if (readablePipeSegment) {
-            return readablePipeSegment;
-        }
-
-        const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
-        const decodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
-        if (decodedPipeSegment) {
-            return decodedPipeSegment;
-        }
-
-        return '';
+        return TaxonomyHelper.extractPreferredPeopleDisplayLabel(rawValue);
     }
 
     private readonly getDisplayName = (rawName: string, rawValue?: string): string => {
