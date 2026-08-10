@@ -83,6 +83,12 @@ define([], function () {
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configure extensibility libraries to load at startup.",
+                    PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom filter layouts, filter controls, web components and Handlebars helpers will be loaded here."
+                }
             }
         },
         Styling: {

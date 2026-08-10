@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Ude af stand til at vise den specifikke skabelon. Fejloplysninger: '{0}'",
                 FiltersTemplateFieldLabel: "Redigér skabelon til filtre",
                 FiltersTemplatePanelHeader: "Redigér skabelon til filtre"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurér extensibility-biblioteker så de indlæser ved opstart.",
+                    PanelDescription: "Tilføj/Fjern ID på dit extensibility-bibliotek her. Du kan specificere et visningsnavn og beslutte, om biblioteket skal indlæses eller ej ved opstart. Kun brugerdefinerede filterlayouts, filterkontroller, web-komponenter og Handlebars-hjælpere vil blive loadet her."
+                }
             }
         },
         Styling: {

@@ -1,4 +1,4 @@
-import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilter, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, FilterConditionOperator, IDataSourceData, SortFieldDirection } from "@pnp/modern-search-extensibility";
+import { BaseDataSource, FilterSortType, FilterSortDirection, ITemplateSlot, BuiltinTemplateSlots, IDataContext, ITokenService, FilterBehavior, PagingBehavior, IDataFilter, IDataFilterResult, IDataFilterResultValue, FilterComparisonOperator, FilterConditionOperator, IDataSourceData, SortFieldDirection, FilterType } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneGroup, PropertyPaneLabel, IPropertyPaneField, PropertyPaneToggle, PropertyPaneHorizontalRule } from "@microsoft/sp-property-pane";
 import { cloneDeep, isEmpty } from '@microsoft/sp-lodash-subset';
 import { MSGraphClientFactory, SPHttpClient } from "@microsoft/sp-http";
@@ -1554,7 +1554,8 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this._aggregationFieldAliases.clear();
 
         return dataContext.filters.filtersConfiguration.filter(filterConfig => {
-            return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople;
+            // 'filterType' is only set for filters using a custom filter control from an extensibility library
+            return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople && filterConfig.filterType !== FilterType.StaticFilter;
         }).map(filterConfig => {
             const normalizedFieldName = this.normalizeAggregationFieldName(filterConfig.filterName);
             this._aggregationFieldAliases.set(normalizedFieldName.toLowerCase(), filterConfig.filterName);

@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 FiltersTemplateFieldLabel: "Muokkaa suodatintemplaattia",
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konsiguroi laajennuskirjastot ladattavaksi käynnistyksessä.",
+                    PanelDescription: "Lisää/poista mukautetun laajennuskirjastosi ID:t tässä. Voit määrittää näyttönimen ja päättää, ladataanko kirjasto käynnistyksessä. Vain mukautetut suodatintemplaatit, suodatinkontrollit, komponentit ja Handlebar helperit ladataan tässä."
+                }
             }
         },
         Styling: {

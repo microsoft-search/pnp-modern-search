@@ -83,6 +83,12 @@ define([], function () {
                 ErrorTemplateResolve: "Impossible de résoudre le modèle indiqué. Renseignements sur l'erreur '{0}'",
                 FiltersTemplateFieldLabel: "Modifier le modèle de filtres",
                 FiltersTemplatePanelHeader: "Modifier le modèle de filtres"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configurez les bibliothèques d’extensibilité pour qu’elles soient chargées au démarrage.",
+                    PanelDescription: "Ajoutez ou supprimez vos identifiants personnalisés de la bibliothèque d’extensibilités ici. Vous pouvez préciser un nom d’affichage et décider si la bibliothèque doit être téléchargée ou non au démarrage. Seuls les mises en page de filtres, les contrôles de filtre, les composants Web et les assistants d’expressions entre accolades personnalisés sont chargés ici."
+                }
             }
         },
         Styling: {

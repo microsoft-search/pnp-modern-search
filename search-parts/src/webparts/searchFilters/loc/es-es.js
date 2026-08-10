@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "No se ha podido resolver la plantilla especificada. Detalles del error: '{0}'",
                 FiltersTemplateFieldLabel: "Editar plantilla de filtros",
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configurar las bibliotecas de extensibilidad para que se carguen al inicio.",
+                    PanelDescription: "Añada/elimine sus IDs de bibliotecas de extensibilidad personalizadas aquí. Puede especificar un nombre para mostrar y decidir si la biblioteca debe cargarse o no al inicio. Sólo se cargarán aquí los diseños de filtros, los controles de filtro, los componentes web y los elementos auxiliares de Handlebars personalizados."
+                }
             }
         },
         Styling: {

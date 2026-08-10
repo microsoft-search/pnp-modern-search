@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection } from "@pnp/modern-search-extensibility";
+import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection, FilterType } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
     IPropertyPaneDropdownOption,
@@ -45,6 +45,7 @@ import commonStyles from '../styles/Common.module.scss';
 import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
+const HIDDEN_TAXONOMY_REFINER_VALUE_REGEX = /^(GT0|GP0|GTSet|GPP)\|#/i;
 const EDIT_MODE_REFINER_LIMIT = 100;
 
 export enum BuiltinSourceIds {
@@ -260,6 +261,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             promotedResults: results.promotedResults
         };
 
+        if (!this.properties.enableLocalization) {
+            data.filters = this.removeHiddenTaxonomyRefinerValues(data.filters || []);
+        }
+
         this.logRefinerCounts(dataContext, data.filters || []);
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
@@ -274,6 +279,18 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this._itemsCount = results.totalRows;
 
         return data;
+    }
+
+    private removeHiddenTaxonomyRefinerValues(filters: IDataFilterResult[]): IDataFilterResult[] {
+        return (filters || []).map((filter) => ({
+            ...filter,
+            values: (filter.values || []).filter((value) => !this.isHiddenTaxonomyRefinerValueName(value?.name))
+        }));
+    }
+
+    private isHiddenTaxonomyRefinerValueName(valueName: string): boolean {
+        const candidate = `${valueName ?? ''}`.trim();
+        return HIDDEN_TAXONOMY_REFINER_VALUE_REGEX.test(candidate);
     }
 
     private logRefinerCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
@@ -759,6 +776,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'AuthorOWSUSER',
                 'owstaxidmetadataalltagsinfo',
                 'Created',
+                'ListItemID',
                 'UniqueID',
                 'NormSiteID',
                 'NormWebID',
@@ -1012,7 +1030,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             // Set list of refiners to retrieve
             searchQuery.Refiners = dataContext.filters.filtersConfiguration.filter(filterConfig => {
-                return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople;
+                // 'filterType' is only set for filters using a custom filter control from an extensibility library
+                return filterConfig.selectedTemplate !== BuiltinFilterTemplates.StaticPeople && filterConfig.filterType !== FilterType.StaticFilter;
             }).map(filterConfig => {
 
                 // Special case with Date managed properties
@@ -1122,7 +1141,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
         }
 
-        searchQuery.SelectProperties = this.properties.selectedProperties.filter(a => a); // Fix to remove null values;
+        const selectProperties = Array.from(new Set([
+            ...this.properties.selectedProperties.filter(Boolean),
+            'ListItemID',
+        ]));
+
+        searchQuery.SelectProperties = selectProperties;
 
         // Audience targeting
         if (this.properties.enableAudienceTargeting) {

@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 FiltersTemplateFieldLabel: "Filter Vorlage bearbeiten",
                 FiltersTemplatePanelHeader: "Filter Vorlage bearbeiten"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Erweiterungsbibliotheken, die beim Start geladen werden, konfigurieren",
+                    PanelDescription: "Hier können Sie die IDs Ihrer benutzerdefinierten Erweiterungsbibliotheken hinzufügen/entfernen. Sie können einen Anzeigenamen angeben und entscheiden, ob die Bibliothek beim Starten geladen werden soll oder nicht. Nur benutzerdefinierte Filterlayouts, Filtersteuerelemente, Webkomponenten und Handlebars-Helfer werden hier geladen."
+                }
             }
         },
         Styling: {

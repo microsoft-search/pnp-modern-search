@@ -15,6 +15,7 @@ export * from './models/filters/IDataFilterInfo';
 export * from './models/filters/IDataFilterInternal';
 export * from './models/filters/IDataFilterConfiguration';
 export * from './models/filters/IDataFilterToken';
+export * from './models/filters/IFilterControlDefinition';
 export * from './models/filters/FilterBehavior';
 export * from './models/dataSources/PagingBehavior';
 export * from './constants/ExtensibilityConstants';

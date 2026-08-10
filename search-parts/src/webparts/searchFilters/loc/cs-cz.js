@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Nelze načíst zadanou šablonu. Podrobnosti chyby: '{0}'",
                 FiltersTemplateFieldLabel: "Upravit šablonu filtrů",
                 FiltersTemplatePanelHeader: "Upravit šablonu filtrů"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurujte knihovny rozšiřitelnosti pro načtení při spuštění.",
+                    PanelDescription: "Přidejte/odeberte ID vlastní knihovny rozšiřitelnosti zde. Můžete zadat zobrazený název a rozhodnout, zda by knihovna měla být načtena nebo ne při spuštění. Zde budou načtena pouze vlastní rozvržení filtrů, ovládací prvky filtrů, webové komponenty a Handlebars pomocníci."
+                }
             }
         },
         Styling: {

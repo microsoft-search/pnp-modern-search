@@ -27,7 +27,7 @@ import { DynamicDataService } from '../../services/dynamicDataService/DynamicDat
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import { ComponentType } from '../../common/ComponentType';
 import { IDataFilterSourceData } from '../../models/dynamicData/IDataFilterSourceData';
-import { IDataFilter, ILayoutDefinition, LayoutType, ILayout, FilterConditionOperator, IDataFilterResult, IDataFilterConfiguration, FilterType, IDataFilterResultValue, IComponentDefinition, FilterSortType, FilterSortDirection } from '@pnp/modern-search-extensibility';
+import { IDataFilter, ILayoutDefinition, LayoutType, ILayout, FilterConditionOperator, IDataFilterResult, IDataFilterConfiguration, FilterType, IDataFilterResultValue, IComponentDefinition, FilterSortType, FilterSortDirection, IExtensibilityLibrary, IFilterControlDefinition } from '@pnp/modern-search-extensibility';
 import { AsyncCombo } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import { AvailableLayouts, BuiltinLayoutsKeys } from '../../layouts/AvailableLayouts';
@@ -50,6 +50,11 @@ import { ITaxonomyService } from '../../services/taxonomyService/ITaxonomyServic
 import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
 import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { TextField } from '@fluentui/react/lib/TextField';
+import { Toggle, IToggleProps } from '@fluentui/react/lib/Toggle';
+import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
+import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
+import { FilterControlHelper } from '../../helpers/FilterControlHelper';
+import { Constants } from '../../common/Constants';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -115,6 +120,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private templateContentToDisplay: string;
 
     /**
+     * The error message to display when the Web Part configuration can't be resolved (ex: a custom layout
+     * coming from an extensibility library which is not available anymore)
+     */
+    private errorMessage: string;
+
+    /**
      * The template service instance
      */
     private templateService: ITemplateService = undefined;
@@ -143,6 +154,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * The available web component definitions (not registered yet)
      */
     private availableWebComponentDefinitions: IComponentDefinition<any>[] = [];
+
+    /**
+     * The custom filter control definitions coming from the registered extensibility libraries
+     */
+    private availableFilterControlDefinitions: IFilterControlDefinition[] = [];
 
     /**
      * The available connections as property pane fields
@@ -246,11 +262,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // That's why we need to fetch the licence info before calling this method
         this.ensureDynamicDataSourcesConnection();
 
+        // Load extensions from the registered extensibility libraries (custom layouts, filter controls,
+        // web components and Handlebars customizations). This must happen BEFORE the web components get
+        // registered so custom components are part of the same registration pass.
+        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
+
         // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
         // Web components are only defined once.
         // We need to register components here in the case where the Search Results WP is not present on the page
-        const { AvailableComponents } = await import(/* webpackChunkName: 'pnp-modern-search-web-components' */ '../../components/AvailableComponents');
-        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
         await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
 
         return super.onInit();
@@ -275,20 +294,34 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             return this.renderCompleted();
         }
 
-        // Determine the template content to display
-        // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
-        await this.initTemplate();
+        // Reset the error message every time
+        this.errorMessage = undefined;
 
-        // Re-check disposal after the awaited audience/template work before resolving the layout
-        // instance, which uses this.context (torn down on dispose).
-        if (this._webPartDisposed || !this.context) {
-            return;
+        try {
+
+            // Determine the template content to display
+            // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
+            await this.initTemplate();
+
+            // Re-check disposal after the awaited audience/template work before resolving the layout
+            // instance, which uses this.context (torn down on dispose).
+            if (this._webPartDisposed || !this.context) {
+                return;
+            }
+
+            // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
+            if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
+                this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                this.lastLayoutKey = this.properties.selectedLayoutKey;
+            }
+
+        } catch (error) {
+            // Catch instanciation or wrong definition errors for extensibility scenarios
+            this.errorMessage = error.message ? error.message : error;
         }
 
-        // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
-        if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-            this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
-            this.lastLayoutKey = this.properties.selectedLayoutKey;
+        if (this._webPartDisposed || !this.context) {
+            return;
         }
 
         // Refresh the property pane to get layout and data source options.
@@ -317,8 +350,22 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         let renderRootElement: JSX.Element = null;
         let filterResults: IDataFilterResult[] = [];
 
-        // Display the Web Part only if a valid configuration is set
-        if (this.templateContentToDisplay && this.properties.filtersConfiguration.length > 0) {
+        // An extensibility error (ex: a custom layout coming from a library which is not deployed anymore)
+        // prevents any rendering, so surface it instead of silently displaying nothing.
+        if (this.errorMessage) {
+
+            renderRootElement = React.createElement(
+                MessageBar,
+                { messageBarType: MessageBarType.error },
+                this.errorMessage
+            );
+
+        } else if (this.templateContentToDisplay && this.properties.filtersConfiguration.length > 0) {
+            // Display the Web Part only if a valid configuration is set
+
+            // The options a custom filter control doesn't support are only disabled in the property pane, so render
+            // the filters from the normalized configuration to always use the effective values of the control
+            const resolvedFiltersConfiguration = this.getResolvedFiltersConfiguration();
 
             // Get data from connected sources
             if (this._dataSourceDynamicProperties.length > 0) {
@@ -334,7 +381,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             // OR the data results don't contain this filter name. 
             // We create fake entries for those filters to be able to render them in the template
             // We do this by convenience to avoid refactoring the Handlebars templates
-            filterResults = this._initStaticFilters(filterResults, this.properties.filtersConfiguration);
+            filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration);
 
             renderRootElement = React.createElement(
                 React.Suspense,
@@ -344,11 +391,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     {
                         templateContent: this.templateContentToDisplay,
                         availableFilters: filterResults,
-                        filtersConfiguration: this.properties.filtersConfiguration,
+                        filtersConfiguration: resolvedFiltersConfiguration,
                         domElement: this.domElement,
                         instanceId: this.instanceId,
                         selectedLayoutKey: this.properties.selectedLayoutKey,
-                        properties: JSON.parse(JSON.stringify(this.properties)),
+                        properties: JSON.parse(JSON.stringify({ ...this.properties, filtersConfiguration: resolvedFiltersConfiguration })),
                         themeVariant: this._themeVariant,
                         context: this.context,
                         onUpdateFilters: (updatedFilters: IDataFilter[]) => {
@@ -469,7 +516,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             case propertyId:
                 return {
-                    filterConfiguration: this.properties.filtersConfiguration,
+                    filterConfiguration: this.getResolvedFiltersConfiguration(),
                     selectedFilters: this._selectedFilters,
                     filterOperator: this.properties.filterOperator,
                     instanceId: this.instanceId,
@@ -479,6 +526,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             default:
                 throw new Error('Bad property id');
         }
+    }
+
+    /**
+     * Returns the effective filters configuration, resolving the filter type of the filters using a custom filter
+     * control and resetting the options their control doesn't support. Connected data sources don't know about the
+     * custom controls registered here, so they rely on the filter type to skip refiners/aggregations for static
+     * filters, and on the normalized options to not apply settings the selected control opted out from.
+     */
+    private getResolvedFiltersConfiguration(): IDataFilterConfiguration[] {
+        return FilterControlHelper.normalizeConfigurations(this.properties.filtersConfiguration, this.availableFilterControlDefinitions);
     }
 
     public onCustomPropertyUpdate(propertyPath: string, newValue: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
@@ -532,6 +589,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     ...this.getPropertyPaneWebPartInfoGroups(),
                     this.getAudienceTargetingPropertyPaneGroup(),
                     {
+                        groupName: commonStrings.PropertyPane.InformationPage.Extensibility.GroupName,
+                        groupFields: this.getExtensibilityFields()
+                    },
+                    {
                         groupName: commonStrings.PropertyPane.InformationPage.ImportExport,
                         groupFields: [this._propertyPanePropertyEditor({
                             webpart: this,
@@ -550,6 +611,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     protected async onPropertyPaneConfigurationStart() {
         await this.loadPropertyPaneResources();
 
+        // Force the load of the enabled libraries so custom layouts and filter controls are selectable
+        // in the property pane, even if the current configuration doesn't use anything custom yet.
+        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration, true);
+        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+
         if (this.groupedTermSets.size === 0) {
             await this._loadTermSets();
         }
@@ -564,7 +630,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             // Set correct default values according to the template
             const nextConfigurations = newValue as IHierarchicalFilterConfiguration[];
-            this.properties.filtersConfiguration = nextConfigurations.map(configuration => {
+            this.properties.filtersConfiguration = nextConfigurations.map(nextConfiguration => {
+
+                // The options unsupported by a custom filter control are disabled in the property pane, but a value
+                // configured before selecting the control could still be persisted, so reset them here as well
+                const configuration = FilterControlHelper.normalizeConfiguration(nextConfiguration, this.availableFilterControlDefinitions);
+
                 if (configuration.selectedTemplate === BuiltinFilterTemplates.DateRange
                     || configuration.selectedTemplate === BuiltinFilterTemplates.DateInterval) {
                     configuration.isMulti = false;
@@ -633,6 +704,20 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 this.properties.verticalsDataSourceReference = undefined;
                 this.properties.selectedVerticalKeys = [];
                 this._verticalsSourceData = undefined;
+            }
+        }
+
+        if (propertyPath.localeCompare('extensibilityLibraryConfiguration') === 0) {
+
+            // Remove duplicates if any
+            this.properties.extensibilityLibraryConfiguration = uniqBy(this.properties.extensibilityLibraryConfiguration, 'id');
+
+            await this.loadExtensions(this.properties.extensibilityLibraryConfiguration, true);
+            await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+
+            // The selected layout may come from a library which is not loaded anymore
+            if (this.availableLayoutDefinitions.filter(layout => layout.key === this.properties.selectedLayoutKey).length === 0) {
+                this.properties.selectedLayoutKey = BuiltinLayoutsKeys.Vertical;
             }
         }
 
@@ -835,6 +920,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     /**
+     * Determines if a filters configuration option is supported by the control selected for a filter.
+     * Builtin controls always support all options, custom controls can opt out from the ones they don't use.
+     */
+    private supportsFilterOption(selectedTemplate: string, option: 'multiValues' | 'valuesCount' | 'maxBuckets'): boolean {
+        return FilterControlHelper.supportsOption(selectedTemplate, this.availableFilterControlDefinitions, option);
+    }
+
+    /**
      * Determines the group fields for filters settings
      */
     private getFilterSettings(): IPropertyPaneField<any>[] {
@@ -934,7 +1027,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 key: `${field.id}-${itemId}`,
                                 type: 'number',
                                 value: value ? value.toString() : '',
-                                disabled: item.selectedTemplate === BuiltinFilterTemplates.StaticPeople,
+                                disabled: item.selectedTemplate === BuiltinFilterTemplates.StaticPeople || !this.supportsFilterOption(item.selectedTemplate, 'maxBuckets'),
                                 errorMessage: errorMessage,
                                 onChange: (ev, newValue) => {
                                     const parsedValue = newValue && newValue.trim() !== '' ? parseInt(newValue, 10) : undefined;
@@ -952,7 +1045,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
                                     defaultChecked: item.showLimitExceededWarning ?? false,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople || !this.supportsFilterOption(item.selectedTemplate, 'maxBuckets'),
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
@@ -993,7 +1086,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             {
                                 key: BuiltinFilterTemplates.Hierarchical,
                                 text: webPartStrings.PropertyPane.DataFilterCollection.Templates.HierarchicalFilterTemplate
-                            }
+                            },
+                            // Filter controls coming from the registered extensibility libraries
+                            ...this.availableFilterControlDefinitions.map(control => {
+                                return {
+                                    key: control.key,
+                                    text: control.name ? control.name : control.key
+                                };
+                            })
                         ]
                     },
 
@@ -1022,8 +1122,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
-                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange ? false : item.showCount,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange,
+                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || !this.supportsFilterOption(item.selectedTemplate, 'valuesCount') ? false : item.showCount,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || !this.supportsFilterOption(item.selectedTemplate, 'valuesCount'),
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
@@ -1039,8 +1139,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
-                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval ? false : item.isMulti,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval,
+                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || !this.supportsFilterOption(item.selectedTemplate, 'multiValues') ? false : item.isMulti,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.DateInterval || !this.supportsFilterOption(item.selectedTemplate, 'multiValues'),
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
@@ -1649,8 +1749,15 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      */
     private async initTemplate(): Promise<void> {
 
-        // Gets the template content according to the selected key
-        const selectedLayoutTemplateContent = this.availableLayoutDefinitions.filter(layout => { return layout.key === this.properties.selectedLayoutKey; })[0].templateContent;
+        // Gets the template content according to the selected key. The matching definition can be missing when
+        // the layout comes from an extensibility library which is not deployed or registered anymore.
+        const selectedLayoutDefinition = this.availableLayoutDefinitions.filter(layout => { return layout.key === this.properties.selectedLayoutKey; })[0];
+
+        if (!selectedLayoutDefinition) {
+            throw new Error(Text.format(commonStrings.General.Extensibility.LayoutDefinitionNotFound, this.properties.selectedLayoutKey));
+        }
+
+        const selectedLayoutTemplateContent = selectedLayoutDefinition.templateContent;
 
         if (this.properties.selectedLayoutKey === BuiltinLayoutsKeys.FiltersCustom) {
 
@@ -1698,6 +1805,168 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         if (this.properties.selectedVerticalKeys === undefined) {
             this.properties.selectedVerticalKeys = [];
         }
+
+        // Seed an example row (disabled by default) so the property pane shows users
+        // where to add their extension manifest IDs. Disabled — it doesn't try to load.
+        this.properties.extensibilityLibraryConfiguration = this.properties.extensibilityLibraryConfiguration ? this.properties.extensibilityLibraryConfiguration : [{
+            name: commonStrings.General.Extensibility.DefaultExtensibilityLibraryName,
+            enabled: false,
+            id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
+        }];
+    }
+
+    /**
+     * Loads extensions from the registered extensibility libraries
+     * @param librariesConfiguration the extensibility libraries configured on the Web Part
+     * @param forceLoad loads the libraries even if nothing custom is currently used (i.e. from the property pane, so custom
+     * layouts and filter controls become selectable before anything custom has been applied)
+     */
+    private async loadExtensions(librariesConfiguration: IExtensibilityConfiguration[], forceLoad: boolean = false) {
+
+        const { AvailableComponents } = await import(
+            /* webpackChunkName: 'pnp-modern-search-web-components' */
+            '../../components/AvailableComponents'
+        );
+        this.availableWebComponentDefinitions = AvailableComponents.BuiltinComponents;
+
+        // Only attempt to load extensibility libraries when the Web Part actually uses something provided
+        // by one. This avoids the slow retry/backoff load of a registered-but-undeployed library.
+        let librariesToLoad = librariesConfiguration || [];
+        const enabledCount = librariesToLoad.filter(configuration => configuration.enabled).length;
+
+        if (!forceLoad && enabledCount > 0) {
+            try {
+                const usage = await ExtensibilityUsageHelper.getFiltersUsage({
+                    selectedLayoutKey: this.properties.selectedLayoutKey,
+                    filtersConfiguration: this.properties.filtersConfiguration,
+                    inlineTemplateContent: this.properties.inlineTemplateContent,
+                    externalTemplateUrl: this.properties.externalTemplateUrl,
+                    layoutProperties: this.properties.layoutProperties,
+                    templateService: this.templateService,
+                    builtinLayoutKeys: AvailableLayouts.BuiltinLayouts.map(layout => layout.key),
+                    builtinFilterTemplateKeys: Object.keys(BuiltinFilterTypes),
+                    builtinComponentNames: this.availableWebComponentDefinitions.map(component => component.componentName)
+                });
+
+                if (!usage.usesCustomExtensibility) {
+                    librariesToLoad = [];
+                    const message = `Skipping load of ${enabledCount} enabled extensibility library/libraries — not used by this Web Part (${usage.reason}).`;
+                    Log.verbose(LogSource, message, this.context.serviceScope);
+                    ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
+                } else {
+                    const message = `Loading ${enabledCount} enabled extensibility library/libraries — the Web Part uses ${usage.reason}.`;
+                    Log.verbose(LogSource, message, this.context.serviceScope);
+                    ExtensibilityUsageHelper.debugLog(`[${LogSource}] ${message}`);
+                }
+            } catch (error) {
+                // If usage can't be determined, fall back to loading so nothing custom is missed.
+                const details = error instanceof Error ? error.message : String(error);
+                Log.warn(LogSource, `Could not evaluate extensibility usage; loading libraries as a fallback. Details: ${details}`, this.context.serviceScope);
+            }
+        }
+
+        const extensibilityLibraries = await this.extensibilityService.loadExtensibilityLibraries(librariesToLoad);
+
+        // Always start from the builtin definitions so a property pane reload doesn't duplicate entries
+        this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => { return layout.type === LayoutType.Filter; });
+        this.availableFilterControlDefinitions = [];
+
+        extensibilityLibraries.forEach((extensibilityLibrary: IExtensibilityLibrary) => {
+
+            // Add custom filter layouts if any
+            if (extensibilityLibrary.getCustomLayouts) {
+                this.availableLayoutDefinitions = this.availableLayoutDefinitions.concat(
+                    extensibilityLibrary.getCustomLayouts().filter(layout => layout && layout.type === LayoutType.Filter)
+                );
+            }
+
+            // Add custom filter controls if any
+            if (extensibilityLibrary.getCustomFilterControls) {
+                this.availableFilterControlDefinitions = this.availableFilterControlDefinitions.concat(
+                    extensibilityLibrary.getCustomFilterControls().filter(control => control && control.key && control.componentName)
+                );
+            }
+
+            // Add custom web components if any
+            if (extensibilityLibrary.getCustomWebComponents) {
+                this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
+            }
+
+            // Registers Handlebars customizations in the local namespace
+            if (extensibilityLibrary.registerHandlebarsCustomizations) {
+                extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+            }
+        });
+
+        // Remove duplicates coming from multiple libraries declaring the same key
+        this.availableLayoutDefinitions = uniqBy(this.availableLayoutDefinitions, 'key');
+        this.availableFilterControlDefinitions = uniqBy(this.availableFilterControlDefinitions, 'key');
+
+        // Make the custom controls available to the Handlebars helpers used by the builtin filter layouts
+        this.templateService.CustomFilterControls = this.availableFilterControlDefinitions;
+    }
+
+    /**
+     * Determines the extensibility libraries configuration fields
+     */
+    private getExtensibilityFields(): IPropertyPaneField<any>[] {
+
+        return [
+            this._propertyFieldCollectionData('extensibilityLibraryConfiguration', {
+                manageBtnLabel: commonStrings.PropertyPane.InformationPage.Extensibility.ManageBtnLabel,
+                key: 'extensibilityLibraryConfiguration',
+                enableSorting: true,
+                panelHeader: webPartStrings.PropertyPane.InformationPage.Extensibility.PanelHeader,
+                panelDescription: webPartStrings.PropertyPane.InformationPage.Extensibility.PanelDescription,
+                label: commonStrings.PropertyPane.InformationPage.Extensibility.FieldLabel,
+                value: this.properties.extensibilityLibraryConfiguration,
+                tableClassName: commonStyles.slotTable,
+                fields: [
+                    {
+                        id: 'name',
+                        title: commonStrings.PropertyPane.InformationPage.Extensibility.Columns.Name,
+                        type: this._customCollectionFieldType.string
+                    },
+                    {
+                        id: 'id',
+                        title: commonStrings.PropertyPane.InformationPage.Extensibility.Columns.Id,
+                        type: this._customCollectionFieldType.string,
+                        onGetErrorMessage: this._validateGuid.bind(this)
+                    },
+                    {
+                        id: 'enabled',
+                        title: commonStrings.PropertyPane.InformationPage.Extensibility.Columns.Enabled,
+                        type: this._customCollectionFieldType.custom,
+                        required: true,
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return (
+                                React.createElement("div", null,
+                                    React.createElement(Toggle, {
+                                        key: itemId,
+                                        checked: value,
+                                        offText: commonStrings.General.OffTextLabel,
+                                        onText: commonStrings.General.OnTextLabel,
+                                        onChange: ((evt, checked) => {
+                                            onUpdate(field.id, checked);
+                                        })
+                                    } as IToggleProps)
+                                )
+                            );
+                        }
+                    }
+                ]
+            })
+        ];
+    }
+
+    private _validateGuid(value: string): string {
+        if (value.length > 0) {
+            if (!(/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(value)) {
+                return 'Invalid GUID';
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -1820,7 +2089,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         filtersConfiguration.forEach(filterConfiguration => {
 
             const shouldKeepVisibleWhenMissing =
-                BuiltinFilterTypes[filterConfiguration.selectedTemplate] === FilterType.StaticFilter
+                FilterControlHelper.getFilterType(filterConfiguration.selectedTemplate, this.availableFilterControlDefinitions) === FilterType.StaticFilter
                 || filterConfiguration.selectedTemplate === BuiltinFilterTemplates.Hierarchical;
 
             if (shouldKeepVisibleWhenMissing) {

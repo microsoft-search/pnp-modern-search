@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Det går inte att visa den angivna mallen. Felinformation: '{0}'",
                 FiltersTemplateFieldLabel: "Redigera filtermall",
                 FiltersTemplatePanelHeader: "Redigera filtermall"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurera utbyggnadsbibliotek som ska laddas vid start.",
+                    PanelDescription: "Lägg till/ta bort anpassade utbyggnadsbiblioteket-ID:n här. Du kan ange ett visningsnamn och bestämma om biblioteket ska laddas eller ej vid start. Här laddas bara anpassade filterlayouter, filterkontroller, webbkomponenter och styrhjälpmedel."
+                }
             }
         },
         Styling: {

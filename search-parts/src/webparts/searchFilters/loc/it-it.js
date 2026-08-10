@@ -81,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Impossibile risolvere il modello specificato. Dettagli dell'errore: '{0}'",
                 FiltersTemplateFieldLabel: "Modifica modello di filtri",
                 FiltersTemplatePanelHeader: "Modifica modello di filtri"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configura le librerie di estensibilità da caricare all'avvio.",
+                    PanelDescription: "Aggiungi/Rimuovi qui gli ID della tua libreria di estensibilità personalizzata. Puoi specificare un nome visualizzato e decidere se la libreria deve essere caricata o meno all'avvio. Solo i layout dei filtri, i controlli dei filtri, i componenti web e gli helper Handlebars personalizzati saranno caricati qui."
+                }
             }
         },
         Styling: {
