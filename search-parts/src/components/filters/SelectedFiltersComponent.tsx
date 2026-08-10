@@ -254,15 +254,25 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
             return '';
         }
 
-        const readablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-        if (readablePipeSegment) {
-            return readablePipeSegment;
+        const preferredReadablePipeSegment = cleanedValue
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (preferredReadablePipeSegment) {
+            return preferredReadablePipeSegment;
         }
 
         const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
-        const decodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
-        if (decodedPipeSegment) {
-            return decodedPipeSegment;
+        const preferredDecodedPipeSegment = decodedValue
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
+        if (preferredDecodedPipeSegment) {
+            return preferredDecodedPipeSegment;
         }
 
         const claimsLabel = TaxonomyHelper.extractClaimsLabel(decodedValue || cleanedValue);

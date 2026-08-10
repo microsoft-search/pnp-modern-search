@@ -734,15 +734,25 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return '';
         }
 
-        const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-        if (firstReadablePipeSegment) {
-            return firstReadablePipeSegment;
+        const preferredReadablePipeSegment = cleanedValue
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (preferredReadablePipeSegment) {
+            return preferredReadablePipeSegment;
         }
 
         const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
-        const readableDecodedPipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
-        if (readableDecodedPipeSegment) {
-            return readableDecodedPipeSegment;
+        const preferredDecodedPipeSegment = decodedValue
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(decodedValue);
+        if (preferredDecodedPipeSegment) {
+            return preferredDecodedPipeSegment;
         }
 
         const readableCleanedValue = this.extractReadableLabelFromString(cleanedValue);
