@@ -117,8 +117,16 @@ export class TaxonomyHelper {
             return '';
         }
 
-        const personLikeLabelMatch = /^([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*)+)$/.exec(cleanedValue);
-        return personLikeLabelMatch?.[1]?.trim() || '';
+        const wordSegment = "[\\p{L}\\p{M}][\\p{L}\\p{M}.'’-]*";
+        const displayNamePattern = new RegExp(`^(${wordSegment}(?:\\s+${wordSegment})+)$`, 'u');
+        const displayNameMatch = displayNamePattern.exec(cleanedValue);
+        if (displayNameMatch?.[1]) {
+            return displayNameMatch[1].trim();
+        }
+
+        const commaNamePattern = new RegExp(`^(${wordSegment}(?:\\s+${wordSegment})*,\\s*${wordSegment}(?:\\s+${wordSegment})*)$`, 'u');
+        const commaNameMatch = commaNamePattern.exec(cleanedValue);
+        return commaNameMatch?.[1]?.trim() || '';
     }
 
     public static extractEmailLikeLabel(value: string): string {
@@ -143,6 +151,36 @@ export class TaxonomyHelper {
             && !this.isTaxonomyTokenPrefix(part)
             && !this.isGuidLikeToken(part));
         return firstReadablePart || '';
+    }
+
+    public static extractPreferredPeopleDisplayLabel(value: string): string {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return '';
+        }
+
+        const getPreferredPipeSegment = (candidateValue: string): string => {
+            const normalizedCandidate = this.normalizeReadableLabelCandidate(candidateValue);
+            if (!normalizedCandidate) {
+                return '';
+            }
+
+            const preferredSegment = normalizedCandidate
+                .split('|')
+                .map(part => part.trim())
+                .filter(Boolean)
+                .find(part => !!this.extractPersonLikeLabel(part));
+
+            return preferredSegment || this.extractFirstReadablePipeSegment(normalizedCandidate);
+        };
+
+        const preferredRawSegment = getPreferredPipeSegment(cleanedValue);
+        if (preferredRawSegment) {
+            return preferredRawSegment;
+        }
+
+        const decodedValue = this.decodeHexString(cleanedValue);
+        return getPreferredPipeSegment(decodedValue);
     }
 
     /**
