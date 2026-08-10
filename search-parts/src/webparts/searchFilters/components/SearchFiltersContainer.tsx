@@ -275,8 +275,21 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return 3;
         }
 
-        if (TaxonomyHelper.extractFirstReadablePipeSegment(cleanedLabel)) {
-            return 2;
+        const preferredPipeSegment = cleanedLabel
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(cleanedLabel);
+
+        if (preferredPipeSegment) {
+            const normalizedPipeSegment = preferredPipeSegment.toLowerCase();
+            const looksLikeClaimsPrefix = normalizedPipeSegment.startsWith('i:0#');
+            const looksLikeEmail = !!TaxonomyHelper.extractEmailLikeLabel(preferredPipeSegment);
+
+            if (!looksLikeClaimsPrefix && !looksLikeEmail) {
+                return 2;
+            }
         }
 
         if (TaxonomyHelper.extractClaimsLabel(cleanedLabel) || TaxonomyHelper.extractEmailLikeLabel(cleanedLabel)) {
