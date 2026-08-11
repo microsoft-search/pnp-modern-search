@@ -719,13 +719,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return false;
         }
 
-        const readableRawValue = this.extractReadableLabelFromString(rawValue);
-        if (!readableRawValue) {
+        const preferredValueLabel = this.extractPreferredPeopleValueDisplayName(rawValue);
+        if (!preferredValueLabel) {
             return false;
         }
 
         const readableRawName = this.extractReadableLabelFromString(rawName);
-        return readableRawName === rawName && readableRawValue !== rawValue;
+        const normalizedPreferredValueLabel = TaxonomyHelper.normalizeReadableLabelCandidate(preferredValueLabel).toLowerCase();
+        const normalizedReadableRawName = TaxonomyHelper.normalizeReadableLabelCandidate(readableRawName).toLowerCase();
+        const rawNameLooksLikeIdentityToken = !!TaxonomyHelper.extractEmailLikeLabel(readableRawName)
+            || !!TaxonomyHelper.extractClaimsLabel(readableRawName);
+
+        return rawNameLooksLikeIdentityToken || normalizedPreferredValueLabel !== normalizedReadableRawName;
     }
 
     private extractPreferredPeopleValueDisplayName(rawValue: string): string {
