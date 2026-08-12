@@ -727,8 +727,14 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const readableRawName = this.extractReadableLabelFromString(rawName);
         const normalizedPreferredValueLabel = TaxonomyHelper.normalizeReadableLabelCandidate(preferredValueLabel).toLowerCase();
         const normalizedReadableRawName = TaxonomyHelper.normalizeReadableLabelCandidate(readableRawName).toLowerCase();
-        const rawNameLooksLikeIdentityToken = !!TaxonomyHelper.extractEmailLikeLabel(readableRawName)
-            || !!TaxonomyHelper.extractClaimsLabel(readableRawName);
+        const rawNameCandidates = [rawName, TaxonomyHelper.decodeHexString(rawName)]
+            .map(candidate => TaxonomyHelper.normalizeReadableLabelCandidate(candidate))
+            .filter(Boolean);
+        const rawNameLooksLikeIdentityToken = rawNameCandidates.some(candidate => {
+            const emailLabel = TaxonomyHelper.extractEmailLikeLabel(candidate);
+            return (emailLabel && emailLabel.toLowerCase() === candidate.toLowerCase())
+                || !!TaxonomyHelper.extractClaimsLabel(candidate);
+        });
 
         return rawNameLooksLikeIdentityToken || normalizedPreferredValueLabel !== normalizedReadableRawName;
     }

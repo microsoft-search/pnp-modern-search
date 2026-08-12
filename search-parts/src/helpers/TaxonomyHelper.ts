@@ -162,8 +162,8 @@ export class TaxonomyHelper {
         const lowerValue = cleanedValue.toLowerCase();
         return lowerValue.startsWith('i:0#')
             || lowerValue.startsWith('c:0')
-            || lowerValue.includes('|membership|')
-            || lowerValue.includes('|federateddirectoryclaimprovider|');
+            || lowerValue === 'membership'
+            || lowerValue === 'federateddirectoryclaimprovider';
     }
 
     private static isUpnLikeSegment(value: string): boolean {
