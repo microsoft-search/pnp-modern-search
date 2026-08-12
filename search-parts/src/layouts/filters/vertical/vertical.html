@@ -283,18 +283,6 @@
 										{{/isnt}}
 									{{else}}
 										{{#if filter.isMulti}}
-											{{#isnt filter.selectedTemplate 'StaticPeopleTemplate'}}
-											<div class="filter--option">
-												<pnp-filteroperator 
-													data-instance-id="{{@root.instanceId}}"
-													data-filter-name="{{filter.filterName}}" 
-													data-operator="{{filter.operator}}" 
-													data-theme-variant="{{JSONstringify @root.theme}}"
-												></pnp-filteroperator>
-											</div>
-											{{/isnt}}
-										{{/if}}
-										{{#if filter.isMulti}}
 											<pnp-filtermultiselect 
 												data-instance-id="{{@root.instanceId}}" 
 												data-filter-name="{{filter.filterName}}" 
