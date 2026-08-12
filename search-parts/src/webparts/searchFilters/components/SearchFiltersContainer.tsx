@@ -719,13 +719,24 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return false;
         }
 
-        const readableRawValue = this.extractReadableLabelFromString(rawValue);
-        if (!readableRawValue) {
+        const preferredValueLabel = this.extractPreferredPeopleValueDisplayName(rawValue);
+        if (!preferredValueLabel) {
             return false;
         }
 
         const readableRawName = this.extractReadableLabelFromString(rawName);
-        return readableRawName === rawName && readableRawValue !== rawValue;
+        const normalizedPreferredValueLabel = TaxonomyHelper.normalizeReadableLabelCandidate(preferredValueLabel).toLowerCase();
+        const normalizedReadableRawName = TaxonomyHelper.normalizeReadableLabelCandidate(readableRawName).toLowerCase();
+        const rawNameCandidates = [rawName, TaxonomyHelper.decodeHexString(rawName)]
+            .map(candidate => TaxonomyHelper.normalizeReadableLabelCandidate(candidate))
+            .filter(Boolean);
+        const rawNameLooksLikeIdentityToken = rawNameCandidates.some(candidate => {
+            const emailLabel = TaxonomyHelper.extractEmailLikeLabel(candidate);
+            return (emailLabel && emailLabel.toLowerCase() === candidate.toLowerCase())
+                || !!TaxonomyHelper.extractClaimsLabel(candidate);
+        });
+
+        return rawNameLooksLikeIdentityToken || normalizedPreferredValueLabel !== normalizedReadableRawName;
     }
 
     private extractPreferredPeopleValueDisplayName(rawValue: string): string {

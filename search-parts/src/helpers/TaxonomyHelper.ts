@@ -153,6 +153,68 @@ export class TaxonomyHelper {
         return firstReadablePart || '';
     }
 
+    private static isClaimsLikeSegment(value: string): boolean {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return false;
+        }
+
+        const lowerValue = cleanedValue.toLowerCase();
+        return lowerValue.startsWith('i:0#')
+            || lowerValue.startsWith('c:0')
+            || lowerValue === 'membership'
+            || lowerValue === 'federateddirectoryclaimprovider';
+    }
+
+    private static isUpnLikeSegment(value: string): boolean {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return false;
+        }
+
+        const extractedEmail = this.extractEmailLikeLabel(cleanedValue);
+        return !!extractedEmail && extractedEmail.toLowerCase() === cleanedValue.toLowerCase();
+    }
+
+    private static scorePeopleDisplaySegment(value: string): number {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        if (!cleanedValue) {
+            return 0;
+        }
+
+        if (this.containsEncodedTokenMarker(cleanedValue)
+            || this.isGuidLikeToken(cleanedValue)
+            || this.isTaxonomyTokenPrefix(cleanedValue)) {
+            return 0;
+        }
+
+        if (this.extractPersonLikeLabel(cleanedValue)) {
+            return 5;
+        }
+
+        if (this.isReadablePlainLabel(cleanedValue)
+            && !this.isUpnLikeSegment(cleanedValue)
+            && !this.isClaimsLikeSegment(cleanedValue)) {
+            return 4;
+        }
+
+        if (this.containsReadableLetter(cleanedValue)
+            && !this.isUpnLikeSegment(cleanedValue)
+            && !this.isClaimsLikeSegment(cleanedValue)) {
+            return 3;
+        }
+
+        if (this.extractClaimsLabel(cleanedValue)) {
+            return 2;
+        }
+
+        if (this.isUpnLikeSegment(cleanedValue) || this.extractEmailLikeLabel(cleanedValue)) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     public static extractPreferredPeopleDisplayLabel(value: string): string {
         const cleanedValue = this.normalizeReadableLabelCandidate(value);
         if (!cleanedValue) {
@@ -165,13 +227,27 @@ export class TaxonomyHelper {
                 return '';
             }
 
-            const preferredSegment = normalizedCandidate
+            const segments = normalizedCandidate
                 .split('|')
-                .map(part => part.trim())
-                .filter(Boolean)
-                .find(part => !!this.extractPersonLikeLabel(part));
+                .map(part => this.normalizeReadableLabelCandidate(part))
+                .filter(Boolean);
 
-            return preferredSegment || this.extractFirstReadablePipeSegment(normalizedCandidate);
+            let bestSegment = '';
+            let bestScore = 0;
+
+            segments.forEach(segment => {
+                const score = this.scorePeopleDisplaySegment(segment);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestSegment = segment;
+                }
+            });
+
+            if (bestSegment) {
+                return bestSegment;
+            }
+
+            return this.extractFirstReadablePipeSegment(normalizedCandidate);
         };
 
         const preferredRawSegment = getPreferredPipeSegment(cleanedValue);
