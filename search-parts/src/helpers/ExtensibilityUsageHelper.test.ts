@@ -1,10 +1,18 @@
-import { LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { FileFormat, ITemplateService } from "../services/templateService/ITemplateService";
-import {
-    ExtensibilityUsageHelper,
+import type {
     IFiltersExtensibilityInput,
     IResultsExtensibilityInput
 } from "./ExtensibilityUsageHelper";
+
+jest.mock("@pnp/modern-search-extensibility", () => ({
+    LayoutRenderType: {
+        Handlebars: "Handlebars",
+        AdaptiveCards: "AdaptiveCards"
+    }
+}));
+
+const { LayoutRenderType } = require("@pnp/modern-search-extensibility") as typeof import("@pnp/modern-search-extensibility");
+const { ExtensibilityUsageHelper } = require("./ExtensibilityUsageHelper") as typeof import("./ExtensibilityUsageHelper");
 
 const createTemplateService = (templateContent: string): ITemplateService => ({
     getFileContent: jest.fn().mockResolvedValue(templateContent),
