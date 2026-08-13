@@ -435,6 +435,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
                 this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
                 this._currentDataResultsSourceData.connectedFilterSourceReference = this.properties.filtersDataSourceReference;
+                this._currentDataResultsSourceData.extensibilityLibraryConfiguration = (this.properties.extensibilityLibraryConfiguration || [])
+                    .filter(configuration => configuration.enabled)
+                    .map(configuration => ({ ...configuration }));
 
                 return this._currentDataResultsSourceData;
 
@@ -1007,6 +1010,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.extensionsLoaded = false;
 
             await this.loadExtensions(cleanConfiguration, true);
+
+            if (this.properties.allowWebPartConnections && this.context?.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
+                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
+            }
         }
 
         if (this.properties.queryTextSource === QueryTextSource.StaticValue || !this.properties.useDefaultQueryText || !this.properties.useInputQueryText) {

@@ -45,6 +45,8 @@ Each Web Part type in the solution supports several extensions or no extension a
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
 
+For backward compatibility, a Search Filters Web Part with its extensibility configuration left at the disabled default inherits enabled libraries from connected Search Results Web Parts. As soon as libraries are configured explicitly on Search Filters, that configuration takes precedence.
+
 ### Context and data available to each extension type
 
 Different extension types receive different runtime context. This table summarises **what each extension can access** so you don't have to dig through each individual doc page.
