@@ -25,7 +25,7 @@ jobs:
 
         outputs:
             majorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}
-            semver: ${{ steps.gitversion.outputs.semver }}
+            semver: ${{ steps.gitversion.outputs.semVer }}
             branchName: ${{ steps.gitversion.outputs.branchName }}
 
         steps:
@@ -36,7 +36,7 @@ jobs:
             - name: Setup GitVersion
               uses: gittools/actions/gitversion/setup@v4.7.0
               with:
-                  versionSpec: "6.0"
+                  versionSpec: "6.2.x"
 
             - name: Setup pnpm
               uses: pnpm/action-setup@v6
@@ -53,6 +53,9 @@ jobs:
               uses: gittools/actions/gitversion/execute@v4.7.0
 
             - name: Build SPFx
+              env:
+                  GITVERSION_MAJORMINORPATCH: ${{ steps.gitversion.outputs.majorMinorPatch }}
+                  GITVERSION_SEMVER: ${{ steps.gitversion.outputs.semVer }}
               run: |
                   pnpm install
                   # Detect build system: heft for SPFx 1.22+, gulp for earlier
