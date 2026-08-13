@@ -19,23 +19,23 @@ jobs:
         # Steps represent a sequence of tasks that will be executed as part of the job
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             # setup nodejs
             - name: Use Node.js 22
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: 22
                   registry-url: "https://registry.npmjs.org"
             # Setup pnpm for consistent dependency management
             - name: Setup pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
               with:
                   version: 10.26.0
 
             # cache node modules
             - name: Cache node modules
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       **/node_modules
