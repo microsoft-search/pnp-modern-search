@@ -20,14 +20,14 @@ export class HandlebarsCustomizationTracker {
 
     /** Runs a library registration and records every helper/partial it changes. */
     public register(handlebars: IHandlebarsRegistry, registration: () => void): void {
-        const helpersBefore = { ...(handlebars.helpers || {}) };
-        const partialsBefore = { ...(handlebars.partials || {}) };
+        const helpersBefore = { ...handlebars.helpers };
+        const partialsBefore = { ...handlebars.partials };
 
         try {
             registration();
         } finally {
-            this.recordChanges(this.originalHelpers, helpersBefore, handlebars.helpers || {});
-            this.recordChanges(this.originalPartials, partialsBefore, handlebars.partials || {});
+            this.recordChanges(this.originalHelpers, helpersBefore, handlebars.helpers);
+            this.recordChanges(this.originalPartials, partialsBefore, handlebars.partials);
         }
     }
 
@@ -54,7 +54,7 @@ export class HandlebarsCustomizationTracker {
         names.forEach(name => {
             if (before[name] !== after[name] && !originals.has(name)) {
                 originals.set(name, {
-                    existed: Object.prototype.hasOwnProperty.call(before, name),
+                    existed: name in before,
                     value: before[name]
                 });
             }
