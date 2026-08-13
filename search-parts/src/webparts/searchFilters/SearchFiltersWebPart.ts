@@ -1848,7 +1848,12 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         this.extensionsLoadingPromise = (async () => {
             await this.loadExtensions(effectiveConfiguration, forceLoad);
-            await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+            const instanceId = this.tryGetInstanceId();
+            if (instanceId) {
+                await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, instanceId);
+            } else {
+                Log.verbose(LogSource, "Skipping web component registration because the instance ID is unavailable.", this.context?.serviceScope);
+            }
             this.loadedExtensibilityConfigurationKey = configurationKey;
         })();
 
