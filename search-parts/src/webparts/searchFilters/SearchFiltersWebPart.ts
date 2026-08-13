@@ -1763,7 +1763,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             if (this.properties.externalTemplateUrl) {
                 // We do not support filters as adaptive cards
-                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl, FileFormat.Text);
+                this.templateContentToDisplay = await this.templateService.getFileContent(
+                    this.properties.externalTemplateUrl,
+                    FileFormat.Text,
+                    this.displayMode === DisplayMode.Edit
+                );
             } else {
                 this.templateContentToDisplay = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : selectedLayoutTemplateContent;
             }
@@ -1843,6 +1847,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     externalTemplateUrl: this.properties.externalTemplateUrl,
                     layoutProperties: this.properties.layoutProperties,
                     templateService: this.templateService,
+                    inspectExternalTemplates: this.displayMode !== DisplayMode.Edit,
                     builtinLayoutKeys: AvailableLayouts.BuiltinLayouts.map(layout => layout.key),
                     builtinFilterTemplateKeys: Object.keys(BuiltinFilterTypes),
                     builtinComponentNames: this.availableWebComponentDefinitions.map(component => component.componentName)

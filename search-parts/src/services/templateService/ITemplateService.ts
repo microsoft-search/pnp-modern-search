@@ -21,7 +21,7 @@ export interface ITemplateService {
   MgtCustomElementHelper: any;
   getTemplateMarkup(templateContent: string): string;
   getPlaceholderMarkup(templateContent: string): string;
-  getFileContent(fileUrl: string, fileFormat: FileFormat): Promise<string>;
+  getFileContent(fileUrl: string, fileFormat: FileFormat, bypassCache?: boolean): Promise<string>;
   ensureFileResolves(fileUrl: string): Promise<void>;
   isValidTemplateFile(filePath: string, validExtensions: string[]): boolean;
   processTemplate(
@@ -38,7 +38,7 @@ export interface ITemplateService {
     item: { [key: string]: any },
     context?: ISearchResultsTemplateContext | any
   ): T;
-  registerResultTypes(resultTypes: IDataResultType[]): Promise<void>;
+  registerResultTypes(resultTypes: IDataResultType[], bypassCache?: boolean): Promise<void>;
   ensureHandlebarsHelpersLoaded(): Promise<void>;
   replaceDisambiguatedMgtElementNames(template: Document): Promise<void>;
   legacyStyleParser(style: HTMLStyleElement, elementPrefixId: string): string;
