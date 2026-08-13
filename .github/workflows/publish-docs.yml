@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       publish_docs:
+        type: boolean
         default: true
         description: 'Publish docs?' 
       
@@ -11,14 +12,14 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ github.event.inputs.publish_docs }}
+    if: ${{ inputs.publish_docs }}
     steps:     
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: 3.x
           

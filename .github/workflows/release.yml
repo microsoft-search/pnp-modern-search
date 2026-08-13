@@ -29,28 +29,28 @@ jobs:
             branchName: ${{ steps.gitversion.outputs.branchName }}
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 0
 
             - name: Setup GitVersion
-              uses: gittools/actions/gitversion/setup@v3.0.0
+              uses: gittools/actions/gitversion/setup@v4.7.0
               with:
                   versionSpec: "6.0"
 
             - name: Setup pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
               with:
                   version: 10.26.0
 
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ matrix.node-version }}
 
             - name: Determine Version
               id: gitversion
-              uses: gittools/actions/gitversion/execute@v3.0.0
+              uses: gittools/actions/gitversion/execute@v4.7.0
 
             - name: Build SPFx
               run: |
@@ -69,7 +69,7 @@ jobs:
                   fi
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: pnp-modern-search-parts-v4
                   path: ${{ github.workspace }}/**/*.sppkg
@@ -83,11 +83,11 @@ jobs:
         needs: build
         if: contains(needs.build.outputs['branchName'], 'main')
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 0
 
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
 
             - name: Create GitHub release
               uses: ncipollo/release-action@v1
@@ -104,7 +104,7 @@ jobs:
                   commit: ${{ github.ref_name }}
 
             - name: Setup python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v7
               with:
                   python-version: 3.x
 
