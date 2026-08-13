@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configure"
             },
             NoAvailableFilterMessage: "No available filter to display.",
-            WebPartDefaultTitle: "Search Filters Web Part"
+            WebPartDefaultTitle: "Search Filters Web Part",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Remove {0}",
+                SearchUsersPlaceholder: "Search users",
+                LoadingTenantUsersLabel: "Loading tenant users...",
+                NoUsersFoundMessage: "No users found."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "The maximum number of values is 1000",
                 FilterLimitReachedWarningToggle: "Show warning when limit is reached",
                 FilterLimitReachedWarningMessage: "Result limit reached — not all matching items are shown. Refine your search to narrow the list",
+                EditModeRefinerLimitReachedWarningMessage: "In Edit mode, refiners are limited to a maximum of 100 items.",
                 PeopleTemplateQUserMappingWarning: "People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
@@ -56,6 +63,7 @@ define([], function () {
                     ComboBoxTemplate: "Combo box",
                     DateIntervalTemplate: "Date interval",
                     PeopleTemplate: "People Template",
+                    StaticPeopleTemplate: "Static Person Template",
                     TaxonomyPickerTemplate: "Taxonomy picker",
                     HierarchicalFilterTemplate: "Hierarchical filter"
                 },
@@ -75,6 +83,12 @@ define([], function () {
                 ErrorTemplateResolve: "Unable to resolve the specified template. Error details: '{0}'",
                 FiltersTemplateFieldLabel: "Edit filters template",
                 FiltersTemplatePanelHeader: "Edit filters template"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configure extensibility libraries to load at startup.",
+                    PanelDescription: "Add/Remove your custom extensibility library IDs here. You can specify a display name and decide if the library should be loaded or not at startup. Only custom filter layouts, filter controls, web components and Handlebars helpers will be loaded here."
+                }
             }
         },
         Styling: {

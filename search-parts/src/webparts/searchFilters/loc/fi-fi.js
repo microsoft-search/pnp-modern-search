@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfiguroi"
             },
             NoAvailableFilterMessage: "Ei suodattimia näytettäväksi.",
-            WebPartDefaultTitle: "Haun suodattimet webosa"
+            WebPartDefaultTitle: "Haun suodattimet webosa",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Poista {0}",
+                SearchUsersPlaceholder: "Hae käyttäjiä",
+                LoadingTenantUsersLabel: "Ladataan vuokraajan käyttäjiä...",
+                NoUsersFoundMessage: "Käyttäjiä ei löytynyt."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
                 FilterLimitReachedWarningToggle: "Näytä varoitus, kun raja saavutetaan",
                 FilterLimitReachedWarningMessage: "Tulosten enimmäismäärä on saavutettu — kaikkia vastaavia kohteita ei näytetä. Rajaa luetteloa tarkentamalla hakua.",
+                EditModeRefinerLimitReachedWarningMessage: "Muokkaustilassa tarkentimet on rajoitettu enintään 100 kohteeseen.",
                 PeopleTemplateQUserMappingWarning: "Henkilömallin varoitus: arvot eivät näytä käyttäjäidentiteeteiltä. Tätä ominaisuutta ei todennäköisesti ole yhdistetty Q_USER-indeksoituun ominaisuuteen.",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
+                    StaticPeopleTemplate: "Staattinen henkilömalli",
                     TaxonomyPickerTemplate: "Taksonomiavalinta",
                     HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Templaatin tunnistaminen ei onnistunut. Virhetiedot: '{0}'",
                 FiltersTemplateFieldLabel: "Muokkaa suodatintemplaattia",
                 FiltersTemplatePanelHeader: "Muokkaa suodatintemplaattia"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konsiguroi laajennuskirjastot ladattavaksi käynnistyksessä.",
+                    PanelDescription: "Lisää/poista mukautetun laajennuskirjastosi ID:t tässä. Voit määrittää näyttönimen ja päättää, ladataanko kirjasto käynnistyksessä. Vain mukautetut suodatintemplaatit, suodatinkontrollit, komponentit ja Handlebar helperit ladataan tässä."
+                }
             }
         },
         Styling: {

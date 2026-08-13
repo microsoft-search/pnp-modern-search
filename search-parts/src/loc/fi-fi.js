@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Tämä kenttä ei voi olla tyhjä",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Tuloksia ei löytynyt",
-                SearchPlaceholder: "Hae arvoa..."
+                SearchPlaceholder: "Hae arvoa...",
+                RemoveButtonAriaLabel: "Poista"
             },
             CurrentVerticalNotSelectedMessage: "Valittu vertikaali ei ole yhdistetty hakutulososaan ({0}). Hakutulososa on tyhjä sivun lukutilassa.",
             True: "Kyllä",
@@ -143,6 +144,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Sisältölähteet",
                 ContentSourcesFieldDescriptionLabel: "Microsoft Search yhdistimien hallintaportaalissa määritettyjen yhteyksien ID:t.",
                 ContentSourcesFieldPlaceholderLabel: "esimerkki: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Yhdistimen metatietojen lataaminen Microsoft Graphista epäonnistui. Myönnä ExternalConnection.Read.All, jotta automaattinen tunnistus voidaan ottaa käyttöön. Voit silti syöttää arvot manuaalisesti.",
+                ExternalMetadataLoadWarning: "Yhdistimen metatietoja ei voitu ladata Microsoft Graphista. Tarvittavaa delegoitua Graph-käyttöoikeutta ei ehkä ole myönnetty. Voit silti syöttää arvot manuaalisesti Valitut kentät -ruutuun.",
                 EnableSuggestionLabel: "Salli kirjoitusasun ehdotukset",
                 EnableModificationLabel: "Salli kirjoitusasun muutokset",
                 QueryTemplateFieldLabel: "Kyselytemplaatti",
@@ -242,6 +245,16 @@ define([], function () {
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
                 EnableDownload: "Salli lataus",
+                EnableDetails: "Ota tiedot käyttöön",
+                DetailsButtonLabel: "Tiedot",
+                DetailsPanelHeader: "Tiedot",
+                DetailsUnavailableLabel: "Tiedot eivät ole käytettävissä",
+                CloseDetailsPanelLabel: "Sulje tietopaneeli",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valittua kohdetta voidaan muokata",
+                SelectedItemsEditLoadingLabel: "Tarkistetaan muokattavat valitut kohteet ja yhteiset kentät",
+                SelectedItemsEditNoEligibleItemsLabel: "Yhtäkään valittua kohdetta ei voi muokata.",
+                SelectedItemsEditNoCommonFieldsLabel: "Valituista kohteista ei löytynyt yhteisiä muokattavia kenttiä.",
+                SelectedItemsEditFieldLabel: "Kenttä",
                 UseAlternatingBackgroundColor: "Käytä Vaihtelevaa taustaväriä"
             },
             Cards: {

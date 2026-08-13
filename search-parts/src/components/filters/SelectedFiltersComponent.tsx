@@ -6,6 +6,8 @@ import styles from './SelectedFiltersComponent.module.scss';
 import * as strings from 'CommonStrings';
 import { Log } from '@microsoft/sp-core-library';
 import { DateHelper } from '../../helpers/DateHelper';
+import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
+import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { TestConstants } from '../../common/Constants';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 const SelectedFilters_LogSource = "PnPModernSearch:SelectedFiltersComponent";
@@ -80,11 +82,15 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                     filterName = currentFilterConfig[0].displayValue ? currentFilterConfig[0].displayValue : filterName;
                 }
 
+                const selectedTemplate = currentFilterConfig.length === 1 ? currentFilterConfig[0].selectedTemplate : undefined;
+
                 const uniqueDisplayValues: Array<{ displayValue: string; operator: FilterComparisonOperator }> = [];
                 const seenDisplayValues = new Set<string>();
 
                 filter.values.forEach(value => {
-                    let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid() ? this.props.dayjs(value.value).format('LL') : value.name;
+                    let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid()
+                        ? this.props.dayjs(value.value).format('LL')
+                        : this.resolveDisplayValue(value.name, value.value, selectedTemplate);
 
                     // For taxonomy filters (GPP/GP0 tokens), extract the label if name is not set
                     if (!displayValue || displayValue.indexOf("GPP|#") === 0 || displayValue.indexOf("GP0|#") === 0) {
@@ -226,6 +232,37 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
         }
 
         return null;
+    }
+
+    private resolveDisplayValue(name: string, value: string, selectedTemplate?: string): string {
+        const rawName = `${name ?? ''}`.trim();
+        const rawValue = `${value ?? ''}`.trim();
+
+        if (selectedTemplate === BuiltinFilterTemplates.People) {
+            const displayNameFromValue = this.extractPeopleDisplayValue(rawValue);
+            if (displayNameFromValue) {
+                return displayNameFromValue;
+            }
+        }
+
+        return rawName || rawValue;
+    }
+
+    private extractPeopleDisplayValue(rawValue: string): string {
+        const preferredDisplayLabel = TaxonomyHelper.extractPreferredPeopleDisplayLabel(rawValue);
+        if (preferredDisplayLabel) {
+            return preferredDisplayLabel;
+        }
+
+        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
+        const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
+
+        const claimsLabel = TaxonomyHelper.extractClaimsLabel(decodedValue || cleanedValue);
+        if (claimsLabel) {
+            return claimsLabel;
+        }
+
+        return '';
     }
 
     private getConditionOperatorString(operator: FilterConditionOperator): string {

@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfiguruj"
             },
             NoAvailableFilterMessage: "Brak dostępnych filtrów do wyświetlenia.",
-            WebPartDefaultTitle: "Web Part Filtry Wyszukiwania"
+            WebPartDefaultTitle: "Web Part Filtry Wyszukiwania",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Usuń {0}",
+                SearchUsersPlaceholder: "Wyszukaj użytkowników",
+                LoadingTenantUsersLabel: "Ładowanie użytkowników dzierżawy...",
+                NoUsersFoundMessage: "Nie znaleziono użytkowników."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Maksymalna liczba wartości to 1000",
                 FilterLimitReachedWarningToggle: "Pokaż ostrzeżenie po osiągnięciu limitu",
                 FilterLimitReachedWarningMessage: "Osiągnięto limit wyników — nie wszystkie pasujące elementy są wyświetlane. Doprecyzuj wyszukiwanie, aby zawęzić listę.",
+                EditModeRefinerLimitReachedWarningMessage: "W trybie edycji filtry są ograniczone do maksymalnie 100 elementów.",
                 PeopleTemplateQUserMappingWarning: "Ostrzeżenie szablonu osób: wartości nie wyglądają jak tożsamości użytkowników. Ta właściwość prawdopodobnie nie jest mapowana do przeszukiwanej właściwości Q_USER.",
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Pole rozwijalne",
                     DateIntervalTemplate: "Okres czasu",
                     PeopleTemplate: "Szablon osoby",
+                    StaticPeopleTemplate: "Statyczny szablon osoby",
                     TaxonomyPickerTemplate: "Wybór terminu",
                     HierarchicalFilterTemplate: "Filtr hierarchiczny"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Nie można rozwiązać wskazanego szablonu. Szczegóły błędu: '{0}'",
                 FiltersTemplateFieldLabel: "Edytuj filtry szablonu",
                 FiltersTemplatePanelHeader: "Edytuj filtry szablonu"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfiguruj biblioteki rozszerzalności ładowane przy starcie.",
+                    PanelDescription: "Dodaj/Usuń identyfikatory niestandardowych bibliotek rozszerzalności. Wybierz nazwę i zdecyduj czy mają być ładowane przy starcie. Tylko niestandardowe układy filtrów, kontrolki filtrów, komponenty web i Handlebars będą tutaj ładowane."
+                }
             }
         },
         Styling: {

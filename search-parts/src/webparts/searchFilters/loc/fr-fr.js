@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configurer"
             },
             NoAvailableFilterMessage: "Aucun filtre disponible à afficher.",
-            WebPartDefaultTitle: "Composant Web des filtres de recherche"
+            WebPartDefaultTitle: "Composant Web des filtres de recherche",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Retirer {0}",
+                SearchUsersPlaceholder: "Rechercher des utilisateurs",
+                LoadingTenantUsersLabel: "Chargement des utilisateurs du locataire...",
+                NoUsersFoundMessage: "Aucun utilisateur trouvé."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -32,6 +38,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Le nombre maximum de valeurs est 1000",
                 FilterLimitReachedWarningToggle: "Afficher un avertissement lorsque la limite est atteinte",
                 FilterLimitReachedWarningMessage: "Limite de résultats atteinte — tous les éléments correspondants ne sont pas affichés. Affinez votre recherche pour réduire la liste.",
+                EditModeRefinerLimitReachedWarningMessage: "En mode édition, les filtres sont limités à 100 éléments maximum.",
                 PeopleTemplateQUserMappingWarning: "Avertissement du modèle Personnes : les valeurs ne ressemblent pas à des identités utilisateur. Cette propriété n'est probablement pas mappée à une propriété analysée Q_USER.",
                 FilterDisplayName: "Nom d'affichage",
                 FilterTemplate: "Modèle",
@@ -56,6 +63,7 @@ define([], function () {
                     ComboBoxTemplate: "Zone de liste modifiable",
                     DateIntervalTemplate: "Intervalle de dates",
                     PeopleTemplate: "Modèle de personne",
+                    StaticPeopleTemplate: "Modèle de personne statique",
                     TaxonomyPickerTemplate: "Sélecteur de taxonomie",
                     HierarchicalFilterTemplate: "Filtre hiérarchique"
                 },
@@ -75,6 +83,12 @@ define([], function () {
                 ErrorTemplateResolve: "Impossible de résoudre le modèle indiqué. Renseignements sur l'erreur '{0}'",
                 FiltersTemplateFieldLabel: "Modifier le modèle de filtres",
                 FiltersTemplatePanelHeader: "Modifier le modèle de filtres"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configurez les bibliothèques d’extensibilité pour qu’elles soient chargées au démarrage.",
+                    PanelDescription: "Ajoutez ou supprimez vos identifiants personnalisés de la bibliothèque d’extensibilités ici. Vous pouvez préciser un nom d’affichage et décider si la bibliothèque doit être téléchargée ou non au démarrage. Seuls les mises en page de filtres, les contrôles de filtre, les composants Web et les assistants d’expressions entre accolades personnalisés sont chargés ici."
+                }
             }
         },
         Styling: {

@@ -24,6 +24,11 @@ export interface ISliderLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+
+    /**
+    * If the details action should be visible
+     */
+    enableDetails?: boolean;
 }
 
 export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
@@ -42,6 +47,8 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
 
         this.properties.slideHeight = this.properties.slideHeight ? this.properties.slideHeight : 360;
         this.properties.slideWidth = this.properties.slideWidth ? this.properties.slideWidth : 318;
+        const legacyEnableDetails = (this.properties as { enableLiveUpdate?: boolean }).enableLiveUpdate;
+        this.properties.enableDetails = this.properties.enableDetails ?? legacyEnableDetails ?? false;
     }
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
@@ -102,6 +109,10 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
                 step: 1,
                 showValue: true
             }),
+                        PropertyPaneToggle('layoutProperties.enableDetails', {
+                            label: strings.Layouts.DetailsList.EnableDetails,
+                            checked: this.properties.enableDetails
+                        }),
             PropertyPaneToggle('layoutProperties.enableDownload', {
               label: strings.Layouts.DetailsList.EnableDownload,
               checked: this.properties.enableDownload

@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurovat"
             },
             NoAvailableFilterMessage: "Žádné dostupné filtry k zobrazení.",
-            WebPartDefaultTitle: "Webový díl filtrů vyhledávání"
+            WebPartDefaultTitle: "Webový díl filtrů vyhledávání",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Odebrat {0}",
+                SearchUsersPlaceholder: "Hledat uživatele",
+                LoadingTenantUsersLabel: "Načítání uživatelů tenanta...",
+                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Maximální počet hodnot je 1000",
                 FilterLimitReachedWarningToggle: "Zobrazit upozornění při dosažení limitu",
                 FilterLimitReachedWarningMessage: "Byl dosažen limit výsledků — nejsou zobrazeny všechny odpovídající položky. Upřesněte hledání a zúžte seznam.",
+                EditModeRefinerLimitReachedWarningMessage: "V režimu úprav jsou filtry omezeny na maximálně 100 položek.",
                 PeopleTemplateQUserMappingWarning: "Upozornění šablony osob: hodnoty nevypadají jako identity uživatelů. Tato vlastnost pravděpodobně není mapována na procházenou vlastnost Q_USER.",
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
+                    StaticPeopleTemplate: "Statická šablona osoby",
                     TaxonomyPickerTemplate: "Výběr taxonomie",
                     HierarchicalFilterTemplate: "Hierarchický filtr"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Nelze načíst zadanou šablonu. Podrobnosti chyby: '{0}'",
                 FiltersTemplateFieldLabel: "Upravit šablonu filtrů",
                 FiltersTemplatePanelHeader: "Upravit šablonu filtrů"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurujte knihovny rozšiřitelnosti pro načtení při spuštění.",
+                    PanelDescription: "Přidejte/odeberte ID vlastní knihovny rozšiřitelnosti zde. Můžete zadat zobrazený název a rozhodnout, zda by knihovna měla být načtena nebo ne při spuštění. Zde budou načtena pouze vlastní rozvržení filtrů, ovládací prvky filtrů, webové komponenty a Handlebars pomocníci."
+                }
             }
         },
         Styling: {

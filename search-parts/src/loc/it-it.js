@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Questo campo non può essere vuoto",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Nessun risultato trovato",
-                SearchPlaceholder: "Cerca un valore..."
+                SearchPlaceholder: "Cerca un valore...",
+                RemoveButtonAriaLabel: "Rimuovi"
             },
             CurrentVerticalNotSelectedMessage: "Il verticale selezionato attualmente non corrisponde a quelli associati a questa Web Part ({0}). Rimarrà vuoto in modalità di visualizzazione.",
             True: "Sì",
@@ -147,6 +148,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Fonti di contenuto",
                 ContentSourcesFieldDescriptionLabel: "ID delle connessioni definite nel portale di amministrazione dei connettori di Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "es: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Impossibile caricare i metadati del connettore da Microsoft Graph. Concedi ExternalConnection.Read.All per abilitare il rilevamento automatico. Puoi comunque inserire i valori manualmente.",
+                ExternalMetadataLoadWarning: "Impossibile caricare i metadati del connettore da Microsoft Graph. È possibile che l'autorizzazione Graph delegata richiesta non sia stata concessa. È comunque possibile inserire manualmente i valori nella casella Campi selezionati.",
                 EnableSuggestionLabel: "Abilita suggerimenti ortografici",
                 EnableModificationLabel: "Abilita modifiche ortografiche",
                 QueryTemplateFieldLabel: "Modello di query",
@@ -244,6 +247,16 @@ define([], function () {
                 EnableStickyHeader: "Abilita intestazione fissa",
                 StickyHeaderListViewHeight: "Altezza vista elenco (in px)",
                 EnableDownload: "Abilita download",
+                EnableDetails: "Abilita dettagli",
+                DetailsButtonLabel: "Dettagli",
+                DetailsPanelHeader: "Dettagli",
+                DetailsUnavailableLabel: "I dettagli non sono disponibili",
+                CloseDetailsPanelLabel: "Chiudi riquadro dettagli",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} elementi selezionati possono essere modificati",
+                SelectedItemsEditLoadingLabel: "Controllo degli elementi selezionati modificabili e dei campi condivisi",
+                SelectedItemsEditNoEligibleItemsLabel: "Nessuno degli elementi selezionati può essere modificato.",
+                SelectedItemsEditNoCommonFieldsLabel: "Non sono stati trovati campi modificabili comuni tra gli elementi selezionati.",
+                SelectedItemsEditFieldLabel: "Campo",
                 UseAlternatingBackgroundColor: "Usa colori di sfondo alternati"
 
             },

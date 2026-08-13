@@ -12,7 +12,7 @@ Starting with v2.0.0, this package has **zero `@microsoft/sp-*` runtime dependen
 
 ### Why
 
-You can now consume this package from a library built against **any SPFx version** (1.18.2, 1.21.1, 1.22.x, ...) without npm peer-dep conflicts. Combined with the runtime cross-version manifest patcher in `search-parts`, extensions built against an older SPFx now load on pages running a newer SPFx version.
+You can now consume this package from a library built against **any SPFx version** (1.18.2, 1.21.1, 1.22.x, 1.23.x, ...) without npm peer-dep conflicts. Combined with the runtime cross-version manifest patcher in `search-parts`, extensions built against an older SPFx now load on pages running a newer SPFx version.
 
 ### Migration from v1.x
 

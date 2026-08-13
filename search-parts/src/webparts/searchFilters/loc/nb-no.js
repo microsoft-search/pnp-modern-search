@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurer"
             },
             NoAvailableFilterMessage: "Det er ingen tilgjengelige filter.",
-            WebPartDefaultTitle: "Søkefilter"
+            WebPartDefaultTitle: "Søkefilter",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Fjern {0}",
+                SearchUsersPlaceholder: "Søk etter brukere",
+                LoadingTenantUsersLabel: "Laster inn leierbrukere...",
+                NoUsersFoundMessage: "Ingen brukere funnet."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Maksimalt antall verdier er 1000",
                 FilterLimitReachedWarningToggle: "Vis advarsel når grensen er nådd",
                 FilterLimitReachedWarningMessage: "Resultatgrensen er nådd — ikke alle samsvarende elementer vises. Avgrens listen ved å gjøre søket mer spesifikt.",
+                EditModeRefinerLimitReachedWarningMessage: "I redigeringsmodus er filtrene begrenset til maksimalt 100 elementer.",
                 PeopleTemplateQUserMappingWarning: "Advarsel for personmal: verdiene ser ikke ut som brukeridentiteter. Denne egenskapen er sannsynligvis ikke mappet til en Q_USER-crawlet egenskap.",
                 FilterDisplayName: "Visningsnavn",
                 FilterTemplate: "Mal",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinasjonsboks",
                     DateIntervalTemplate: "Datointervall (faste intervaller)",
                     PeopleTemplate: "Person mal",
+                    StaticPeopleTemplate: "Statisk personmal",
                     TaxonomyPickerTemplate: "Taksonomivelger",
                     HierarchicalFilterTemplate: "Hierarkisk filter"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Det går ikke å vise denne malen. Feil: '{0}'",
                 FiltersTemplateFieldLabel: "Rediger filtermal",
                 FiltersTemplatePanelHeader: "Rediger filtermal"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurer utvidelsesbibliotek som skal lastes ved oppstart.",
+                    PanelDescription: "Legg til / fjern ID-en til ditt tilpassede utvidelsesbibliotek her. Du kan angi et visningsnavn og bestemme om biblioteket skal lastes ved oppstart eller ikke. Her lastes kun tilpassede filtermaler, filterkontroller, web-komponenter og Handlebars-hjelpere."
+                }
             }
         },
         Styling: {

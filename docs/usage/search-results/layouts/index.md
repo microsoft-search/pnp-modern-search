@@ -43,7 +43,7 @@ For all layouts, some common settings are available:
 | Setting | Description | Default value 
 | ------- |---------------- | ---------- |
 | **Allow items selection** | If enabled, allow items to be selected in default layouts. See [documentation](../connections/item-selection.md) for usage. | Disabled.
-| **Allow multiple selection** | If the item selection is allowed, specify if users can select multiple items | Disabled.
+| **Allow multiple selection** | If the item selection is allowed, specify if users can select multiple items. When a layout also has **Enable details** turned on, the same **Details** action is reused for both modes: single selection opens the SharePoint details panel for that item, while multiple selection opens the shared selected items edit panel for the compatible selected items. | Disabled.
 | **Preserve selection on empty click** | If the item selection is allowed, specify if a click outside of the selection zone should clear the selection | Disabled.
 | **Hide this web part if there's nothing to show** | If there is no results, the Web Part will remain blank in display mode (title and 'See all' link included). In edit mode, you will see a message indicating there is no results. <p align="center">!["Common options"](../../../assets/webparts/search-results/layouts/hide_webpart.png)</p> | Disabled.
 | **Show results count** | Hide or display the results count for the current query. | Enabled.

@@ -70,9 +70,11 @@ export interface IDataFilterConfiguration {
     isMulti: boolean;
 
     /**
-     * The type of the filter ('Refiner' or 'Static Filter')
+     * The type of the filter ('Refiner' or 'Static Filter').
+     * Only set for filters using a custom filter control coming from an extensibility library, as the
+     * type of builtin controls is already known by the data sources.
      */
-    // type: FilterType;
+    filterType?: FilterType;
 
     /**
      * If the filter should be sorted by name or by count

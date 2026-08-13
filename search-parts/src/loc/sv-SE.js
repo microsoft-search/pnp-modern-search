@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Det här fältet får inte vara tomt",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Inga resultat funna",
-                SearchPlaceholder: "Sök efter ett värde..."
+                SearchPlaceholder: "Sök efter ett värde...",
+                RemoveButtonAriaLabel: "Ta bort"
             },
             CurrentVerticalNotSelectedMessage: "Den aktuella valda vertikalen matchar inte de som är kopplade till den här webbdelen ({0}). Den förblir tom i visningsläge.",
             True: "Ja",
@@ -146,6 +147,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Innehållskällor",
                 ContentSourcesFieldDescriptionLabel: "Visar ID för de anslutningar som definierats i administrationsportalen för Microsoft Search Connectors",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Det gick inte att läsa in anslutningsmetadata från Microsoft Graph. Bevilja ExternalConnection.Read.All för att aktivera automatisk identifiering. Du kan fortfarande ange värden manuellt.",
+                ExternalMetadataLoadWarning: "Det gick inte att läsa in anslutningsmetadata från Microsoft Graph. Den nödvändiga delegerade Graph-behörigheten kanske inte har beviljats. Du kan fortfarande ange värden manuellt i rutan Valda fält.",
                 EnableSuggestionLabel: "Aktivera stavningsförslag",
                 EnableModificationLabel: "Aktivera stavningsändringar",
                 QueryTemplateFieldLabel: "Frågemodifierare",
@@ -245,6 +248,16 @@ define([], function () {
                 EnableStickyHeader: "Aktivera fast rubrik",
                 StickyHeaderListViewHeight: "Höjd för listvy (px)",
                 EnableDownload: "Aktivera nedladdning",
+                EnableDetails: "Aktivera detaljer",
+                DetailsButtonLabel: "Detaljer",
+                DetailsPanelHeader: "Detaljer",
+                DetailsUnavailableLabel: "Detaljer är inte tillgängliga",
+                CloseDetailsPanelLabel: "Stäng informationspanelen",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valda objekt kan redigeras",
+                SelectedItemsEditLoadingLabel: "Kontrollerar redigerbara valda objekt och gemensamma fält",
+                SelectedItemsEditNoEligibleItemsLabel: "Inga av de valda objekten kan redigeras.",
+                SelectedItemsEditNoCommonFieldsLabel: "Inga gemensamma redigerbara fält hittades för de valda objekten.",
+                SelectedItemsEditFieldLabel: "Fält",
                 UseAlternatingBackgroundColor: "Använd alternerande bakgrundsfärg"
             },
             Cards: {

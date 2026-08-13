@@ -1,6 +1,6 @@
 import { LayoutRenderType } from "@pnp/modern-search-extensibility";
 import { IDataResultType } from "../models/common/IDataResultType";
-import { ITemplateService } from "../services/templateService/ITemplateService";
+import { FileFormat, ITemplateService } from "../services/templateService/ITemplateService";
 
 // NOTE: this helper intentionally does not import the built-in layout / data source / component /
 // suggestions modules. Those pull in heavy runtime dependencies (all the web component classes and
@@ -41,6 +41,7 @@ export interface IResultsExtensibilityInput {
     layoutProperties: { [key: string]: any };
     resultTypes: IDataResultType[];
     templateService: ITemplateService;
+    inspectExternalTemplates?: boolean;
 
     /**
      * Built-in ("out-of-the-box") identifiers, passed in by the caller so this helper does not have
@@ -48,6 +49,28 @@ export interface IResultsExtensibilityInput {
      */
     builtinDataSourceKeys: string[];
     builtinLayoutKeys: string[];
+    builtinComponentNames: string[];
+}
+
+/**
+ * Inputs required to evaluate whether a Search Filters Web Part instance uses any
+ * custom extensibility feature.
+ */
+export interface IFiltersExtensibilityInput {
+    selectedLayoutKey: string;
+    filtersConfiguration: { selectedTemplate: string }[];
+    inlineTemplateContent: string;
+    externalTemplateUrl: string;
+    layoutProperties: { [key: string]: any };
+    templateService: ITemplateService;
+    inspectExternalTemplates?: boolean;
+
+    /**
+     * Built-in ("out-of-the-box") identifiers, passed in by the caller so this helper does not have
+     * to eagerly import the heavy modules that define them.
+     */
+    builtinLayoutKeys: string[];
+    builtinFilterTemplateKeys: string[];
     builtinComponentNames: string[];
 }
 
@@ -111,12 +134,18 @@ export class ExtensibilityUsageHelper {
             return { usesCustomExtensibility: true, reason: "an enabled custom query modifier" };
         }
 
-        // 4. External templates cannot be inspected up front — be conservative and load.
-        if (input.externalTemplateUrl || (input.resultTypes || []).some(rt => rt && rt.externalTemplateUrl)) {
-            return { usesCustomExtensibility: true, reason: "an external template that cannot be inspected" };
+        if (
+            input.inspectExternalTemplates === false
+            && (input.externalTemplateUrl || (input.resultTypes || []).some(resultType => resultType?.externalTemplateUrl))
+        ) {
+            return { usesCustomExtensibility: true, reason: "external template inspection is disabled" };
         }
 
-        const { templates, truncated } = this.collectResultsTemplates(input);
+        const { templates, truncated, externalTemplateError } = await this.collectResultsTemplates(input);
+
+        if (externalTemplateError) {
+            return { usesCustomExtensibility: true, reason: "an external template that could not be inspected" };
+        }
 
         // If the configuration was too large or deeply nested to fully inspect, we can't be certain
         // the templates are free of custom components/helpers — conservatively load (bias to a false
@@ -143,6 +172,72 @@ export class ExtensibilityUsageHelper {
 
         // 7. Custom Handlebars helpers / partials (registerHandlebarsCustomizations). Ensure the
         // out-of-the-box helpers/partials are registered first so custom ones can be told apart.
+        await input.templateService.ensureHandlebarsHelpersLoaded();
+        const handlebars: any = input.templateService.Handlebars;
+        if (!handlebars || typeof handlebars.parse !== "function") {
+            return { usesCustomExtensibility: true, reason: "Handlebars namespace unavailable (conservative)" };
+        }
+
+        const customHandlebars = this.findCustomHandlebars(templates, handlebars);
+        if (customHandlebars) {
+            return { usesCustomExtensibility: true, reason: `custom Handlebars ${customHandlebars}` };
+        }
+
+        return { usesCustomExtensibility: false, reason: "only out-of-the-box features are used" };
+    }
+
+    /**
+     * Evaluates whether a Search Filters Web Part instance uses any custom extensibility feature.
+     */
+    public static async getFiltersUsage(input: IFiltersExtensibilityInput): Promise<IExtensibilityUsageResult> {
+
+        // 1. Custom filter layout (getCustomLayouts)
+        if (input.selectedLayoutKey && input.builtinLayoutKeys.indexOf(input.selectedLayoutKey) === -1) {
+            return { usesCustomExtensibility: true, reason: `custom layout '${input.selectedLayoutKey}'` };
+        }
+
+        // 2. Custom filter control (getCustomFilterControls)
+        const customControl = (input.filtersConfiguration || []).filter(
+            configuration => configuration && configuration.selectedTemplate && input.builtinFilterTemplateKeys.indexOf(configuration.selectedTemplate) === -1
+        )[0];
+
+        if (customControl) {
+            return { usesCustomExtensibility: true, reason: `custom filter control '${customControl.selectedTemplate}'` };
+        }
+
+        if (input.inspectExternalTemplates === false && input.externalTemplateUrl) {
+            return { usesCustomExtensibility: true, reason: "external template inspection is disabled" };
+        }
+
+        const templates: string[] = [];
+        const state = { truncated: false };
+
+        if (input.inlineTemplateContent) {
+            templates.push(input.inlineTemplateContent);
+        }
+
+        if (input.externalTemplateUrl) {
+            try {
+                templates.push(await input.templateService.getFileContent(input.externalTemplateUrl, FileFormat.Text));
+            } catch {
+                return { usesCustomExtensibility: true, reason: "an external template that could not be inspected" };
+            }
+        }
+
+        this.collectStrings(input.layoutProperties, templates, 0, state);
+
+        if (state.truncated) {
+            return { usesCustomExtensibility: true, reason: "a configuration too large to fully inspect" };
+        }
+
+        // 4. Custom web components (getCustomWebComponents) referenced in the template.
+        const oobComponents = new Set((input.builtinComponentNames || []).map(n => (n || "").toLowerCase()));
+        const customComponent = this.findCustomComponent(templates, oobComponents);
+        if (customComponent) {
+            return { usesCustomExtensibility: true, reason: `custom web component '<${customComponent}>'` };
+        }
+
+        // 5. Custom Handlebars helpers / partials (registerHandlebarsCustomizations).
         await input.templateService.ensureHandlebarsHelpersLoaded();
         const handlebars: any = input.templateService.Handlebars;
         if (!handlebars || typeof handlebars.parse !== "function") {
@@ -194,13 +289,27 @@ export class ExtensibilityUsageHelper {
      * Gathers every inline template / field snippet configured on the Web Part so it can be
      * inspected for custom components, helpers or partials.
      */
-    private static collectResultsTemplates(input: IResultsExtensibilityInput): { templates: string[]; truncated: boolean } {
+    private static async collectResultsTemplates(input: IResultsExtensibilityInput): Promise<{
+        templates: string[];
+        truncated: boolean;
+        externalTemplateError: boolean;
+    }> {
 
         const templates: string[] = [];
         const state = { truncated: false };
+        const externalTemplateRequests: Promise<string>[] = [];
 
         if (input.inlineTemplateContent) {
             templates.push(input.inlineTemplateContent);
+        }
+
+        if (input.externalTemplateUrl) {
+            const fileFormat = input.layoutRenderType === LayoutRenderType.AdaptiveCards
+                ? FileFormat.Json
+                : FileFormat.Text;
+            externalTemplateRequests.push(
+                input.templateService.getFileContent(input.externalTemplateUrl, fileFormat)
+            );
         }
 
         // Column / field templates live under layoutProperties (e.g. Details List columns,
@@ -212,9 +321,19 @@ export class ExtensibilityUsageHelper {
             if (rt && rt.inlineTemplateContent) {
                 templates.push(rt.inlineTemplateContent);
             }
+            if (rt?.externalTemplateUrl) {
+                externalTemplateRequests.push(
+                    input.templateService.getFileContent(rt.externalTemplateUrl, FileFormat.Text)
+                );
+            }
         });
 
-        return { templates, truncated: state.truncated };
+        try {
+            templates.push(...await Promise.all(externalTemplateRequests));
+            return { templates, truncated: state.truncated, externalTemplateError: false };
+        } catch {
+            return { templates, truncated: state.truncated, externalTemplateError: true };
+        }
     }
 
     /**

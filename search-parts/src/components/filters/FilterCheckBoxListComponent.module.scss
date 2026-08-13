@@ -1,0 +1,24 @@
+.srOnly {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap;
+}
+
+/* Keeps the value away from its count, the way the per value 'ChoiceGroup' padding used to */
+.choiceField {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding-right: 10px;
+}
+
+/* A long value clips against the values list, it never squeezes out its own count */
+.count {
+    flex-shrink: 0;
+}

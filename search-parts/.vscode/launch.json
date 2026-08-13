@@ -1,16 +1,12 @@
 {
-  /**
-   * Install Chrome Debugger Extension for Visual Studio Code to debug your components with the
-   * Chrome browser: https://aka.ms/spfx-debugger-extensions
-   */
   "version": "0.2.0",
   "configurations": [
     {
       "name": "Local workbench",
-      "type": "chrome",
+      "type": "pwa-msedge",
       "request": "launch",
       "url": "https://localhost:4321/temp/workbench.html",
-      "webRoot": "${workspaceRoot}",
+      "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///.././src/*": "${webRoot}/src/*",
@@ -18,14 +14,14 @@
         "webpack:///../../../../src/*": "${webRoot}/src/*",
         "webpack:///../../../../../src/*": "${webRoot}/src/*"
       },
-      "runtimeArgs": ["--remote-debugging-port=9222"]
+      "runtimeArgs": ["--remote-debugging-port=9222", "--inprivate"]
     },
     {
-      "name": "Hosted workbench",
-      "type": "chrome",
+      "name": "Hosted page (PnPModernSearchHQ)",
+      "type": "pwa-msedge",
       "request": "launch",
-      "url": "https://sonbaedev.sharepoint.com/sites/ThePerspective/_layouts/15/workbench.aspx",
-      "webRoot": "${workspaceRoot}",
+      "url": "https://m365thinking.sharepoint.com/sites/PnPModernSearchHQ/SitePages/Question-on-externalItems-properties-in-Search--4876.aspx?debugManifestsFile=https%3A%2F%2Flocalhost%3A4321%2Ftemp%2Fbuild%2Fmanifests.js&debug=true&noredir=true&Mode=Edit",
+      "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///.././src/*": "${webRoot}/src/*",
@@ -34,16 +30,16 @@
         "webpack:///../../../../../src/*": "${webRoot}/src/*"
       },
       "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"],
-      "runtimeArgs": ["--remote-debugging-port=9222", "--incognito"]
+      "runtimeArgs": ["--remote-debugging-port=9222", "--inprivate"]
     },
     {
       "name": "GulpTester",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
+      "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
       "stopOnEntry": false,
       "args": [],
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceFolder}",
       "runtimeArgs": ["--nolazy"],
       "console": "internalConsole"
     }

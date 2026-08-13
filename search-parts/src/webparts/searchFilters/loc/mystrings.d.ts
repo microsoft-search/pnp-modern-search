@@ -8,6 +8,12 @@ declare interface ISearchFiltersWebPartStrings {
         },
         NoAvailableFilterMessage: string;
         WebPartDefaultTitle: string;
+        StaticPeoplePicker: {
+            RemoveSelectedUserTitle: string;
+            SearchUsersPlaceholder: string;
+            LoadingTenantUsersLabel: string;
+            NoUsersFoundMessage: string;
+        };
     },
     PropertyPane: {
         ConnectionsPage: {
@@ -29,6 +35,7 @@ declare interface ISearchFiltersWebPartStrings {
             FilterMaxBucketsWarning: string;
             FilterLimitReachedWarningToggle: string;
             FilterLimitReachedWarningMessage: string;
+            EditModeRefinerLimitReachedWarningMessage: string;
             PeopleTemplateQUserMappingWarning: string;
             FilterDisplayName: string;
             FilterTemplate: string;
@@ -54,6 +61,7 @@ declare interface ISearchFiltersWebPartStrings {
                 DateRangeTemplate: string;
                 ComboBoxTemplate: string;
                 PeopleTemplate: string;
+                StaticPeopleTemplate: string;
                 DateIntervalTemplate: string;
                 TaxonomyPickerTemplate: string;
                 HierarchicalFilterTemplate: string;
@@ -74,6 +82,12 @@ declare interface ISearchFiltersWebPartStrings {
             ErrorTemplateResolve: string;
             FiltersTemplateFieldLabel: string;
             FiltersTemplatePanelHeader: string;
+        },
+        InformationPage: {
+            Extensibility: {
+                PanelHeader: string;
+                PanelDescription: string;
+            }
         }
     },
     Styling: {

@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dette felt må ikke stå tomt",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Ingen resultater fundet",
-                SearchPlaceholder: "Søg efter en værdi..."
+                SearchPlaceholder: "Søg efter en værdi...",
+                RemoveButtonAriaLabel: "Fjern"
             },
             CurrentVerticalNotSelectedMessage: "Den aktuelle valgte vertikal stemmer ikke overens med dem, der er knyttet til denne webdel ({0}). Den forbliver tom i visningstilstand.",
             True: "Ja",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Indholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID af de forbindelser der er defineret i administrationsportalen for Microsoft Search-connectors.",
                 ContentSourcesFieldPlaceholderLabel: "Fx: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Kunne ikke indlæse connector-metadata fra Microsoft Graph. Giv tilladelsen ExternalConnection.Read.All for at aktivere automatisk registrering. Du kan stadig indtaste værdier manuelt.",
+                ExternalMetadataLoadWarning: "Kunne ikke indlæse connector-metadata fra Microsoft Graph. Den krævede delegerede Graph-tilladelse er muligvis ikke blevet givet. Du kan stadig indtaste værdier manuelt i feltet Valgte felter.",
                 EnableSuggestionLabel: "Aktiver staveforslag",
                 EnableModificationLabel: "Aktiver staveændringer",
                 QueryTemplateFieldLabel: "Forespørgselsmodifikator",
@@ -244,6 +247,16 @@ define([], function () {
                 EnableStickyHeader: "Aktivér fastgjort header",
                 StickyHeaderListViewHeight: "Listevisningshøjde (px)",
                 EnableDownload: "Aktivér download",
+                EnableDetails: "Aktivér detaljer",
+                DetailsButtonLabel: "Detaljer",
+                DetailsPanelHeader: "Detaljer",
+                DetailsUnavailableLabel: "Detaljer er ikke tilgængelige",
+                CloseDetailsPanelLabel: "Luk detaljepanel",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valgte elementer kan redigeres",
+                SelectedItemsEditLoadingLabel: "Kontrollerer redigerbare valgte elementer og fælles felter",
+                SelectedItemsEditNoEligibleItemsLabel: "Ingen af de valgte elementer kan redigeres.",
+                SelectedItemsEditNoCommonFieldsLabel: "Der blev ikke fundet fælles redigerbare felter på tværs af de valgte elementer.",
+                SelectedItemsEditFieldLabel: "Felt",
                 UseAlternatingBackgroundColor: "Vis skiftende baggrundsfarve"
             },
             Cards: {

@@ -93,6 +93,11 @@
 			max-width: 100%;
 		}
 
+		pnp-filtercheckboxlist {
+			display: block;
+			max-width: 100%;
+		}
+
 		pnp-filtercombobox {
 			width: 90%;
 			max-width: 325px;
@@ -106,6 +111,11 @@
 			<div class="filter">
 				{{#eq filter.selectedTemplate 'ComboBoxFilterTemplate'}}
 						<div class="filter--name">{{filter.displayName}}{{#if filter.showLimitExceededWarning}} <button type="button" class="filter--limit-warning-button" title="{{filter.limitExceededWarningText}}" data-tooltip="{{filter.limitExceededWarningText}}" aria-label="{{filter.limitExceededWarningText}}" aria-describedby="filter-limit-warning-{{@root.instanceId}}-{{@index}}">i</button><span id="filter-limit-warning-{{@root.instanceId}}-{{@index}}" class="filter--limit-warning-sr-only">{{filter.limitExceededWarningText}}</span>{{/if}}</div>
+						{{#if filter.warningMessages.length}}
+							{{#each filter.warningMessages}}
+								<div class="filter--message">{{this}}</div>
+							{{/each}}
+						{{/if}}
 						<div class="filter--value">
 							<pnp-filtercombobox 
 								data-instance-id="{{@root.instanceId}}" 
@@ -128,6 +138,11 @@
 						</template>
 						
 						<template id="collapsible-content">
+							{{#if filter.warningMessages.length}}
+								{{#each filter.warningMessages}}
+									<div class="filter--message">{{this}}</div>
+								{{/each}}
+							{{/if}}
 							{{#eq filter.selectedTemplate 'DateRangeFilterTemplate'}}
 								<div class="filter--value">
 									<pnp-filterdaterange 
@@ -154,34 +169,21 @@
 										<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
 									</div>
 
-									<div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
-										{{#each filter.values}}
-											<div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
-												<pnp-filtercheckbox 
-													data-instance-id="{{@root.instanceId}}" 
-													data-filter-name="{{filter.filterName}}" 
-													data-name="{{name}}" 
-													data-value="{{value}}" 
-													data-selected="{{selected}}" 
-													data-disabled="{{disabled}}" 
-													data-count="{{count}}"
-													data-is-multi="{{../isMulti}}"
-													data-value-count="{{../values.length}}"
-													data-value-index="{{@index}}"
-													data-theme-variant="{{JSONstringify @root.theme}}"
-												>
-												</pnp-filtercheckbox>
-												{{#if ../showCount}}
-													<span data-ui-test-id="filterCount">({{count}})</span>
-												{{/if}}
-											</div>
-										{{/each}}
+									<div class="filter--values-list" data-is-scrollable="true">
+										<pnp-filtercheckboxlist
+											data-instance-id="{{@root.instanceId}}"
+											data-filter-name="{{filter.filterName}}"
+											data-display-name="{{filter.displayName}}"
+											data-is-multi="{{filter.isMulti}}"
+											data-show-count="{{filter.showCount}}"
+										>
+											{{#each filter.values}}
+												<option value="{{value}}" data-display-label="{{#with (split name '|')}}{{[1]}}{{/with}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
+											{{/each}}
+										</pnp-filtercheckboxlist>
 									</div>
 								{{else}}
 									{{#eq filter.selectedTemplate 'PeopleTemplate'}}
-										{{#if filter.showPeopleTemplateMappingWarning}}
-											<div class="filter--message">{{filter.peopleTemplateMappingWarningText}}</div>
-										{{/if}}
 										{{#if filter.isMulti}}
 											<div class="filter--option">
 												<pnp-filteroperator 
@@ -197,56 +199,68 @@
 											<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
 										</div>
 
-										<div class="filter--values-list" role="{{#if filter.isMulti}}group{{else}}radiogroup{{/if}}" aria-label="{{filter.displayName}}">
-											{{#each filter.values}}
-
-														<div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
-															<pnp-filtercheckbox 
-																data-instance-id="{{@root.instanceId}}" 
-																data-filter-name="{{filter.filterName}}" 
-																data-name="{{name}}" 
-																data-value="{{value}}" 
-																data-selected="{{selected}}" 
-																data-disabled="{{disabled}}" 
-																data-count="{{count}}"
-																data-is-multi="{{../isMulti}}"
-																data-value-count="{{../values.length}}"
-																data-value-index="{{@index}}"
-																data-theme-variant="{{JSONstringify @root.theme}}"
-															>
-															</pnp-filtercheckbox>
-															{{#if ../showCount}}
-																<span data-ui-test-id="filterCount">({{count}})</span>
-															{{/if}}
-														</div>
-
-													
-											{{/each}}
+										<div class="filter--values-list" data-is-scrollable="true">
+											<pnp-filtercheckboxlist
+												data-instance-id="{{@root.instanceId}}"
+												data-filter-name="{{filter.filterName}}"
+												data-display-name="{{filter.displayName}}"
+												data-is-multi="{{filter.isMulti}}"
+												data-show-count="{{filter.showCount}}"
+											>
+												{{#each filter.values}}
+													<option value="{{value}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
+												{{/each}}
+											</pnp-filtercheckboxlist>
 										</div>
 									{{else}}
-										{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
-											<div class="filter--value">
-												<pnp-filterdateinterval 
-													data-instance-id="{{@root.instanceId}}" 
-													data-filter="{{JSONstringify filter 2}}"
+										{{#eq filter.selectedTemplate 'StaticPeopleTemplate'}}
+											{{#if filter.isMulti}}
+												<div class="filter--option">
+													<pnp-filteroperator 
+														data-instance-id="{{@root.instanceId}}"
+														data-filter-name="{{filter.filterName}}" 
+														data-operator="{{filter.operator}}" 
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													></pnp-filteroperator>
+												</div>
+											{{/if}}
+											<div class="filter--option">
+												<pnp-peoplefilter
+													data-instance-id="{{@root.instanceId}}"
+													data-filter-name="{{filter.filterName}}"
+													data-is-multi="{{filter.isMulti}}"
+													data-static-picker="true"
+													data-selected-values="{{JSONstringify filter.values 2}}"
 													data-theme-variant="{{JSONstringify @root.theme}}"
-												>
-											</pnp-filterdateinterval>
+												></pnp-peoplefilter>
 											</div>
 										{{else}}
-											{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
-												<div class="filter--value-hierarchical">
-													{{{hierarchicalOperator filter @root.instanceId @root.theme}}}
-													<pnp-filterhierarchical 
+											{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
+												<div class="filter--value">
+													<pnp-filterdateinterval 
 														data-instance-id="{{@root.instanceId}}" 
 														data-filter="{{JSONstringify filter 2}}"
-														data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
 														data-theme-variant="{{JSONstringify @root.theme}}"
 													>
-													</pnp-filterhierarchical>
+													</pnp-filterdateinterval>
 												</div>
-											{{/eq}}
-										{{/eq}}	
+											{{else}}
+												{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
+													<div class="filter--value-hierarchical">
+														{{{hierarchicalOperator filter @root.instanceId @root.theme}}}
+														<pnp-filterhierarchical
+															data-instance-id="{{@root.instanceId}}"
+															data-filter="{{JSONstringify filter 2}}"
+															data-selected-filters="{{JSONstringify @root.selectedFilters 2}}"
+															data-theme-variant="{{JSONstringify @root.theme}}"
+														>
+														</pnp-filterhierarchical>
+													</div>
+												{{else}}
+													{{{customFilterControl filter @root.instanceId @root.theme @root.selectedFilters}}}
+												{{/eq}}
+											{{/eq}}	
+										{{/eq}}
 									{{/eq}}
 								{{/eq}}
 							{{/eq}}
@@ -254,25 +268,20 @@
 						</template>
 
 						<template id="collapsible-footer">
+							{{#isCustomFilterControl filter}}
+								{{{customFilterControlFooter filter @root.instanceId @root.theme}}}
+							{{else}}
 							{{#isnt filter.selectedTemplate 'DateRangeFilterTemplate'}}
 								{{#eq filter.selectedTemplate 'HierarchicalFilterTemplate'}}
 									{{{hierarchicalMultiselect filter @root.instanceId @root.theme}}}
 								{{else}}
 									{{#eq filter.values.length 0}}
-										<div class="filter--message">
-											{{@root.strings.FilterNoValuesMessage}}
-										</div>
-									{{else}}
-										{{#if filter.isMulti}}
-											<div class="filter--option">
-												<pnp-filteroperator 
-													data-instance-id="{{@root.instanceId}}"
-													data-filter-name="{{filter.filterName}}" 
-													data-operator="{{filter.operator}}" 
-													data-theme-variant="{{JSONstringify @root.theme}}"
-												></pnp-filteroperator>
+										{{#isnt filter.selectedTemplate 'StaticPeopleTemplate'}}
+											<div class="filter--message">
+												{{@root.strings.FilterNoValuesMessage}}
 											</div>
-										{{/if}}
+										{{/isnt}}
+									{{else}}
 										{{#if filter.isMulti}}
 											<pnp-filtermultiselect 
 												data-instance-id="{{@root.instanceId}}" 
@@ -284,6 +293,7 @@
 									{{/eq}}
 								{{/eq}}
 							{{/isnt}}
+							{{/isCustomFilterControl}}
 						</template>
 
 					</pnp-collapsible>

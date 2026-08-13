@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configura"
             },
             NoAvailableFilterMessage: "Nessun filtro disponibile da visualizzare.",
-            WebPartDefaultTitle: "Web Part dei Filtri di Ricerca"
+            WebPartDefaultTitle: "Web Part dei Filtri di Ricerca",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Rimuovi {0}",
+                SearchUsersPlaceholder: "Cerca utenti",
+                LoadingTenantUsersLabel: "Caricamento utenti del tenant...",
+                NoUsersFoundMessage: "Nessun utente trovato."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Il numero massimo di valori è 1000",
                 FilterLimitReachedWarningToggle: "Mostra avviso quando il limite viene raggiunto",
                 FilterLimitReachedWarningMessage: "Limite risultati raggiunto — non vengono mostrati tutti gli elementi corrispondenti. Affina la ricerca per restringere l'elenco.",
+                EditModeRefinerLimitReachedWarningMessage: "In modalità di modifica, i filtri sono limitati a un massimo di 100 elementi.",
                 PeopleTemplateQUserMappingWarning: "Avviso modello Persone: i valori non sembrano identità utente. Probabilmente questa proprietà non è mappata a una proprietà di ricerca per indicizzazione Q_USER.",
                 FilterDisplayName: "Nome visualizzato",
                 FilterTemplate: "Modello",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Casella combinata",
                     DateIntervalTemplate: "Intervallo di tempo",
                     PeopleTemplate: "Modello di persona",
+                    StaticPeopleTemplate: "Modello persona statico",
                     TaxonomyPickerTemplate: "Selettore di tassonomia",
                     HierarchicalFilterTemplate: "Filtro gerarchico"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Impossibile risolvere il modello specificato. Dettagli dell'errore: '{0}'",
                 FiltersTemplateFieldLabel: "Modifica modello di filtri",
                 FiltersTemplatePanelHeader: "Modifica modello di filtri"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configura le librerie di estensibilità da caricare all'avvio.",
+                    PanelDescription: "Aggiungi/Rimuovi qui gli ID della tua libreria di estensibilità personalizzata. Puoi specificare un nome visualizzato e decidere se la libreria deve essere caricata o meno all'avvio. Solo i layout dei filtri, i controlli dei filtri, i componenti web e gli helper Handlebars personalizzati saranno caricati qui."
+                }
             }
         },
         Styling: {

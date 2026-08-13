@@ -44,6 +44,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     isMaxBucketsExceeded?: boolean;
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
+    isEditModeCapApplied?: boolean;
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
@@ -52,6 +53,7 @@ interface IFilterInternalWithWarning extends IDataFilterInternal {
     limitExceededWarningText?: string;
     showPeopleTemplateMappingWarning?: boolean;
     peopleTemplateMappingWarningText?: string;
+    warningMessages?: string[];
     warningMarkerTooltipText?: string;
 }
 
@@ -70,6 +72,12 @@ interface IUpdateDebugContext {
     filterName: string;
     startedAt: number;
     lastMarkAt: number;
+}
+
+interface IGraphUserEntity {
+    displayName?: string;
+    mail?: string;
+    userPrincipalName?: string;
 }
 
 export default class SearchFiltersContainer extends React.Component<ISearchFiltersContainerProps, ISearchFiltersContainerState> {
@@ -94,15 +102,31 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private _busyHideTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyWatchdogTimer: ReturnType<typeof setTimeout> | null = null;
     private _busyPrimeTimer: ReturnType<typeof setTimeout> | null = null;
+    private _busyCursorAutoHideTimer: ReturnType<typeof setTimeout> | null = null;
+    private _isMounted: boolean = false;
+    private _hasAttemptedPeopleDisplayNameLookup: boolean = false;
     private _busyStartedAt: number = 0;
     private _latestDeferredSubmittedFilters: IDataFilter[] | null = null;
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
     private static readonly _MIN_BUSY_VISIBLE_MS = 2000;
+    private static readonly _STATIC_PEOPLE_BUSY_VISIBLE_MS = 3000;
     private static readonly _MAX_BUSY_DURATION_MS = 10000;
     private static readonly _BUSY_PRIME_TIMEOUT_MS = 1500;
     private static readonly _GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
+    private static readonly _GRAPH_PAGE_SIZE = 200;
+    private static readonly _MAX_INITIAL_GRAPH_USERS = 2000;
+    private static _tenantPeopleDisplayNameCache: Map<string, string> | null = null;
+    private static _tenantPeopleDisplayNameLoadingPromise: Promise<Map<string, string>> | null = null;
+
+    private static setTenantPeopleDisplayNameCache(cache: Map<string, string> | null): void {
+        SearchFiltersContainer._tenantPeopleDisplayNameCache = cache;
+    }
+
+    private static setTenantPeopleDisplayNameLoadingPromise(promise: Promise<Map<string, string>> | null): void {
+        SearchFiltersContainer._tenantPeopleDisplayNameLoadingPromise = promise;
+    }
 
     public constructor(props: ISearchFiltersContainerProps) {
 
@@ -193,40 +217,48 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private extractReadableLabelFromString(value: string): string {
-        const cleanedValue = `${value || ''}`.trim().replace(/^"+|"+$/g, '');
+        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(value);
         if (!cleanedValue) {
             return '';
         }
 
-        const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#0?[0-9a-f-]{32,36}\|(.+)$/i.exec(cleanedValue);
-        if (taxonomyLabelMatch?.[1]?.trim()) {
-            return taxonomyLabelMatch[1].trim();
+        const taxonomyLabel = TaxonomyHelper.extractTaxonomyLabel(cleanedValue);
+        if (taxonomyLabel) {
+            return taxonomyLabel;
         }
 
-        const genericGuidLabelMatch = /\|#0?[0-9a-f-]{32,36}\|([^|]+)$/i.exec(cleanedValue);
-        if (genericGuidLabelMatch?.[1]?.trim()) {
-            return genericGuidLabelMatch[1].trim();
+        const claimsLabel = TaxonomyHelper.extractClaimsLabel(cleanedValue);
+        if (claimsLabel) {
+            return claimsLabel;
         }
 
-        const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
-        if (claimsLabelMatch?.[1]?.trim()) {
-            return claimsLabelMatch[1].trim();
+        if (TaxonomyHelper.isReadablePlainLabel(cleanedValue)) {
+            return cleanedValue;
         }
 
-        const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
-        if (personLikeLabelMatch?.[1]?.trim()) {
-            return personLikeLabelMatch[1].trim();
+        const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
+        if (personLikeLabel) {
+            return personLikeLabel;
         }
 
-        const emailMatch = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/.exec(cleanedValue);
-        if (emailMatch?.[1]) {
-            return emailMatch[1];
+        const preferredPipeSegment = cleanedValue
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (preferredPipeSegment) {
+            return preferredPipeSegment;
         }
 
-        const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
-        const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part) && !/^#?[0-9a-fA-F]{24,}$/.test(part));
-        if (firstReadablePart) {
-            return firstReadablePart;
+        const emailLikeLabel = TaxonomyHelper.extractEmailLikeLabel(cleanedValue);
+        if (emailLikeLabel) {
+            return emailLikeLabel;
+        }
+
+        const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+        if (firstReadablePipeSegment) {
+            return firstReadablePipeSegment;
         }
 
         return '';
@@ -248,6 +280,81 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         cache.set(key, label);
     }
 
+    private getDisplayLabelQuality(label: string): number {
+        const cleanedLabel = TaxonomyHelper.normalizeReadableLabelCandidate(label);
+        if (!cleanedLabel) {
+            return 0;
+        }
+
+        if (TaxonomyHelper.extractPersonLikeLabel(cleanedLabel)) {
+            return 4;
+        }
+
+        if (TaxonomyHelper.isReadablePlainLabel(cleanedLabel) && !TaxonomyHelper.extractEmailLikeLabel(cleanedLabel)) {
+            return 3;
+        }
+
+        const preferredPipeSegment = cleanedLabel
+            .split('|')
+            .map(part => part.trim())
+            .filter(Boolean)
+            .find(part => !!TaxonomyHelper.extractPersonLikeLabel(part))
+            || TaxonomyHelper.extractFirstReadablePipeSegment(cleanedLabel);
+
+        if (preferredPipeSegment) {
+            const normalizedPipeSegment = preferredPipeSegment.toLowerCase();
+            const looksLikeClaimsPrefix = normalizedPipeSegment.startsWith('i:0#');
+            const looksLikeEmail = !!TaxonomyHelper.extractEmailLikeLabel(preferredPipeSegment);
+
+            if (!looksLikeClaimsPrefix && !looksLikeEmail) {
+                return 2;
+            }
+        }
+
+        if (TaxonomyHelper.extractClaimsLabel(cleanedLabel) || TaxonomyHelper.extractEmailLikeLabel(cleanedLabel)) {
+            return 1;
+        }
+
+        return 1;
+    }
+
+    private getPreferredDisplayLabel(primaryLabel: string, candidateLabel: string): string {
+        if (!candidateLabel) {
+            return primaryLabel;
+        }
+
+        if (!primaryLabel) {
+            return candidateLabel;
+        }
+
+        const normalizedPrimary = TaxonomyHelper.normalizeReadableLabelCandidate(primaryLabel).toLowerCase();
+        const normalizedCandidate = TaxonomyHelper.normalizeReadableLabelCandidate(candidateLabel).toLowerCase();
+
+        if (normalizedPrimary === normalizedCandidate) {
+            return primaryLabel;
+        }
+
+        const primaryQuality = this.getDisplayLabelQuality(primaryLabel);
+        const candidateQuality = this.getDisplayLabelQuality(candidateLabel);
+
+        if (candidateQuality > primaryQuality) {
+            return candidateLabel;
+        }
+
+        return primaryLabel;
+    }
+
+    private setPreferredDisplayNameCacheEntry(cache: Map<string, string>, key: string, label: string): void {
+        if (!key || !label) {
+            return;
+        }
+
+        const existingLabel = cache.get(key);
+        const preferredLabel = this.getPreferredDisplayLabel(existingLabel, label);
+
+        this.setDisplayNameCacheEntry(cache, key, preferredLabel);
+    }
+
     private setLimitedCacheEntry<T>(cache: Map<string, T>, key: string, value: T, limit: number): void {
         if (!key) {
             return;
@@ -258,6 +365,129 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         cache.set(key, value);
+    }
+
+    private hasPeopleTemplateConfigured(filtersConfiguration: IDataFilterConfiguration[] = this.props.filtersConfiguration): boolean {
+        return (filtersConfiguration || []).some(filter => filter.selectedTemplate === BuiltinFilterTemplates.People);
+    }
+
+    private applyTenantPeopleDisplayNameCache(cache: Map<string, string>): boolean {
+        let cacheChanged = false;
+
+        cache.forEach((displayName, normalizedIdentity) => {
+            if (!displayName || !normalizedIdentity) {
+                return;
+            }
+
+            if (this._peopleDisplayNameByValue.get(normalizedIdentity) !== displayName) {
+                this.setDisplayNameCacheEntry(this._peopleDisplayNameByValue, normalizedIdentity, displayName);
+                cacheChanged = true;
+            }
+
+            if (this._peopleDisplayNameByName.get(normalizedIdentity) !== displayName) {
+                this.setDisplayNameCacheEntry(this._peopleDisplayNameByName, normalizedIdentity, displayName);
+                cacheChanged = true;
+            }
+        });
+
+        if (cacheChanged) {
+            this._resolvedDisplayNameCache.clear();
+        }
+
+        return cacheChanged;
+    }
+
+    private async loadTenantPeopleDisplayNameCache(): Promise<Map<string, string>> {
+        const msGraphClientFactory = this.props.context?.msGraphClientFactory;
+        if (!msGraphClientFactory) {
+            return new Map<string, string>();
+        }
+
+        const client = await msGraphClientFactory.getClient('3');
+        const displayNameCache = new Map<string, string>();
+        let users: IGraphUserEntity[] = [];
+        let response = await client
+            .api('/users')
+            .version('v1.0')
+            .select('displayName,mail,userPrincipalName')
+            .top(SearchFiltersContainer._GRAPH_PAGE_SIZE)
+            .get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
+
+        users = users.concat(Array.isArray(response?.value) ? response.value : []);
+        if (users.length > SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS) {
+            users = users.slice(0, SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS);
+        }
+
+        let nextLink = response?.['@odata.nextLink'];
+        let pageCount = 1;
+
+        while (nextLink && pageCount < 100 && users.length < SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS) {
+            response = await client.api(nextLink).get() as { value?: IGraphUserEntity[]; '@odata.nextLink'?: string };
+            users = users.concat(Array.isArray(response?.value) ? response.value : []);
+
+            if (users.length > SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS) {
+                users = users.slice(0, SearchFiltersContainer._MAX_INITIAL_GRAPH_USERS);
+            }
+
+            nextLink = response?.['@odata.nextLink'];
+            pageCount++;
+        }
+
+        users.forEach(user => {
+            const displayName = `${user.displayName || ''}`.trim();
+            if (!displayName) {
+                return;
+            }
+
+            const normalizedMail = this.normalizeDisplayCacheKey(user.mail);
+            const normalizedUserPrincipalName = this.normalizeDisplayCacheKey(user.userPrincipalName);
+
+            if (normalizedMail) {
+                displayNameCache.set(normalizedMail, displayName);
+            }
+
+            if (normalizedUserPrincipalName) {
+                displayNameCache.set(normalizedUserPrincipalName, displayName);
+            }
+        });
+
+        return displayNameCache;
+    }
+
+    private async ensurePeopleDisplayNameCacheLoaded(): Promise<void> {
+        if (this._hasAttemptedPeopleDisplayNameLookup || !this.hasPeopleTemplateConfigured()) {
+            return;
+        }
+
+        this._hasAttemptedPeopleDisplayNameLookup = true;
+
+        const existingCache = SearchFiltersContainer._tenantPeopleDisplayNameCache;
+        if (existingCache) {
+            const cacheChanged = this.applyTenantPeopleDisplayNameCache(existingCache);
+            if (cacheChanged && this._isMounted) {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+            }
+            return;
+        }
+
+        const loadingPromise = SearchFiltersContainer._tenantPeopleDisplayNameLoadingPromise ?? this.loadTenantPeopleDisplayNameCache();
+        SearchFiltersContainer.setTenantPeopleDisplayNameLoadingPromise(loadingPromise);
+
+        try {
+            const tenantPeopleDisplayNameCache = await loadingPromise;
+            SearchFiltersContainer.setTenantPeopleDisplayNameCache(tenantPeopleDisplayNameCache);
+
+            const cacheChanged = this.applyTenantPeopleDisplayNameCache(tenantPeopleDisplayNameCache);
+            if (cacheChanged && this._isMounted) {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+            }
+        } catch {
+            // Ignore People display-name lookup failures and keep raw identities.
+        } finally {
+            if (SearchFiltersContainer._tenantPeopleDisplayNameLoadingPromise === loadingPromise) {
+                SearchFiltersContainer.setTenantPeopleDisplayNameLoadingPromise(null);
+            }
+        }
     }
 
     private getHierarchyCacheKey(filterName: string, termSetId: string, termGroupId: string): string {
@@ -298,6 +528,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             this._busyHideTimer = null;
         }
 
+        if (this._busyCursorAutoHideTimer) {
+            clearTimeout(this._busyCursorAutoHideTimer);
+            this._busyCursorAutoHideTimer = null;
+        }
+
         if (this._busyWatchdogTimer) {
             clearTimeout(this._busyWatchdogTimer);
             this._busyWatchdogTimer = null;
@@ -318,6 +553,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 this.endResultsUpdate();
             }
         }, SearchFiltersContainer._MAX_BUSY_DURATION_MS);
+
+        if (this.isStaticPeopleFilter(sourceFilterName)) {
+            this._busyCursorAutoHideTimer = setTimeout(() => {
+                this._busyCursorAutoHideTimer = null;
+
+                if (this._isMounted && this.state.isUpdatingResults) {
+                    this.setBusyCursor(false);
+                }
+            }, SearchFiltersContainer._STATIC_PEOPLE_BUSY_VISIBLE_MS);
+        }
 
         this.setState(prevState => ({
             isUpdatingResults: true,
@@ -390,7 +635,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return false;
         }
 
-        return !!target.closest('pnp-filtercheckbox, pnp-filtercombobox, pnp-filtersearchbox, pnp-filtermultiselect, pnp-filteroperator, pnp-filterdaterange, pnp-filterdateinterval, pnp-filterhierarchical');
+        return !!target.closest('pnp-filtercheckbox, pnp-filtercheckboxlist, pnp-filtercombobox, pnp-filtersearchbox, pnp-filtermultiselect, pnp-filteroperator, pnp-filterdaterange, pnp-filterdateinterval, pnp-filterhierarchical, pnp-peoplefilter');
     }
 
     private readonly primeBusyCursorFromInteraction = (event: React.PointerEvent<HTMLDivElement>): void => {
@@ -421,6 +666,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const elapsed = performance.now() - this._busyStartedAt;
         const remaining = SearchFiltersContainer._MIN_BUSY_VISIBLE_MS - elapsed;
 
+        if (this._busyCursorAutoHideTimer) {
+            clearTimeout(this._busyCursorAutoHideTimer);
+            this._busyCursorAutoHideTimer = null;
+        }
+
         if (this._busyHideTimer) {
             clearTimeout(this._busyHideTimer);
         }
@@ -450,11 +700,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const normalizedNameKey = this.normalizeDisplayCacheKey(name);
 
         if (normalizedValueKey) {
-            this.setDisplayNameCacheEntry(this._peopleDisplayNameByValue, normalizedValueKey, resolvedLabel);
+            this.setPreferredDisplayNameCacheEntry(this._peopleDisplayNameByValue, normalizedValueKey, resolvedLabel);
         }
 
         if (normalizedNameKey) {
-            this.setDisplayNameCacheEntry(this._peopleDisplayNameByName, normalizedNameKey, resolvedLabel);
+            this.setPreferredDisplayNameCacheEntry(this._peopleDisplayNameByName, normalizedNameKey, resolvedLabel);
         }
     }
 
@@ -464,60 +714,120 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
     }
 
-    private resolveFilterDisplayName(name: string, value: string): string {
+    private shouldPreferPeopleValueDisplayName(rawName: string, rawValue: string, selectedTemplate?: string): boolean {
+        if (selectedTemplate !== BuiltinFilterTemplates.People) {
+            return false;
+        }
+
+        const preferredValueLabel = this.extractPreferredPeopleValueDisplayName(rawValue);
+        if (!preferredValueLabel) {
+            return false;
+        }
+
+        const readableRawName = this.extractReadableLabelFromString(rawName);
+        const normalizedPreferredValueLabel = TaxonomyHelper.normalizeReadableLabelCandidate(preferredValueLabel).toLowerCase();
+        const normalizedReadableRawName = TaxonomyHelper.normalizeReadableLabelCandidate(readableRawName).toLowerCase();
+        const rawNameCandidates = [rawName, TaxonomyHelper.decodeHexString(rawName)]
+            .map(candidate => TaxonomyHelper.normalizeReadableLabelCandidate(candidate))
+            .filter(Boolean);
+        const rawNameLooksLikeIdentityToken = rawNameCandidates.some(candidate => {
+            const emailLabel = TaxonomyHelper.extractEmailLikeLabel(candidate);
+            return (emailLabel && emailLabel.toLowerCase() === candidate.toLowerCase())
+                || !!TaxonomyHelper.extractClaimsLabel(candidate);
+        });
+
+        return rawNameLooksLikeIdentityToken || normalizedPreferredValueLabel !== normalizedReadableRawName;
+    }
+
+    private extractPreferredPeopleValueDisplayName(rawValue: string): string {
+        const preferredDisplayLabel = TaxonomyHelper.extractPreferredPeopleDisplayLabel(rawValue);
+        if (preferredDisplayLabel) {
+            return preferredDisplayLabel;
+        }
+
+        const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(rawValue);
+        const decodedValue = TaxonomyHelper.decodeHexString(cleanedValue);
+
+        const readableCleanedValue = this.extractReadableLabelFromString(cleanedValue);
+        if (readableCleanedValue) {
+            return readableCleanedValue;
+        }
+
+        return this.extractReadableLabelFromString(decodedValue);
+    }
+
+    private resolveFilterDisplayName(name: string, value: string, selectedTemplate?: string): string {
         const rawName = `${name ?? ''}`;
         const rawValue = `${value ?? ''}`;
-        const cacheKey = `${this.normalizeDisplayCacheKey(rawName)}::${this.normalizeDisplayCacheKey(rawValue)}`;
+        const normalizedRawNameKey = this.normalizeDisplayCacheKey(rawName);
+        const normalizedRawValueKey = this.normalizeDisplayCacheKey(rawValue);
+        const cacheKey = `${normalizedRawNameKey}::${normalizedRawValueKey}`;
+        const readableRawName = this.extractReadableLabelFromString(rawName);
 
         const resolvedFromSharedCache = this._resolvedDisplayNameCache.get(cacheKey);
         if (resolvedFromSharedCache) {
             return resolvedFromSharedCache;
         }
 
-        const resolvedFromPeopleValueCache = this._peopleDisplayNameByValue.get(this.normalizeDisplayCacheKey(rawValue));
+        const resolvedFromPeopleValueCache = this._peopleDisplayNameByValue.get(normalizedRawValueKey);
         if (resolvedFromPeopleValueCache) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, resolvedFromPeopleValueCache);
-            return resolvedFromPeopleValueCache;
+            const preferredLabel = this.getPreferredDisplayLabel(resolvedFromPeopleValueCache, readableRawName);
+            if (preferredLabel !== resolvedFromPeopleValueCache) {
+                this.setPreferredDisplayNameCacheEntry(this._peopleDisplayNameByValue, normalizedRawValueKey, preferredLabel);
+                this.setPreferredDisplayNameCacheEntry(this._peopleDisplayNameByName, normalizedRawNameKey, preferredLabel);
+            }
+
+            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, preferredLabel);
+            return preferredLabel;
         }
 
-        const resolvedFromPeopleNameCache = this._peopleDisplayNameByName.get(this.normalizeDisplayCacheKey(rawName));
+        const resolvedFromPeopleNameCache = this._peopleDisplayNameByName.get(normalizedRawNameKey);
         if (resolvedFromPeopleNameCache) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, resolvedFromPeopleNameCache);
-            return resolvedFromPeopleNameCache;
+            const preferredLabel = this.getPreferredDisplayLabel(resolvedFromPeopleNameCache, readableRawName);
+            if (preferredLabel !== resolvedFromPeopleNameCache) {
+                this.setPreferredDisplayNameCacheEntry(this._peopleDisplayNameByName, normalizedRawNameKey, preferredLabel);
+                this.setPreferredDisplayNameCacheEntry(this._peopleDisplayNameByValue, normalizedRawValueKey, preferredLabel);
+            }
+            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, preferredLabel);
+            return preferredLabel;
         }
 
-        const readableRawName = this.extractReadableLabelFromString(rawName);
-        if (readableRawName) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableRawName);
-            return readableRawName;
+        if (this.shouldPreferPeopleValueDisplayName(rawName, rawValue, selectedTemplate)) {
+            const readableRawValue = this.extractPreferredPeopleValueDisplayName(rawValue);
+            if (readableRawValue) {
+                this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableRawValue);
+                return readableRawValue;
+            }
+
+            const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
+            const readableDecodedValue = this.extractPreferredPeopleValueDisplayName(decodedValue);
+            if (readableDecodedValue) {
+                this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableDecodedValue);
+                return readableDecodedValue;
+            }
         }
 
         const decodedName = TaxonomyHelper.decodeHexString(rawName);
         const readableDecodedName = this.extractReadableLabelFromString(decodedName);
-        if (readableDecodedName) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableDecodedName);
-            return readableDecodedName;
-        }
-        if (decodedName) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, decodedName);
-            return decodedName;
-        }
-
         const readableRawValue = this.extractReadableLabelFromString(rawValue);
-        if (readableRawValue) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableRawValue);
-            return readableRawValue;
-        }
-
         const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
         const readableDecodedValue = this.extractReadableLabelFromString(decodedValue);
-        if (readableDecodedValue) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, readableDecodedValue);
-            return readableDecodedValue;
-        }
-        if (decodedValue) {
-            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, decodedValue);
-            return decodedValue;
+
+        let preferredResolvedLabel = '';
+        const considerResolvedLabel = (candidateLabel: string): void => {
+            preferredResolvedLabel = this.getPreferredDisplayLabel(preferredResolvedLabel, candidateLabel);
+        };
+
+        considerResolvedLabel(readableRawName);
+        considerResolvedLabel(readableDecodedName);
+        considerResolvedLabel(decodedName);
+        considerResolvedLabel(readableRawValue);
+        considerResolvedLabel(readableDecodedValue);
+        considerResolvedLabel(decodedValue);
+
+        if (preferredResolvedLabel) {
+            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, preferredResolvedLabel);
+            return preferredResolvedLabel;
         }
 
         const fallbackValue = rawName || rawValue;
@@ -734,7 +1044,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return false;
     }
 
-    private shouldShowPeopleTemplateMappingWarning(availableFilter: IDataFilterResult): boolean {
+    private shouldShowPeopleTemplateMappingWarning(availableFilter: IDataFilterResult, selectedTemplate?: string): boolean {
+        if (selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+            return false;
+        }
+
         const values = availableFilter?.values ?? [];
         if (values.length === 0) {
             return false;
@@ -820,9 +1134,27 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return selectedFilterValues.findIndex(value => this.areFilterValuesEquivalent(`${value.value ?? ''}`, availableRawValue));
     }
 
-    private mergeAvailableValueWithSelection(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[], selectedValueIndexByRaw: Map<string, number>): IDataFilterValueInternal {
+    private getMatchingStaticPeopleSelectedValueIndex(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[]): number {
+        const availableLabel = this.resolveFilterDisplayName(`${availableValue?.name ?? ''}`, `${availableValue?.value ?? ''}`)
+            .trim()
+            .toLowerCase();
+
+        if (!availableLabel) {
+            return -1;
+        }
+
+        return selectedFilterValues.findIndex(selectedValue => {
+            const selectedLabel = this.resolveFilterDisplayName(`${selectedValue?.name ?? ''}`, `${selectedValue?.value ?? ''}`)
+                .trim()
+                .toLowerCase();
+
+            return selectedLabel === availableLabel;
+        });
+    }
+
+    private mergeAvailableValueWithSelection(availableValue: IDataFilterResultValue, selectedFilterValues: IDataFilterValueInternal[], selectedValueIndexByRaw: Map<string, number>, selectedTemplate?: string): IDataFilterValueInternal {
         const filterValueInternal: IDataFilterValueInternal = {
-            name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`),
+            name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, selectedTemplate),
             selected: false,
             selectedOnce: false,
             disabled: false,
@@ -830,7 +1162,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             count: availableValue.count
         };
 
-        const valueIdx = this.getMatchingSelectedValueIndex(`${availableValue.value}`, selectedValueIndexByRaw, selectedFilterValues);
+        let valueIdx = this.getMatchingSelectedValueIndex(`${availableValue.value}`, selectedValueIndexByRaw, selectedFilterValues);
+        if (valueIdx === -1 && selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+            valueIdx = this.getMatchingStaticPeopleSelectedValueIndex(availableValue, selectedFilterValues);
+        }
+
         if (valueIdx === -1) {
             return filterValueInternal;
         }
@@ -838,7 +1174,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const updatedValue = selectedFilterValues[valueIdx];
         updatedValue.count = availableValue.count;
 
-        const resolvedAvailableName = this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`);
+        const resolvedAvailableName = this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, selectedTemplate);
         const currentNameIsToken = this.isTokenDisplayName(updatedValue.name);
         const availableNameIsToken = this.isTokenDisplayName(availableValue.name);
 
@@ -861,7 +1197,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return availableFilter.values.map(availableValue => {
             if (selectedFilterIdx === -1) {
                 return {
-                    name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`),
+                    name: this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, filterConfiguration.selectedTemplate),
                     selected: false,
                     selectedOnce: false,
                     disabled: false,
@@ -870,7 +1206,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 };
             }
 
-            return this.mergeAvailableValueWithSelection(availableValue, selectedFilterValues, selectedValueIndexByRaw);
+            return this.mergeAvailableValueWithSelection(availableValue, selectedFilterValues, selectedValueIndexByRaw, filterConfiguration.selectedTemplate);
         });
     }
 
@@ -931,22 +1267,32 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } {
         const filterOperator = selectedFilterIdx === -1 ? filterConfiguration.operator : currentUiFilters[selectedFilterIdx].operator;
-        const showLimitExceededWarning = Boolean(filterConfiguration.showLimitExceededWarning && filterWithLimitInfo.isMaxBucketsExceeded);
+        const reachedEditModeRefinerCap = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
+            && filterWithLimitInfo.isMaxBucketsExceeded
+            && filterWithLimitInfo.isEditModeCapApplied;
+        const showLimitExceededWarning = Boolean(filterWithLimitInfo.isMaxBucketsExceeded && filterConfiguration.showLimitExceededWarning);
         const limitExceededWarningText = showLimitExceededWarning
             ? this.formatLocalizedString(
                 webPartStrings.PropertyPane.DataFilterCollection.FilterLimitReachedWarningMessage,
                 [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
             )
             : undefined;
+        const editModeRefinerLimitWarningText = reachedEditModeRefinerCap
+            ? this.formatLocalizedString(
+                webPartStrings.PropertyPane.DataFilterCollection.EditModeRefinerLimitReachedWarningMessage,
+                [filterWithLimitInfo.returnedValueCount ?? values.length, filterWithLimitInfo.configuredMaxBuckets ?? values.length]
+            )
+            : undefined;
         const showPeopleTemplateMappingWarning = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
             && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.People
-            && this.shouldShowPeopleTemplateMappingWarning(availableFilter);
+            && this.shouldShowPeopleTemplateMappingWarning(availableFilter, filterConfiguration.selectedTemplate);
         const peopleTemplateMappingWarningText = showPeopleTemplateMappingWarning
             ? (webPartStrings.PropertyPane.DataFilterCollection.PeopleTemplateQUserMappingWarning
                 || 'People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.')
             : undefined;
-        const warningMarkerTooltipText = peopleTemplateMappingWarningText || limitExceededWarningText;
-        const showWarningMarker = Boolean(showPeopleTemplateMappingWarning || showLimitExceededWarning);
+        const warningMessages = [editModeRefinerLimitWarningText, peopleTemplateMappingWarningText].filter(Boolean);
+        const warningMarkerTooltipText = [limitExceededWarningText, ...warningMessages].filter(Boolean).join('\n');
+        const showWarningMarker = Boolean(showPeopleTemplateMappingWarning || showLimitExceededWarning || reachedEditModeRefinerCap);
 
         return {
             displayName: filterConfiguration.displayValue?.trim() ? filterConfiguration.displayValue : availableFilter.filterName,
@@ -959,6 +1305,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             limitExceededWarningText,
             showPeopleTemplateMappingWarning,
             peopleTemplateMappingWarningText,
+            warningMessages,
             warningMarkerTooltipText,
             selectedOnce: selectionState.selectedOnce,
             selectedTemplate: filterConfiguration.selectedTemplate,
@@ -1109,10 +1456,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return filterResultInternal;
     }
 
-    private buildFilterValueInternal(filterValue: IDataFilterValueInfo): IDataFilterValueInternal {
+    private buildFilterValueInternal(filterValue: IDataFilterValueInfo, selectedTemplate?: string): IDataFilterValueInternal {
         return {
             selected: filterValue.selected,
-            name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`),
+            name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`, selectedTemplate),
             value: filterValue.value,
             operator: filterValue.operator,
             selectedOnce: true
@@ -1123,7 +1470,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const filterValuesInternal: IDataFilterValueInternal[] = filterInfo.filterValues.map(filterValue => {
             return {
                 selected: filterValue.selected,
-                name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`),
+                name: this.resolveFilterDisplayName(`${filterValue.name ?? ''}`, `${filterValue.value ?? ''}`, filterConfiguration.selectedTemplate),
                 value: filterValue.value,
                 selectedOnce: true
             };
@@ -1160,7 +1507,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         filterInfo.filterValues.forEach(filterValue => {
-            const filterValueInternal = this.buildFilterValueInternal(filterValue);
+            const filterValueInternal = this.buildFilterValueInternal(filterValue, filterConfiguration.selectedTemplate);
             const valueIdx = updatedUiFilters[filterIdx].values.findIndex(value => value.value === filterValue.value);
 
             if (valueIdx === -1) {
@@ -1322,8 +1669,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             backgroundColor: this.props.filterBackgroundColor || undefined,
             borderStyle: this.props.filterBorderColor || this.props.filterBorderThickness ? 'solid' : undefined,
             borderColor: this.props.filterBorderColor || undefined,
-            borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`,
-            cursor: this.state.isUpdatingResults ? 'progress' : 'default'
+            borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`
         };
 
         return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
@@ -1333,6 +1679,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     public componentDidMount() {
+        this._isMounted = true;
 
         // Bind events when filter values are selected
         this.bindFilterEvents();
@@ -1347,16 +1694,30 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
         this.bindFilterValueOperatorUpdated();
 
-        // Initial state
-        this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+        const hasDeepLink = !!UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
 
-        // Process deep links
-        this.getFiltersDeepLink();
+        // Process deep links first so restored selections are not overwritten by an empty initial UI refresh.
+        if (hasDeepLink) {
+            this.getFiltersDeepLink();
+        } else {
+            // Initial state
+            this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+        }
+
+        this.ensurePeopleDisplayNameCacheLoaded().catch(() => {
+            // Ignore People display-name lookup failures and keep raw identities.
+        });
 
         this._handleQueryStringChange();
     }
 
     public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
+
+        if (!this._hasAttemptedPeopleDisplayNameLookup && this.hasPeopleTemplateConfigured(this.props.filtersConfiguration)) {
+            this.ensurePeopleDisplayNameCacheLoaded().catch(() => {
+                // Ignore People display-name lookup failures and keep raw identities.
+            });
+        }
 
         const availableFiltersChanged = !isEqual(prevProps.availableFilters, this.props.availableFilters);
         const currentUiFiltersChanged = !isEqual(prevState.currentUiFilters, this.state.currentUiFilters) && prevState.currentUiFilters.length > 0;
@@ -1491,6 +1852,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     public componentWillUnmount(): void {
+        this._isMounted = false;
+
         if (this._deferredSubmittedUpdateTimer) {
             clearTimeout(this._deferredSubmittedUpdateTimer);
             this._deferredSubmittedUpdateTimer = null;
@@ -1511,9 +1874,22 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             this._busyHideTimer = null;
         }
 
+        if (this._busyCursorAutoHideTimer) {
+            clearTimeout(this._busyCursorAutoHideTimer);
+            this._busyCursorAutoHideTimer = null;
+        }
+
         this.setBusyCursor(false);
 
         this._latestDeferredSubmittedFilters = null;
+    }
+
+    private isStaticPeopleFilter(filterName?: string): boolean {
+        if (!filterName) {
+            return false;
+        }
+
+        return this.props.filtersConfiguration.some(filter => filter.filterName === filterName && filter.selectedTemplate === BuiltinFilterTemplates.StaticPeople);
     }
 
     /**
@@ -1537,6 +1913,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             });
 
             if (values.length > 0) {
+                const isStaticPeopleFilter = selectedFilter.selectedTemplate === BuiltinFilterTemplates.StaticPeople;
 
                 newSelectedFilter.values = values.map(value => {
 
@@ -1550,9 +1927,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     // 'Equals' by default
                     if (!newValue.operator) newValue.operator = FilterComparisonOperator.Eq;
 
-                    // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
-                    // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
-                    newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
+                    if (isStaticPeopleFilter) {
+                        const displayNameValue = `${newValue.name ?? newValue.value ?? ''}`.trim();
+                        newValue.value = displayNameValue;
+                        newValue.name = displayNameValue;
+                        newValue.operator = FilterComparisonOperator.Eq;
+                    } else {
+                        // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
+                        // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
+                        newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
+                    }
 
                     return newValue;
                 });
@@ -1891,6 +2275,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         limitExceededWarningText: undefined,
                         showPeopleTemplateMappingWarning: false,
                         peopleTemplateMappingWarningText: undefined,
+                        warningMessages: undefined,
                         warningMarkerTooltipText: undefined,
                         selectedOnce: true,
                         operator: filter.operator,
@@ -1921,12 +2306,26 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     currentUiFilters: currentUiFilters,
                     submittedFilters: dataFilters
                 }, () => {
+                    // Rebuild available values using restored deep-link selection state.
+                    // This ensures static people selection remains marked after reload.
+                    this.getFiltersToDisplay(this.props.availableFilters, currentUiFilters, this.props.filtersConfiguration);
+
                     // Update the connected data source only after UI state has been restored.
                     // This prevents a stale getFiltersToDisplay() pass from overwriting deep-link selections on refresh.
                     this.props.onUpdateFilters(dataFilters);
                 });
 
             } catch {
+                this._lastProcessedDeepLink = '';
+
+                this.setState(prevState => ({
+                    currentUiFilters: this.resetSelectedFilterValues(prevState.currentUiFilters),
+                    submittedFilters: []
+                }), () => {
+                    this.getFiltersToDisplay(this.props.availableFilters, [], this.props.filtersConfiguration);
+                    this.props.onUpdateFilters([]);
+                });
+
                 Log.verbose(`[SearchFiltersContainer.getFiltersDeepLink]`, `Filters format in the query string is invalid.`);
             }
         }

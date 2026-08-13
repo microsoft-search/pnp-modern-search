@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dieses Feld darf nicht leer bleiben.",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Keine Ergebnisse gefunden",
-                SearchPlaceholder: "Suche einen Wert..."
+                SearchPlaceholder: "Suche einen Wert...",
+                RemoveButtonAriaLabel: "Entfernen"
             },
             CurrentVerticalNotSelectedMessage: "Das derzeit ausgewählte Vertikal passt nicht zu den zu diesem Web Part ({0}) zugeordneten Vertikalen. Es wird im Anzeige Modus als leer angezeigt.",
             True: "Ja",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Inhaltsquellen",
                 ContentSourcesFieldDescriptionLabel: "IDs von Verbindungen, die im Verwaltungsportal von Microsoft Search Connectors definiert sind.",
                 ContentSourcesFieldPlaceholderLabel: "Bspw.: 'MeineAngepassteVerbindungsId'",
+                ExternalMetadataPermissionWarning: "Die Connectormetadaten konnten nicht aus Microsoft Graph geladen werden. Erteilen Sie ExternalConnection.Read.All, um die automatische Ermittlung zu aktivieren. Sie können Werte weiterhin manuell eingeben.",
+                ExternalMetadataLoadWarning: "Die Connectormetadaten konnten nicht aus Microsoft Graph geladen werden. Die erforderliche delegierte Graph-Berechtigung wurde möglicherweise nicht erteilt. Sie können Werte weiterhin manuell im Feld Ausgewählte Felder eingeben.",
                 EnableSuggestionLabel: "Rechtschreibevorschläge aktivieren",
                 EnableModificationLabel: "Rechtschreibemodifikationen aktivieren",
                 QueryTemplateFieldLabel: "Query Vorlage",
@@ -244,6 +247,16 @@ define([], function () {
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
                 StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
                 EnableDownload: "Download aktivieren",
+                EnableDetails: "Details aktivieren",
+                DetailsButtonLabel: "Details",
+                DetailsPanelHeader: "Details",
+                DetailsUnavailableLabel: "Details sind nicht verfügbar",
+                CloseDetailsPanelLabel: "Detailbereich schließen",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} ausgewählte Elemente können bearbeitet werden",
+                SelectedItemsEditLoadingLabel: "Bearbeitbare ausgewählte Elemente und gemeinsame Felder werden geprüft",
+                SelectedItemsEditNoEligibleItemsLabel: "Keines der ausgewählten Elemente kann bearbeitet werden.",
+                SelectedItemsEditNoCommonFieldsLabel: "Für die ausgewählten Elemente wurden keine gemeinsamen bearbeitbaren Felder gefunden.",
+                SelectedItemsEditFieldLabel: "Feld",
                 UseAlternatingBackgroundColor: "Verwenden Sie abwechselnde Hintergrundfarben"
             },
             Cards: {

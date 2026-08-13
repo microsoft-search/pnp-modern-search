@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configureer"
             },
             NoAvailableFilterMessage: "Er zijn geen beschikbare filters.",
-            WebPartDefaultTitle: "Zoekfilters webonderdeel"
+            WebPartDefaultTitle: "Zoekfilters webonderdeel",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "{0} verwijderen",
+                SearchUsersPlaceholder: "Zoek gebruikers",
+                LoadingTenantUsersLabel: "Tenantgebruikers laden...",
+                NoUsersFoundMessage: "Geen gebruikers gevonden."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",
                 FilterLimitReachedWarningToggle: "Waarschuwing tonen wanneer de limiet is bereikt",
                 FilterLimitReachedWarningMessage: "Resultaatlimiet bereikt — niet alle overeenkomende items worden weergegeven. Verfijn uw zoekopdracht om de lijst te beperken.",
+                EditModeRefinerLimitReachedWarningMessage: "In de bewerkingsmodus zijn verfijningen beperkt tot maximaal 100 items.",
                 PeopleTemplateQUserMappingWarning: "Waarschuwing voor personen-sjabloon: waarden lijken geen gebruikersidentiteiten te zijn. Deze eigenschap is waarschijnlijk niet toegewezen aan een Q_USER-crawled property.",
                 FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Keuzelijst",
                     DateIntervalTemplate: "Datum interval",
                     PeopleTemplate: "Persoon sjabloon",
+                    StaticPeopleTemplate: "Statisch persoonssjabloon",
                     TaxonomyPickerTemplate: "Taxonomie picker",
                     HierarchicalFilterTemplate: "Hiërarchisch filter"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Kan het opgegeven template niet inladen. Foutmelding: '{0}'",
                 FiltersTemplateFieldLabel: "Bewerk filters sjabloon",
                 FiltersTemplatePanelHeader: "Bewerk filters sjabloon"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configureer inladen van uitbreidingsbibliotheken bij opstarten",
+                    PanelDescription: "Beheer hier je aangepaste uitbreidingsbibliotheek ID's. Je kan hier een weergavenaam specificeren en aangeven of de bibliotheek geladen moet worden. Alleen aangepaste filterindelingen, filtercontrols, web componenten en Handlebars helpers worden hier geladen."
+                }
             }
         },
         Styling: {

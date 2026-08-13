@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "This field cannot be empty",
             TagPickerStrings: {
                 NoResultsSearchMessage: "No results found",
-                SearchPlaceholder: "Search a value..."
+                SearchPlaceholder: "Search a value...",
+                RemoveButtonAriaLabel: "Remove"
             },
             CurrentVerticalNotSelectedMessage: "The current selected vertical does not match with the ones associated for this Web Part ({0}). It will remains blank in display mode.",
             True: "Yes",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Content sources",
                 ContentSourcesFieldDescriptionLabel: "IDs of connections defined in the Microsoft Search connectors administration portal.",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Could not load connector metadata from Microsoft Graph. Grant ExternalConnection.Read.All to enable automatic discovery. You can still enter values manually.",
+                ExternalMetadataLoadWarning: "Could not load connector metadata from Microsoft Graph. The required delegated Graph permission might not be granted. You can still enter values manually in the Selected Fields box.",
                 EnableSuggestionLabel: "Enable spelling suggestions",
                 EnableModificationLabel: "Enable spelling modifications",
                 QueryTemplateFieldLabel: "Query template",
@@ -244,6 +247,16 @@ define([], function () {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
+                EnableDetails: "Enable details",
+                DetailsButtonLabel: "Details",
+                DetailsPanelHeader: "Details",
+                DetailsUnavailableLabel: "Details unavailable",
+                CloseDetailsPanelLabel: "Close details panel",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} selected items can be edited",
+                SelectedItemsEditLoadingLabel: "Checking editable selected items and shared fields",
+                SelectedItemsEditNoEligibleItemsLabel: "None of the selected items can be edited.",
+                SelectedItemsEditNoCommonFieldsLabel: "No shared editable fields were found across the selected items.",
+                SelectedItemsEditFieldLabel: "Field",
                 UseAlternatingBackgroundColor: "Use Alternating Background Color",
                 ColumnDescriptionFieldLabel: "Column description (tooltip)"
             },

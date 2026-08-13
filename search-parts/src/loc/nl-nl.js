@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dit veld mag niet leeg zijn",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Geen resultaten gevonden",
-                SearchPlaceholder: "Zoek een waarde..."
+                SearchPlaceholder: "Zoek een waarde...",
+                RemoveButtonAriaLabel: "Verwijderen"
             },
             CurrentVerticalNotSelectedMessage: "De huidige geselecteerde branche komt niet overeen met die welke zijn gekoppeld aan dit webonderdeel ({0}). Het blijft leeg in de weergavemodus.",
             True: "Ja",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Inhoudsbronnen",
                 ContentSourcesFieldDescriptionLabel: "IDs van verbingingen gedefinieerd in de Microsoft Search connectors administratie portaal.",
                 ContentSourcesFieldPlaceholderLabel: "bijv: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Kan connectormetadata niet laden vanuit Microsoft Graph. Verleen ExternalConnection.Read.All om automatische detectie in te schakelen. Je kunt waarden nog steeds handmatig invoeren.",
+                ExternalMetadataLoadWarning: "Kan connectormetadata niet laden vanuit Microsoft Graph. De vereiste gedelegeerde Graph-machtiging is mogelijk niet verleend. Je kunt waarden nog steeds handmatig invoeren in het vak Geselecteerde velden.",
                 EnableSuggestionLabel: "Spellingsuggesties inschakelen",
                 EnableModificationLabel: "Spellingaanpassingen inschakelen",
                 QueryTemplateFieldLabel: "Query-modifier",
@@ -243,6 +246,16 @@ define([], function () {
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
                 EnableDownload: "Downloaden inschakelen",
+                EnableDetails: "Details inschakelen",
+                DetailsButtonLabel: "Details",
+                DetailsPanelHeader: "Details",
+                DetailsUnavailableLabel: "Details zijn niet beschikbaar",
+                CloseDetailsPanelLabel: "Detailvenster sluiten",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} geselecteerde items kunnen worden bewerkt",
+                SelectedItemsEditLoadingLabel: "Bewerkbare geselecteerde items en gedeelde velden worden gecontroleerd",
+                SelectedItemsEditNoEligibleItemsLabel: "Geen van de geselecteerde items kan worden bewerkt.",
+                SelectedItemsEditNoCommonFieldsLabel: "Er zijn geen gemeenschappelijke bewerkbare velden gevonden voor de geselecteerde items.",
+                SelectedItemsEditFieldLabel: "Veld",
                 UseAlternatingBackgroundColor: "Gebruik afwisselende achtergrondkleur"
 
             },

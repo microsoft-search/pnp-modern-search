@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurér"
             },
             NoAvailableFilterMessage: "Ingen tilgængelige filtre at vise.",
-            WebPartDefaultTitle: "Søgefiltre-webpart"
+            WebPartDefaultTitle: "Søgefiltre-webpart",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Fjern {0}",
+                SearchUsersPlaceholder: "Søg efter brugere",
+                LoadingTenantUsersLabel: "Indlæser brugere...",
+                NoUsersFoundMessage: "Ingen brugere fundet."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -31,6 +37,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Det maksimale antal værdier er 1000",
                 FilterLimitReachedWarningToggle: "Vis advarsel, når grænsen er nået",
                 FilterLimitReachedWarningMessage: "Resultatgrænsen er nået — ikke alle matchende elementer vises. Forfin din søgning for at indsnævre listen.",
+                EditModeRefinerLimitReachedWarningMessage: "I redigeringstilstand er filtrene begrænset til maksimalt 100 elementer.",
                 PeopleTemplateQUserMappingWarning: "Advarsel for personskabelon: værdierne ligner ikke brugeridentiteter. Egenskaben er sandsynligvis ikke knyttet til en Q_USER-crawlet egenskab.",
                 FilterTemplate: "Skabelon",
                 FilterExpandByDefault: "Udvid som standard",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Combo-boks",
                     DateIntervalTemplate: "Datointerval",
                     PeopleTemplate: "Personskabelon",
+                    StaticPeopleTemplate: "Statisk personskabelon",
                     TaxonomyPickerTemplate: "Taksonomivælger",
                     HierarchicalFilterTemplate: "Hierarkisk filter"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Ude af stand til at vise den specifikke skabelon. Fejloplysninger: '{0}'",
                 FiltersTemplateFieldLabel: "Redigér skabelon til filtre",
                 FiltersTemplatePanelHeader: "Redigér skabelon til filtre"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurér extensibility-biblioteker så de indlæser ved opstart.",
+                    PanelDescription: "Tilføj/Fjern ID på dit extensibility-bibliotek her. Du kan specificere et visningsnavn og beslutte, om biblioteket skal indlæses eller ej ved opstart. Kun brugerdefinerede filterlayouts, filterkontroller, web-komponenter og Handlebars-hjælpere vil blive loadet her."
+                }
             }
         },
         Styling: {

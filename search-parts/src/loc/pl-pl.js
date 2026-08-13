@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "To pole nie może być puste",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Nie znaleziono wyników",
-                SearchPlaceholder: "Wyszukaj wartość..."
+                SearchPlaceholder: "Wyszukaj wartość...",
+                RemoveButtonAriaLabel: "Usuń"
             },
             CurrentVerticalNotSelectedMessage: "Aktualnie wybrana branża nie odpowiada branżom powiązanym z tym składnikiem Web Part ({0}). W trybie wyświetlania pozostanie puste.",
             True: "Tak",
@@ -146,6 +147,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Źródła zawartości",
                 ContentSourcesFieldDescriptionLabel: "Identyfikatory połączeń zdefiniowanych w portalu administracyjnym Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "przykładowo: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Nie można załadować metadanych łącznika z Microsoft Graph. Udziel uprawnienia ExternalConnection.Read.All, aby włączyć automatyczne wykrywanie. Nadal możesz wpisywać wartości ręcznie.",
+                ExternalMetadataLoadWarning: "Nie można załadować metadanych łącznika z Microsoft Graph. Wymagane delegowane uprawnienie Graph mogło nie zostać przyznane. Nadal możesz ręcznie wprowadzać wartości w polu Wybrane pola.",
                 EnableSuggestionLabel: "Włącz sugestie pisowni",
                 EnableModificationLabel: "Włącz modyfikacje pisowni",
                 QueryTemplateFieldLabel: "Modyfikator zapytania",
@@ -245,6 +248,16 @@ define([], function () {
                 EnableStickyHeader: "Włącz lepką nagłówkę",
                 StickyListViewHeight: "Wysokość listy ze szczegółami (px)",
                 EnableDownload: "Włącz pobieranie",
+                EnableDetails: "Włącz szczegóły",
+                DetailsButtonLabel: "Szczegóły",
+                DetailsPanelHeader: "Szczegóły",
+                DetailsUnavailableLabel: "Szczegóły są niedostępne",
+                CloseDetailsPanelLabel: "Zamknij panel szczegółów",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} wybranych elementów można edytować",
+                SelectedItemsEditLoadingLabel: "Sprawdzanie edytowalnych wybranych elementów i wspólnych pól",
+                SelectedItemsEditNoEligibleItemsLabel: "Żadnego z wybranych elementów nie można edytować.",
+                SelectedItemsEditNoCommonFieldsLabel: "Nie znaleziono wspólnych edytowalnych pól dla wybranych elementów.",
+                SelectedItemsEditFieldLabel: "Pole",
                 UseAlternatingBackgroundColor: "Użyj naprzemiennego koloru tła"
             },
             Cards: {

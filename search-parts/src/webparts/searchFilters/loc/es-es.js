@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Configurar"
             },
             NoAvailableFilterMessage: "No hay ningún filtro disponible para mostrar.",
-            WebPartDefaultTitle: "Web Part de filtros de búsqueda"
+            WebPartDefaultTitle: "Web Part de filtros de búsqueda",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Quitar {0}",
+                SearchUsersPlaceholder: "Buscar usuarios",
+                LoadingTenantUsersLabel: "Cargando usuarios del inquilino...",
+                NoUsersFoundMessage: "No se encontraron usuarios."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "El número máximo de valores es 1000",
                 FilterLimitReachedWarningToggle: "Mostrar advertencia cuando se alcance el límite",
                 FilterLimitReachedWarningMessage: "Se alcanzó el límite de resultados — no se muestran todos los elementos coincidentes. Refine su búsqueda para reducir la lista.",
+                EditModeRefinerLimitReachedWarningMessage: "En el modo de edición, los filtros están limitados a un máximo de 100 elementos.",
                 PeopleTemplateQUserMappingWarning: "Advertencia de plantilla de personas: los valores no parecen identidades de usuario. Es probable que esta propiedad no esté asignada a una propiedad rastreada Q_USER.",
                 FilterDisplayName: "Nombre para mostrar",
                 FilterTemplate: "Plantilla",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Caja combo",
                     DateIntervalTemplate: "Intervalo de fechas",
                     PeopleTemplate: "Plantilla de persona",
+                    StaticPeopleTemplate: "Plantilla de persona estática",
                     TaxonomyPickerTemplate: "Selector de taxonomía",
                     HierarchicalFilterTemplate: "Filtro jerárquico"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "No se ha podido resolver la plantilla especificada. Detalles del error: '{0}'",
                 FiltersTemplateFieldLabel: "Editar plantilla de filtros",
                 FiltersTemplatePanelHeader: "Editar plantilla de filtros"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Configurar las bibliotecas de extensibilidad para que se carguen al inicio.",
+                    PanelDescription: "Añada/elimine sus IDs de bibliotecas de extensibilidad personalizadas aquí. Puede especificar un nombre para mostrar y decidir si la biblioteca debe cargarse o no al inicio. Sólo se cargarán aquí los diseños de filtros, los controles de filtro, los componentes web y los elementos auxiliares de Handlebars personalizados."
+                }
             }
         },
         Styling: {

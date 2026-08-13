@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Ce champ ne doit pas être vide.",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Aucun résultat trouvé",
-                SearchPlaceholder: "Rechercher une valeur..."
+                SearchPlaceholder: "Rechercher une valeur...",
+                RemoveButtonAriaLabel: "Supprimer"
             },
             CurrentVerticalNotSelectedMessage: "La verticale actuellement sélectionnée ne correspond pas à celles associées à ce composant WebPart ({0}). Il restera vide en mode d'affichage.",
             True: "Oui",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Sources du contenu",
                 ContentSourcesFieldDescriptionLabel: "Identifiants de connexion définis dans le portail d’administration des connecteurs de recherche Microsoft.",
                 ContentSourcesFieldPlaceholderLabel: "Exemple: « MyCustomConnectorID » ",
+                ExternalMetadataPermissionWarning: "Impossible de charger les métadonnées du connecteur depuis Microsoft Graph. Accordez ExternalConnection.Read.All pour activer la découverte automatique. Vous pouvez toujours saisir les valeurs manuellement.",
+                ExternalMetadataLoadWarning: "Impossible de charger les métadonnées du connecteur depuis Microsoft Graph. L’autorisation Graph déléguée requise n’a peut-être pas été accordée. Vous pouvez toujours saisir les valeurs manuellement dans la zone Champs sélectionnés.",
                 EnableSuggestionLabel: "Activer les suggestions orthographiques",
                 EnableModificationLabel: "Activer les modifications orthographiques",
                 QueryTemplateFieldLabel: "Modèle de requête",
@@ -244,6 +247,16 @@ define([], function () {
                 EnableStickyHeader: "Activer l’en-tête collant",
                 StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
                 EnableDownload: "Activer le téléchargement",
+                EnableDetails: "Activer les détails",
+                DetailsButtonLabel: "Détails",
+                DetailsPanelHeader: "Détails",
+                DetailsUnavailableLabel: "Les détails ne sont pas disponibles",
+                CloseDetailsPanelLabel: "Fermer le panneau des détails",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} éléments sélectionnés peuvent être modifiés",
+                SelectedItemsEditLoadingLabel: "Vérification des éléments sélectionnés modifiables et des champs communs",
+                SelectedItemsEditNoEligibleItemsLabel: "Aucun des éléments sélectionnés ne peut être modifié.",
+                SelectedItemsEditNoCommonFieldsLabel: "Aucun champ modifiable commun n’a été trouvé pour les éléments sélectionnés.",
+                SelectedItemsEditFieldLabel: "Champ",
                 UseAlternatingBackgroundColor: "Utiliser une couleur d'arrière-plan alternée"
             },
             Cards: {

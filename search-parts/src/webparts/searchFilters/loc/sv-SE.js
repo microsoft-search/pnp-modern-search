@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurera"
             },
             NoAvailableFilterMessage: "Inget tillgängligt filter att visa.",
-            WebPartDefaultTitle: "Sökfilters webbdel"
+            WebPartDefaultTitle: "Sökfilters webbdel",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "Ta bort {0}",
+                SearchUsersPlaceholder: "Sök användare",
+                LoadingTenantUsersLabel: "Läser in klientanvändare...",
+                NoUsersFoundMessage: "Inga användare hittades."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Det maximala antalet värden är 1000",
                 FilterLimitReachedWarningToggle: "Visa varning när gränsen uppnås",
                 FilterLimitReachedWarningMessage: "Resultatgränsen har nåtts — alla matchande objekt visas inte. Förfina sökningen för att begränsa listan.",
+                EditModeRefinerLimitReachedWarningMessage: "I redigeringsläge är filtren begränsade till högst 100 objekt.",
                 PeopleTemplateQUserMappingWarning: "Varning för personmall: värdena ser inte ut som användaridentiteter. Den här egenskapen är troligen inte mappad till en Q_USER-genomsökt egenskap.",
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinationsruta",
                     DateIntervalTemplate: "Datumintervall (fasta intervall)",
                     PeopleTemplate: "Person mall",
+                    StaticPeopleTemplate: "Statisk personmall",
                     TaxonomyPickerTemplate: "Taxonomiväljare",
                     HierarchicalFilterTemplate: "Hierarkiskt filter"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Det går inte att visa den angivna mallen. Felinformation: '{0}'",
                 FiltersTemplateFieldLabel: "Redigera filtermall",
                 FiltersTemplatePanelHeader: "Redigera filtermall"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Konfigurera utbyggnadsbibliotek som ska laddas vid start.",
+                    PanelDescription: "Lägg till/ta bort anpassade utbyggnadsbiblioteket-ID:n här. Du kan ange ett visningsnamn och bestämma om biblioteket ska laddas eller ej vid start. Här laddas bara anpassade filterlayouter, filterkontroller, webbkomponenter och styrhjälpmedel."
+                }
             }
         },
         Styling: {

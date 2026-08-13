@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Dette feltet kan ikke være tomt",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Ingen resultater",
-                SearchPlaceholder: "Søk etter en verdi..."
+                SearchPlaceholder: "Søk etter en verdi...",
+                RemoveButtonAriaLabel: "Fjern"
             },
             CurrentVerticalNotSelectedMessage: "Den gjeldende valgte vertikalen samsvarer ikke med de som er knyttet til denne nettdelen ({0}). Det vil forbli tomt i visningsmodus.",
             True: "Ja",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Innholdskilder",
                 ContentSourcesFieldDescriptionLabel: "Viser ID for de tilkoblinger som er definert i admin-portalen for Microsoft Search Connectors",
                 ContentSourcesFieldPlaceholderLabel: "f.eks.: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Kunne ikke laste inn tilkoblingsmetadata fra Microsoft Graph. Gi ExternalConnection.Read.All for å aktivere automatisk oppdagelse. Du kan fortsatt skrive inn verdier manuelt.",
+                ExternalMetadataLoadWarning: "Kunne ikke laste inn tilkoblingsmetadata fra Microsoft Graph. Den nødvendige delegerte Graph-tillatelsen er kanskje ikke gitt. Du kan fortsatt skrive inn verdier manuelt i boksen Valgte felt.",
                 EnableSuggestionLabel: "Aktiver staveforslag",
                 EnableModificationLabel: "Aktiver stavemåtendringer",
                 QueryTemplateFieldLabel: "Forespørselsmal",
@@ -243,6 +246,16 @@ define([], function () {
                 EnableStickyHeader: "Aktiver klebrig overskrift",
                 StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
                 EnableDownload: "Aktiver nedlasting",
+                EnableDetails: "Aktiver detaljer",
+                DetailsButtonLabel: "Detaljer",
+                DetailsPanelHeader: "Detaljer",
+                DetailsUnavailableLabel: "Detaljer er ikke tilgjengelige",
+                CloseDetailsPanelLabel: "Lukk detaljpanelet",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} valgte elementer kan redigeres",
+                SelectedItemsEditLoadingLabel: "Kontrollerer redigerbare valgte elementer og felles felt",
+                SelectedItemsEditNoEligibleItemsLabel: "Ingen av de valgte elementene kan redigeres.",
+                SelectedItemsEditNoCommonFieldsLabel: "Fant ingen felles redigerbare felt på tvers av de valgte elementene.",
+                SelectedItemsEditFieldLabel: "Felt",
                 UseAlternatingBackgroundColor: "Bruk vekslende bakgrunnsfarge"
             },
             Cards: {

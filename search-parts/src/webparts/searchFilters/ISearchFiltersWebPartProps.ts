@@ -1,5 +1,6 @@
 import { IBaseWebPartProps } from "../../models/common/IBaseWebPartProps";
 import { IDataFilterConfiguration, FilterConditionOperator } from "@pnp/modern-search-extensibility";
+import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
 
 export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
     
@@ -58,6 +59,11 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
      * The selected vertical fro the Web Part
      */
     selectedVerticalKeys: string[];
+
+    /**
+     * The extensibility configuration to load
+     */
+    extensibilityLibraryConfiguration: IExtensibilityConfiguration[];
 
     /**
      * Filter panel background color

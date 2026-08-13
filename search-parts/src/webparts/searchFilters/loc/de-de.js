@@ -8,7 +8,13 @@ define([], function () {
                 ConfigureBtnLabel: "Konfigurieren"
             },
             NoAvailableFilterMessage: "Keine Filter zum Anzeigen verfügbar.",
-            WebPartDefaultTitle: "Suchfilter Web Part"
+            WebPartDefaultTitle: "Suchfilter Web Part",
+            StaticPeoplePicker: {
+                RemoveSelectedUserTitle: "{0} entfernen",
+                SearchUsersPlaceholder: "Benutzer suchen",
+                LoadingTenantUsersLabel: "Mandantenbenutzer werden geladen...",
+                NoUsersFoundMessage: "Keine Benutzer gefunden."
+            }
         },
         PropertyPane: {
             ConnectionsPage: {
@@ -30,6 +36,7 @@ define([], function () {
                 FilterMaxBucketsWarning: "Die maximale Anzahl von Werten ist 1000",
                 FilterLimitReachedWarningToggle: "Warnung anzeigen, wenn das Limit erreicht ist",
                 FilterLimitReachedWarningMessage: "Ergebnislimit erreicht — nicht alle passenden Elemente werden angezeigt. Verfeinern Sie Ihre Suche, um die Liste einzugrenzen.",
+                EditModeRefinerLimitReachedWarningMessage: "Im Bearbeitungsmodus sind Verfeinerer auf maximal 100 Elemente begrenzt.",
                 PeopleTemplateQUserMappingWarning: "Warnung für Personenvorlage: Die Werte sehen nicht wie Benutzeridentitäten aus. Diese Eigenschaft ist wahrscheinlich nicht einer Q_USER-Crawleigenschaft zugeordnet.",
                 FilterDisplayName: "Anzeige name",
                 FilterTemplate: "Vorlage",
@@ -54,6 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Combobox",
                     DateIntervalTemplate: "Datums Interval",
                     PeopleTemplate: "Personenvorlage",
+                    StaticPeopleTemplate: "Statische Personenvorlage",
                     TaxonomyPickerTemplate: "Taxonomy Picker",
                     HierarchicalFilterTemplate: "Hierarchischer Filter"
                 },
@@ -73,6 +81,12 @@ define([], function () {
                 ErrorTemplateResolve: "Kann die angegebene Vorlage nicht auflösen. Fehler Details: '{0}'",
                 FiltersTemplateFieldLabel: "Filter Vorlage bearbeiten",
                 FiltersTemplatePanelHeader: "Filter Vorlage bearbeiten"
+            },
+            InformationPage: {
+                Extensibility: {
+                    PanelHeader: "Erweiterungsbibliotheken, die beim Start geladen werden, konfigurieren",
+                    PanelDescription: "Hier können Sie die IDs Ihrer benutzerdefinierten Erweiterungsbibliotheken hinzufügen/entfernen. Sie können einen Anzeigenamen angeben und entscheiden, ob die Bibliothek beim Starten geladen werden soll oder nicht. Nur benutzerdefinierte Filterlayouts, Filtersteuerelemente, Webkomponenten und Handlebars-Helfer werden hier geladen."
+                }
             }
         },
         Styling: {

@@ -176,7 +176,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
     }
 
     private readonly onRenderSelectedItem = (props: { item: ITag; index: number }): JSX.Element => {
-        const itemName = this.getDisplayName(`${props.item.name ?? ''}`);
+        const itemName = this.getDisplayName(`${props.item.name ?? ''}`, `${props.item.key ?? ''}`);
 
         return <li
             className={styles.tagItem}
@@ -212,7 +212,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
     }
 
     private readonly onRenderSuggestionItem = (itemProps: ITag): JSX.Element => {
-        return <span>{this.getDisplayName(itemProps.name)}</span>;
+        return <span>{this.getDisplayName(itemProps.name, `${itemProps.key ?? ''}`)}</span>;
     }
 
     public componentDidUpdate(prevProps: IFilterSearchBoxProps): void {
@@ -257,7 +257,7 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
         return values.map(filterValue => {
             return {
                 key: `${filterValue?.value ?? ''}`,
-                name: this.getDisplayName(filterValue?.name ?? filterValue?.value)
+                name: this.getDisplayName(`${filterValue?.name ?? filterValue?.value ?? ''}`, `${filterValue?.value ?? ''}`)
             };
         });
     }
@@ -271,40 +271,52 @@ export class FilterSearchBox extends React.Component<IFilterSearchBoxProps, IFil
         return (this.props.filter as any)?.selectedTemplate === 'PeopleTemplate';
     }
 
-    private readonly getDisplayName = (rawName: string): string => {
+    private readonly getPreferredPeopleValueLabel = (rawValue: string): string => {
+        return TaxonomyHelper.extractPreferredPeopleDisplayLabel(rawValue);
+    }
+
+    private readonly getDisplayName = (rawName: string, rawValue?: string): string => {
         if (!this.isPeopleTemplate()) {
             return `${rawName ?? ''}`;
         }
 
         const extractReadableLabel = (value: string): string => {
-            const cleanedValue = `${value || ''}`.trim().replace(/^"+|"+$/g, '');
+            const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(value);
             if (!cleanedValue) {
                 return '';
             }
 
-            const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
-            if (claimsLabelMatch?.[1]?.trim()) {
-                return claimsLabelMatch[1].trim();
+            const claimsLabel = TaxonomyHelper.extractClaimsLabel(cleanedValue);
+            if (claimsLabel) {
+                return claimsLabel;
             }
 
-            const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
-            if (personLikeLabelMatch?.[1]?.trim()) {
-                return personLikeLabelMatch[1].trim();
+            if (TaxonomyHelper.isReadablePlainLabel(cleanedValue)) {
+                return cleanedValue;
             }
 
-            const emailMatch = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/.exec(cleanedValue);
-            if (emailMatch?.[1]) {
-                return emailMatch[1];
+            const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
+            if (personLikeLabel) {
+                return personLikeLabel;
             }
 
-            const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
-            const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part) && !/^#?[0-9a-fA-F]{24,}$/.test(part));
-            if (firstReadablePart) {
-                return firstReadablePart;
+            const emailLikeLabel = TaxonomyHelper.extractEmailLikeLabel(cleanedValue);
+            if (emailLikeLabel) {
+                return emailLikeLabel;
+            }
+
+            const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+            if (firstReadablePipeSegment) {
+                return firstReadablePipeSegment;
             }
 
             return '';
         };
+
+        const preferredValueLabel = this.getPreferredPeopleValueLabel(`${rawValue ?? ''}`);
+        if (preferredValueLabel) {
+            return preferredValueLabel;
+        }
 
         const readableRawName = extractReadableLabel(rawName);
         if (readableRawName) {

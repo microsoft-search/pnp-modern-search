@@ -168,40 +168,38 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         }
 
         const extractReadableLabel = (input: string): string => {
-            const cleanedValue = `${input || ''}`.trim().replace(/^"+|"+$/g, '');
+            const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(input);
             if (!cleanedValue) {
                 return '';
             }
 
-            const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#0?[0-9a-f-]{32,36}\|(.+)$/i.exec(cleanedValue);
-            if (taxonomyLabelMatch?.[1]?.trim()) {
-                return taxonomyLabelMatch[1].trim();
+            const taxonomyLabel = TaxonomyHelper.extractTaxonomyLabel(cleanedValue);
+            if (taxonomyLabel) {
+                return taxonomyLabel;
             }
 
-            const genericGuidLabelMatch = /\|#0?[0-9a-f-]{32,36}\|([^|]+)$/i.exec(cleanedValue);
-            if (genericGuidLabelMatch?.[1]?.trim()) {
-                return genericGuidLabelMatch[1].trim();
+            const claimsLabel = TaxonomyHelper.extractClaimsLabel(cleanedValue);
+            if (claimsLabel) {
+                return claimsLabel;
             }
 
-            const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
-            if (claimsLabelMatch?.[1]?.trim()) {
-                return claimsLabelMatch[1].trim();
+            if (TaxonomyHelper.isReadablePlainLabel(cleanedValue)) {
+                return cleanedValue;
             }
 
-            const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
-            if (personLikeLabelMatch?.[1]?.trim()) {
-                return personLikeLabelMatch[1].trim();
+            const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
+            if (personLikeLabel) {
+                return personLikeLabel;
             }
 
-            const emailMatch = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/.exec(cleanedValue);
-            if (emailMatch?.[1]) {
-                return emailMatch[1];
+            const emailLikeLabel = TaxonomyHelper.extractEmailLikeLabel(cleanedValue);
+            if (emailLikeLabel) {
+                return emailLikeLabel;
             }
 
-            const parts = cleanedValue.split('|').map(part => part.trim()).filter(Boolean);
-            const firstReadablePart = parts.find(part => /[A-Za-z]/.test(part) && !/^#?[0-9a-fA-F]{24,}$/.test(part));
-            if (firstReadablePart) {
-                return firstReadablePart;
+            const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
+            if (firstReadablePipeSegment) {
+                return firstReadablePipeSegment;
             }
 
             return '';

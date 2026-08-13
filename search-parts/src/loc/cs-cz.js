@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Toto pole nemůže být prázdné",
             TagPickerStrings: {
                 NoResultsSearchMessage: "Nebyla nalezena žádná shoda",
-                SearchPlaceholder: "Hledat hodnotu..."
+                SearchPlaceholder: "Hledat hodnotu...",
+                RemoveButtonAriaLabel: "Odebrat"
             },
             CurrentVerticalNotSelectedMessage: "Aktuálně vybraná vertikála neodpovídá těm, které jsou přiřazeny k této webové části ({0}). V režimu zobrazení zůstane prázdná.",
             True: "Ano",
@@ -145,6 +146,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Zdroje obsahu",
                 ContentSourcesFieldDescriptionLabel: "ID připojení definovaných v administračním portálu konektorů Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "např.: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "Nepodařilo se načíst metadata konektoru z Microsoft Graph. Udělte oprávnění ExternalConnection.Read.All, aby bylo možné automatické zjišťování. Hodnoty můžete stále zadat ručně.",
+                ExternalMetadataLoadWarning: "Nepodařilo se načíst metadata konektoru z Microsoft Graph. Požadované delegované oprávnění Graph pravděpodobně nebylo uděleno. Hodnoty můžete stále zadat ručně do pole Vybraná pole.",
                 EnableSuggestionLabel: "Povolit návrhy pravopisu",
                 EnableModificationLabel: "Povolit úpravy pravopisu",
                 QueryTemplateFieldLabel: "Šablona dotazu",
@@ -242,6 +245,16 @@ define([], function () {
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
                 EnableDownload: "Povolit stažení",
+                EnableDetails: "Povolit podrobnosti",
+                DetailsButtonLabel: "Podrobnosti",
+                DetailsPanelHeader: "Podrobnosti",
+                DetailsUnavailableLabel: "Podrobnosti nejsou k dispozici",
+                CloseDetailsPanelLabel: "Zavřít panel podrobností",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} vybraných položek lze upravit",
+                SelectedItemsEditLoadingLabel: "Kontrola upravitelných vybraných položek a společných polí",
+                SelectedItemsEditNoEligibleItemsLabel: "Žádnou z vybraných položek nelze upravit.",
+                SelectedItemsEditNoCommonFieldsLabel: "Ve vybraných položkách nebyla nalezena žádná společná upravitelná pole.",
+                SelectedItemsEditFieldLabel: "Pole",
                 UseAlternatingBackgroundColor: "Použijte střídající se barvu pozadí"
             },
             Cards: {

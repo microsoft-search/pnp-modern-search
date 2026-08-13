@@ -29,7 +29,7 @@ For your project to be a valid extensibility library, you must have the followin
 - You library **manifest ID** must be registered in the Web Part where you want to use the extension.
 
 !!! important "SPFx version"
-    The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Otherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893). Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the **Heft-based toolchain**. Your extensibility library must also use the Heft toolchain if targeting this version.
+    The SPFx library project must use the same SPFx version as the main solution (check [compatibility matrix](./extensibility_compatibility_matrix.md)). Otherwise you may face issues at build time. See [GitHub issue #1893](https://github.com/microsoft-search/pnp-modern-search/issues/1893). Starting with PnP Modern Search v4.21.0, the solution uses the **Heft-based toolchain**. Version 4.23.3 and later use SPFx v1.23.0. Your extensibility library must also use the Heft toolchain and matching SPFx version.
 
 !!! note "Extensibility package v2.0.0+"
     Starting with `@pnp/modern-search-extensibility` v2.0.0, the npm package has **zero SPFx runtime dependencies**. SPFx types like `WebPartContext` and `ServiceScope` are typed as `any` in the base classes. **No code changes are required when upgrading** — existing extensions compile as-is since they already import SPFx types directly from `@microsoft/sp-*`. Optionally, you can pass your own SPFx types as a second generic parameter for improved intellisense (e.g., `extends BaseDataSource<IMyProps, WebPartContext>`). See the [custom data source](./custom_data_sources.md) or [custom layout](./custom_layout.md) documentation for examples.
@@ -41,7 +41,7 @@ Each Web Part type in the solution supports several extensions or no extension a
 | Web Part type | Supported extensions |
 | ------------- | -------------------- |
 | **Search Results** | <ul><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials ,etc.).</li><li>Custom event handlers for adaptive cards actions</li><li>Custom Data Sources</li><li>Custom query modifier</li></ul>
-| **Search Filters** |  <ul><li>Custom web components (_not directly but via the 'Search Results' Web Part extensibility library registration_).</li></ul>
+| **Search Filters** |  <ul><li>Custom filter layouts.</li><li>Custom [filter controls](./custom_filter_control.md).</li><li>Custom web components.</li><li>Custom Handlebars [customizations](https://handlebarsjs.com/api-reference/runtime.html) (ex: helpers, partials, etc.).</li></ul>
 | **Search box** | <ul><li>Custom suggestions providers.</li></ul>
 | **Search Verticals** | None.
 
@@ -196,6 +196,7 @@ The extensibility library requires `html-loader` to load Handlebars templates fr
     !["Extensibility interface implementation"](../assets/extensibility/implement_interface.png){: .center}
 6. Implement your extension(s) depending of the type:
     - [Layout](./custom_layout.md)
+    - [Filter control](./custom_filter_control.md)
     - [Web component](./custom_web_component.md)
     - [Suggestions providers](./custom_suggestions_provider.md)
     - [Handlebars customizations](./handlebars_customizations.md)    
@@ -290,6 +291,10 @@ export class MyCustomLibraryComponent implements IExtensibilityLibrary {
   }
 
   public getCustomWebComponents(): IComponentDefinition<any>[] {
+    return [];
+  }
+
+  public getCustomFilterControls(): IFilterControlDefinition[] {
     return [];
   }
 

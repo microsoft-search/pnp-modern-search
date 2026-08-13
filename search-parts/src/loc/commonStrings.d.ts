@@ -94,6 +94,7 @@ declare interface ICommonStrings {
       TagPickerStrings: {
         NoResultsSearchMessage: string;
         SearchPlaceholder: string;
+        RemoveButtonAriaLabel: string;
       }
       CurrentVerticalNotSelectedMessage: string;
     },
@@ -143,6 +144,8 @@ declare interface ICommonStrings {
         ContentSourcesFieldLabel: string;
         ContentSourcesFieldDescriptionLabel: string;
         ContentSourcesFieldPlaceholderLabel: string;
+        ExternalMetadataPermissionWarning: string;
+        ExternalMetadataLoadWarning: string;
         EnableTopResultsLabel: string;
         EnableSuggestionLabel: string;
         EnableModificationLabel: string;
@@ -243,6 +246,16 @@ declare interface ICommonStrings {
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
         EnableDownload: string;
+        EnableDetails: string;
+        DetailsButtonLabel: string;
+        DetailsPanelHeader: string;
+        DetailsUnavailableLabel: string;
+        CloseDetailsPanelLabel: string;
+        SelectedItemsEditEligibleItemsCountLabel: string;
+        SelectedItemsEditLoadingLabel: string;
+        SelectedItemsEditNoEligibleItemsLabel: string;
+        SelectedItemsEditNoCommonFieldsLabel: string;
+        SelectedItemsEditFieldLabel: string;
         UseAlternatingBackgroundColor:string;
         ColumnDescriptionFieldLabel: string;
       };

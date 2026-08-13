@@ -4,6 +4,8 @@ import * as ReactDOM from 'react-dom';
 import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Text, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
+import { ThemeVariantHelper } from '../../helpers/ThemeVariantHelper';
+import { BusyCursorHelper } from '../../helpers/BusyCursorHelper';
 
 export interface IFilterCheckBoxProps {
 
@@ -77,29 +79,6 @@ export interface IFilterCheckBoxState {
 export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProps, IFilterCheckBoxState> {
 
     private readonly _rootRef: React.RefObject<HTMLDivElement> = React.createRef();
-    private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
-
-    private _setImmediateProgressCursor(): void {
-        if (!globalThis.document) {
-            return;
-        }
-
-        if (globalThis.document.documentElement) {
-            globalThis.document.documentElement.style.setProperty('cursor', 'progress', 'important');
-        }
-
-        if (globalThis.document.body) {
-            globalThis.document.body.style.setProperty('cursor', 'progress', 'important');
-        }
-
-        const styleId = FilterCheckBoxComponent.GLOBAL_BUSY_CURSOR_STYLE_ID;
-        if (!globalThis.document.getElementById(styleId)) {
-            const styleElement = globalThis.document.createElement('style');
-            styleElement.id = styleId;
-            styleElement.textContent = '* { cursor: progress !important; }';
-            globalThis.document.head.appendChild(styleElement);
-        }
-    }
 
     private _getTextColor(): string {
         if (this.props.themeVariant?.isInverted) {
@@ -150,65 +129,6 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         }
     }
 
-    private _extractReadableLabel(value: string): string {
-        const cleanedValue = `${value || ''}`.trim().replace(/^"+|"+$/g, '');
-        if (!cleanedValue) {
-            return '';
-        }
-
-        const taxonomyLabelMatch = /(?:L0|GP0|GPP)\|#0?[0-9a-f-]{32,36}\|(.+)$/i.exec(cleanedValue);
-        if (taxonomyLabelMatch?.[1]?.trim()) {
-            return taxonomyLabelMatch[1].trim();
-        }
-
-        const genericGuidLabelMatch = /\|#0?[0-9a-f-]{32,36}\|([^|]+)$/i.exec(cleanedValue);
-        if (genericGuidLabelMatch?.[1]?.trim()) {
-            return genericGuidLabelMatch[1].trim();
-        }
-
-        const claimsLabelMatch = /^i:0#.*\|([^|]+)$/i.exec(cleanedValue);
-        if (claimsLabelMatch?.[1]?.trim()) {
-            return claimsLabelMatch[1].trim();
-        }
-
-        const personLikeLabelMatch = /([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)+)/.exec(cleanedValue);
-        if (personLikeLabelMatch?.[1]?.trim()) {
-            return personLikeLabelMatch[1].trim();
-        }
-
-        const segments = cleanedValue.split('|').map(segment => segment.trim()).filter(Boolean);
-        if (segments.length > 0) {
-            for (const segment of segments) {
-                const isGuidLike = /^#?[-0-9a-fA-F]{32,36}$/.test(segment);
-                const isLongHexLike = segment.length > 16 && /^[0-9a-fA-F]+$/.test(segment);
-                if (!isGuidLike && !isLongHexLike) {
-                    return segment;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    private _resolveDisplayLabel(rawValue: string): string {
-        const readableRawLabel = this._extractReadableLabel(rawValue);
-        if (readableRawLabel) {
-            return readableRawLabel;
-        }
-
-        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
-        if (decodedValue) {
-            const readableDecodedLabel = this._extractReadableLabel(decodedValue);
-            if (readableDecodedLabel) {
-                return readableDecodedLabel;
-            }
-
-            return decodedValue;
-        }
-
-        return rawValue;
-    }
-
     public render() {
 
         let filterValue: IDataFilterValueInfo = {
@@ -222,7 +142,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
         let renderInput: JSX.Element = null;
         const textColor = this._getTextColor();
         const rawLabelValue = `${filterValue.name ?? filterValue.value ?? ''}`;
-        const labelValue = this._resolveDisplayLabel(rawLabelValue);
+        const labelValue = TaxonomyHelper.resolveDisplayLabel(rawLabelValue);
 
 
         if (this.props.isMulti) {
@@ -246,7 +166,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 
 
                 onChange={(ev, checked: boolean) => {
-                    this._setImmediateProgressCursor();
+                    BusyCursorHelper.setImmediateProgressCursor();
                     filterValue.selected = checked;
                     filterValue.name = labelValue;
                     this.props.onChecked(this.props.filterName, filterValue);
@@ -285,7 +205,7 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
                     }
                 ]}
                 onChange={(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
-                    this._setImmediateProgressCursor();
+                    BusyCursorHelper.setImmediateProgressCursor();
                     filterValue.selected = (ev.currentTarget as HTMLInputElement).checked;
                     filterValue.value = safeFilterValue;
                     filterValue.name = labelValue;
@@ -326,6 +246,15 @@ export class FilterCheckBoxWebComponent extends BaseWebComponent {
         />;
 
         ReactDOM.render(checkBox, this);
+    }
+
+    /**
+     * Serializing the theme on every single value is what made large refiners unusable, so
+     * templates can set it once on an enclosing element (ex: `pnp-collapsible` or the values
+     * list) and let every value resolve it from there.
+     */
+    protected getThemeVariant(): IReadonlyTheme {
+        return ThemeVariantHelper.resolveFromAncestors(this);
     }
 
     protected onDispose(): void {

@@ -94,7 +94,8 @@ define([], function () {
             EmptyFieldErrorMessage: "Este campo no puede estar vacío",
             TagPickerStrings: {
                 NoResultsSearchMessage: "No se han encontrado resultados",
-                SearchPlaceholder: "Buscar un valor..."
+                SearchPlaceholder: "Buscar un valor...",
+                RemoveButtonAriaLabel: "Quitar"
             },
             CurrentVerticalNotSelectedMessage: "La vertical seleccionada actualmente no coincide con las asociadas a este Web Part ({0}). Permanecerá en blanco en el modo de visualización.",
             True: "Si",
@@ -146,6 +147,8 @@ define([], function () {
                 ContentSourcesFieldLabel: "Fuentes de contenido",
                 ContentSourcesFieldDescriptionLabel: "IDs de conexiones definidas en el portal de administración de conectores de Microsoft Search.",
                 ContentSourcesFieldPlaceholderLabel: "ex: 'MyCustomConnectorId'",
+                ExternalMetadataPermissionWarning: "No se pudieron cargar los metadatos del conector desde Microsoft Graph. Conceda ExternalConnection.Read.All para habilitar la detección automática. Aun puede escribir los valores manualmente.",
+                ExternalMetadataLoadWarning: "No se pudieron cargar los metadatos del conector desde Microsoft Graph. Es posible que no se haya concedido el permiso delegado de Graph requerido. Aun puede escribir los valores manualmente en el cuadro Campos seleccionados.",
                 EnableSuggestionLabel: "Activar las sugerencias ortográficas",
                 EnableModificationLabel: "Habilitar las modificaciones ortográficas",
                 QueryTemplateFieldLabel: "Plantilla de consulta",
@@ -245,6 +248,16 @@ define([], function () {
                 EnableStickyHeader: "Activar el encabezado fijo",
                 StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)",
                 EnableDownload: "Activar la descarga de archivos",
+                EnableDetails: "Habilitar detalles",
+                DetailsButtonLabel: "Detalles",
+                DetailsPanelHeader: "Detalles",
+                DetailsUnavailableLabel: "Los detalles no están disponibles",
+                CloseDetailsPanelLabel: "Cerrar panel de detalles",
+                SelectedItemsEditEligibleItemsCountLabel: "{0} / {1} elementos seleccionados se pueden editar",
+                SelectedItemsEditLoadingLabel: "Comprobando elementos seleccionados editables y campos compartidos",
+                SelectedItemsEditNoEligibleItemsLabel: "Ninguno de los elementos seleccionados puede editarse.",
+                SelectedItemsEditNoCommonFieldsLabel: "No se encontraron campos editables comunes entre los elementos seleccionados.",
+                SelectedItemsEditFieldLabel: "Campo",
                 UseAlternatingBackgroundColor: "Utilice colores de fondo alternos"
             },
             Cards: {
