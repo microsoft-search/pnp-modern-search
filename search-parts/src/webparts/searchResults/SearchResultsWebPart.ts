@@ -1184,6 +1184,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     layoutProperties: this.properties.layoutProperties,
                     resultTypes: this.properties.resultTypes,
                     templateService: this.templateService,
+                    inspectExternalTemplates: this.displayMode !== DisplayMode.Edit,
                     builtinDataSourceKeys: AvailableDataSources.BuiltinDataSources.map(d => d.key),
                     builtinLayoutKeys: AvailableLayouts.BuiltinLayouts.map(l => l.key),
                     builtinComponentNames: this.availableWebComponentDefinitions.map(c => c.componentName)
@@ -2070,7 +2071,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
             if (this.properties.externalTemplateUrl) {
                 let fileFormat: FileFormat = this.properties.layoutRenderType === LayoutRenderType.AdaptiveCards ? FileFormat.Json : FileFormat.Text;
-                this.templateContentToDisplay = await this.templateService.getFileContent(this.properties.externalTemplateUrl, fileFormat);
+                this.templateContentToDisplay = await this.templateService.getFileContent(
+                    this.properties.externalTemplateUrl,
+                    fileFormat,
+                    this.displayMode === DisplayMode.Edit
+                );
             } else {
                 this.templateContentToDisplay = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : selectedLayoutTemplateContent;
             }
@@ -2084,7 +2089,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Register result types inside the template      
         if (this.properties.layoutRenderType === LayoutRenderType.Handlebars && this.templateService) {
-            await this.templateService.registerResultTypes(this.properties.resultTypes);
+            await this.templateService.registerResultTypes(
+                this.properties.resultTypes,
+                this.displayMode === DisplayMode.Edit
+            );
 
             // extract all used slot names from result types
             this.resultTypesSlotNames = [];

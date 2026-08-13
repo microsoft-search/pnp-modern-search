@@ -6,7 +6,7 @@ import {
     ServiceKey,
     ServiceScope,
 } from "@microsoft/sp-core-library";
-import { SPHttpClient, SPHttpClientResponse } from "@microsoft/sp-http";
+import { ISPHttpClientOptions, SPHttpClient, SPHttpClientResponse } from "@microsoft/sp-http";
 import * as Handlebars from "handlebars";
 import {
     trimEnd,
@@ -47,9 +47,16 @@ import { getHandlebarsHelpers } from "../../helpers/HandlebarsHelpers";
 import { ServiceScopeHelper } from "../../helpers/ServiceScopeHelper";
 import { DomPurifyHelper } from "../../helpers/DomPurifyHelper";
 import { IAdaptiveCardAction } from "@pnp/modern-search-extensibility";
+import { ExpiringPromiseCache } from "./ExpiringPromiseCache";
+import { ExpiringSessionStorageCache } from "./ExpiringSessionStorageCache";
 
 const TemplateService_ServiceKey = "PnPModernSearchTemplateService";
 const TemplateService_LogSource = "PnPModernSearch:TemplateService";
+const ExternalTemplateCacheKey = "PnPModernSearch:ExternalTemplateCache:v2";
+const ExternalTemplateSessionStorageKey = "PnPModernSearch:ExternalTemplate:v2";
+const ExternalTemplateMemoryCacheTtlMs = 60 * 1000;
+const ExternalTemplateSessionCacheTtlMs = 60 * 60 * 1000;
+const ExternalTemplateCacheMaxEntries = 100;
 
 /**
  * The CSS identifer to load the template markup from a layout html file
@@ -72,6 +79,10 @@ export class TemplateService implements ITemplateService {
     private _adaptiveCardsTemplating;
     private _serializationContext;
     private _extendedHelpersPromise: Promise<void> | null = null;
+    private readonly externalTemplateSessionCache = new ExpiringSessionStorageCache(
+        ExternalTemplateSessionStorageKey,
+        ExternalTemplateSessionCacheTtlMs
+    );
 
     /**
      * The dayjs library reference. Initialized synchronously to the imported
@@ -653,7 +664,57 @@ export class TemplateService implements ITemplateService {
      */
     public async getFileContent(
         fileUrl: string,
-        fileFormat: FileFormat
+        fileFormat: FileFormat,
+        bypassCache: boolean = false
+    ): Promise<string> {
+        const normalizedFileUrl = fileUrl?.trim();
+        if (!normalizedFileUrl) {
+            throw new TypeError("fileUrl");
+        }
+
+        const userId = this.pageContext?.legacyPageContext?.userId ?? "anonymous";
+        const cacheKey = `${userId}:${fileFormat}:${normalizedFileUrl}`;
+
+        if (bypassCache) {
+            const content = await this.loadFileContent(normalizedFileUrl, fileFormat, true);
+            this.getExternalTemplateCache().delete(cacheKey);
+            this.externalTemplateSessionCache.set(cacheKey, content);
+            return content;
+        }
+
+        return this.getExternalTemplateCache().get(
+            cacheKey,
+            async () => {
+                const sessionContent = this.externalTemplateSessionCache.get(cacheKey);
+                if (sessionContent !== undefined) {
+                    return sessionContent;
+                }
+
+                const content = await this.loadFileContent(normalizedFileUrl, fileFormat);
+                this.externalTemplateSessionCache.set(cacheKey, content);
+                return content;
+            }
+        );
+    }
+
+    private getExternalTemplateCache(): ExpiringPromiseCache<string> {
+        let cache = GlobalSettings.getValue<ExpiringPromiseCache<string>>(ExternalTemplateCacheKey);
+
+        if (!cache) {
+            cache = new ExpiringPromiseCache<string>(
+                ExternalTemplateMemoryCacheTtlMs,
+                ExternalTemplateCacheMaxEntries
+            );
+            GlobalSettings.setValue(ExternalTemplateCacheKey, cache);
+        }
+
+        return cache;
+    }
+
+    private async loadFileContent(
+        fileUrl: string,
+        fileFormat: FileFormat,
+        bypassBrowserCache: boolean = false
     ): Promise<string> {
         let headers: HeadersInit = {
             "X-ClientService-ClientTag": Constants.X_CLIENTSERVICE_CLIENTTAG,
@@ -665,12 +726,15 @@ export class TemplateService implements ITemplateService {
             headers["Accept"] = "application/json";
         }
 
+        const requestOptions: ISPHttpClientOptions = { headers };
+        if (bypassBrowserCache) {
+            requestOptions.cache = "no-store";
+        }
+
         const response: SPHttpClientResponse = await this.spHttpClient.get(
             fileUrl,
             SPHttpClient.configurations.v1,
-            {
-                headers,
-            }
+            requestOptions
         );
 
         if (response.ok) {
@@ -957,13 +1021,14 @@ export class TemplateService implements ITemplateService {
      * @param resultTypes the configured result types from the property pane
      */
     public async registerResultTypes(
-        resultTypes: IDataResultType[]
+        resultTypes: IDataResultType[],
+        bypassCache: boolean = false
     ): Promise<void> {
         await this._ensureExtendedHelpers();
         this.Handlebars.unregisterPartial("resultTypes");
 
         if (resultTypes.length > 0) {
-            let content = await this._buildCondition(resultTypes, resultTypes[0], 0);
+            let content = await this._buildCondition(resultTypes, resultTypes[0], 0, bypassCache);
             let template = this.Handlebars.compile(content);
 
             this.Handlebars.registerPartial("resultTypes", template);
@@ -1135,7 +1200,8 @@ export class TemplateService implements ITemplateService {
     private async _buildCondition(
         resultTypes: IDataResultType[],
         currentResultType: IDataResultType,
-        currentIdx: number
+        currentIdx: number,
+        bypassCache: boolean
     ): Promise<string> {
         let conditionBlockContent;
         let templateContent = currentResultType.inlineTemplateContent;
@@ -1143,7 +1209,8 @@ export class TemplateService implements ITemplateService {
         if (currentResultType.externalTemplateUrl) {
             templateContent = await this.getFileContent(
                 currentResultType.externalTemplateUrl,
-                FileFormat.Text
+                FileFormat.Text,
+                bypassCache
             );
         }
 
@@ -1184,7 +1251,8 @@ export class TemplateService implements ITemplateService {
                 conditionBlockContent = await this._buildCondition(
                     resultTypes,
                     resultTypes[currentIdx + 1],
-                    currentIdx + 1
+                    currentIdx + 1,
+                    bypassCache
                 );
             }
 

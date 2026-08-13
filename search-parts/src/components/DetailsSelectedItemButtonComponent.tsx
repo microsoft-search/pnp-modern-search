@@ -192,7 +192,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   private _syncOpenPanelWithSelection(): void {
     if (this.state.activePanelMode === "editSelectedItems") {
       if (this._selectedItems.length > 1) {
-        void this._prepareSelectedItemsEditPanel();
+        this._prepareSelectedItemsEditPanel().catch(() => undefined);
       } else {
         this._closeDetailsPanel();
       }
@@ -201,7 +201,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     }
 
     if (this.props.allowMulti === true && this._selectedItems.length > 1) {
-      void this._prepareSelectedItemsEditPanel(true);
+      this._prepareSelectedItemsEditPanel(true).catch(() => undefined);
       return;
     }
 
@@ -238,7 +238,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     }
 
     if (this.props.allowMulti === true && this._selectedItems.length > 1) {
-      void this._prepareSelectedItemsEditPanel(true);
+      this._prepareSelectedItemsEditPanel(true).catch(() => undefined);
       return;
     }
 
@@ -492,7 +492,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     event.stopPropagation();
 
     if (this.props.allowMulti === true && this._selectedItems.length > 1) {
-      void this._prepareSelectedItemsEditPanel(true);
+      this._prepareSelectedItemsEditPanel(true).catch(() => undefined);
       return;
     }
 
