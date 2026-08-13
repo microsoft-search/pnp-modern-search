@@ -733,6 +733,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../../extensibility/custom_filter_control/" class="md-nav__link">
+        Custom filter control
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../extensibility/custom_web_component/" class="md-nav__link">
         Custom web component
       </a>
@@ -903,7 +915,8 @@ In this scenario, we will use the AzureSQLConnector as an example.</p>
 <p>In most cases we are using SharePoint as the source of our data. But in this case we are using a Graph Connector and wherefore we need to use the Microsoft Search data source.</p>
 <p><img alt="Setting up the Search Results web part" src="../assets/Create-a-search-page-showing-graph-connector-data/Results_wp_setup1.png" title="Setting up the Search Results web part" /></p>
 <p>Set the Entity type to External Items and set the Content sources to the name of the Graph Connector you are using. In this case we are using the AzureSqlConnector3.</p>
-<p>Unfortunately we are unable to read the Properties from the Graph Connector, so you will have to type ( or copy and paste) from the schema.</p>
+<p>If you want the solution to read Graph connector definitions and schema metadata, approve the Microsoft Graph permission <em>ExternalConnection.Read.All</em> for the package in addition to <em>ExternalItem.Read.All</em>.</p>
+<p>With <em>ExternalConnection.Read.All</em> approved, the Content sources and schema properties can be loaded automatically from Microsoft Graph in the property pane. Without this permission, you can still type or paste values manually.</p>
 <p><img alt="SelectedProperties" src="../assets/Create-a-search-page-showing-graph-connector-data/SelectedProperties.png" title="Selected Properties" /></p>
 <p>From here, it is just a matter of setting up the web part as you would do with any other data source. You can set up the layout, sorting and refiners as you like.</p>
 <p><img alt="" src="../assets/Create-a-search-page-showing-graph-connector-data/columnsAndRefiners.png" title="Columns and Refiners" /></p>

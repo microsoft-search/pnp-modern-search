@@ -824,6 +824,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../custom_filter_control/" class="md-nav__link">
+        Custom filter control
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../custom_web_component/" class="md-nav__link">
         Custom web component
       </a>
@@ -1008,7 +1020,7 @@
                 <h1 id="create-a-custom-layout">Create a custom layout<a class="headerlink" href="#create-a-custom-layout" title="Permanent link">&para;</a></h1>
 <p><img alt="&quot;Custom layout&quot;" class="center" src="../../assets/extensibility/layout/custom_layout.png" /></p>
 <blockquote>
-<p>Custom layouts are only supported for the 'Search Results' Web Part. You can't add custom layout for the 'Search Filters' Web Part.</p>
+<p>Custom layouts are supported for both the 'Search Results' and the 'Search Filters' Web Parts. Use the <code>type</code> property of the layout definition (<code>LayoutType.Results</code> or <code>LayoutType.Filter</code>) to decide where your layout shows up. The 'Search Filters' Web Part only renders Handlebars layouts (adaptive cards are not supported for filters).</p>
 </blockquote>
 <h2 id="layout-creation-process">Layout creation process<a class="headerlink" href="#layout-creation-process" title="Permanent link">&para;</a></h2>
 <p>Same as data source, the layout creation process comes in three distinct steps:</p>
@@ -1128,7 +1140,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td>The layout type (<code>LayoutType.Results</code> is for the 'Data Visualizer' Web Part, <code>LayoutType.Filter</code> for the 'Data Filter' Web Part). Only <strong><code>LayoutType.Results</code></strong> is supported for now. You can't add custom layout for the 'Data Filter' Web Part.</td>
+<td>The layout type (<code>LayoutType.Results</code> is for the 'Search Results' Web Part, <code>LayoutType.Filter</code> for the 'Search Filters' Web Part).</td>
 </tr>
 <tr>
 <td><code>renderType</code></td>
@@ -1195,13 +1207,13 @@
       
       
         
-        <a href="../custom_web_component/" class="md-footer__link md-footer__link--next" aria-label="Next: Custom web component" rel="next">
+        <a href="../custom_filter_control/" class="md-footer__link md-footer__link--next" aria-label="Next: Custom filter control" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Custom web component
+              Custom filter control
             </div>
           </div>
           <div class="md-footer__button md-icon">

@@ -957,15 +957,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#formatspfilesize" class="md-nav__link">
-    formatSPFileSize
+  <a href="#deep-link-example-for-search-filters" class="md-nav__link">
+    Deep Link Example For Search Filters
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#deep-link-example-for-search-filters" class="md-nav__link">
-    Deep Link Example For Search Filters
+  <a href="#formatspfilesize" class="md-nav__link">
+    formatSPFileSize
   </a>
   
 </li>
@@ -1132,6 +1132,18 @@
     <li class="md-nav__item">
       <a href="../custom_layout/" class="md-nav__link">
         Custom layout
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom_filter_control/" class="md-nav__link">
+        Custom filter control
       </a>
     </li>
   
@@ -1464,15 +1476,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#formatspfilesize" class="md-nav__link">
-    formatSPFileSize
+  <a href="#deep-link-example-for-search-filters" class="md-nav__link">
+    Deep Link Example For Search Filters
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#deep-link-example-for-search-filters" class="md-nav__link">
-    Deep Link Example For Search Filters
+  <a href="#formatspfilesize" class="md-nav__link">
+    formatSPFileSize
   </a>
   
 </li>
@@ -1865,6 +1877,18 @@
 <p><strong>Syntax</strong> <code>{{hexToString &lt;value&gt;}}</code></p>
 <p><strong>Description</strong> Convert a UTF-8 hexadecimal string back to text. The helper also accepts the filter value format used in deep links, including optional surrounding quotes and the <code>ǂǂ</code> prefix.</p>
 <p><strong>Example</strong> <code>{{hexToString '"ǂǂ4b656f6768e280997320437269737073"'}}</code> returns <code>Keogh’s Crisps</code>.</p>
+<h4 id="deep-link-example-for-search-filters">Deep Link Example For Search Filters<a class="headerlink" href="#deep-link-example-for-search-filters" title="Permanent link">&para;</a></h4>
+<p>If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.</p>
+<p>The deep-link query string parameter is <code>f_&lt;Search Filters instance ID&gt;</code>. The filter <code>value</code> must contain the UTF-8 hex form of the label, prefixed with <code>ǂǂ</code> and wrapped in escaped quotes.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c">{{!-- Example for a Search Filters web part whose instance ID is known --}}</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c">{{!-- Replace the GUID below with the instance ID of your Search Filters web part --}}</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="x">&lt;a</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="x">    href=&quot;/sites/contoso/SitePages/Search.aspx?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22</span><span class="cp">{{</span><span class="nv">slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title</span><span class="cp">}}</span><span class="x">%22%2C%22value%22%3A%22%5C%22%C7%82%C7%82</span><span class="cp">{{</span><span class="nv">stringToHex</span> <span class="nv">(slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title)</span><span class="cp">}}</span><span class="x">%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="x">&gt;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="x">    </span><span class="cp">{{</span><span class="nv">slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title</span><span class="cp">}}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="x">&lt;/a&gt;</span>
+</code></pre></div>
+<p>In practice, the safest approach is still to select a filter once in the UI, copy the generated URL, and then replace only the <code>name</code> and hex-encoded <code>value</code> parts in your template.</p>
 <h4 id="formatspfilesize">formatSPFileSize<a class="headerlink" href="#formatspfilesize" title="Permanent link">&para;</a></h4>
 <p><strong>Syntax</strong> <code>{{formatSPFileSize &lt;value&gt;}}</code></p>
 <p><strong>Description</strong> Formats a file size in bytes into a SharePoint-style value — <code>bytes</code>,
@@ -1937,18 +1961,6 @@ the helper handles it should that limit rise.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="deep-link-example-for-search-filters">Deep Link Example For Search Filters<a class="headerlink" href="#deep-link-example-for-search-filters" title="Permanent link">&para;</a></h4>
-<p>If you want a value rendered in a custom results template to open a page with a filter already selected, you can build the filter payload yourself.</p>
-<p>The deep-link query string parameter is <code>f_&lt;Search Filters instance ID&gt;</code>. The filter <code>value</code> must contain the UTF-8 hex form of the label, prefixed with <code>ǂǂ</code> and wrapped in escaped quotes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c">{{!-- Example for a Search Filters web part whose instance ID is known --}}</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c">{{!-- Replace the GUID below with the instance ID of your Search Filters web part --}}</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="x">&lt;a</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="x">    href=&quot;/sites/contoso/SitePages/Search.aspx?f_4b43307b-8891-42d5-9a62-7bfb83c11de9=%5B%7B%22filterName%22%3A%22RefinableString109%22%2C%22values%22%3A%5B%7B%22name%22%3A%22</span><span class="cp">{{</span><span class="nv">slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title</span><span class="cp">}}</span><span class="x">%22%2C%22value%22%3A%22%5C%22%C7%82%C7%82</span><span class="cp">{{</span><span class="nv">stringToHex</span> <span class="nv">(slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title)</span><span class="cp">}}</span><span class="x">%5C%22%22%2C%22operator%22%3A0%2C%22disabled%22%3Afalse%7D%5D%2C%22operator%22%3A%22or%22%7D%5D&quot;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="x">&gt;</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="x">    </span><span class="cp">{{</span><span class="nv">slot</span> <span class="nv">item</span> <span class="nv">@root.slots.Title</span><span class="cp">}}</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="x">&lt;/a&gt;</span>
-</code></pre></div>
-<p>In practice, the safest approach is still to select a filter once in the UI, copy the generated URL, and then replace only the <code>name</code> and hex-encoded <code>value</code> parts in your template.</p>
 <h4 id="times">#times<a class="headerlink" href="#times" title="Permanent link">&para;</a></h4>
 <p><strong>Syntax</strong> <code>{{#times &lt;number&gt;}}</code></p>
 <p><strong>Description</strong> Iterate the block <code>&lt;number&gt;</code> times.</p>

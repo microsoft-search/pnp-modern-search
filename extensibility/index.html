@@ -1049,6 +1049,18 @@
   
   
     <li class="md-nav__item">
+      <a href="custom_filter_control/" class="md-nav__link">
+        Custom filter control
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="custom_web_component/" class="md-nav__link">
         Custom web component
       </a>
@@ -1326,7 +1338,7 @@
 </ul>
 <div class="admonition important">
 <p class="admonition-title">SPFx version</p>
-<p>The SPFx library project must use the same SPFx version as the main solution (check <a href="extensibility_compatibility_matrix/">compatibility matrix</a>). Otherwise you may face issues at build time. See <a href="https://github.com/microsoft-search/pnp-modern-search/issues/1893">GitHub issue #1893</a>. Starting with PnP Modern Search v4.21.0, the solution uses SPFx v1.22.2 with the <strong>Heft-based toolchain</strong>. Your extensibility library must also use the Heft toolchain if targeting this version.</p>
+<p>The SPFx library project must use the same SPFx version as the main solution (check <a href="extensibility_compatibility_matrix/">compatibility matrix</a>). Otherwise you may face issues at build time. See <a href="https://github.com/microsoft-search/pnp-modern-search/issues/1893">GitHub issue #1893</a>. Starting with PnP Modern Search v4.21.0, the solution uses the <strong>Heft-based toolchain</strong>. Version 4.23.3 and later use SPFx v1.23.0. Your extensibility library must also use the Heft toolchain and matching SPFx version.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Extensibility package v2.0.0+</p>
@@ -1348,7 +1360,7 @@
 </tr>
 <tr>
 <td><strong>Search Filters</strong></td>
-<td><ul><li>Custom web components (<em>not directly but via the 'Search Results' Web Part extensibility library registration</em>).</li></ul></td>
+<td><ul><li>Custom filter layouts.</li><li>Custom <a href="custom_filter_control/">filter controls</a>.</li><li>Custom web components.</li><li>Custom Handlebars <a href="https://handlebarsjs.com/api-reference/runtime.html">customizations</a> (ex: helpers, partials, etc.).</li></ul></td>
 </tr>
 <tr>
 <td><strong>Search box</strong></td>
@@ -1537,6 +1549,7 @@
 <p>Implement your extension(s) depending of the type:</p>
 <ul>
 <li><a href="custom_layout/">Layout</a></li>
+<li><a href="custom_filter_control/">Filter control</a></li>
 <li><a href="custom_web_component/">Web component</a></li>
 <li><a href="custom_suggestions_provider/">Suggestions providers</a></li>
 <li><a href="handlebars_customizations/">Handlebars customizations</a>    </li>
@@ -1627,59 +1640,63 @@ You simply need to declare a public static property with name <code>serviceKey</
 <a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
 <a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="w">  </span><span class="p">}</span>
 <a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>
-<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomFilterControls</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IFilterControlDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
 <a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="w">  </span><span class="p">}</span>
 <a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a>
-<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">registerHandlebarsCustomizations</span><span class="o">?</span><span class="p">(</span><span class="nx">handlebarsNamespace</span><span class="o">:</span><span class="w"> </span><span class="kt">typeof</span><span class="w"> </span><span class="nx">Handlebars</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a>
-<a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomQueryModifiers</span><span class="o">?</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="p">[]{</span>
-<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a>
+<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a>
+<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">registerHandlebarsCustomizations</span><span class="o">?</span><span class="p">(</span><span class="nx">handlebarsNamespace</span><span class="o">:</span><span class="w"> </span><span class="kt">typeof</span><span class="w"> </span><span class="nx">Handlebars</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a><span class="w">  </span><span class="p">}</span>
 <a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a>
-<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">invokeCardAction</span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">IAdaptiveCardAction</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomQueryModifiers</span><span class="o">?</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IQueryModifierDefinition</span><span class="p">[]{</span>
 <a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a>
-<a id="__codelineno-8-45" name="__codelineno-8-45" href="#__codelineno-8-45"></a><span class="w">    </span><span class="c1">// Process the action based on type</span>
-<a id="__codelineno-8-46" name="__codelineno-8-46" href="#__codelineno-8-46"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.OpenUrl&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-47" name="__codelineno-8-47" href="#__codelineno-8-47"></a><span class="w">      </span><span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;_blank&quot;</span><span class="p">);</span>
-<a id="__codelineno-8-48" name="__codelineno-8-48" href="#__codelineno-8-48"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.Submit&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-49" name="__codelineno-8-49" href="#__codelineno-8-49"></a><span class="w">      </span><span class="c1">// Process the Submit action based on title</span>
-<a id="__codelineno-8-50" name="__codelineno-8-50" href="#__codelineno-8-50"></a><span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-51" name="__codelineno-8-51" href="#__codelineno-8-51"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="o">:</span>
-<a id="__codelineno-8-52" name="__codelineno-8-52" href="#__codelineno-8-52"></a>
-<a id="__codelineno-8-53" name="__codelineno-8-53" href="#__codelineno-8-53"></a><span class="w">          </span><span class="c1">// Invoke the currentUser endpoint</span>
-<a id="__codelineno-8-54" name="__codelineno-8-54" href="#__codelineno-8-54"></a><span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">_spHttpClient</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span>
-<a id="__codelineno-8-55" name="__codelineno-8-55" href="#__codelineno-8-55"></a><span class="w">            </span><span class="sb">`</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentWebUrl</span><span class="si">}</span><span class="sb">/_api/web/currentUser`</span><span class="p">,</span>
-<a id="__codelineno-8-56" name="__codelineno-8-56" href="#__codelineno-8-56"></a><span class="w">            </span><span class="nx">SPHttpClient</span><span class="p">.</span><span class="nx">configurations</span><span class="p">.</span><span class="nx">v1</span><span class="p">,</span><span class="w"> </span>
-<a id="__codelineno-8-57" name="__codelineno-8-57" href="#__codelineno-8-57"></a><span class="w">            </span><span class="kc">null</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="o">:</span><span class="w"> </span><span class="kt">SPHttpClientResponse</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-58" name="__codelineno-8-58" href="#__codelineno-8-58"></a><span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
-<a id="__codelineno-8-59" name="__codelineno-8-59" href="#__codelineno-8-59"></a><span class="w">            </span><span class="p">});</span>
-<a id="__codelineno-8-60" name="__codelineno-8-60" href="#__codelineno-8-60"></a>
-<a id="__codelineno-8-61" name="__codelineno-8-61" href="#__codelineno-8-61"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
-<a id="__codelineno-8-62" name="__codelineno-8-62" href="#__codelineno-8-62"></a><span class="w">        </span><span class="nx">default</span><span class="o">:</span>
-<a id="__codelineno-8-63" name="__codelineno-8-63" href="#__codelineno-8-63"></a><span class="w">          </span><span class="kt">console.log</span><span class="p">(</span><span class="s1">&#39;Action not supported!&#39;</span><span class="p">);</span>
-<a id="__codelineno-8-64" name="__codelineno-8-64" href="#__codelineno-8-64"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
-<a id="__codelineno-8-65" name="__codelineno-8-65" href="#__codelineno-8-65"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-8-66" name="__codelineno-8-66" href="#__codelineno-8-66"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-8-67" name="__codelineno-8-67" href="#__codelineno-8-67"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-8-68" name="__codelineno-8-68" href="#__codelineno-8-68"></a>
-<a id="__codelineno-8-69" name="__codelineno-8-69" href="#__codelineno-8-69"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomDataSources</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IDataSourceDefinition</span><span class="p">[]</span>
-<a id="__codelineno-8-70" name="__codelineno-8-70" href="#__codelineno-8-70"></a><span class="w">  </span><span class="p">{</span>
-<a id="__codelineno-8-71" name="__codelineno-8-71" href="#__codelineno-8-71"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-8-72" name="__codelineno-8-72" href="#__codelineno-8-72"></a><span class="w">      </span><span class="p">{</span>
-<a id="__codelineno-8-73" name="__codelineno-8-73" href="#__codelineno-8-73"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Custom Data Source&#39;</span><span class="p">,</span>
-<a id="__codelineno-8-74" name="__codelineno-8-74" href="#__codelineno-8-74"></a><span class="w">          </span><span class="nx">iconName</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Database&#39;</span><span class="p">,</span>
-<a id="__codelineno-8-75" name="__codelineno-8-75" href="#__codelineno-8-75"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span>
-<a id="__codelineno-8-76" name="__codelineno-8-76" href="#__codelineno-8-76"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">IDataSource</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomDataSource</span><span class="p">)</span>
-<a id="__codelineno-8-77" name="__codelineno-8-77" href="#__codelineno-8-77"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-8-78" name="__codelineno-8-78" href="#__codelineno-8-78"></a><span class="w">    </span><span class="p">];</span>
-<a id="__codelineno-8-79" name="__codelineno-8-79" href="#__codelineno-8-79"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-8-80" name="__codelineno-8-80" href="#__codelineno-8-80"></a>
-<a id="__codelineno-8-81" name="__codelineno-8-81" href="#__codelineno-8-81"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">name</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-82" name="__codelineno-8-82" href="#__codelineno-8-82"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;MyCustomLibraryComponent&#39;</span><span class="p">;</span>
+<a id="__codelineno-8-45" name="__codelineno-8-45" href="#__codelineno-8-45"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-8-46" name="__codelineno-8-46" href="#__codelineno-8-46"></a>
+<a id="__codelineno-8-47" name="__codelineno-8-47" href="#__codelineno-8-47"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">invokeCardAction</span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">IAdaptiveCardAction</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-48" name="__codelineno-8-48" href="#__codelineno-8-48"></a>
+<a id="__codelineno-8-49" name="__codelineno-8-49" href="#__codelineno-8-49"></a><span class="w">    </span><span class="c1">// Process the action based on type</span>
+<a id="__codelineno-8-50" name="__codelineno-8-50" href="#__codelineno-8-50"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.OpenUrl&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-51" name="__codelineno-8-51" href="#__codelineno-8-51"></a><span class="w">      </span><span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;_blank&quot;</span><span class="p">);</span>
+<a id="__codelineno-8-52" name="__codelineno-8-52" href="#__codelineno-8-52"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;Action.Submit&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-53" name="__codelineno-8-53" href="#__codelineno-8-53"></a><span class="w">      </span><span class="c1">// Process the Submit action based on title</span>
+<a id="__codelineno-8-54" name="__codelineno-8-54" href="#__codelineno-8-54"></a><span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-55" name="__codelineno-8-55" href="#__codelineno-8-55"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="o">:</span>
+<a id="__codelineno-8-56" name="__codelineno-8-56" href="#__codelineno-8-56"></a>
+<a id="__codelineno-8-57" name="__codelineno-8-57" href="#__codelineno-8-57"></a><span class="w">          </span><span class="c1">// Invoke the currentUser endpoint</span>
+<a id="__codelineno-8-58" name="__codelineno-8-58" href="#__codelineno-8-58"></a><span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">_spHttpClient</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span>
+<a id="__codelineno-8-59" name="__codelineno-8-59" href="#__codelineno-8-59"></a><span class="w">            </span><span class="sb">`</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentWebUrl</span><span class="si">}</span><span class="sb">/_api/web/currentUser`</span><span class="p">,</span>
+<a id="__codelineno-8-60" name="__codelineno-8-60" href="#__codelineno-8-60"></a><span class="w">            </span><span class="nx">SPHttpClient</span><span class="p">.</span><span class="nx">configurations</span><span class="p">.</span><span class="nx">v1</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-8-61" name="__codelineno-8-61" href="#__codelineno-8-61"></a><span class="w">            </span><span class="kc">null</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="o">:</span><span class="w"> </span><span class="kt">SPHttpClientResponse</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-62" name="__codelineno-8-62" href="#__codelineno-8-62"></a><span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<a id="__codelineno-8-63" name="__codelineno-8-63" href="#__codelineno-8-63"></a><span class="w">            </span><span class="p">});</span>
+<a id="__codelineno-8-64" name="__codelineno-8-64" href="#__codelineno-8-64"></a>
+<a id="__codelineno-8-65" name="__codelineno-8-65" href="#__codelineno-8-65"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-8-66" name="__codelineno-8-66" href="#__codelineno-8-66"></a><span class="w">        </span><span class="nx">default</span><span class="o">:</span>
+<a id="__codelineno-8-67" name="__codelineno-8-67" href="#__codelineno-8-67"></a><span class="w">          </span><span class="kt">console.log</span><span class="p">(</span><span class="s1">&#39;Action not supported!&#39;</span><span class="p">);</span>
+<a id="__codelineno-8-68" name="__codelineno-8-68" href="#__codelineno-8-68"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-8-69" name="__codelineno-8-69" href="#__codelineno-8-69"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-8-70" name="__codelineno-8-70" href="#__codelineno-8-70"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-8-71" name="__codelineno-8-71" href="#__codelineno-8-71"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-8-72" name="__codelineno-8-72" href="#__codelineno-8-72"></a>
+<a id="__codelineno-8-73" name="__codelineno-8-73" href="#__codelineno-8-73"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomDataSources</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IDataSourceDefinition</span><span class="p">[]</span>
+<a id="__codelineno-8-74" name="__codelineno-8-74" href="#__codelineno-8-74"></a><span class="w">  </span><span class="p">{</span>
+<a id="__codelineno-8-75" name="__codelineno-8-75" href="#__codelineno-8-75"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-8-76" name="__codelineno-8-76" href="#__codelineno-8-76"></a><span class="w">      </span><span class="p">{</span>
+<a id="__codelineno-8-77" name="__codelineno-8-77" href="#__codelineno-8-77"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Custom Data Source&#39;</span><span class="p">,</span>
+<a id="__codelineno-8-78" name="__codelineno-8-78" href="#__codelineno-8-78"></a><span class="w">          </span><span class="nx">iconName</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Database&#39;</span><span class="p">,</span>
+<a id="__codelineno-8-79" name="__codelineno-8-79" href="#__codelineno-8-79"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span>
+<a id="__codelineno-8-80" name="__codelineno-8-80" href="#__codelineno-8-80"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">IDataSource</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;CustomDataSource&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomDataSource</span><span class="p">)</span>
+<a id="__codelineno-8-81" name="__codelineno-8-81" href="#__codelineno-8-81"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-8-82" name="__codelineno-8-82" href="#__codelineno-8-82"></a><span class="w">    </span><span class="p">];</span>
 <a id="__codelineno-8-83" name="__codelineno-8-83" href="#__codelineno-8-83"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-8-84" name="__codelineno-8-84" href="#__codelineno-8-84"></a><span class="p">}</span>
+<a id="__codelineno-8-84" name="__codelineno-8-84" href="#__codelineno-8-84"></a>
+<a id="__codelineno-8-85" name="__codelineno-8-85" href="#__codelineno-8-85"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">name</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-86" name="__codelineno-8-86" href="#__codelineno-8-86"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;MyCustomLibraryComponent&#39;</span><span class="p">;</span>
+<a id="__codelineno-8-87" name="__codelineno-8-87" href="#__codelineno-8-87"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-8-88" name="__codelineno-8-88" href="#__codelineno-8-88"></a><span class="p">}</span>
 </code></pre></div>
 <p>In order to run the above sample code, you will need to import in your library the following npm packages: <code>@microsoft/sp-component-base</code>, <code>@microsoft/sp-core-library</code>, and <code>@microsoft/sp-webpart-base</code>.  </p>
                 
