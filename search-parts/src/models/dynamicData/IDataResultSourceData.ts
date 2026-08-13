@@ -1,4 +1,5 @@
 import { IDataFilterResult } from "@pnp/modern-search-extensibility";
+import { IExtensibilityConfiguration } from "../common/IExtensibilityConfiguration";
 
 export interface IDataResultSourceData {
 
@@ -31,4 +32,11 @@ export interface IDataResultSourceData {
      * The filter data source reference this results web part is connected to (used for bidirectional connection validation)
      */
     connectedFilterSourceReference?: string;
+
+    /**
+     * Enabled extensibility libraries configured on this Search Results Web Part.
+     * Search Filters instances saved before they had their own extensibility setting
+     * can inherit these through their existing dynamic-data connection.
+     */
+    extensibilityLibraryConfiguration?: IExtensibilityConfiguration[];
 }

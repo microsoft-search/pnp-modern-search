@@ -55,6 +55,8 @@ import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityC
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
 import { FilterControlHelper } from '../../helpers/FilterControlHelper';
 import { Constants } from '../../common/Constants';
+import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityConfigurationHelper';
+import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -159,6 +161,15 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * The custom filter control definitions coming from the registered extensibility libraries
      */
     private availableFilterControlDefinitions: IFilterControlDefinition[] = [];
+
+    /** Stable identity of the effective own/inherited extensibility configuration. */
+    private loadedExtensibilityConfigurationKey: string;
+
+    /** Prevents concurrent reloads when dynamic-data callbacks re-enter render. */
+    private extensionsLoadingPromise: Promise<void>;
+
+    /** Restores helpers/partials when the effective library configuration changes. */
+    private readonly handlebarsCustomizationTracker = new HandlebarsCustomizationTracker();
 
     /**
      * The available connections as property pane fields
@@ -265,12 +276,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         // Load extensions from the registered extensibility libraries (custom layouts, filter controls,
         // web components and Handlebars customizations). This must happen BEFORE the web components get
         // registered so custom components are part of the same registration pass.
-        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration);
-
-        // Register Web Components in the global page context. We need to do this BEFORE the template processing to avoid race condition.
-        // Web components are only defined once.
-        // We need to register components here in the case where the Search Results WP is not present on the page
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+        await this.ensureExtensionsLoaded();
 
         return super.onInit();
     }
@@ -298,6 +304,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.errorMessage = undefined;
 
         try {
+
+            // A connected Search Results Web Part may become available after this Web Part initialized.
+            // Re-resolve the effective configuration so legacy pages can inherit its libraries.
+            await this.ensureExtensionsLoaded();
 
             // Determine the template content to display
             // In the case of an external template is selected, the render is done asynchronously waiting for the content to be fetched
@@ -613,8 +623,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         // Force the load of the enabled libraries so custom layouts and filter controls are selectable
         // in the property pane, even if the current configuration doesn't use anything custom yet.
-        await this.loadExtensions(this.properties.extensibilityLibraryConfiguration, true);
-        await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+        await this.ensureExtensionsLoaded(true);
 
         if (this.groupedTermSets.size === 0) {
             await this._loadTermSets();
@@ -712,8 +721,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             // Remove duplicates if any
             this.properties.extensibilityLibraryConfiguration = uniqBy(this.properties.extensibilityLibraryConfiguration, 'id');
 
-            await this.loadExtensions(this.properties.extensibilityLibraryConfiguration, true);
-            await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, this.instanceId);
+            await this.ensureExtensionsLoaded(true);
 
             // The selected layout may come from a library which is not loaded anymore
             if (this.availableLayoutDefinitions.filter(layout => layout.key === this.properties.selectedLayoutKey).length === 0) {
@@ -1820,6 +1828,59 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     /**
+     * Loads extensions when the effective configuration changes. Explicit Search Filters
+     * configuration wins; otherwise enabled libraries are inherited from connected Results Web Parts.
+     */
+    private async ensureExtensionsLoaded(forceLoad: boolean = false): Promise<void> {
+        if (this.extensionsLoadingPromise !== undefined) {
+            await this.extensionsLoadingPromise;
+        }
+
+        const effectiveConfiguration = this.getEffectiveExtensibilityLibraryConfiguration();
+        const configurationKey = ExtensibilityConfigurationHelper.getConfigurationKey(effectiveConfiguration);
+        if (!forceLoad && configurationKey === this.loadedExtensibilityConfigurationKey) {
+            return;
+        }
+
+        if (configurationKey !== this.loadedExtensibilityConfigurationKey) {
+            this.handlebarsCustomizationTracker.reset(this.templateService.Handlebars);
+        }
+
+        this.extensionsLoadingPromise = (async () => {
+            await this.loadExtensions(effectiveConfiguration, forceLoad);
+            const instanceId = this.tryGetInstanceId();
+            if (instanceId) {
+                await this.templateService.registerWebComponents(this.availableWebComponentDefinitions, instanceId);
+            } else {
+                Log.verbose(LogSource, "Skipping web component registration because the instance ID is unavailable.", this.context?.serviceScope);
+            }
+            this.loadedExtensibilityConfigurationKey = configurationKey;
+        })();
+
+        try {
+            await this.extensionsLoadingPromise;
+        } finally {
+            this.extensionsLoadingPromise = undefined;
+        }
+    }
+
+    private getEffectiveExtensibilityLibraryConfiguration(): IExtensibilityConfiguration[] {
+        const connectedResultsConfigurations: IExtensibilityConfiguration[] = [];
+
+        this._dataSourceDynamicProperties.forEach(dynamicProperty => {
+            const sourceData = DynamicPropertyHelper.tryGetValueSafe(dynamicProperty);
+            if (sourceData?.extensibilityLibraryConfiguration) {
+                connectedResultsConfigurations.push(...sourceData.extensibilityLibraryConfiguration);
+            }
+        });
+
+        return ExtensibilityConfigurationHelper.resolveFiltersConfiguration(
+            this.properties.extensibilityLibraryConfiguration,
+            connectedResultsConfigurations
+        );
+    }
+
+    /**
      * Loads extensions from the registered extensibility libraries
      * @param librariesConfiguration the extensibility libraries configured on the Web Part
      * @param forceLoad loads the libraries even if nothing custom is currently used (i.e. from the property pane, so custom
@@ -1899,7 +1960,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             // Registers Handlebars customizations in the local namespace
             if (extensibilityLibrary.registerHandlebarsCustomizations) {
-                extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+                this.handlebarsCustomizationTracker.register(
+                    this.templateService.Handlebars,
+                    () => extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars)
+                );
             }
         });
 
