@@ -29,6 +29,7 @@ describe("ExpiringSessionStorageCache", () => {
         const cache = new ExpiringSessionStorageCache("templates", 60_000, () => storage);
 
         expect(cache.get("url")).toBeUndefined();
+        expect(storage.removeItem).toHaveBeenCalledWith("templates:url");
     });
 
     it("continues when browser storage is unavailable", () => {

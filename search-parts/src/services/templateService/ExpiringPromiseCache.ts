@@ -17,6 +17,10 @@ export class ExpiringPromiseCache<T> {
     ) { }
 
     public get(key: string, valueFactory: () => Promise<T>): Promise<T> {
+        if (this.maxEntries <= 0) {
+            return Promise.resolve().then(valueFactory);
+        }
+
         const currentTime = this.now();
         const cachedEntry = this.entries.get(key);
 

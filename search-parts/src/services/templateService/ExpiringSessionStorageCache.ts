@@ -32,12 +32,13 @@ export class ExpiringSessionStorageCache {
                 || typeof entry.expiresAt !== "number"
                 || entry.expiresAt <= this.now()
             ) {
-                this.storageProvider().removeItem(storageKey);
+                this.remove(storageKey);
                 return undefined;
             }
 
             return entry.content;
         } catch {
+            this.remove(storageKey);
             return undefined;
         }
     }
@@ -57,5 +58,13 @@ export class ExpiringSessionStorageCache {
 
     private getStorageKey(key: string): string {
         return `${this.keyPrefix}:${key}`;
+    }
+
+    private remove(storageKey: string): void {
+        try {
+            this.storageProvider().removeItem(storageKey);
+        } catch {
+            // Storage cleanup is best-effort when browser storage is unavailable.
+        }
     }
 }

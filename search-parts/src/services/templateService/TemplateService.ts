@@ -667,7 +667,11 @@ export class TemplateService implements ITemplateService {
         fileFormat: FileFormat,
         bypassCache: boolean = false
     ): Promise<string> {
-        const normalizedFileUrl = fileUrl.trim();
+        const normalizedFileUrl = fileUrl?.trim();
+        if (!normalizedFileUrl) {
+            throw new TypeError("fileUrl");
+        }
+
         const userId = this.pageContext?.legacyPageContext?.userId ?? "anonymous";
         const cacheKey = `${userId}:${fileFormat}:${normalizedFileUrl}`;
 

@@ -66,4 +66,14 @@ describe("ExpiringPromiseCache", () => {
         cache.delete("template");
         await expect(cache.get("template", valueFactory)).resolves.toBe("second");
     });
+
+    it("disables caching when capacity is not positive", async () => {
+        const valueFactory = jest.fn().mockResolvedValue("content");
+        const cache = new ExpiringPromiseCache<string>(60_000, 0);
+
+        await cache.get("template", valueFactory);
+        await cache.get("template", valueFactory);
+
+        expect(valueFactory).toHaveBeenCalledTimes(2);
+    });
 });
