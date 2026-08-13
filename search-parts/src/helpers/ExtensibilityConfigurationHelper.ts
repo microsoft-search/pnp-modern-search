@@ -38,7 +38,7 @@ export class ExtensibilityConfigurationHelper {
     public static getConfigurationKey(configuration: IExtensibilityConfiguration[]): string {
         return (configuration || [])
             .map(item => `${this.normalizeId(item?.id)}:${item?.enabled === true}`)
-            .sort()
+            .sort((left, right) => left.localeCompare(right))
             .join("|");
     }
 

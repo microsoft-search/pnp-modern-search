@@ -56,6 +56,7 @@ import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper
 import { FilterControlHelper } from '../../helpers/FilterControlHelper';
 import { Constants } from '../../common/Constants';
 import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityConfigurationHelper';
+import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -166,6 +167,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     /** Prevents concurrent reloads when dynamic-data callbacks re-enter render. */
     private extensionsLoadingPromise: Promise<void>;
+
+    /** Restores helpers/partials when the effective library configuration changes. */
+    private readonly handlebarsCustomizationTracker = new HandlebarsCustomizationTracker();
 
     /**
      * The available connections as property pane fields
@@ -1828,7 +1832,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * configuration wins; otherwise enabled libraries are inherited from connected Results Web Parts.
      */
     private async ensureExtensionsLoaded(forceLoad: boolean = false): Promise<void> {
-        if (this.extensionsLoadingPromise) {
+        if (this.extensionsLoadingPromise !== undefined) {
             await this.extensionsLoadingPromise;
         }
 
@@ -1836,6 +1840,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         const configurationKey = ExtensibilityConfigurationHelper.getConfigurationKey(effectiveConfiguration);
         if (!forceLoad && configurationKey === this.loadedExtensibilityConfigurationKey) {
             return;
+        }
+
+        if (configurationKey !== this.loadedExtensibilityConfigurationKey) {
+            this.handlebarsCustomizationTracker.reset(this.templateService.Handlebars);
         }
 
         this.extensionsLoadingPromise = (async () => {
@@ -1947,7 +1955,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
             // Registers Handlebars customizations in the local namespace
             if (extensibilityLibrary.registerHandlebarsCustomizations) {
-                extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+                this.handlebarsCustomizationTracker.register(
+                    this.templateService.Handlebars,
+                    () => extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars)
+                );
             }
         });
 
