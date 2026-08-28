@@ -45,6 +45,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
     isEditModeCapApplied?: boolean;
+    isAwaitingResultSignals?: boolean;
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
@@ -1265,7 +1266,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         };
     }
 
-    private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } {
+    private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean; isAwaitingResultSignals?: boolean } {
         const filterOperator = selectedFilterIdx === -1 ? filterConfiguration.operator : currentUiFilters[selectedFilterIdx].operator;
         const reachedEditModeRefinerCap = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
             && filterWithLimitInfo.isMaxBucketsExceeded
@@ -1318,7 +1319,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             termSetId: filterConfiguration.termSetId,
             termGroupId: filterConfiguration.termGroupId,
             hideNodesNotInDataSet: filterConfiguration.hideNodesNotInDataSet,
-            expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault
+            expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault,
+            isAwaitingResultSignals: filterWithLimitInfo.isAwaitingResultSignals
         };
     }
 

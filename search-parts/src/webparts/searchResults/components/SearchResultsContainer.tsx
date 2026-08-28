@@ -263,6 +263,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      */
     private async getDataFromDataSource(pageNumber: number): Promise<void> {
 
+        this.props.onDataLoadingChanged(true);
         this.setState({
             isLoading: true,
             errorMessage: ''
@@ -309,6 +310,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
 
             this.props.onDataRetrieved(this.getAvailableFieldsFromResults(data), availableFilters, pageNumber);
+            this.props.onDataLoadingChanged(false);
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;
@@ -324,6 +326,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             this._lastPageNumber = pageNumber;
 
         } catch (error) {
+
+            this.props.onDataLoadingChanged(false);
 
             this.setState({
                 isLoading: false,

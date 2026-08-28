@@ -14,6 +14,11 @@ export interface IDataResultSourceData {
     availablefilters: IDataFilterResult[];
 
     /**
+     * Indicates whether the results source is retrieving data.
+     */
+    isLoading?: boolean;
+
+    /**
      * The Hanlebars context available for consumers
      */
     handlebarsContext?: typeof Handlebars;
