@@ -103,7 +103,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _currentDataResultsSourceData: IDataResultSourceData = {
         availableFieldsFromResults: [],
         availablefilters: [],
-        selectedItems: []
+        selectedItems: [],
+        isLoading: true
     };
 
     /**
@@ -280,6 +281,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         this._bindHashChange = this._bindHashChange.bind(this);
         this._onDataRetrieved = this._onDataRetrieved.bind(this);
+        this._onDataLoadingChanged = this._onDataLoadingChanged.bind(this);
         this._onItemSelected = this._onItemSelected.bind(this);
         this._updateTitleProperty = this._updateTitleProperty.bind(this);
     }
@@ -510,6 +512,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 instanceId: instanceId,
                 properties: JSON.parse(JSON.stringify(this.properties)), // Create a copy to avoid unexpected reference value updates from data sources 
                 onDataRetrieved: this._onDataRetrieved,
+                onDataLoadingChanged: this._onDataLoadingChanged,
                 onItemSelected: this._onItemSelected,
                 onNoResultsFound: this._onNoResultsFound.bind(this),
                 pageContext: this.context.pageContext,
@@ -594,7 +597,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     // Reset data source information
                     this._currentDataResultsSourceData = {
                         availableFieldsFromResults: [],
-                        availablefilters: []
+                        availablefilters: [],
+                        isLoading: false
                     };
 
                     // Remove margin and padding for the empty control zone
@@ -2518,6 +2522,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Extra call to refresh the property pane in the case where data sources rely on results fields in there configuration (ex: ODataDataSource)
         if (this.context && this.context.propertyPane) {
             this.context.propertyPane.refresh();
+        }
+    }
+
+    private _onDataLoadingChanged(isLoading: boolean): void {
+        if (this._currentDataResultsSourceData.isLoading === isLoading) {
+            return;
+        }
+
+        this._currentDataResultsSourceData.isLoading = isLoading;
+
+        if (this.properties.allowWebPartConnections && this.context?.dynamicDataSourceManager && !this.context.dynamicDataSourceManager.isDisposed) {
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchResults);
         }
     }
 

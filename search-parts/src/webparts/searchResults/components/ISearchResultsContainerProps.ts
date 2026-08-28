@@ -66,6 +66,11 @@ export interface ISearchResultsContainerProps {
   onDataRetrieved: (availableDataSourceFields: string[], filters?: IDataFilterResult[], pageNumber?: number) => void;
 
   /**
+   * Handler when the data source loading state changes.
+   */
+  onDataLoadingChanged: (isLoading: boolean) => void;
+
+  /**
    * Handler when a item has been selected from results
    */
   onItemSelected: (currentSelectedItems: {[key: string]: any}[]) => void; 

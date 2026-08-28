@@ -74,6 +74,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
     isEditModeCapApplied?: boolean;
+    isAwaitingResultSignals?: boolean;
 }
 
 /**
@@ -391,7 +392,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             // OR the data results don't contain this filter name. 
             // We create fake entries for those filters to be able to render them in the template
             // We do this by convenience to avoid refactoring the Handlebars templates
-            filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration);
+            const isResultsLoading = this._dataSourceDynamicProperties.some(dynamicProperty => Boolean(DynamicPropertyHelper.tryGetValueSafe(dynamicProperty)?.isLoading));
+            filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration, isResultsLoading);
 
             renderRootElement = React.createElement(
                 React.Suspense,
@@ -2150,9 +2152,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * Initializes filter results according to 'Static' type filters in the configuration
      * @param filtersConfiguration The current filters configurations
      */
-    private _initStaticFilters(filterResults: IDataFilterResult[], filtersConfiguration: IDataFilterConfiguration[]): IDataFilterResult[] {
+    private _initStaticFilters(filterResults: IDataFilterResult[], filtersConfiguration: IDataFilterConfiguration[], isResultsLoading: boolean = false): IDataFilterResult[] {
 
-        let updatedFilterResults = cloneDeep(filterResults);
+        let updatedFilterResults: IFilterResultWithLimitInfo[] = cloneDeep(filterResults);
 
         // Get the corresponding configuration for this filter
         filtersConfiguration.forEach(filterConfiguration => {
@@ -2167,8 +2169,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 if (filterResults.filter(filterResult => filterResult.filterName === filterConfiguration.filterName).length === 0) {
                     updatedFilterResults.push({
                         filterName: filterConfiguration.filterName,
-                        values: [
-                        ]
+                        values: [],
+                        isAwaitingResultSignals: isResultsLoading && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.Hierarchical
                     });
                 }
             }
