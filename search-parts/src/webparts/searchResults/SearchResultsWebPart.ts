@@ -598,7 +598,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     this._currentDataResultsSourceData = {
                         availableFieldsFromResults: [],
                         availablefilters: [],
-                        isLoading: false
+                        isLoading: false,
+                        selectedItems: []
                     };
 
                     // Remove margin and padding for the empty control zone
