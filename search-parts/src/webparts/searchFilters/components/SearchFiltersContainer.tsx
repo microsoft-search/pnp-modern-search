@@ -1517,7 +1517,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 return;
             }
 
-            updatedUiFilters = update(updatedUiFilters, { [filterIdx]: { values: { [valueIdx]: { $set: filterValueInternal } } } });
+            const existingValue = updatedUiFilters[filterIdx].values[valueIdx];
+            updatedUiFilters = update(updatedUiFilters, { [filterIdx]: { values: { [valueIdx]: { $set: { ...filterValueInternal, count: existingValue.count } } } } });
         });
 
         return updatedUiFilters;
