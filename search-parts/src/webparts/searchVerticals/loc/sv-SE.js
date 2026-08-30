@@ -18,6 +18,7 @@ define([], function() {
                 ButtonLabel: "Konfigurera",
                 DefaultVerticalQueryStringParamLabel: "Frågesträngsparameter att använda för att välja en vertikal flik som standard",
                 DefaultVerticalQueryStringParamDescription: "Matchningen kommer att göras mot fliknamnet eller den aktuella sidans URL (om fliken är en hyperlänk)",
+                ClearFiltersOnVerticalChangeLabel: "Rensa filter när vertikal ändras",
                 Fields: {
                     TabName: "Fliknamn",
                     IconName: "Fluent UI Fabric ikonnamn",

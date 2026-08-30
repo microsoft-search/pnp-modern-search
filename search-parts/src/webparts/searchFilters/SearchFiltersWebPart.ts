@@ -95,6 +95,34 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _dataSourceDynamicProperties: DynamicProperty<IDataResultSourceData>[] = [];
     private _verticalsSourceData: DynamicProperty<IDataVerticalSourceData>;
     private _selectedFilters: IDataFilter[] = [];
+    private _lastSelectedVerticalKey: string = undefined;
+    private _verticalChangeVersion: number = 0;
+
+    private _resetFiltersForChangedVertical(): boolean {
+        const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsSourceData);
+        const selectedVerticalKey = verticalData?.selectedVertical?.key;
+
+        if (verticalData?.clearFiltersOnVerticalChange === true && selectedVerticalKey && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== selectedVerticalKey) {
+            this._selectedFilters = [];
+            this._verticalChangeVersion++;
+            this._lastSelectedVerticalKey = selectedVerticalKey;
+            return true;
+        }
+
+        if (selectedVerticalKey) {
+            this._lastSelectedVerticalKey = selectedVerticalKey;
+        }
+
+        return false;
+    }
+
+    private _onVerticalsDataChanged = (): void => {
+        if (this._resetFiltersForChangedVertical()) {
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
+        }
+
+        this.render();
+    };
 
     /**
      * Dynamically loaded components for property pane
@@ -407,6 +435,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         domElement: this.domElement,
                         instanceId: this.instanceId,
                         selectedLayoutKey: this.properties.selectedLayoutKey,
+                        verticalChangeVersion: this._verticalChangeVersion,
                         properties: JSON.parse(JSON.stringify({ ...this.properties, filtersConfiguration: resolvedFiltersConfiguration })),
                         themeVariant: this._themeVariant,
                         context: this.context,
@@ -527,6 +556,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         switch (propertyId) {
 
             case propertyId:
+                this._resetFiltersForChangedVertical();
                 return {
                     filterConfiguration: this.getResolvedFiltersConfiguration(),
                     selectedFilters: this._selectedFilters,
@@ -2076,11 +2106,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
 
             this._verticalsSourceData.setReference(this.properties.verticalsDataSourceReference);
-            this._verticalsSourceData.register(this.render);
+            this._verticalsSourceData.register(this._onVerticalsDataChanged);
 
         } else {
             if (this._verticalsSourceData) {
-                this._verticalsSourceData.unregister(this.render);
+                this._verticalsSourceData.unregister(this._onVerticalsDataChanged);
             }
         }
     }

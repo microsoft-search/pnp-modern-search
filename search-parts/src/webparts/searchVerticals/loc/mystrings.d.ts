@@ -17,6 +17,7 @@ declare interface ISearchVerticalsWebPartStrings {
       ButtonLabel: string;
       DefaultVerticalQueryStringParamLabel: string;
       DefaultVerticalQueryStringParamDescription: string;
+      ClearFiltersOnVerticalChangeLabel: string;
       Fields: {
         TabName: string;
         TabValue: string;

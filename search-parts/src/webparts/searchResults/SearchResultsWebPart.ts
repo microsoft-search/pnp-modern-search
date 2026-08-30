@@ -220,6 +220,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _lastSelectedFilters: IDataFilter[] = [];
     private _lastInputQueryText: string = undefined;
     private _lastSelectedVerticalKey: string = undefined;
+    private _filtersToIgnoreAfterVerticalChange: IDataFilter[] = undefined;
 
     /**
      * The default template slots when the data source is instanciated for the first time
@@ -385,8 +386,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset page number when switching between verticals (before getDataContext)
             if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
                 const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
-                if (verticalData && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
+                if (verticalData?.clearFiltersOnVerticalChange === true && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
                     this.currentPageNumber = 1;
+                    const filtersSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
+                    this._filtersToIgnoreAfterVerticalChange = filtersSourceData?.selectedFilters;
+                    this._lastSelectedFilters = [];
+
+                    if (filtersSourceData?.instanceId) {
+                        const filterQueryStringParameter = `f_${filtersSourceData.instanceId}`;
+                        const urlWithoutFilters = UrlHelper.removeQueryStringParam(filterQueryStringParameter, globalThis.location.href);
+                        globalThis.history.replaceState({ path: urlWithoutFilters }, '', urlWithoutFilters);
+                    }
+                }
+
+                if (verticalData && verticalData.selectedVertical?.key) {
                     this._lastSelectedVerticalKey = verticalData.selectedVertical.key;
                 }
             }
@@ -2387,7 +2400,14 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         if (this._filtersConnectionSourceData) {
             const filtersSourceData: IDataFilterSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
             if (filtersSourceData) {
-                const selectedFilters = dataContext.filters.selectedFilters.concat(filtersSourceData.selectedFilters);
+                const filtersWereClearedForVerticalChange = this._filtersToIgnoreAfterVerticalChange
+                    && isEqual(filtersSourceData.selectedFilters, this._filtersToIgnoreAfterVerticalChange);
+
+                if (!filtersWereClearedForVerticalChange) {
+                    this._filtersToIgnoreAfterVerticalChange = undefined;
+                }
+
+                const selectedFilters = dataContext.filters.selectedFilters.concat(filtersWereClearedForVerticalChange ? [] : filtersSourceData.selectedFilters);
 
                 // Reset the page number if filters have been updated by the user
                 if (!isEqual(selectedFilters, this._lastSelectedFilters)) {
