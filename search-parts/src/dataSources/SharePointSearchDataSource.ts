@@ -895,8 +895,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         return this._availableManagedProperties;
     }
 
-    private _convertToSortList(sortList: ISortFieldConfiguration[]): ISort[] {
-        return sortList.map(e => {
+    private async _convertToSortList(sortList: ISortFieldConfiguration[]): Promise<ISort[]> {
+        return Promise.all(sortList.map(async e => {
 
             let direction;
 
@@ -915,10 +915,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             }
 
             return {
-                Property: e.sortField,
+                Property: e.sortField ? await this._tokenService.resolveTokens(e.sortField) : e.sortField,
                 Direction: direction
             } as ISort;
-        });
+        }));
     }
 
     private async buildSharePointSearchQuery(dataContext: IDataContext): Promise<ISharePointSearchQuery> {
@@ -1131,14 +1131,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             // Manual user sorting
             searchQuery.SortList = [{
-                Property: dataContext.sorting.selectedSortFieldName,
+                Property: await this._tokenService.resolveTokens(dataContext.sorting.selectedSortFieldName),
                 Direction: dataContext.sorting.selectedSortDirection === SortFieldDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending
             }];
 
         } else {
 
             // Default sort
-            searchQuery.SortList = this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
+            searchQuery.SortList = await this._convertToSortList(this.properties.sortList.filter(sort => sort.isDefaultSort));
         }
 
         const selectProperties = Array.from(new Set([
