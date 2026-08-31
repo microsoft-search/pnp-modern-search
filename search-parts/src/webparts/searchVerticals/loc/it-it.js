@@ -18,6 +18,7 @@ define([], function () {
                 ButtonLabel: "Configura verticali",
                 DefaultVerticalQueryStringParamLabel: "Parametro della stringa di query da utilizzare per selezionare una scheda verticale per impostazione predefinita",
                 DefaultVerticalQueryStringParamDescription: "La corrispondenza verrà fatta con il nome della scheda o l'URL della pagina corrente (se la scheda è un hyperlink)",
+                ClearFiltersOnVerticalChangeLabel: "Cancella i filtri quando si cambia verticale",
                 Fields: {
                     TabName: "Nome scheda",
                     TabValue: "Valore scheda",

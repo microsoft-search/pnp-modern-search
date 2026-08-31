@@ -30,7 +30,8 @@
         },
         "officeFabricIconFontName": "Sections",
         "properties": {
-            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/"
+            "documentationLink": "https://microsoft-search.github.io/pnp-modern-search/",
+            "clearFiltersOnVerticalChange": false
         }
     }]
 }

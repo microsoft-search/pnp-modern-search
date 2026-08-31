@@ -18,6 +18,7 @@ define([], function() {
                     ButtonLabel: "Konfiguruj wertykały",
                     DefaultVerticalQueryStringParamLabel: "Parametr ciągu zapytań do użycia do wybrania zakładki wertykalnej domyślnie",
                     DefaultVerticalQueryStringParamDescription: "Dopasowanie zostanie wykonane do nazwy karty lub bieżącego adresu URL strony (jeśli karta jest hiperłączem)",
+                    ClearFiltersOnVerticalChangeLabel: "Wyczyść filtry przy zmianie wertykalnej",
                     Fields: {
                         TabName: "Nazwa karty",
                         IconName: "Nazwa ikony Fluent UI",

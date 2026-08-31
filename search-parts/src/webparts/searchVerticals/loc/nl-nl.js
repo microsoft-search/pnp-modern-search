@@ -18,6 +18,7 @@ define([], function() {
                 ButtonLabel: "Configureer zoekverticalen",
                 DefaultVerticalQueryStringParamLabel: "Querystring-parameter om te gebruiken om standaard een verticale tab te selecteren",
                 DefaultVerticalQueryStringParamDescription: "De overeenkomst wordt gemaakt met de tabnaam of de huidige paginakoppeling (als de tab een hyperlink is)",
+                ClearFiltersOnVerticalChangeLabel: "Filters wissen bij het wijzigen van de verticale tab",
                 Fields: {
                     TabName: "Tab naam",
                     IconName: "Fluent UI icoon naam",

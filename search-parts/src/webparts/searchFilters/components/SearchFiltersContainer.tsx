@@ -108,6 +108,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private _hasAttemptedPeopleDisplayNameLookup: boolean = false;
     private _busyStartedAt: number = 0;
     private _latestDeferredSubmittedFilters: IDataFilter[] | null = null;
+    private _filterUpdateVersion: number = 0;
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
@@ -500,6 +501,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private queueDeferredSubmittedFiltersUpdate(submittedFilters: IDataFilter[], sourceFilterName?: string): void {
+        const filterUpdateVersion = this._filterUpdateVersion;
         this._latestDeferredSubmittedFilters = submittedFilters;
 
         this.beginResultsUpdate(sourceFilterName);
@@ -509,6 +511,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         this._deferredSubmittedUpdateTimer = setTimeout(() => {
+            if (filterUpdateVersion !== this._filterUpdateVersion) {
+                return;
+            }
+
             const filtersToUpdate = this._latestDeferredSubmittedFilters;
 
             this._deferredSubmittedUpdateTimer = null;
@@ -524,6 +530,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private beginResultsUpdate(sourceFilterName?: string, onReady?: () => void): void {
+        const filterUpdateVersion = this._filterUpdateVersion;
         if (this._busyHideTimer) {
             clearTimeout(this._busyHideTimer);
             this._busyHideTimer = null;
@@ -569,16 +576,24 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             isUpdatingResults: true,
             activeBusyFilterName: sourceFilterName || prevState.activeBusyFilterName
         }), () => {
-            if (!onReady) {
+            if (!onReady || filterUpdateVersion !== this._filterUpdateVersion) {
                 return;
             }
 
             if (typeof globalThis.requestAnimationFrame === 'function') {
-                globalThis.requestAnimationFrame(() => onReady());
+                globalThis.requestAnimationFrame(() => {
+                    if (filterUpdateVersion === this._filterUpdateVersion) {
+                        onReady();
+                    }
+                });
                 return;
             }
 
-            setTimeout(() => onReady(), 0);
+            setTimeout(() => {
+                if (filterUpdateVersion === this._filterUpdateVersion) {
+                    onReady();
+                }
+            }, 0);
         });
     }
 
@@ -1716,6 +1731,26 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
 
+        if (prevProps.verticalChangeVersion !== this.props.verticalChangeVersion) {
+            this._filterUpdateVersion++;
+            if (this._deferredSubmittedUpdateTimer) {
+                clearTimeout(this._deferredSubmittedUpdateTimer);
+                this._deferredSubmittedUpdateTimer = null;
+            }
+            this._latestDeferredSubmittedFilters = null;
+
+            this.setState(prevState => ({
+                currentUiFilters: this.resetSelectedFilterValues(prevState.currentUiFilters),
+                submittedFilters: []
+            }), () => {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+                this.resetFiltersDeepLink();
+                this.props.onUpdateFilters([]);
+            });
+            this.endResultsUpdate();
+            return;
+        }
+
         if (!this._hasAttemptedPeopleDisplayNameLookup && this.hasPeopleTemplateConfigured(this.props.filtersConfiguration)) {
             this.ensurePeopleDisplayNameCacheLoaded().catch(() => {
                 // Ignore People display-name lookup failures and keep raw identities.
@@ -1776,17 +1811,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             });
         }
 
-        const updatedFilters: IDataFilterInternal[] = [];
-
-        for (const availableFilter of availableFilters) {
-            const filterResultInternal = await this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext);
-            if (filterResultInternal) {
-                updatedFilters.push(filterResultInternal);
-            }
-        }
+        const updatedFilters = (await Promise.all(
+            availableFilters.map(availableFilter => this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext))
+        )).filter((filter): filter is IDataFilterInternal => Boolean(filter));
 
         const sortStartedAt = performance.now();
-        const sortedFilters = sortBy(updatedFilters.filter(Boolean), 'sortIdx');
+        const sortedFilters = sortBy(updatedFilters, 'sortIdx');
 
         if (debugContext) {
             this.logUpdateStep(debugContext, 'getFiltersToDisplay:beforeSetState', {

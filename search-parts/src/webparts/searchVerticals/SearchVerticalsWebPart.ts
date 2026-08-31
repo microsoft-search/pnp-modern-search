@@ -7,6 +7,7 @@ import {
     IPropertyPaneField,
     IPropertyPaneGroup,
     PropertyPaneTextField,
+    PropertyPaneToggle,
     PropertyPaneSlider,
     PropertyPaneButton,
     PropertyPaneButtonType
@@ -276,6 +277,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             case ComponentType.SearchVerticals:
                 return {
                     selectedVertical: this._selectedVertical,
+                    clearFiltersOnVerticalChange: this.properties.clearFiltersOnVerticalChange,
                     verticalsConfiguration: this.properties.verticals,
                 } as IDataVerticalSourceData;
 
@@ -523,6 +525,12 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                         }
                     }
                 ]
+            }),
+            PropertyPaneToggle('clearFiltersOnVerticalChange', {
+                label: webPartStrings.PropertyPane.Verticals.ClearFiltersOnVerticalChangeLabel,
+                onText: commonStrings.General.OnTextLabel,
+                offText: commonStrings.General.OffTextLabel,
+                checked: this.properties.clearFiltersOnVerticalChange === true
             }),
             PropertyPaneTextField('defaultVerticalQueryStringParam', {
                 label: webPartStrings.PropertyPane.Verticals.DefaultVerticalQueryStringParamLabel,
