@@ -397,8 +397,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                         if (filtersSourceData?.instanceId) {
                             const filterQueryStringParameter = `f_${filtersSourceData.instanceId}`;
-                            const urlWithoutFilters = UrlHelper.removeQueryStringParam(filterQueryStringParameter, globalThis.location.href);
-                            globalThis.history.replaceState({ path: urlWithoutFilters }, '', urlWithoutFilters);
+                            const url = new URL(globalThis.location.href);
+                            url.searchParams.delete(filterQueryStringParameter);
+                            globalThis.history.replaceState({ path: url.toString() }, '', url.toString());
                         }
                     }
                 }
