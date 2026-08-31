@@ -1813,10 +1813,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         const updatedFilters = (await Promise.all(
             availableFilters.map(availableFilter => this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext))
-        )).filter(Boolean);
+        )).filter((filter): filter is IDataFilterInternal => Boolean(filter));
 
         const sortStartedAt = performance.now();
-        const sortedFilters = sortBy(updatedFilters.filter(Boolean), 'sortIdx');
+        const sortedFilters = sortBy(updatedFilters, 'sortIdx');
 
         if (debugContext) {
             this.logUpdateStep(debugContext, 'getFiltersToDisplay:beforeSetState', {

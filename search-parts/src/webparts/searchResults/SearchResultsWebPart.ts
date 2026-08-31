@@ -386,16 +386,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             // Reset page number when switching between verticals (before getDataContext)
             if (this._verticalsConnectionSourceData && this.properties.selectedVerticalKeys.length > 0) {
                 const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
-                if (verticalData?.clearFiltersOnVerticalChange === true && verticalData.selectedVertical?.key && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key) {
+                const hasChangedVertical = verticalData?.selectedVertical?.key && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== verticalData.selectedVertical.key;
+                if (hasChangedVertical) {
                     this.currentPageNumber = 1;
-                    const filtersSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
-                    this._filtersToIgnoreAfterVerticalChange = filtersSourceData?.selectedFilters;
-                    this._lastSelectedFilters = [];
 
-                    if (filtersSourceData?.instanceId) {
-                        const filterQueryStringParameter = `f_${filtersSourceData.instanceId}`;
-                        const urlWithoutFilters = UrlHelper.removeQueryStringParam(filterQueryStringParameter, globalThis.location.href);
-                        globalThis.history.replaceState({ path: urlWithoutFilters }, '', urlWithoutFilters);
+                    if (verticalData.clearFiltersOnVerticalChange === true) {
+                        const filtersSourceData = DynamicPropertyHelper.tryGetValueSafe(this._filtersConnectionSourceData);
+                        this._filtersToIgnoreAfterVerticalChange = filtersSourceData?.selectedFilters;
+                        this._lastSelectedFilters = [];
+
+                        if (filtersSourceData?.instanceId) {
+                            const filterQueryStringParameter = `f_${filtersSourceData.instanceId}`;
+                            const urlWithoutFilters = UrlHelper.removeQueryStringParam(filterQueryStringParameter, globalThis.location.href);
+                            globalThis.history.replaceState({ path: urlWithoutFilters }, '', urlWithoutFilters);
+                        }
                     }
                 }
 

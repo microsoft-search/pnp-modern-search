@@ -555,7 +555,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         switch (propertyId) {
 
-            case propertyId:
+            case ComponentType.SearchFilters:
                 this._resetFiltersForChangedVertical();
                 return {
                     filterConfiguration: this.getResolvedFiltersConfiguration(),
