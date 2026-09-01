@@ -18,7 +18,7 @@ export class Constants {
     /**
      * The regular expression to sanitize URIs with DomPurify
      */
-    public static readonly ALLOWED_URI_REGEXP = /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|msteams|rcapp|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i;
+    public static readonly ALLOWED_URI_REGEXP = /^(?:(?:(?:f|ht)tps?|mailto|file|tel|callto|msteams|odopen|rcapp|im|cid|xmpp|xxx|ms-\w+):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i;
 
     /**
      * Page-wide GlobalSettings key holding a monotonically increasing id that is bumped every time a
