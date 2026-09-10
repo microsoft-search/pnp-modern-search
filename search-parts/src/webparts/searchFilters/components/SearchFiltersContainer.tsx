@@ -238,6 +238,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return cleanedValue;
         }
 
+        if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedValue)) {
+            return cleanedValue;
+        }
+
         const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
         if (personLikeLabel) {
             return personLikeLabel;
@@ -294,6 +298,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         if (TaxonomyHelper.isReadablePlainLabel(cleanedLabel) && !TaxonomyHelper.extractEmailLikeLabel(cleanedLabel)) {
             return 3;
+        }
+
+        if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedLabel)) {
+            return 4;
         }
 
         const preferredPipeSegment = cleanedLabel
@@ -828,6 +836,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const readableRawValue = this.extractReadableLabelFromString(rawValue);
         const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
         const readableDecodedValue = this.extractReadableLabelFromString(decodedValue);
+        const resolvedRawValue = TaxonomyHelper.resolveDisplayLabel(rawValue);
+
+        const normalizedResolvedValue = this.normalizeDisplayCacheKey(resolvedRawValue);
+        const normalizedRawName = this.normalizeDisplayCacheKey(rawName);
+        if (normalizedResolvedValue
+            && normalizedRawName
+            && normalizedResolvedValue !== normalizedRawName
+            && normalizedResolvedValue.includes(normalizedRawName)) {
+            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, resolvedRawValue);
+            return resolvedRawValue;
+        }
 
         let preferredResolvedLabel = '';
         const considerResolvedLabel = (candidateLabel: string): void => {
@@ -839,6 +858,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         considerResolvedLabel(decodedName);
         considerResolvedLabel(readableRawValue);
         considerResolvedLabel(readableDecodedValue);
+        considerResolvedLabel(resolvedRawValue);
         considerResolvedLabel(decodedValue);
 
         if (preferredResolvedLabel) {

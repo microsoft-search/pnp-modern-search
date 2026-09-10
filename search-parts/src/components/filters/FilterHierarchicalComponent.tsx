@@ -187,6 +187,10 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                 return cleanedValue;
             }
 
+            if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedValue)) {
+                return cleanedValue;
+            }
+
             const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
             if (personLikeLabel) {
                 return personLikeLabel;

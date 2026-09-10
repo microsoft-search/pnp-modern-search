@@ -67,6 +67,18 @@ export class TaxonomyHelper {
             && !this.isGuidLikeToken(cleanedValue);
     }
 
+    public static isReadablePlainLabelWithPipe(value: string): boolean {
+        const cleanedValue = this.normalizeReadableLabelCandidate(value);
+        return !!cleanedValue
+            && cleanedValue.includes('|')
+            && this.containsReadableLetter(cleanedValue)
+            && !this.containsNonPrintableCharacter(cleanedValue)
+            && !this.containsEncodedTokenMarker(cleanedValue)
+            && !this.isGuidLikeToken(cleanedValue)
+            && !this.extractTaxonomyLabel(cleanedValue)
+            && !this.extractClaimsLabel(cleanedValue);
+    }
+
     public static extractTaxonomyLabel(value: string): string {
         const cleanedValue = this.normalizeReadableLabelCandidate(value);
         if (!cleanedValue) {
@@ -298,7 +310,18 @@ export class TaxonomyHelper {
             return claimsLabel;
         }
 
+        if (/(?:^|[\s|])i:0#.*\|/i.test(cleanedValue)) {
+            const peopleLabel = this.extractPreferredPeopleDisplayLabel(cleanedValue);
+            if (peopleLabel) {
+                return peopleLabel;
+            }
+        }
+
         if (this.isReadablePlainLabel(cleanedValue)) {
+            return cleanedValue;
+        }
+
+        if (this.isReadablePlainLabelWithPipe(cleanedValue)) {
             return cleanedValue;
         }
 
