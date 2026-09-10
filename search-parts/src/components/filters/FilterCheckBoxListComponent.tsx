@@ -332,17 +332,21 @@ export class FilterCheckBoxList extends React.Component<IFilterCheckBoxListProps
         return this._displayLabels.get(label) ?? label;
     }
 
+    private _resolvePreferredDisplayLabel(value: IFilterCheckBoxListValue, preferredDisplayLabel: string): string {
+        const resolvedValueLabel = value.value ? TaxonomyHelper.resolveDisplayLabel(value.value) : '';
+        if (resolvedValueLabel
+            && resolvedValueLabel !== value.value
+            && resolvedValueLabel.toLowerCase().includes(preferredDisplayLabel.toLowerCase())) {
+            return resolvedValueLabel;
+        }
+
+        return this._resolveDisplayLabel(preferredDisplayLabel);
+    }
+
     private _getDisplayLabel(value: IFilterCheckBoxListValue): string {
         const preferredDisplayLabel = value.displayLabel?.trim();
         if (preferredDisplayLabel) {
-            const resolvedValueLabel = value.value ? TaxonomyHelper.resolveDisplayLabel(value.value) : '';
-            if (resolvedValueLabel
-                && resolvedValueLabel !== value.value
-                && resolvedValueLabel.toLowerCase().includes(preferredDisplayLabel.toLowerCase())) {
-                return resolvedValueLabel;
-            }
-
-            return this._resolveDisplayLabel(preferredDisplayLabel);
+            return this._resolvePreferredDisplayLabel(value, preferredDisplayLabel);
         }
 
         const rawName = `${value.name ?? ''}`;
