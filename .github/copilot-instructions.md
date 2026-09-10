@@ -6,6 +6,13 @@ This repository (**PnP Modern Search v4**) is a **SharePoint Framework (SPFx)** 
 These notes are **additional, project-specific** guidance for PR reviews — they supplement, not
 replace, the default review.
 
+## Official SPFx skills reference
+
+- For SPFx work in `search-parts/` or `search-extensibility/`, load and follow the official
+  [`spfx` development skill](https://github.com/SharePoint/spfx-dev-skills).
+- Use its guidance for SPFx scaffolding, upgrades, toolchain selection, Fluent UI design, and
+  PnPjs data access, together with the repository-specific rules below.
+
 ## SPFx-specific things the reviewer should know
 
 - **Async-only code splitting**: each web part has a single injected entry script, so only
