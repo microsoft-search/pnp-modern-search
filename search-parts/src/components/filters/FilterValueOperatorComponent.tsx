@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants, FilterConditionOperator } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { ChoiceGroup, Icon } from '@fluentui/react';
+import { ChoiceGroup, Icon, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as commonStrings from 'CommonStrings';
 import styles from "./FilterValueOperatorComponent.module.scss";
@@ -64,8 +64,11 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
     }
     
     public render() {
+        const theme = (this.props.themeVariant as ITheme) || getTheme();
+        const textColor = theme.semanticColors.bodyText ?? '#323130';
 
         let renderOperators: JSX.Element =  <ChoiceGroup tabIndex={0}
+                                                theme={theme}
                                                 styles={{
                                                     flexContainer: {
                                                         display: 'flex',
@@ -83,7 +86,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             '.ms-ChoiceField + .ms-ChoiceField::before': {
                                                                 content: '"/"',
                                                                 padding: '0 4px',
-                                                                color: this.props.themeVariant?.isInverted ? '#fff' : this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
+                                                                color: textColor
                                                             },
                                                             'label::before, label::after': {
                                                                 display: 'none',
@@ -93,10 +96,10 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             },
                                                             'label.is-checked span.ms-ChoiceFieldLabel, label.is-checked:hover, label.is-checked span.ms-ChoiceFieldLabel:hover': {
                                                                 fontWeight: 700,
-                                                                color: this.props.themeVariant ? this.props.themeVariant.palette.themePrimary : '#005a9e'
+                                                                color: theme.palette.themePrimary
                                                             },
                                                             'label span.ms-ChoiceFieldLabel, label span.ms-ChoiceFieldLabel:hover': {
-                                                                color: this.props.themeVariant?.isInverted ? '#fff' : this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
+                                                                color: textColor
                                                             }
                                                         }
                                                     }
@@ -121,7 +124,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                             />;
 
         return  <div className={styles.filterValueOperator}>
-                    <Icon iconName="FilterSettings" title={commonStrings.Filters.UseValuesOperators}/>
+                    <Icon iconName="FilterSettings" title={commonStrings.Filters.UseValuesOperators} styles={{ root: { color: textColor } }}/>
                     {renderOperators}
                 </div>;
     }
