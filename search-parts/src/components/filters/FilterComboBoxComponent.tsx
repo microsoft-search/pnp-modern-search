@@ -182,7 +182,11 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                             <ComboBox 
                                                 theme={theme}
                                                 calloutProps={{
-                                                    backgroundColor: surfaceColor
+                                                    styles: {
+                                                        calloutMain: {
+                                                            backgroundColor: surfaceColor
+                                                        }
+                                                    }
                                                 }}
                                                 comboBoxOptionStyles={{
                                                     root: {
@@ -252,7 +256,7 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                     theme={theme}
                                     styles={{
                                         root: {
-                                            color: '#ffffff',
+                                            color: textColor,
                                             cursor: 'pointer'
                                         }
                                     }}
