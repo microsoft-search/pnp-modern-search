@@ -65,9 +65,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
     
     public render() {
         const theme = (this.props.themeVariant as ITheme) || getTheme();
-        const textColor = this.props.themeVariant?.isInverted
-            ? this.props.themeVariant?.semanticColors?.bodyText ?? '#ffffff'
-            : this.props.themeVariant?.semanticColors?.bodyText ?? '#323130';
+        const textColor = theme.semanticColors.bodyText ?? '#323130';
 
         let renderOperators: JSX.Element =  <ChoiceGroup tabIndex={0}
                                                 theme={theme}
@@ -98,7 +96,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             },
                                                             'label.is-checked span.ms-ChoiceFieldLabel, label.is-checked:hover, label.is-checked span.ms-ChoiceFieldLabel:hover': {
                                                                 fontWeight: 700,
-                                                                color: this.props.themeVariant ? this.props.themeVariant.palette.themePrimary : '#005a9e'
+                                                                color: theme.palette.themePrimary
                                                             },
                                                             'label span.ms-ChoiceFieldLabel, label span.ms-ChoiceFieldLabel:hover': {
                                                                 color: textColor

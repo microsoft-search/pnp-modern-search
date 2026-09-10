@@ -147,8 +147,8 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
 
         let options = this.state.options;
         const theme = (this.props.themeVariant as ITheme) || getTheme();
-        const surfaceColor = this.props.themeVariant?.semanticColors?.bodyBackground ?? '#ffffff';
-        const textColor = this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
+        const surfaceColor = theme.semanticColors.bodyBackground ?? '#ffffff';
+        const textColor = theme.semanticColors.inputText ?? '#323130';
 
         let foundValuesCount = 0;
         // Filter the current collection by the search value
@@ -260,6 +260,9 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                             cursor: 'pointer'
                                         }
                                     }}
+                                    role='button'
+                                    tabIndex={0}
+                                    aria-label={strings.Filters.ClearAllFiltersButtonLabel}
                                     onClick={() => {
                                         
                                         if (!this.props.isMulti) {
@@ -276,6 +279,12 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                             }
                                         } else {
                                             this._clearFilters();
+                                        }
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Enter' || event.key === ' ') {
+                                            event.preventDefault();
+                                            (event.currentTarget as HTMLElement).click();
                                         }
                                     }}>
                                 </Icon>
