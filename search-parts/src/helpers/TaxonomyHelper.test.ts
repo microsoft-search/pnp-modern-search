@@ -13,4 +13,9 @@ describe('TaxonomyHelper display labels', () => {
         expect(TaxonomyHelper.resolveDisplayLabel('| Alejandro Ahmed | identity i:0#.f|membership|alejandro.ahmed@example.com'))
             .toBe('Alejandro Ahmed');
     });
+
+    it('does not classify a people identity value as a plain pipe label', () => {
+        expect(TaxonomyHelper.isReadablePlainLabelWithPipe('| Alejandro Ahmed | identity i:0#.f|membership|alejandro.ahmed@example.com'))
+            .toBe(false);
+    });
 });

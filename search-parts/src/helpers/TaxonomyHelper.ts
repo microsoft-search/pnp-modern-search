@@ -76,7 +76,8 @@ export class TaxonomyHelper {
             && !this.containsEncodedTokenMarker(cleanedValue)
             && !this.isGuidLikeToken(cleanedValue)
             && !this.extractTaxonomyLabel(cleanedValue)
-            && !this.extractClaimsLabel(cleanedValue);
+            && !this.extractClaimsLabel(cleanedValue)
+            && !/(?:^|[\s|])i:0#/i.test(cleanedValue);
     }
 
     public static extractTaxonomyLabel(value: string): string {
