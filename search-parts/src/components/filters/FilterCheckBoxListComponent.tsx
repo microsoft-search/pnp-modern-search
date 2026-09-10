@@ -333,7 +333,7 @@ export class FilterCheckBoxList extends React.Component<IFilterCheckBoxListProps
     }
 
     private _resolvePreferredDisplayLabel(value: IFilterCheckBoxListValue, preferredDisplayLabel: string): string {
-        const resolvedValueLabel = value.value ? TaxonomyHelper.resolveDisplayLabel(value.value) : '';
+        const resolvedValueLabel = value.value ? this._resolveDisplayLabel(value.value) : '';
         if (resolvedValueLabel
             && resolvedValueLabel !== value.value
             && resolvedValueLabel.toLowerCase().includes(preferredDisplayLabel.toLowerCase())) {
