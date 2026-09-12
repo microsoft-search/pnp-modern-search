@@ -69,18 +69,34 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
     }
 
     public render() {
+        const theme = (this.props.themeVariant as ITheme) || getTheme();
+
         return <div className={styles.filterMultiActions}>
             <PrimaryButton
                 className={styles.applyBtn}
                 disabled={this.props.applyDisabled}
-                theme={(this.props.themeVariant as ITheme) || getTheme()}
+                theme={theme}
+                styles={{
+                    root: {
+                        backgroundColor: theme.semanticColors.primaryButtonBackground,
+                        borderColor: theme.semanticColors.primaryButtonBackground,
+                        color: theme.semanticColors.primaryButtonText
+                    }
+                }}
                 onClick={this._applyFilters}>
                 {strings.Filters.ApplyAllFiltersButtonLabel}
             </PrimaryButton>
             <DefaultButton
                 className={styles.clearBtn}
-                theme={(this.props.themeVariant as ITheme) || getTheme()}
+                theme={theme}
                 disabled={this.props.clearDisabled}
+                styles={{
+                    root: {
+                        backgroundColor: theme.semanticColors.buttonBackground,
+                        borderColor: theme.semanticColors.buttonBorder,
+                        color: theme.semanticColors.buttonText
+                    }
+                }}
                 onClick={this._clearFilters}>
                 {strings.Filters.ClearAllFiltersButtonLabel}
             </DefaultButton>
