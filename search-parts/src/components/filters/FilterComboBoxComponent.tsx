@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterValueInfo, ExtensibilityConstants, IDataFilterInfo, FilterConditionOperator } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, Fabric } from '@fluentui/react';
+import { IComboBoxOption, Label, Icon, SelectableOptionMenuItemType, ComboBox, IComboBox, Fabric, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import update from 'immutability-helper';
 import styles from './FilterComboBoxComponent.module.scss';
@@ -146,6 +146,9 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
     public render() {
 
         let options = this.state.options;
+        const theme = (this.props.themeVariant as ITheme) || getTheme();
+        const surfaceColor = theme.semanticColors.bodyBackground ?? '#ffffff';
+        const textColor = theme.semanticColors.inputText ?? '#323130';
 
         let foundValuesCount = 0;
         // Filter the current collection by the search value
@@ -175,8 +178,29 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
         }
 
         let renderIcon: JSX.Element = null;
-        let renderCombo: JSX.Element =  <Fabric>
+        let renderCombo: JSX.Element =  <Fabric theme={theme}>
                                             <ComboBox 
+                                                theme={theme}
+                                                calloutProps={{
+                                                    styles: {
+                                                        calloutMain: {
+                                                            backgroundColor: surfaceColor
+                                                        }
+                                                    }
+                                                }}
+                                                comboBoxOptionStyles={{
+                                                    root: {
+                                                        backgroundColor: surfaceColor,
+                                                        color: theme.semanticColors.bodyText
+                                                    },
+                                                    rootHovered: {
+                                                        backgroundColor: theme.semanticColors.listItemBackgroundHovered,
+                                                        color: theme.semanticColors.bodyText
+                                                    },
+                                                    optionText: {
+                                                        color: theme.semanticColors.bodyText
+                                                    }
+                                                }}
                                                 allowFreeform={true}
                                                 text={this.state.searchValue ? this.state.searchValue : this.props.defaultOptions.filter(option => option.selected).map(option => option.text).join(',')}
                                                 componentRef={this.comboRef}
@@ -206,10 +230,13 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                                         width: '90%'
                                                     },
                                                     optionsContainerWrapper: {
-                                                        overflow: 'hidden'
+                                                        overflow: 'hidden',
+                                                        backgroundColor: surfaceColor,
+                                                        color: theme.semanticColors.bodyText
                                                     },
                                                     input: {
-                                                        backgroundColor: 'inherit'
+                                                        backgroundColor: 'inherit',
+                                                        color: textColor
                                                     },
                                                     header:{
                                                         height: '100%'
@@ -226,6 +253,16 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
             renderIcon =    <Label>
                                 <Icon
                                     iconName='ClearFilter' 
+                                    theme={theme}
+                                    styles={{
+                                        root: {
+                                            color: textColor,
+                                            cursor: 'pointer'
+                                        }
+                                    }}
+                                    role='button'
+                                    tabIndex={0}
+                                    aria-label={strings.Filters.ClearAllFiltersButtonLabel}
                                     onClick={() => {
                                         
                                         if (!this.props.isMulti) {
@@ -242,6 +279,12 @@ export class FilterComboBox extends React.Component<IFilterComboBoxProps, IFilte
                                             }
                                         } else {
                                             this._clearFilters();
+                                        }
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Enter' || event.key === ' ') {
+                                            event.preventDefault();
+                                            (event.currentTarget as HTMLElement).click();
                                         }
                                     }}>
                                 </Icon>

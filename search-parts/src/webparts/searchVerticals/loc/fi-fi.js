@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Konfiguroi hakuvertikaalit",
           DefaultVerticalQueryStringParamLabel: "URL-osoitteen parametri, jolla määritetään oletuksena valittu vertikaali",
           DefaultVerticalQueryStringParamDescription: "Parametri yhdistetään vertikaalin nimeen tai sivun URL-osoitteeseen, jos vertikaali on linkki",
+          ClearFiltersOnVerticalChangeLabel: "Tyhjennä suodattimet vertikaalia vaihdettaessa",
           Fields: {
             TabName: "Vertikaalin nimi",
             TabValue: "Vertikaalin arvo",

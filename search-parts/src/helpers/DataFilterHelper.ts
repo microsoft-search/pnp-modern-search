@@ -208,8 +208,16 @@ export class DataFilterHelper {
                         value = DataFilterHelper.fixRefinableYesNoFilter(filter, value);
                     }
 
+                    // Some search environments fail to match hex-encoded ('ǂǂ<hex>') FQL tokens containing
+                    // multi-byte UTF-8 characters (e.g. accented letters), returning no results even though
+                    // matching items exist. Re-encode the value as a plain quoted FQL string instead.
+                    // Taxonomy tokens (GP0/GPP/L0) are left hex-encoded since they rely on it.
+                    if (!encodeTokens) {
+                        value = DataFilterHelper.decodeStringRefinementToken(value);
+                    }
+
                     // Enclose the expression with quotes if the value contains spaces, or number only
-                    if ((/\s/.test(value) && value.indexOf('range') === -1) || (filter.filterName.includes("RefinableString") && /^\d+$/.test(value))) {
+                    if ((/\s/.test(value) && value.indexOf('range') === -1 && !/^".*"$/.test(value)) || (filter.filterName.includes("RefinableString") && /^\d+$/.test(value))) {
                         value = DataFilterHelper.quoteStringRefinementValue(value);
                     }
 
@@ -267,8 +275,16 @@ export class DataFilterHelper {
                         refinementToken = DataFilterHelper.fixRefinableYesNoFilter(filter, refinementToken);
                     }
 
+                    // Some search environments fail to match hex-encoded ('ǂǂ<hex>') FQL tokens containing
+                    // multi-byte UTF-8 characters (e.g. accented letters), returning no results even though
+                    // matching items exist. Re-encode the value as a plain quoted FQL string instead.
+                    // Taxonomy tokens (GP0/GPP/L0) are left hex-encoded since they rely on it.
+                    if (!encodeTokens) {
+                        refinementToken = DataFilterHelper.decodeStringRefinementToken(refinementToken);
+                    }
+
                     // Enclose the expression with quotes if the value contains spaces
-                    if (/\s/.test(refinementToken) && refinementToken.indexOf('range') === -1) {
+                    if (/\s/.test(refinementToken) && refinementToken.indexOf('range') === -1 && !/^".*"$/.test(refinementToken)) {
                         refinementToken = DataFilterHelper.quoteStringRefinementValue(refinementToken);
                     }
 
@@ -278,6 +294,42 @@ export class DataFilterHelper {
         });
 
         return refinementQueryConditions;
+    }
+
+    /**
+     * Decodes a hex-encoded FQL refinement token (e.g. `"ǂǂ4176616e6365c3a9"`) back into a plain,
+     * quoted FQL string literal using its literal UTF-8 value (e.g. `"Avancé"`).
+     * SharePoint hex-encodes refinement tokens by default and, under normal circumstances, resending
+     * the token as-is round-trips correctly. However some search environments fail to match hex-encoded
+     * tokens that contain multi-byte UTF-8 characters (e.g. accented letters), returning no results even
+     * though matching items exist. Sending the plain, quoted value instead avoids the issue.
+     * Taxonomy tokens (GP0/GPP/L0) are returned unchanged since they rely on hex-encoding to safely carry
+     * the '|' and '#' characters used in their format.
+     * @param token the FQL token to decode, as produced by `buildFqlRefinementString`
+     */
+    private static decodeStringRefinementToken(token: string): string {
+        if (!token || typeof token !== 'string') {
+            return token;
+        }
+
+        const match = /^"?ǂǂ([0-9a-fA-F]+)"?$/.exec(token.trim());
+        if (!match || match[1].length % 2 !== 0) {
+            return token;
+        }
+
+        try {
+            const percentEncoded = match[1].match(/.{2}/g).map(bytePair => `%${bytePair}`).join('');
+            const decoded = decodeURIComponent(percentEncoded);
+
+            // Taxonomy tokens must remain hex-encoded
+            if (/^(GP0|GPP|L0)\|#/.test(decoded)) {
+                return token;
+            }
+
+            return DataFilterHelper.quoteStringRefinementValue(decoded);
+        } catch {
+            return token;
+        }
     }
 
     private static decodeHexRefinementToken(value: string): string | null {

@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Configurar las verticales",
           DefaultVerticalQueryStringParamLabel: "Parámetro de cadena de consulta que se utilizará para seleccionar una pestaña vertical por defecto",
           DefaultVerticalQueryStringParamDescription: "La coincidencia se hará con el nombre de la pestaña o la URL de la página actual (si la pestaña es un hipervínculo)",
+          ClearFiltersOnVerticalChangeLabel: "Borrar filtros al cambiar de vertical",
           Fields: {
             TabName: "Nombre de la pestaña",
             TabValue: "Valor de la pestaña",
