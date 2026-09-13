@@ -483,9 +483,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                             });
                         } else {
 
-                            if (fieldValue) {
+                            if (fieldValue !== undefined && fieldValue !== null) {
                                 // Break down multiple values in a field value (like a multi choice or taxonomy column)
-                                fieldValue.split(";").forEach(value => {
+                                String(fieldValue).split(";").forEach(value => {
                                     fields[field].push(value);
                                 });
                             } else {
@@ -2225,6 +2225,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             if (this._verticalsConnectionSourceData) {
                 this._verticalsConnectionSourceData.unregister(this.render);
             }
+        }
+
+        if (this.properties.useDynamicFiltering) {
+            this.properties.selectedItemFieldValue.register(this.render);
+        } else {
+            this.properties.selectedItemFieldValue.unregister(this.render);
         }
 
     }
