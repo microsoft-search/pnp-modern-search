@@ -113,6 +113,5 @@ jobs:
 
             - name: Deploy documentation
               run: |
-                  pip install markdown-include
-                  pip install mkdocs-material==7.2.4
+                  python -m pip install -r requirements-docs.txt
                   mkdocs gh-deploy --force
