@@ -74,6 +74,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
     isEditModeCapApplied?: boolean;
+    isAwaitingResultSignals?: boolean;
 }
 
 /**
@@ -94,6 +95,34 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _dataSourceDynamicProperties: DynamicProperty<IDataResultSourceData>[] = [];
     private _verticalsSourceData: DynamicProperty<IDataVerticalSourceData>;
     private _selectedFilters: IDataFilter[] = [];
+    private _lastSelectedVerticalKey: string = undefined;
+    private _verticalChangeVersion: number = 0;
+
+    private _resetFiltersForChangedVertical(): boolean {
+        const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsSourceData);
+        const selectedVerticalKey = verticalData?.selectedVertical?.key;
+
+        if (verticalData?.clearFiltersOnVerticalChange === true && selectedVerticalKey && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== selectedVerticalKey) {
+            this._selectedFilters = [];
+            this._verticalChangeVersion++;
+            this._lastSelectedVerticalKey = selectedVerticalKey;
+            return true;
+        }
+
+        if (selectedVerticalKey) {
+            this._lastSelectedVerticalKey = selectedVerticalKey;
+        }
+
+        return false;
+    }
+
+    private _onVerticalsDataChanged = (): void => {
+        if (this._resetFiltersForChangedVertical()) {
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
+        }
+
+        this.render();
+    };
 
     /**
      * Dynamically loaded components for property pane
@@ -391,7 +420,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             // OR the data results don't contain this filter name. 
             // We create fake entries for those filters to be able to render them in the template
             // We do this by convenience to avoid refactoring the Handlebars templates
-            filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration);
+            const isResultsLoading = this._dataSourceDynamicProperties.some(dynamicProperty => Boolean(DynamicPropertyHelper.tryGetValueSafe(dynamicProperty)?.isLoading));
+            filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration, isResultsLoading);
 
             renderRootElement = React.createElement(
                 React.Suspense,
@@ -405,6 +435,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         domElement: this.domElement,
                         instanceId: this.instanceId,
                         selectedLayoutKey: this.properties.selectedLayoutKey,
+                        verticalChangeVersion: this._verticalChangeVersion,
                         properties: JSON.parse(JSON.stringify({ ...this.properties, filtersConfiguration: resolvedFiltersConfiguration })),
                         themeVariant: this._themeVariant,
                         context: this.context,
@@ -524,7 +555,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         switch (propertyId) {
 
-            case propertyId:
+            case ComponentType.SearchFilters:
+                this._resetFiltersForChangedVertical();
                 return {
                     filterConfiguration: this.getResolvedFiltersConfiguration(),
                     selectedFilters: this._selectedFilters,
@@ -2074,11 +2106,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
 
             this._verticalsSourceData.setReference(this.properties.verticalsDataSourceReference);
-            this._verticalsSourceData.register(this.render);
+            this._verticalsSourceData.register(this._onVerticalsDataChanged);
 
         } else {
             if (this._verticalsSourceData) {
-                this._verticalsSourceData.unregister(this.render);
+                this._verticalsSourceData.unregister(this._onVerticalsDataChanged);
             }
         }
     }
@@ -2150,9 +2182,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * Initializes filter results according to 'Static' type filters in the configuration
      * @param filtersConfiguration The current filters configurations
      */
-    private _initStaticFilters(filterResults: IDataFilterResult[], filtersConfiguration: IDataFilterConfiguration[]): IDataFilterResult[] {
+    private _initStaticFilters(filterResults: IDataFilterResult[], filtersConfiguration: IDataFilterConfiguration[], isResultsLoading: boolean = false): IDataFilterResult[] {
 
-        let updatedFilterResults = cloneDeep(filterResults);
+        let updatedFilterResults: IFilterResultWithLimitInfo[] = cloneDeep(filterResults);
 
         // Get the corresponding configuration for this filter
         filtersConfiguration.forEach(filterConfiguration => {
@@ -2167,8 +2199,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 if (filterResults.filter(filterResult => filterResult.filterName === filterConfiguration.filterName).length === 0) {
                     updatedFilterResults.push({
                         filterName: filterConfiguration.filterName,
-                        values: [
-                        ]
+                        values: [],
+                        isAwaitingResultSignals: isResultsLoading && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.Hierarchical
                     });
                 }
             }

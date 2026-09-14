@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Konfiguriere Vertikale",
           DefaultVerticalQueryStringParamLabel: "Query-String Parameter zur automatischen Auswahl eines Vertikals.",
           DefaultVerticalQueryStringParamDescription: "Der Tab Name oder die derzeitige URL (wenn das Tab ein Hyperlink ist) werden dabei verglichen.",
+          ClearFiltersOnVerticalChangeLabel: "Filter beim Wechsel des Vertikals löschen",
           Fields: {
             TabName: "Tab Name",
             TabValue: "Tab Wert",

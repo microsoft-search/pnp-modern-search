@@ -11,7 +11,7 @@ For example:
 
 `python -m pip install mkdocs-material`
 
-The repository includes a pinned set of documentation dependencies in `requirements-docs.txt`. Using these versions avoids compatibility issues between MkDocs 1.2.2 and newer Jinja2 releases.
+The repository includes a pinned set of documentation dependencies in `requirements-docs.txt`. Using these versions ensures that MkDocs, Material for MkDocs, and Jinja2 are compatible.
 
 - [Install MkDocs](https://www.mkdocs.org/#installation)
     - `python -m pip install -r requirements-docs.txt`

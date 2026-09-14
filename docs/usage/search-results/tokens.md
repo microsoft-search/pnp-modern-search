@@ -8,6 +8,7 @@ You can use tokens in the following locations:
     - Builtin data sources
         - **SharePoint Search**
             - Query template field.
+            - Sort settings field.
             - Refinement filters field.
         - **Microsoft Search**
             - Query template field.

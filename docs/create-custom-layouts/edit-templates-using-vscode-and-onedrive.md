@@ -25,7 +25,7 @@ I guess you already have OneDrive, if not, here is the instructions to get start
 ### Create the SharePoint environment for developing templates.
 
 1. Setup a SharePoint site, where you want to store your templates. [Store custom templates in SharePoint](howto-store-custom-templates-in-sharepoint.md)
-2. Create a page using PnP Search Results. [Create a simple search page](create-simple-search-page.md)
+2. Create a page using PnP Search Results. [Create a simple search page](../scenarios/create-simple-search-page.md)
 3. Create a custom template and store it in SharePoint. [Create your first custom template](create-your-first-custom-template.md)
 4. Configure your search web part to use the new template. (See article in step 3)
 
@@ -67,5 +67,4 @@ You cannot see any changes on the webpage
 ## Tips
 In VS Code you can format the code by selecting the language mode for the document you are editing. For files with extension .HTML, they are automatically formatted by a rule set for HTML.
 Since you are going to use Handlebar you should change the language mode to "Handlebars".
-
 

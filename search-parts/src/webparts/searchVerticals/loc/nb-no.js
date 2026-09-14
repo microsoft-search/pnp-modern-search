@@ -18,6 +18,7 @@ define([], function() {
                 ButtonLabel: "Konfigurer vertikaler",
                 DefaultVerticalQueryStringParamLabel: "Spørringsstrengparameter for å velge en vertikal fane som standard",
                 DefaultVerticalQueryStringParamDescription: "Sammenligningen vil bli utført mot fane-navnet eller gjeldende side-URL (hvis fanen er en hyperkobling)",
+                ClearFiltersOnVerticalChangeLabel: "Fjern filtre når vertikal endres",
                 Fields: {
                     TabName: "Fane",
                     IconName: "Fluent UI ikonnavn",

@@ -19,6 +19,11 @@ export interface ISearchVerticalsWebPartProps extends IBaseWebPartProps {
     defaultVerticalQueryStringParam: string;
 
     /**
+     * Determines whether connected filters are cleared when the selected vertical changes.
+     */
+    clearFiltersOnVerticalChange?: boolean;
+
+    /**
      * Vertical tabs background color
      */
     verticalBackgroundColor?: string;

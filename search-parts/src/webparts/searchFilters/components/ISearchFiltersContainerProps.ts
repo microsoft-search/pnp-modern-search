@@ -39,6 +39,11 @@ export interface ISearchFiltersContainerProps {
   selectedLayoutKey: string;
 
   /**
+   * Incremented when the connected search vertical changes.
+   */
+  verticalChangeVersion: number;
+
+  /**
    * The Web Part properties so they can be used in Handlebars template
    */
   properties: ISearchFiltersWebPartProps;

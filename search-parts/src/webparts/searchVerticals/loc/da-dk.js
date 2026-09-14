@@ -18,6 +18,7 @@ define([], function() {
         ButtonLabel: "Konfigurér vertikaler",
         DefaultVerticalQueryStringParamLabel: "Query-strengparameter til brug for at vælge en vertikal fane som standard",
         DefaultVerticalQueryStringParamDescription: "Matchningen vil blive udført mod fane-navnet eller den aktuelle side-URL (hvis fanen er et hyperlink)",
+        ClearFiltersOnVerticalChangeLabel: "Ryd filtre ved skift af lodret fane",
         Fields: {
           TabName: "Navn på fane",
           IconName: "Fluent UI ikonnavn",

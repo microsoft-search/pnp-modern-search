@@ -19,7 +19,7 @@ In order to achieve the objectives, I had to get:
 - The hiredate, but with the year segment being the current year
 - The number of years the employee has been with company at the next anniversary
 
-![birthdayAndHiredateSynclist](..\assets\Setup-Results-web-part-to-show-work-anniversaries\BirthdayAndHiredateSyncList.png)
+![birthdayAndHiredateSynclist](assets/Setup-Results-web-part-to-show-work-anniversaries/BirthdayAndHiredateSyncList.png)
 
 Lets add birthdayThisYear while I was at it, in order to be able to show upcoming birthdays.
 

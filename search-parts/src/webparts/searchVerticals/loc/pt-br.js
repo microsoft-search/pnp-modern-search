@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Configurar verticais",
           DefaultVerticalQueryStringParamLabel: "Parâmetro da <i>query string</i> a ser usado para selecionar a aba da vertical por padrão",
           DefaultVerticalQueryStringParamDescription: "A correspondência será feita com o nome da guia ou a URL da página atual (se a guia for um hiperlink)",
+          ClearFiltersOnVerticalChangeLabel: "Limpar filtros ao alterar a vertical",
           Fields: {
             TabName: "Nome da aba",
             TabValue: "Valor da aba",

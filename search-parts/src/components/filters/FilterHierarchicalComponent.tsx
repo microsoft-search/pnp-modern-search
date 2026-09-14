@@ -187,6 +187,10 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                 return cleanedValue;
             }
 
+            if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedValue)) {
+                return cleanedValue;
+            }
+
             const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
             if (personLikeLabel) {
                 return personLikeLabel;
@@ -770,7 +774,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             );
         }
 
-        if (hierarchicalTerms.length === 0) {
+        if (hierarchicalTerms.length === 0 || (this.props.filter?.hideNodesNotInDataSet && this.props.filter?.isAwaitingResultSignals)) {
             return (
                 <div className={styles.filterHierarchical}>
                     <div>{strings.Filters.LoadingMessage}</div>

@@ -45,6 +45,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
     configuredMaxBuckets?: number;
     returnedValueCount?: number;
     isEditModeCapApplied?: boolean;
+    isAwaitingResultSignals?: boolean;
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
@@ -107,6 +108,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private _hasAttemptedPeopleDisplayNameLookup: boolean = false;
     private _busyStartedAt: number = 0;
     private _latestDeferredSubmittedFilters: IDataFilter[] | null = null;
+    private _filterUpdateVersion: number = 0;
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
@@ -236,6 +238,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return cleanedValue;
         }
 
+        if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedValue)) {
+            return cleanedValue;
+        }
+
         const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
         if (personLikeLabel) {
             return personLikeLabel;
@@ -292,6 +298,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         if (TaxonomyHelper.isReadablePlainLabel(cleanedLabel) && !TaxonomyHelper.extractEmailLikeLabel(cleanedLabel)) {
             return 3;
+        }
+
+        if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedLabel)) {
+            return 4;
         }
 
         const preferredPipeSegment = cleanedLabel
@@ -499,6 +509,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private queueDeferredSubmittedFiltersUpdate(submittedFilters: IDataFilter[], sourceFilterName?: string): void {
+        const filterUpdateVersion = this._filterUpdateVersion;
         this._latestDeferredSubmittedFilters = submittedFilters;
 
         this.beginResultsUpdate(sourceFilterName);
@@ -508,6 +519,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         this._deferredSubmittedUpdateTimer = setTimeout(() => {
+            if (filterUpdateVersion !== this._filterUpdateVersion) {
+                return;
+            }
+
             const filtersToUpdate = this._latestDeferredSubmittedFilters;
 
             this._deferredSubmittedUpdateTimer = null;
@@ -523,6 +538,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private beginResultsUpdate(sourceFilterName?: string, onReady?: () => void): void {
+        const filterUpdateVersion = this._filterUpdateVersion;
         if (this._busyHideTimer) {
             clearTimeout(this._busyHideTimer);
             this._busyHideTimer = null;
@@ -568,16 +584,24 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             isUpdatingResults: true,
             activeBusyFilterName: sourceFilterName || prevState.activeBusyFilterName
         }), () => {
-            if (!onReady) {
+            if (!onReady || filterUpdateVersion !== this._filterUpdateVersion) {
                 return;
             }
 
             if (typeof globalThis.requestAnimationFrame === 'function') {
-                globalThis.requestAnimationFrame(() => onReady());
+                globalThis.requestAnimationFrame(() => {
+                    if (filterUpdateVersion === this._filterUpdateVersion) {
+                        onReady();
+                    }
+                });
                 return;
             }
 
-            setTimeout(() => onReady(), 0);
+            setTimeout(() => {
+                if (filterUpdateVersion === this._filterUpdateVersion) {
+                    onReady();
+                }
+            }, 0);
         });
     }
 
@@ -812,6 +836,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const readableRawValue = this.extractReadableLabelFromString(rawValue);
         const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
         const readableDecodedValue = this.extractReadableLabelFromString(decodedValue);
+        const resolvedRawValue = TaxonomyHelper.resolveDisplayLabel(rawValue);
+
+        const normalizedResolvedValue = this.normalizeDisplayCacheKey(resolvedRawValue);
+        const normalizedRawName = this.normalizeDisplayCacheKey(rawName);
+        if (normalizedResolvedValue
+            && normalizedRawName
+            && normalizedResolvedValue !== normalizedRawName
+            && normalizedResolvedValue.includes(normalizedRawName)) {
+            this.setDisplayNameCacheEntry(this._resolvedDisplayNameCache, cacheKey, resolvedRawValue);
+            return resolvedRawValue;
+        }
 
         let preferredResolvedLabel = '';
         const considerResolvedLabel = (candidateLabel: string): void => {
@@ -823,6 +858,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         considerResolvedLabel(decodedName);
         considerResolvedLabel(readableRawValue);
         considerResolvedLabel(readableDecodedValue);
+        considerResolvedLabel(resolvedRawValue);
         considerResolvedLabel(decodedValue);
 
         if (preferredResolvedLabel) {
@@ -1265,7 +1301,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         };
     }
 
-    private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean } {
+    private buildFilterResultInternal(availableFilter: IDataFilterResult, filterConfiguration: IHierarchicalFilterConfiguration, values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number, filterWithLimitInfo: IFilterResultWithLimitInfo, selectionState: { selectedOnce: boolean; hasSelectedValues: boolean; canApply: boolean; canClear: boolean; }): IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean; isAwaitingResultSignals?: boolean } {
         const filterOperator = selectedFilterIdx === -1 ? filterConfiguration.operator : currentUiFilters[selectedFilterIdx].operator;
         const reachedEditModeRefinerCap = this.props.webPartTitleProps?.displayMode === DisplayMode.Edit
             && filterWithLimitInfo.isMaxBucketsExceeded
@@ -1318,7 +1354,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             termSetId: filterConfiguration.termSetId,
             termGroupId: filterConfiguration.termGroupId,
             hideNodesNotInDataSet: filterConfiguration.hideNodesNotInDataSet,
-            expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault
+            expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault,
+            isAwaitingResultSignals: filterWithLimitInfo.isAwaitingResultSignals
         };
     }
 
@@ -1515,7 +1552,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 return;
             }
 
-            updatedUiFilters = update(updatedUiFilters, { [filterIdx]: { values: { [valueIdx]: { $set: filterValueInternal } } } });
+            const existingValue = updatedUiFilters[filterIdx].values[valueIdx];
+            updatedUiFilters = update(updatedUiFilters, { [filterIdx]: { values: { [valueIdx]: { $set: { ...filterValueInternal, count: existingValue.count } } } } });
         });
 
         return updatedUiFilters;
@@ -1713,6 +1751,26 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     public componentDidUpdate(prevProps: ISearchFiltersContainerProps, prevState: ISearchFiltersContainerState) {
 
+        if (prevProps.verticalChangeVersion !== this.props.verticalChangeVersion) {
+            this._filterUpdateVersion++;
+            if (this._deferredSubmittedUpdateTimer) {
+                clearTimeout(this._deferredSubmittedUpdateTimer);
+                this._deferredSubmittedUpdateTimer = null;
+            }
+            this._latestDeferredSubmittedFilters = null;
+
+            this.setState(prevState => ({
+                currentUiFilters: this.resetSelectedFilterValues(prevState.currentUiFilters),
+                submittedFilters: []
+            }), () => {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration);
+                this.resetFiltersDeepLink();
+                this.props.onUpdateFilters([]);
+            });
+            this.endResultsUpdate();
+            return;
+        }
+
         if (!this._hasAttemptedPeopleDisplayNameLookup && this.hasPeopleTemplateConfigured(this.props.filtersConfiguration)) {
             this.ensurePeopleDisplayNameCacheLoaded().catch(() => {
                 // Ignore People display-name lookup failures and keep raw identities.
@@ -1773,17 +1831,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             });
         }
 
-        const updatedFilters: IDataFilterInternal[] = [];
-
-        for (const availableFilter of availableFilters) {
-            const filterResultInternal = await this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext);
-            if (filterResultInternal) {
-                updatedFilters.push(filterResultInternal);
-            }
-        }
+        const updatedFilters = (await Promise.all(
+            availableFilters.map(availableFilter => this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext))
+        )).filter((filter): filter is IDataFilterInternal => Boolean(filter));
 
         const sortStartedAt = performance.now();
-        const sortedFilters = sortBy(updatedFilters.filter(Boolean), 'sortIdx');
+        const sortedFilters = sortBy(updatedFilters, 'sortIdx');
 
         if (debugContext) {
             this.logUpdateStep(debugContext, 'getFiltersToDisplay:beforeSetState', {

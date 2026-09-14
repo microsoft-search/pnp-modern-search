@@ -18,6 +18,7 @@ define([], function() {
           ButtonLabel: "Konfigurovat vertikály",
           DefaultVerticalQueryStringParamLabel: "Parametr dotazu pro výběr vertikálního panelu jako výchozího",
           DefaultVerticalQueryStringParamDescription: "Porovnání bude provedeno s názvem panelu nebo aktuální URL stránky (pokud je panel hypertextový odkaz)",
+          ClearFiltersOnVerticalChangeLabel: "Vymazat filtry při změně vertikály",
           Fields: {
             TabName: "Název panelu",
             TabValue: "Hodnota panelu",

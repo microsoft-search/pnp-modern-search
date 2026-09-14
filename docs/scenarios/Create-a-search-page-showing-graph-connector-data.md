@@ -48,4 +48,4 @@ From here, it is just a matter of setting up the web part as you would do with a
 
 In this case the final result is a simple list of items from the Graph Connector. You can see that we have set up the refiners to show the properties that are refineable.
 
-![alt text](../scenarios/assets/Create-a-search-page-showing-graph-connector-data/FinalResult.png "Final Result")
+![alt text](assets/Create-a-search-page-showing-graph-connector-data/finalresult.png "Final Result")
