@@ -871,6 +871,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return fallbackValue;
     }
 
+    private isTaxonomyTokenDisplayValue(value: string): boolean {
+        const normalizedValue = TaxonomyHelper.normalizeReadableLabelCandidate(value);
+        return /^(?:GPP|GP0|L0)\|#/i.test(normalizedValue)
+            || normalizedValue.startsWith('ǂǂ');
+    }
+
     private readonly areFilterValuesEquivalent = (leftValue: string, rightValue: string): boolean => {
         if (!leftValue || !rightValue) {
             return false;
@@ -1247,6 +1253,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return this.getZeroResultValues(currentUiFilters, selectedFilterIdx, filterConfiguration);
         }
 
+        const hasReadableDisplayValue = availableFilter.values.some(availableValue => {
+            const displayName = this.resolveFilterDisplayName(availableValue.name, `${availableValue.value}`, filterConfiguration.selectedTemplate);
+            return !!displayName && !this.isTaxonomyTokenDisplayValue(displayName);
+        });
+
         return availableFilter.values.map(availableValue => {
             if (selectedFilterIdx === -1) {
                 return {
@@ -1260,7 +1271,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
 
             return this.mergeAvailableValueWithSelection(availableValue, selectedFilterValues, selectedValueIndexByRaw, filterConfiguration.selectedTemplate);
-        });
+        }).filter(value => !hasReadableDisplayValue || !this.isTaxonomyTokenDisplayValue(value.name));
     }
 
     private appendAdditionalSelectedValues(values: IDataFilterValueInternal[], currentUiFilters: IDataFilterInternal[], selectedFilterIdx: number): IDataFilterValueInternal[] {
@@ -1601,11 +1612,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 .map(submittedFilter => submittedFilter.values)
         )
             .map(value => `${value.value}`)
-            .sort((left, right) => left.localeCompare(right));
+            ;
 
         updatedFilter.hasSelectedValues = updatedFilter.values.some(value => value.selected);
         updatedFilter.selectedOnce = true;
-        updatedFilter.canApply = !isEqual(currentSelectedValuesInUiForFilter, alreadySubmittedValuesForFilter);
+        updatedFilter.canApply = !this.areFilterValueCollectionsEquivalent(currentSelectedValuesInUiForFilter, alreadySubmittedValuesForFilter);
         updatedFilter.canClear = alreadySubmittedValuesForFilter.length > 0 || updatedFilter.hasSelectedValues;
     }
 
@@ -2047,7 +2058,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return rawValue;
         }
 
-        const tokenRegex = /^((?:GP0|GPP|L0)\|#0?)([-0-9a-f]+)/i;
+        const tokenRegex = /^((?:GP0|GPP|L0)\|#0?)([-0-9a-f]+)(\|.*)?$/i;
         const tokenMatch = tokenRegex.exec(decodedValue);
         if (!tokenMatch) {
             return rawValue;
@@ -2059,7 +2070,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return rawValue;
         }
 
-        return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+        return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}${tokenMatch[3] || ''}`);
     }
 
     private decodeHierarchicalLeafRefinementValue(rawValue: string): string {
@@ -2334,9 +2345,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     const sanitizedValues = (filter.values || []).filter((value: any) => {
                         return !!value?.value && `${value.value}`.trim().length > 0;
                     }).map((value: any) => {
+                        const normalizedValue = this.sanitizeTaxonomyRefinementValue(`${value.value ?? ''}`);
+                        const filterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
                         return {
                             ...value,
-                            value: this.sanitizeTaxonomyRefinementValue(`${value.value ?? ''}`)
+                            value: filterConfiguration?.selectedTemplate === BuiltinFilterTemplates.Hierarchical
+                                ? this.decodeHierarchicalLeafRefinementValue(normalizedValue)
+                                : normalizedValue
                         };
                     });
 
@@ -2430,7 +2445,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 values: (filter.values || []).map(value => {
                     return {
                         ...value,
-                        value: this.sanitizeTaxonomyRefinementValue(`${value.value ?? ''}`)
+                            value: this.sanitizeTaxonomyRefinementValue(`${value.value ?? ''}`)
                     };
                 })
             };

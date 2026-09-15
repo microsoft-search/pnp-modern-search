@@ -599,7 +599,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             return rawValue;
         }
 
-        const tokenMatch = /^((?:GP0|GPP|L0)\|#0?)([0-9a-f-]+)/i.exec(decodedValue);
+        const tokenMatch = /^((?:GP0|GPP|L0)\|#0?)([0-9a-f-]+)(\|.*)?$/i.exec(decodedValue);
         if (!tokenMatch) {
             return rawValue;
         }
@@ -610,7 +610,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             return rawValue;
         }
 
-        return this.encodeRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+        return this.encodeRefinementToken(`${tokenMatch[1]}${extractedGuid}${tokenMatch[3] || ''}`);
     }
 
     private readonly dedupeFilterValues = (values: IDataFilterValueInfo[]): IDataFilterValueInfo[] => {
