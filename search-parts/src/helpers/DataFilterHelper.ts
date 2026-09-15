@@ -216,8 +216,9 @@ export class DataFilterHelper {
                         value = DataFilterHelper.decodeStringRefinementToken(value);
                     }
 
-                    // Enclose the expression with quotes if the value contains spaces, or number only
-                    if ((/\s/.test(value) && value.indexOf('range') === -1 && !/^".*"$/.test(value)) || (filter.filterName.includes("RefinableString") && /^\d+$/.test(value))) {
+                    // Enclose bare string operands containing spaces or pipes, but leave FQL expressions executable.
+                    const isFqlExpression = /^(?:or|and|range)\(/i.test(value);
+                    if ((!isFqlExpression && (/\s/.test(value) || value.includes('|')) && !/^".*"$/.test(value)) || (filter.filterName.includes("RefinableString") && /^\d+$/.test(value))) {
                         value = DataFilterHelper.quoteStringRefinementValue(value);
                     }
 
