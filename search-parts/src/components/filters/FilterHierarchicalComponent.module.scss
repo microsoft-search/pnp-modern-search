@@ -107,6 +107,29 @@
     flex: 1;
   }
 
+  .termRadio {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    font-size: 14px;
+
+    input {
+      flex: 0 0 auto;
+      width: 16px;
+      height: 16px;
+      margin: 0 8px 0 0;
+      accent-color: var(--themePrimary, #0078d4);
+    }
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   .childTerms {
     margin: 0;
   }

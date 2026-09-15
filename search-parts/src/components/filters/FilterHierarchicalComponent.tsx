@@ -742,13 +742,26 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         />
                     )}
                     {!hasChildren && <span className={styles.noChildrenSpacer}></span>}
-                    <Checkbox
-                        label={displayLabel}
-                        checked={isSelected}
-                        onChange={(ev, checked) => this.onTermCheckboxChange(term, !!checked)}
-                        className={styles.termCheckbox}
-                        disabled={hasResultSignals && !termExistsInResults}
-                    />
+                    {this.props.filter?.isMulti ? (
+                        <Checkbox
+                            label={displayLabel}
+                            checked={isSelected}
+                            onChange={(ev, checked) => this.onTermCheckboxChange(term, !!checked)}
+                            className={styles.termCheckbox}
+                            disabled={hasResultSignals && !termExistsInResults}
+                        />
+                    ) : (
+                        <label className={styles.termRadio}>
+                            <input
+                                type="radio"
+                                checked={isSelected}
+                                onChange={() => this.onTermCheckboxChange(term, !isSelected)}
+                                disabled={hasResultSignals && !termExistsInResults}
+                                aria-label={displayLabel}
+                            />
+                            <span>{displayLabel}</span>
+                        </label>
+                    )}
                 </div>
                 {hasChildren && isExpanded && (
                     <div className={styles.childTerms}>
@@ -799,7 +812,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const enabledResultGuidSet = resultGuidSet;
         
         const lowerSearchText = this.state.searchText.toLowerCase();
-        const selectedHierarchyTerms = this.props.filter?.isMulti ? this.getSelectedHierarchyTerms(hierarchicalTerms) : [];
+        const selectedHierarchyTerms = this.getSelectedHierarchyTerms(hierarchicalTerms);
 
         return (
             <div
