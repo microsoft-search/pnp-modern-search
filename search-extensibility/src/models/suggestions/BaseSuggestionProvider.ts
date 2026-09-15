@@ -1,5 +1,6 @@
 import { ISuggestionProvider } from './ISuggestionProvider';
 import { ISuggestion } from './ISuggestion';
+import { ISuggestionProviderContext } from './ISuggestionProviderContext';
 
 export abstract class BaseSuggestionProvider<T, TContext = any> implements ISuggestionProvider {
 
@@ -49,11 +50,11 @@ export abstract class BaseSuggestionProvider<T, TContext = any> implements ISugg
         // Do nothing by default      
     }
 
-    public getSuggestions(queryText: string): Promise<ISuggestion[]> {
+    public getSuggestions(queryText: string, suggestionContext?: ISuggestionProviderContext): Promise<ISuggestion[]> {
         throw 'Not implemented';
     }
 
-    public getZeroTermSuggestions(): Promise<ISuggestion[]> {
+    public getZeroTermSuggestions(suggestionContext?: ISuggestionProviderContext): Promise<ISuggestion[]> {
         throw 'Not implemented';
     }
 }

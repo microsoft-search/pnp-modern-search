@@ -52,8 +52,8 @@ Suggestions provider creation process comes in two distinct steps:
 | Method | Description |
 | --------- | ---------- |
 | `onInit()`| The initialization method of your provider (ex: initialize your properties, etc.). You can perform asynchronous calls here. This method will be called when the provider is instanciated by the main Web Part. This is a good place to fetch any zero term suggestions if any.
-| `getSuggestions()` | Method called to retrieve suggestions when a keyword is entered (in paramter).
-| `getZeroTermSuggestions()` | Method called to retrieve the zero term suggestions (i.e. when the search box gets initial focus).
+| `getSuggestions(queryText, suggestionContext?)` | Method called to retrieve suggestions when a keyword is entered. When the Search Box is connected to a Search Verticals Web Part, `suggestionContext.verticals.selectedVertical` contains the current vertical.
+| `getZeroTermSuggestions(suggestionContext?)` | Method called to retrieve the zero term suggestions (i.e. when the search box gets initial focus). The same optional vertical context is provided.
 | `getPropertyPaneGroupsConfiguration()` | Returns the property pane fields to display when your provider is selected. These are regular SPFx property fields and groups. PRovider properties are isolated from the other general Web Part properties under the property `providerProperties`. It means you must include that path in your property pane controls get the value persisted. Defining fields or groups is not mandatory for a provider. If you don't want to expose any option, just return an empty array.
 | `onPropertyUpdate()` | The method will be called when a property pane value is updated. The main Web Part in `Reactive` mode for property pane fields.
 
@@ -63,6 +63,31 @@ Suggestions provider creation process comes in two distinct steps:
 | --------- | ---------- |
 | `properties` | The Web Part properties in the property bag. Corresponds to the isolated `providerProperties` property in the global property bag. You won't be able to access any other general properties of the Web Part.
 | `isZeroTermSuggestionsEnabled` | Flag indicating if the provider supports zero term suggestions or not.
+
+#### Use the selected vertical
+
+Starting with `@pnp/modern-search-extensibility` v2.2.0, connect the Search Box to a Search Verticals Web Part in the **Connections** property pane section. The selected vertical is then supplied on every suggestion request. Existing providers remain compatible because the context argument is optional.
+
+```typescript
+import {
+    BaseSuggestionProvider,
+    ISuggestion,
+    ISuggestionProviderContext
+} from '@pnp/modern-search-extensibility';
+
+public async getSuggestions(
+    queryText: string,
+    suggestionContext?: ISuggestionProviderContext
+): Promise<ISuggestion[]> {
+    const selectedVertical = suggestionContext?.verticals?.selectedVertical;
+
+    // Use selectedVertical?.key, selectedVertical?.name or selectedVertical?.value
+    // to scope the suggestions returned by your provider.
+    return this.getMatchingSuggestions(queryText, selectedVertical);
+}
+```
+
+Changing the selected vertical refreshes visible query suggestions and invalidates cached zero term suggestions. The Search Box does not modify the query or apply the vertical value itself; the provider decides how to use the context.
 
 ### Register provider information
 

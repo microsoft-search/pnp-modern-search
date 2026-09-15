@@ -125,6 +125,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             onSearch={this._onSearch}
             placeholderText={this.props.placeholderText}
             suggestionProviders={this.props.suggestionProviders}
+            suggestionProviderContext={this.props.suggestionProviderContext}
             themeVariant={this.props.themeVariant}
             domElement={this.props.domElement}
             numberOfSuggestionsPerGroup={this.props.numberOfSuggestionsPerGroup}

@@ -72,6 +72,8 @@ The query suggestions allows users to easily find relevant query keywords based 
 
 Optionally, you can set a default query text coming from an other dynamic data source on the page. For instance, connect the search box to a page environment variable like a query string parameter. The value retrieved from a connected data source will be displayed automatically at page load in the text box if present and broadcasted to any other Web Parts connected to the search box Web Part (ex: a 'Search Results' Web Part) resulting to a cascading effect.
 
+You can also connect the Search Box to a Search Verticals Web Part. The current vertical (`key`, `name`, and `value`) is passed to custom suggestion providers through the optional `ISuggestionProviderContext` argument. Switching verticals refreshes visible query suggestions and invalidates cached zero term suggestions without changing the submitted search query. See [Custom suggestions providers](../../extensibility/custom_suggestions_provider.md#use-the-selected-vertical) for an implementation example.
+
 ### Audience Targeting
 
 You can control the visibility of the search box based on user group membership. See [Audience Targeting](../search-results/common/audience-targeting.md) for details.

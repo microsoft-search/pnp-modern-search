@@ -52,6 +52,16 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
     queryText: DynamicProperty<string>;
 
     /**
+     * Determines whether the Web Part uses context from a Search Verticals Web Part.
+     */
+    useVerticals: boolean;
+
+    /**
+     * Dynamic data connection reference for the Search Verticals Web Part.
+     */
+    verticalsDataSourceReference: string;
+
+    /**
      * The transformation to apply on the queryText before sending to a different page
      */
     inputTemplate: string;

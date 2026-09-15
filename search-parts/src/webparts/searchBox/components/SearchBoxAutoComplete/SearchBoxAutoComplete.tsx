@@ -188,13 +188,17 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
                 const allProviderPromises = this.props.suggestionProviders.map(async (provider) => {
 
-                    let suggestions = await provider.getSuggestions(trimmedInputValue);
+                    const suggestionProviderContext = this.props.suggestionProviderContext;
+                    let suggestions = await provider.getSuggestions(trimmedInputValue, suggestionProviderContext);
 
                     // Verify before updating proposed suggestions
                     //  1) the input value hasn't been searched
                     //  2) we have suggestions from this provider
                     //  3) the input value hasn't changed while the provider was retrieving suggestions
-                    if (!this.state.isSearchExecuted && suggestions.length > 0 && (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue)) {
+                    if (!this.state.isSearchExecuted
+                        && isEqual(suggestionProviderContext, this.props.suggestionProviderContext)
+                        && suggestions.length > 0
+                        && (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue)) {
                         this.setState({
                             proposedQuerySuggestions: this.state.proposedQuerySuggestions.concat(suggestions), // Merge suggestions
                             termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
@@ -248,7 +252,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     }
 
-    private async _ensureZeroTermQuerySuggestions(forceUpdate: boolean = false): Promise<void> {
+    private async _ensureZeroTermQuerySuggestions(forceUpdate: boolean = false, showSuggestions: boolean = false): Promise<void> {
         if ((!this.state.hasRetrievedZeroTermSuggestions && !this.state.isRetrievingZeroTermSuggestions) || forceUpdate) {
 
             // Verify we have at least one suggestion provider that has isZeroTermSuggestionsEnabled
@@ -258,12 +262,13 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                     isRetrievingZeroTermSuggestions: true,
                 });
 
+                const suggestionProviderContext = this.props.suggestionProviderContext;
                 const allZeroTermSuggestions = await Promise.all(this.props.suggestionProviders.map(async (provider): Promise<ISuggestion[]> => {
                     let zeroTermSuggestions = [];
 
                     // Verify we have a valid suggestion provider and it is enabled
                     if (provider && provider.isZeroTermSuggestionsEnabled) {
-                        zeroTermSuggestions = await provider.getZeroTermSuggestions();
+                        zeroTermSuggestions = await provider.getZeroTermSuggestions(suggestionProviderContext);
                     }
 
                     return zeroTermSuggestions;
@@ -272,16 +277,22 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 // Flatten two-dimensional array of zero term suggestions
                 const mergedSuggestions = allZeroTermSuggestions.reduce((allSuggestions, suggestions) => allSuggestions.concat(suggestions), []);
 
-                this.setState({
-                    hasRetrievedZeroTermSuggestions: true,
-                    isRetrievingZeroTermSuggestions: false,
-                    zeroTermQuerySuggestions: mergedSuggestions,
-                });
+                if (isEqual(suggestionProviderContext, this.props.suggestionProviderContext)) {
+                    this.setState({
+                        hasRetrievedZeroTermSuggestions: true,
+                        isRetrievingZeroTermSuggestions: false,
+                        zeroTermQuerySuggestions: mergedSuggestions,
+                        proposedQuerySuggestions: showSuggestions && !this.state.searchInputValue
+                            ? mergedSuggestions
+                            : this.state.proposedQuerySuggestions,
+                    });
+                }
             }
             else {
                 this.setState({
                     zeroTermQuerySuggestions: [],
                     hasRetrievedZeroTermSuggestions: true,
+                    proposedQuerySuggestions: showSuggestions ? [] : this.state.proposedQuerySuggestions,
                 });
             }
         }
@@ -471,9 +482,22 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
     public componentDidUpdate(prevProps: ISearchBoxAutoCompleteProps) {
         // Detect if any of our suggestion providers have changed
-        if (prevProps.suggestionProviders.length !== this.props.suggestionProviders.length
-            || !isEqual(prevProps.suggestionProviders, this.props.suggestionProviders)) {
-            this._ensureZeroTermQuerySuggestions(true);
+        const suggestionProvidersChanged = prevProps.suggestionProviders.length !== this.props.suggestionProviders.length
+            || !isEqual(prevProps.suggestionProviders, this.props.suggestionProviders);
+        const suggestionContextChanged = !isEqual(prevProps.suggestionProviderContext, this.props.suggestionProviderContext);
+
+        if (suggestionProvidersChanged || suggestionContextChanged) {
+            const trimmedInputValue = this.state.searchInputValue ? this.state.searchInputValue.trim() : "";
+            const showZeroTermSuggestions = trimmedInputValue.length === 0 && this.state.proposedQuerySuggestions.length > 0;
+
+            if (trimmedInputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
+                this._updateQuerySuggestions(this.state.searchInputValue);
+            } else {
+                this.setState({
+                    proposedQuerySuggestions: [],
+                });
+                this._ensureZeroTermQuerySuggestions(true, showZeroTermSuggestions);
+            }
         }
 
         if (!isEqual(prevProps.inputValue, this.props.inputValue)) {
