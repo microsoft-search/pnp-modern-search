@@ -456,28 +456,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }
 
     private handleLeafTermSelection(term: any, resolvedTermLabel: string, checked: boolean): void {
-        const currentFilterValues = this.props.filter?.values || [];
-        const termGuidForMatching = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-        const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
-        const matchingRefiner = this.findMatchingRefiner(currentFilterValues, termGuidForMatching, normalizedTermLabel);
-        const filterValue = matchingRefiner
-            ? this.createSelectedFilterValue(
-                resolvedTermLabel,
-                this.sanitizeRefinerValue(matchingRefiner.value),
-                checked,
-                matchingRefiner.operator
-            )
-            : (() => {
-                const fallbackValue = termGuidForMatching
-                    ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`)
-                    : term.id;
-
-                return this.createSelectedFilterValue(
-                    resolvedTermLabel,
-                    fallbackValue,
-                    checked
-                );
-            })();
+        const fallbackValue = resolvedTermLabel || term.id;
+        const filterValue = this.createSelectedFilterValue(
+            resolvedTermLabel,
+            fallbackValue,
+            checked
+        );
 
         if (checked && this.props.domElement) {
             this.dispatchFilterUpdate([filterValue]);
