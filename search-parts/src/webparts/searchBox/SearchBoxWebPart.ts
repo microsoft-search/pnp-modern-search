@@ -31,15 +31,19 @@ import { ISearchBoxWebPartProps } from './ISearchBoxWebPartProps';
 import { UrlHelper, PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
 import * as commonStrings from 'CommonStrings';
 import { ServiceScope } from '@microsoft/sp-core-library';
-import { ISuggestionProviderDefinition, BaseSuggestionProvider, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
+import {
+    BaseSuggestionProvider,
+    ISuggestionProvider,
+    ISuggestionProviderContext,
+    ISuggestionProviderDefinition,
+    ITokenService
+} from '@pnp/modern-search-extensibility';
 import { AvailableSuggestionProviders, BuiltinSuggestionProviderKeys } from '../../providers/AvailableSuggestionProviders';
-import { ISuggestionProvider } from '@pnp/modern-search-extensibility';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from '@fluentui/react';
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';
-import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
@@ -890,7 +894,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.openBehavior = this.properties.openBehavior ? this.properties.openBehavior : PageOpenBehavior.Self;
         this.properties.queryPathBehavior = this.properties.queryPathBehavior ? this.properties.queryPathBehavior : QueryPathBehavior.URLFragment;
         this.properties.reQueryOnClear = this.properties.reQueryOnClear !== undefined ? this.properties.reQueryOnClear : true;
-        this.properties.useVerticals = this.properties.useVerticals !== undefined ? this.properties.useVerticals : false;
+        this.properties.useVerticals = this.properties.useVerticals ?? false;
 
         this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration ? this.properties.suggestionProviderConfiguration : [];
         this.properties.numberOfSuggestionsPerGroup = this.properties.numberOfSuggestionsPerGroup ? this.properties.numberOfSuggestionsPerGroup : 10;

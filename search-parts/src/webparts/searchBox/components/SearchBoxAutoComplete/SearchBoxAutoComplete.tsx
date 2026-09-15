@@ -4,7 +4,7 @@ import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
 import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType, ISearchBox, DefaultButton } from '@fluentui/react';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
-import { ISuggestion } from '@pnp/modern-search-extensibility';
+import { ISuggestion, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
 import { DomPurifyHelper } from '../../../../helpers/DomPurifyHelper';
 
@@ -253,49 +253,51 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     }
 
     private async _ensureZeroTermQuerySuggestions(forceUpdate: boolean = false, showSuggestions: boolean = false): Promise<void> {
-        if ((!this.state.hasRetrievedZeroTermSuggestions && !this.state.isRetrievingZeroTermSuggestions) || forceUpdate) {
-
-            // Verify we have at least one suggestion provider that has isZeroTermSuggestionsEnabled
-            if (this.props.suggestionProviders && this.props.suggestionProviders.some(sgp => sgp.isZeroTermSuggestionsEnabled)) {
-                this.setState({
-                    zeroTermQuerySuggestions: [],
-                    isRetrievingZeroTermSuggestions: true,
-                });
-
-                const suggestionProviderContext = this.props.suggestionProviderContext;
-                const allZeroTermSuggestions = await Promise.all(this.props.suggestionProviders.map(async (provider): Promise<ISuggestion[]> => {
-                    let zeroTermSuggestions = [];
-
-                    // Verify we have a valid suggestion provider and it is enabled
-                    if (provider && provider.isZeroTermSuggestionsEnabled) {
-                        zeroTermSuggestions = await provider.getZeroTermSuggestions(suggestionProviderContext);
-                    }
-
-                    return zeroTermSuggestions;
-                }));
-
-                // Flatten two-dimensional array of zero term suggestions
-                const mergedSuggestions = allZeroTermSuggestions.reduce((allSuggestions, suggestions) => allSuggestions.concat(suggestions), []);
-
-                if (isEqual(suggestionProviderContext, this.props.suggestionProviderContext)) {
-                    this.setState({
-                        hasRetrievedZeroTermSuggestions: true,
-                        isRetrievingZeroTermSuggestions: false,
-                        zeroTermQuerySuggestions: mergedSuggestions,
-                        proposedQuerySuggestions: showSuggestions && !this.state.searchInputValue
-                            ? mergedSuggestions
-                            : this.state.proposedQuerySuggestions,
-                    });
-                }
-            }
-            else {
-                this.setState({
-                    zeroTermQuerySuggestions: [],
-                    hasRetrievedZeroTermSuggestions: true,
-                    proposedQuerySuggestions: showSuggestions ? [] : this.state.proposedQuerySuggestions,
-                });
-            }
+        const shouldRetrieveSuggestions = (!this.state.hasRetrievedZeroTermSuggestions && !this.state.isRetrievingZeroTermSuggestions) || forceUpdate;
+        if (!shouldRetrieveSuggestions) {
+            return;
         }
+
+        const hasZeroTermProvider = this.props.suggestionProviders?.some(provider => provider.isZeroTermSuggestionsEnabled);
+        if (!hasZeroTermProvider) {
+            this.setState(previousState => ({
+                zeroTermQuerySuggestions: [],
+                hasRetrievedZeroTermSuggestions: true,
+                proposedQuerySuggestions: showSuggestions ? [] : previousState.proposedQuerySuggestions,
+            }));
+            return;
+        }
+
+        this.setState({
+            zeroTermQuerySuggestions: [],
+            isRetrievingZeroTermSuggestions: true,
+        });
+
+        const suggestionProviderContext = this.props.suggestionProviderContext;
+        const mergedSuggestions = await this._getZeroTermSuggestions(suggestionProviderContext);
+
+        if (isEqual(suggestionProviderContext, this.props.suggestionProviderContext)) {
+            this.setState(previousState => ({
+                hasRetrievedZeroTermSuggestions: true,
+                isRetrievingZeroTermSuggestions: false,
+                zeroTermQuerySuggestions: mergedSuggestions,
+                proposedQuerySuggestions: showSuggestions && !previousState.searchInputValue
+                    ? mergedSuggestions
+                    : previousState.proposedQuerySuggestions,
+            }));
+        }
+    }
+
+    private async _getZeroTermSuggestions(suggestionProviderContext?: ISuggestionProviderContext): Promise<ISuggestion[]> {
+        const allZeroTermSuggestions = await Promise.all(this.props.suggestionProviders.map(async (provider): Promise<ISuggestion[]> => {
+            if (!provider || !provider.isZeroTermSuggestionsEnabled) {
+                return [];
+            }
+
+            return provider.getZeroTermSuggestions(suggestionProviderContext);
+        }));
+
+        return allZeroTermSuggestions.reduce((allSuggestions, suggestions) => allSuggestions.concat(suggestions), []);
     }
 
     /**
