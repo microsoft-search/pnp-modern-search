@@ -849,8 +849,8 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                     </div>
                 )}
                 <div
-                    role="radiogroup"
-                    aria-label={this.props.filter?.displayName || this.props.filter?.filterName}
+                    role={this.props.filter?.isMulti ? undefined : 'radiogroup'}
+                    aria-label={this.props.filter?.isMulti ? undefined : this.props.filter?.displayName || this.props.filter?.filterName}
                 >
                     {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, enabledResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
                 </div>
