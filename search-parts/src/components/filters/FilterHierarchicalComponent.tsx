@@ -460,6 +460,9 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const termGuidForMatching = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
         const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
         const matchingRefiner = this.findMatchingRefiner(currentFilterValues, termGuidForMatching, normalizedTermLabel);
+        const fallbackValue = termGuidForMatching
+            ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`)
+            : term.id;
         const filterValue = matchingRefiner
             ? this.createSelectedFilterValue(
                 resolvedTermLabel,
@@ -467,17 +470,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                 checked,
                 matchingRefiner.operator
             )
-            : (() => {
-                const fallbackValue = termGuidForMatching
-                    ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`)
-                    : term.id;
-
-                return this.createSelectedFilterValue(
-                    resolvedTermLabel,
-                    fallbackValue,
-                    checked
-                );
-            })();
+            : this.createSelectedFilterValue(
+                resolvedTermLabel,
+                fallbackValue,
+                checked
+            );
 
         if (checked && this.props.domElement) {
             this.dispatchFilterUpdate([filterValue]);

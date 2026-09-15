@@ -898,6 +898,23 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return leftGuids.some(guid => rightGuids.includes(guid));
     }
 
+    private areFilterValueCollectionsEquivalent(leftValues: string[], rightValues: string[]): boolean {
+        if (leftValues.length !== rightValues.length) {
+            return false;
+        }
+
+        const unmatchedRightValues = [...rightValues];
+        return leftValues.every(leftValue => {
+            const matchIndex = unmatchedRightValues.findIndex(rightValue => this.areFilterValuesEquivalent(leftValue, rightValue));
+            if (matchIndex === -1) {
+                return false;
+            }
+
+            unmatchedRightValues.splice(matchIndex, 1);
+            return true;
+        });
+    }
+
     private formatLocalizedString(template: string, values: Array<string | number>): string {
         return values.reduce<string>((formattedValue, currentValue, index) => {
             return formattedValue.replace(`{${index}}`, currentValue.toString());
@@ -1283,20 +1300,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const hasSelectedValues = values.some(value => value.selected);
         const currentSelectedValuesInUiForFilter = values
             .filter(value => value.selected)
-            .map(value => `${value.value ?? ''}`)
-            .sort((left, right) => left.localeCompare(right));
+            .map(value => `${value.value ?? ''}`);
         const alreadySubmittedValuesForFilter = flatten(
             this.state.submittedFilters
                 .filter(submittedFilter => submittedFilter.filterName === availableFilter.filterName)
                 .map(submittedFilter => submittedFilter.values)
         )
-            .map(value => `${value.value ?? ''}`)
-            .sort((left, right) => left.localeCompare(right));
+            .map(value => `${value.value ?? ''}`);
 
         return {
             selectedOnce,
             hasSelectedValues,
-            canApply: !isEqual(currentSelectedValuesInUiForFilter, alreadySubmittedValuesForFilter),
+            canApply: !this.areFilterValueCollectionsEquivalent(currentSelectedValuesInUiForFilter, alreadySubmittedValuesForFilter),
             canClear: alreadySubmittedValuesForFilter.length > 0 || hasSelectedValues
         };
     }
@@ -1989,6 +2004,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
                         // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
                         newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
+
+                        if (selectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical) {
+                            newValue.value = this.decodeHierarchicalLeafRefinementValue(newValue.value);
+                        }
                     }
 
                     return newValue;
@@ -2041,6 +2060,21 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+    }
+
+    private decodeHierarchicalLeafRefinementValue(rawValue: string): string {
+        const encodedTokenPattern = /"ǂǂ[0-9a-fA-F]+"/g;
+        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
+        const isSingleEncodedToken = /^"ǂǂ[0-9a-fA-F]+"$/.test(rawValue);
+
+        if (decodedValue?.startsWith('L0|#') && isSingleEncodedToken) {
+            return decodedValue;
+        }
+
+        return rawValue.replace(encodedTokenPattern, encodedToken => {
+            const decodedToken = TaxonomyHelper.decodeHexString(encodedToken);
+            return decodedToken?.startsWith('L0|#') ? `"${decodedToken}"` : encodedToken;
+        });
     }
 
     private isMultiValueFilter(filterConfiguration: IDataFilterConfiguration | IHierarchicalFilterConfiguration): boolean {

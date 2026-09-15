@@ -83,4 +83,36 @@ describe('DataFilterHelper.buildFqlRefinementString', () => {
 
         expect(result[0]).toContain(taxonomyToken);
     });
+
+    it('quotes a taxonomy value when its label contains the word range', () => {
+        const selectedFilters: IDataFilter[] = [
+            {
+                filterName: 'RefinableString00',
+                operator: 'or' as IDataFilter['operator'],
+                values: [
+                    { name: 'Strange', value: 'L0|#0123456789abcdef0123456789abcdef|Strange' }
+                ]
+            }
+        ];
+
+        const result = DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined);
+
+        expect(result).toEqual(['RefinableString00:"L0|#0123456789abcdef0123456789abcdef|Strange"']);
+    });
+
+    it('does not quote executable FQL expressions containing taxonomy pipes', () => {
+        const selectedFilters: IDataFilter[] = [
+            {
+                filterName: 'RefinableString00',
+                operator: 'or' as IDataFilter['operator'],
+                values: [
+                    { name: 'Category', value: 'or(GP0|#0123456789abcdef0123456789abcdef,L0|#0123456789abcdef0123456789abcdef|Category)' }
+                ]
+            }
+        ];
+
+        const result = DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined);
+
+        expect(result).toEqual(['RefinableString00:or(GP0|#0123456789abcdef0123456789abcdef,L0|#0123456789abcdef0123456789abcdef|Category)']);
+    });
 });
