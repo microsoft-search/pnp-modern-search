@@ -1,4 +1,5 @@
 import { ISuggestion } from './ISuggestion';
+import { ISuggestionProviderContext } from './ISuggestionProviderContext';
 
 export interface ISuggestionProvider {
 
@@ -25,13 +26,15 @@ export interface ISuggestionProvider {
     /**
      * Retrieve suggestions according to the entered query text
      * @param queryText the input query text from the search box
+     * @param suggestionContext contextual information for the current request
      */
-    getSuggestions(queryText: string): Promise<ISuggestion[]>;
+    getSuggestions(queryText: string, suggestionContext?: ISuggestionProviderContext): Promise<ISuggestion[]>;
 
     /**
      * Returns the zero term suggestions
+     * @param suggestionContext contextual information for the current request
      */
-    getZeroTermSuggestions(): Promise<ISuggestion[]>;
+    getZeroTermSuggestions(suggestionContext?: ISuggestionProviderContext): Promise<ISuggestion[]>;
 
     /**
      * Returns the data source property pane option fields if any.
