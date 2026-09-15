@@ -1991,10 +1991,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
 
                         if (selectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical) {
-                            const decodedValue = TaxonomyHelper.decodeHexString(newValue.value);
-                            if (decodedValue?.startsWith('L0|#')) {
-                                newValue.value = decodedValue;
-                            }
+                            newValue.value = this.decodeHierarchicalLeafRefinementValue(newValue.value);
                         }
                     }
 
@@ -2048,6 +2045,21 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+    }
+
+    private decodeHierarchicalLeafRefinementValue(rawValue: string): string {
+        const encodedTokenPattern = /"ǂǂ[0-9a-fA-F]+"/g;
+        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
+        const isSingleEncodedToken = /^"ǂǂ[0-9a-fA-F]+"$/.test(rawValue);
+
+        if (decodedValue?.startsWith('L0|#') && isSingleEncodedToken) {
+            return decodedValue;
+        }
+
+        return rawValue.replace(encodedTokenPattern, encodedToken => {
+            const decodedToken = TaxonomyHelper.decodeHexString(encodedToken);
+            return decodedToken?.startsWith('L0|#') ? `"${decodedToken}"` : encodedToken;
+        });
     }
 
     private isMultiValueFilter(filterConfiguration: IDataFilterConfiguration | IHierarchicalFilterConfiguration): boolean {
