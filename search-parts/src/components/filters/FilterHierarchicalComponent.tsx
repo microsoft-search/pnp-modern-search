@@ -313,6 +313,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const submittedSelections = this.props.selectedFilters || [];
         if (submittedSelections.length > 0) {
             return submittedSelections
+                .filter((filter: any) => filter?.filterName === this.props.filter?.filterName)
                 .flatMap((filter: any) => filter?.values || [])
                 .filter((value: any) => value?.value);
         }
@@ -725,6 +726,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const isSelected = this.state.selectedTerms[term.id];
         const displayLabel = this.getResolvedLabel(term.label);
         const indent = level * 20;
+        const radioGroupName = `pnp-filter-${this.props.instanceId || ''}-${this.props.filter?.filterName || ''}`;
 
         const termExistsInResults = this.termOrDescendantExistsInResults(term, resultGuids, resultLabels);
         if (!this.termOrDescendantMatchesSearch(term, lowerSearchText)) {
@@ -754,6 +756,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         <label className={styles.termRadio}>
                             <input
                                 type="radio"
+                                name={radioGroupName}
                                 checked={isSelected}
                                 onChange={() => this.onTermCheckboxChange(term, !isSelected)}
                                 disabled={hasResultSignals && !termExistsInResults}
