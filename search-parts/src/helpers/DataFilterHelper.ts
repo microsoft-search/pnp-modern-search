@@ -284,7 +284,8 @@ export class DataFilterHelper {
                     }
 
                     // Enclose the expression with quotes if the value contains spaces
-                    if ((/\s/.test(refinementToken) || refinementToken.includes('|')) && refinementToken.indexOf('range') === -1 && !/^".*"$/.test(refinementToken)) {
+                    const isFqlExpression = /^(?:or|and|range)\(/i.test(refinementToken);
+                    if (!isFqlExpression && (/\s/.test(refinementToken) || refinementToken.includes('|')) && refinementToken.indexOf('range') === -1 && !/^".*"$/.test(refinementToken)) {
                         refinementToken = DataFilterHelper.quoteStringRefinementValue(refinementToken);
                     }
 

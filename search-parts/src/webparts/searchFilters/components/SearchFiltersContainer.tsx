@@ -1992,7 +1992,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                         if (selectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical) {
                             const decodedValue = TaxonomyHelper.decodeHexString(newValue.value);
-                            if (decodedValue) {
+                            if (decodedValue?.startsWith('L0|#')) {
                                 newValue.value = decodedValue;
                             }
                         }
