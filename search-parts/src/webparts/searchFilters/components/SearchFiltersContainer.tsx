@@ -1989,6 +1989,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         // Guard rail: normalize malformed taxonomy tokens before submitting to query/URL.
                         // This prevents trailing garbage characters in GP0/GPP/L0 GUID payloads.
                         newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
+
+                        if (selectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical) {
+                            const decodedValue = TaxonomyHelper.decodeHexString(newValue.value);
+                            if (decodedValue) {
+                                newValue.value = decodedValue;
+                            }
+                        }
                     }
 
                     return newValue;

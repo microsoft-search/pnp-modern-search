@@ -284,7 +284,7 @@ export class DataFilterHelper {
                     }
 
                     // Enclose the expression with quotes if the value contains spaces
-                    if (/\s/.test(refinementToken) && refinementToken.indexOf('range') === -1 && !/^".*"$/.test(refinementToken)) {
+                    if ((/\s/.test(refinementToken) || refinementToken.includes('|')) && refinementToken.indexOf('range') === -1 && !/^".*"$/.test(refinementToken)) {
                         refinementToken = DataFilterHelper.quoteStringRefinementValue(refinementToken);
                     }
 
