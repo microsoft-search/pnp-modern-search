@@ -86,6 +86,10 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
                 const uniqueDisplayValues: Array<{ displayValue: string; operator: FilterComparisonOperator }> = [];
                 const seenDisplayValues = new Set<string>();
+                const hasReadableDisplayValue = filter.values.some(value => {
+                    const candidate = this.resolveDisplayValue(value.name, value.value, selectedTemplate);
+                    return !!candidate && !this.isTaxonomyTokenDisplayValue(candidate);
+                });
 
                 filter.values.forEach(value => {
                     let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid()
@@ -99,6 +103,10 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
                         if (labelFromToken) {
                             displayValue = labelFromToken;
                         }
+                    }
+
+                    if (hasReadableDisplayValue && this.isTaxonomyTokenDisplayValue(displayValue)) {
+                        return;
                     }
 
                     if (displayValue && displayValue.indexOf("i:0#") > -1) {
@@ -232,6 +240,12 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
         }
 
         return null;
+    }
+
+    private isTaxonomyTokenDisplayValue = (value: string): boolean => {
+        const normalizedValue = TaxonomyHelper.normalizeReadableLabelCandidate(value);
+        return /^(?:GPP|GP0|L0)\|#/i.test(normalizedValue)
+            || normalizedValue.startsWith('ǂǂ');
     }
 
     private resolveDisplayValue(name: string, value: string, selectedTemplate?: string): string {

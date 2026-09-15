@@ -313,6 +313,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const submittedSelections = this.props.selectedFilters || [];
         if (submittedSelections.length > 0) {
             return submittedSelections
+                .filter((filter: any) => filter?.filterName === this.props.filter?.filterName)
                 .flatMap((filter: any) => filter?.values || [])
                 .filter((value: any) => value?.value);
         }
@@ -599,7 +600,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             return rawValue;
         }
 
-        const tokenMatch = /^((?:GP0|GPP|L0)\|#0?)([0-9a-f-]+)/i.exec(decodedValue);
+        const tokenMatch = /^((?:GP0|GPP|L0)\|#0?)([0-9a-f-]+)(\|.*)?$/i.exec(decodedValue);
         if (!tokenMatch) {
             return rawValue;
         }
@@ -610,7 +611,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             return rawValue;
         }
 
-        return this.encodeRefinementToken(`${tokenMatch[1]}${extractedGuid}`);
+        return this.encodeRefinementToken(`${tokenMatch[1]}${extractedGuid}${tokenMatch[3] || ''}`);
     }
 
     private readonly dedupeFilterValues = (values: IDataFilterValueInfo[]): IDataFilterValueInfo[] => {
@@ -725,6 +726,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const isSelected = this.state.selectedTerms[term.id];
         const displayLabel = this.getResolvedLabel(term.label);
         const indent = level * 20;
+        const radioGroupName = `pnp-filter-${this.props.instanceId || ''}-${this.props.filter?.filterName || ''}`;
 
         const termExistsInResults = this.termOrDescendantExistsInResults(term, resultGuids, resultLabels);
         if (!this.termOrDescendantMatchesSearch(term, lowerSearchText)) {
@@ -742,13 +744,27 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         />
                     )}
                     {!hasChildren && <span className={styles.noChildrenSpacer}></span>}
-                    <Checkbox
-                        label={displayLabel}
-                        checked={isSelected}
-                        onChange={(ev, checked) => this.onTermCheckboxChange(term, !!checked)}
-                        className={styles.termCheckbox}
-                        disabled={hasResultSignals && !termExistsInResults}
-                    />
+                    {this.props.filter?.isMulti ? (
+                        <Checkbox
+                            label={displayLabel}
+                            checked={isSelected}
+                            onChange={(ev, checked) => this.onTermCheckboxChange(term, !!checked)}
+                            className={styles.termCheckbox}
+                            disabled={hasResultSignals && !termExistsInResults}
+                        />
+                    ) : (
+                        <label className={styles.termRadio}>
+                            <input
+                                type="radio"
+                                name={radioGroupName}
+                                checked={isSelected}
+                                onChange={() => this.onTermCheckboxChange(term, !isSelected)}
+                                disabled={hasResultSignals && !termExistsInResults}
+                                aria-label={displayLabel}
+                            />
+                            <span>{displayLabel}</span>
+                        </label>
+                    )}
                 </div>
                 {hasChildren && isExpanded && (
                     <div className={styles.childTerms}>
@@ -799,7 +815,7 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const enabledResultGuidSet = resultGuidSet;
         
         const lowerSearchText = this.state.searchText.toLowerCase();
-        const selectedHierarchyTerms = this.props.filter?.isMulti ? this.getSelectedHierarchyTerms(hierarchicalTerms) : [];
+        const selectedHierarchyTerms = this.getSelectedHierarchyTerms(hierarchicalTerms);
 
         return (
             <div
@@ -832,7 +848,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
                         ))}
                     </div>
                 )}
-                {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, enabledResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
+                <div
+                    role={this.props.filter?.isMulti ? undefined : 'radiogroup'}
+                    aria-label={this.props.filter?.isMulti ? undefined : this.props.filter?.displayName || this.props.filter?.filterName}
+                >
+                    {hierarchicalTerms.map((term: any) => this.renderTerm(term, 0, enabledResultGuidSet, resultLabelSet, lowerSearchText, hasResultSignals)).filter(x => x !== null)}
+                </div>
             </div>
         );
     }
