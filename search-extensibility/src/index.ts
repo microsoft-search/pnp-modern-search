@@ -24,6 +24,7 @@ export * from './models/dataSources/ITemplateSlot';
 export * from './models/suggestions/BaseSuggestionProvider';
 export * from './models/suggestions/ISuggestion';
 export * from './models/suggestions/ISuggestionProvider';
+export * from './models/suggestions/ISuggestionProviderContext';
 export * from './models/suggestions/ISuggestionProviderDefinition';
 export * from './models/dataSources/SortFieldDirection';
 export * from './models/verticals/IDataVertical';
