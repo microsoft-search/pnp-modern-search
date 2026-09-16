@@ -1414,6 +1414,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#use-the-selected-vertical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use the selected vertical
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1663,6 +1674,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#use-the-selected-vertical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use the selected vertical
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1762,12 +1784,12 @@
 <td>The initialization method of your provider (ex: initialize your properties, etc.). You can perform asynchronous calls here. This method will be called when the provider is instanciated by the main Web Part. This is a good place to fetch any zero term suggestions if any.</td>
 </tr>
 <tr>
-<td><code>getSuggestions()</code></td>
-<td>Method called to retrieve suggestions when a keyword is entered (in paramter).</td>
+<td><code>getSuggestions(queryText, suggestionContext?)</code></td>
+<td>Method called to retrieve suggestions when a keyword is entered. When the Search Box is connected to a Search Verticals Web Part, <code>suggestionContext.verticals.selectedVertical</code> contains the current vertical.</td>
 </tr>
 <tr>
-<td><code>getZeroTermSuggestions()</code></td>
-<td>Method called to retrieve the zero term suggestions (i.e. when the search box gets initial focus).</td>
+<td><code>getZeroTermSuggestions(suggestionContext?)</code></td>
+<td>Method called to retrieve the zero term suggestions (i.e. when the search box gets initial focus). The same optional vertical context is provided.</td>
 </tr>
 <tr>
 <td><code>getPropertyPaneGroupsConfiguration()</code></td>
@@ -1798,6 +1820,26 @@
 </tr>
 </tbody>
 </table>
+<h4 id="use-the-selected-vertical">Use the selected vertical<a class="headerlink" href="#use-the-selected-vertical" title="Permanent link">&para;</a></h4>
+<p>Starting with <code>@pnp/modern-search-extensibility</code> v2.2.0, connect the Search Box to a Search Verticals Web Part in the <strong>Connections</strong> property pane section. The selected vertical is then supplied on every suggestion request. Existing providers remain compatible because the context argument is optional.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nx">BaseSuggestionProvider</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nx">ISuggestion</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nx">ISuggestionProviderContext</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@pnp/modern-search-extensibility'</span><span class="p">;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="nx">getSuggestions</span><span class="p">(</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nx">queryText</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nx">suggestionContext?</span><span class="o">:</span><span class="w"> </span><span class="kt">ISuggestionProviderContext</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ISuggestion</span><span class="p">[]</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">selectedVertical</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">suggestionContext</span><span class="o">?</span><span class="p">.</span><span class="nx">verticals</span><span class="o">?</span><span class="p">.</span><span class="nx">selectedVertical</span><span class="p">;</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="c1">// Use selectedVertical?.key, selectedVertical?.name or selectedVertical?.value</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="c1">// to scope the suggestions returned by your provider.</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">getMatchingSuggestions</span><span class="p">(</span><span class="nx">queryText</span><span class="p">,</span><span class="w"> </span><span class="nx">selectedVertical</span><span class="p">);</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">}</span>
+</code></pre></div>
+<p>Changing the selected vertical refreshes visible query suggestions and invalidates cached zero term suggestions. The Search Box does not modify the query or apply the vertical value itself; the provider decides how to use the context.</p>
 <h3 id="register-provider-information">Register provider information<a class="headerlink" href="#register-provider-information" title="Permanent link">&para;</a></h3>
 <p>The next step is to fill information about your new suggestions provider. In the library main entry point (i.e. the class implementing the <code>IExtensibilityLibrary</code> in interface) return a new <code>ISuggestionProviderDefinition</code> object in the <code>getCustomSuggestionProviders()</code> method using these properties: </p>
 <table>
@@ -1826,16 +1868,16 @@
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'Custom Suggestions Provider'</span><span class="p">,</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">'CustomSuggestionsProvider'</span><span class="p">,</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">          </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">'A demo custom suggestions provider from the extensibility library'</span><span class="p">,</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ISuggestionProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'MyCompany:CustomSuggestionsProvider'</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomSuggestionProvider</span><span class="p">)</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">];</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">getCustomSuggestionProviders</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">ISuggestionProviderDefinition</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'Custom Suggestions Provider'</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">          </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">'CustomSuggestionsProvider'</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">          </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">'A demo custom suggestions provider from the extensibility library'</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">          </span><span class="nx">serviceKey</span><span class="o">:</span><span class="w"> </span><span class="kt">ServiceKey.create</span><span class="o">&lt;</span><span class="nx">ISuggestionProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'MyCompany:CustomSuggestionsProvider'</span><span class="p">,</span><span class="w"> </span><span class="nx">CustomSuggestionProvider</span><span class="p">)</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="p">];</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span><span class="p">}</span>
 </code></pre></div>
 
 

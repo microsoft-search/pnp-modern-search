@@ -2261,7 +2261,7 @@
 <tr>
 <td><strong>Custom Suggestion Provider</strong></td>
 <td><code>BaseSuggestionProvider&lt;TProps, TContext&gt;</code></td>
-<td><code>this.context</code>, <code>this.properties</code>, <code>this.serviceScope</code>, <code>this.isZeroTermSuggestionsEnabled</code>. Receives <code>queryText</code> on <code>getSuggestions(queryText)</code>.</td>
+<td><code>this.context</code>, <code>this.properties</code>, <code>this.serviceScope</code>, <code>this.isZeroTermSuggestionsEnabled</code>. Receives <code>queryText</code> and an optional <code>ISuggestionProviderContext</code> containing the connected selected vertical on each suggestion request.</td>
 <td>Same as above.</td>
 </tr>
 <tr>
