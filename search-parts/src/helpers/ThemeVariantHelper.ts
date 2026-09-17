@@ -1,12 +1,22 @@
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IFontStyles, IRawStyle } from '@fluentui/react';
 
 const THEME_VARIANT_ATTRIBUTE = 'data-theme-variant';
-const DEFAULT_FONT_FAMILY = "'Segoe UI', 'Segoe UI Web (West European)', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif";
-
-type FontStyleName = keyof NonNullable<IReadonlyTheme['fonts']>;
-
-const BODY_FONT_STYLES: FontStyleName[] = ['tiny', 'xSmall', 'small', 'smallPlus', 'medium', 'mediumPlus'];
-const HEADLINE_FONT_STYLES: FontStyleName[] = ['large', 'xLarge', 'xLargePlus', 'xxLarge', 'xxLargePlus', 'superLarge', 'mega'];
+const BRAND_FONT_TOKEN_BY_STYLE: Partial<Record<keyof IFontStyles, number>> = {
+    tiny: 100,
+    xSmall: 200,
+    small: 300,
+    smallPlus: 400,
+    medium: 600,
+    mediumPlus: 700,
+    large: 900,
+    xLarge: 1000,
+    xLargePlus: 1100,
+    xxLarge: 1200,
+    xxLargePlus: 1300,
+    superLarge: 1500,
+    mega: 1700
+};
 
 export class ThemeVariantHelper {
 
@@ -19,37 +29,31 @@ export class ThemeVariantHelper {
     private static readonly _parsedThemes: WeakMap<Element, IReadonlyTheme> = new WeakMap<Element, IReadonlyTheme>();
 
     /**
-     * Copies the custom font families exposed by SharePoint Brand Center into the
-     * Fluent UI font slots. SharePoint exposes these values as CSS custom
-     * properties, while the serialized SPFx theme can retain the default
-     * `fonts.*.fontFamily` values.
+     * Uses the SharePoint Brand Center CSS custom properties documented for SPFx
+     * components. Keeping the var() expression in the serialized theme lets
+     * layouts and Fluent UI components resolve the current font in the page CSS
+     * context, including after the user changes the selected font.
      */
-    public static resolveThemeVariant(themeVariant: IReadonlyTheme | undefined, element?: Element): IReadonlyTheme | undefined {
-        if (!themeVariant || typeof window === 'undefined' || typeof getComputedStyle !== 'function') {
+    public static resolveThemeVariant(themeVariant: IReadonlyTheme | undefined): IReadonlyTheme | undefined {
+        if (!themeVariant) {
             return themeVariant;
         }
 
-        const style = getComputedStyle(element || document.documentElement);
-        const fontFamilies = this._getCustomFontFamilies(style, themeVariant);
-
-        if (!fontFamilies.body && !fontFamilies.headline && !fontFamilies.title && !fontFamilies.interactive) {
+        if (!themeVariant.fonts) {
             return themeVariant;
         }
 
-        const fonts = { ...(themeVariant.fonts || {}) };
-        const bodyFontFamily = fontFamilies.body || fontFamilies.interactive;
-        const headlineFontFamily = fontFamilies.headline || bodyFontFamily;
-        const titleFontFamily = fontFamilies.title || headlineFontFamily;
+        const fonts = { ...themeVariant.fonts } as IFontStyles;
 
-        BODY_FONT_STYLES.forEach((styleName) => {
-            if (fonts[styleName]) {
-                fonts[styleName] = { ...fonts[styleName], fontFamily: bodyFontFamily };
-            }
-        });
+        (Object.keys(BRAND_FONT_TOKEN_BY_STYLE) as (keyof IFontStyles)[]).forEach((styleName) => {
+            const token = BRAND_FONT_TOKEN_BY_STYLE[styleName];
+            const fontStyle = fonts[styleName] as IRawStyle;
 
-        HEADLINE_FONT_STYLES.forEach((styleName) => {
-            if (fonts[styleName]) {
-                fonts[styleName] = { ...fonts[styleName], fontFamily: styleName === 'mega' ? titleFontFamily : headlineFontFamily };
+            if (token && fontStyle) {
+                fonts[styleName] = {
+                    ...fontStyle,
+                    fontFamily: `var(--fontFamilyCustomFont${token}, var(--fontFamilyBase))`
+                };
             }
         });
 
@@ -93,61 +97,5 @@ export class ThemeVariantHelper {
         ThemeVariantHelper._parsedThemes.set(themeHost, themeVariant);
 
         return themeVariant;
-    }
-
-    private static _getCustomFontFamilies(style: CSSStyleDeclaration, themeVariant: IReadonlyTheme): {
-        body?: string;
-        headline?: string;
-        title?: string;
-        interactive?: string;
-    } {
-        const slotValues: { [slot: string]: string } = {};
-
-        for (let slot = 100; slot <= 1700; slot += 100) {
-            const customFont = style.getPropertyValue(`--fontFamilyCustomFont${slot}`).trim();
-            if (customFont) {
-                slotValues[`CustomFont${slot}`] = customFont;
-            }
-        }
-
-        const themeSlots = (themeVariant as any).fontSlots;
-        const themeFaces = (themeVariant as any).fontFaces;
-
-        for (let slot = 100; slot <= 1700; slot += 100) {
-            const slotName = `CustomFont${slot}`;
-            slotValues[slotName] = slotValues[slotName] ||
-                this._extractFontFamily(themeSlots?.[slotName]) ||
-                this._extractFontFamily(themeFaces?.[slotName]);
-        }
-
-        const getFirst = (start: number, end: number): string | undefined => {
-            for (let slot = start; slot <= end; slot += 100) {
-                if (slotValues[`CustomFont${slot}`]) {
-                    return slotValues[`CustomFont${slot}`];
-                }
-            }
-            return undefined;
-        };
-
-        return {
-            body: getFirst(100, 900),
-            interactive: getFirst(400, 600),
-            headline: getFirst(1000, 1400),
-            title: getFirst(1500, 1700)
-        };
-    }
-
-    private static _extractFontFamily(value: any): string | undefined {
-        if (typeof value === 'string' && value.trim() && value !== DEFAULT_FONT_FAMILY) {
-            return value.trim();
-        }
-
-        if (value && typeof value === 'object') {
-            return this._extractFontFamily(value.fontFamily) ||
-                this._extractFontFamily(value.family) ||
-                this._extractFontFamily(value.value);
-        }
-
-        return undefined;
     }
 }

@@ -324,8 +324,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
 
         // If it exists, get the theme variant
         this._themeVariant = ThemeVariantHelper.resolveThemeVariant(
-            (this._themeProvider.tryGetTheme() as IReadonlyTheme) || (getTheme() as unknown as IReadonlyTheme),
-            this.domElement
+            (this._themeProvider.tryGetTheme() as IReadonlyTheme) || (getTheme() as unknown as IReadonlyTheme)
         );
 
         // Register a handler to be notified if the theme variant changes
@@ -340,8 +339,7 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
 
         if (!isEqual(this._themeVariant, args.theme)) {
             this._themeVariant = ThemeVariantHelper.resolveThemeVariant(
-                (args.theme as IReadonlyTheme) || (getTheme() as unknown as IReadonlyTheme),
-                this.domElement
+                (args.theme as IReadonlyTheme) || (getTheme() as unknown as IReadonlyTheme)
             );
             this.render();
         }
