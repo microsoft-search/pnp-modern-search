@@ -1450,10 +1450,10 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return false;
     }
 
-    const normalizedIframeUrl = this._normalizeDetailsPaneUrl(iframeUrl);
+    const detailsPaneUrl = new URL(iframeUrl, window.location.origin);
 
-    if (iframe.src !== normalizedIframeUrl) {
-      iframe.src = normalizedIframeUrl;
+    if (!detailsPaneUrl.searchParams.has("isDarkMode")) {
+      iframe.src = this._normalizeDetailsPaneUrl(iframeUrl);
       return true;
     }
 
@@ -1714,7 +1714,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       }
 
       if (this._isDetailsDocumentItem(item)) {
-        return this._buildDocumentViewerUrl(item, baseUrl) ?? this._buildDocumentDetailsPaneUrl(item, baseUrl);
+        return this._buildDocumentDetailsPaneUrl(item, baseUrl) ?? this._buildDocumentViewerUrl(item, baseUrl);
       }
 
       if (!listId || !listItemId) {
