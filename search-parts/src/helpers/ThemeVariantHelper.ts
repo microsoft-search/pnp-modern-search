@@ -1,6 +1,12 @@
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 const THEME_VARIANT_ATTRIBUTE = 'data-theme-variant';
+const DEFAULT_FONT_FAMILY = "'Segoe UI', 'Segoe UI Web (West European)', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif";
+
+type FontStyleName = keyof NonNullable<IReadonlyTheme['fonts']>;
+
+const BODY_FONT_STYLES: FontStyleName[] = ['tiny', 'xSmall', 'small', 'smallPlus', 'medium', 'mediumPlus'];
+const HEADLINE_FONT_STYLES: FontStyleName[] = ['large', 'xLarge', 'xLargePlus', 'xxLarge', 'xxLargePlus', 'superLarge', 'mega'];
 
 export class ThemeVariantHelper {
 
@@ -11,6 +17,47 @@ export class ThemeVariantHelper {
      * hundred values) cheap to render.
      */
     private static readonly _parsedThemes: WeakMap<Element, IReadonlyTheme> = new WeakMap<Element, IReadonlyTheme>();
+
+    /**
+     * Copies the custom font families exposed by SharePoint Brand Center into the
+     * Fluent UI font slots. SharePoint exposes these values as CSS custom
+     * properties, while the serialized SPFx theme can retain the default
+     * `fonts.*.fontFamily` values.
+     */
+    public static resolveThemeVariant(themeVariant: IReadonlyTheme | undefined, element?: Element): IReadonlyTheme | undefined {
+        if (!themeVariant || typeof window === 'undefined' || typeof getComputedStyle !== 'function') {
+            return themeVariant;
+        }
+
+        const style = getComputedStyle(element || document.documentElement);
+        const fontFamilies = this._getCustomFontFamilies(style, themeVariant);
+
+        if (!fontFamilies.body && !fontFamilies.headline && !fontFamilies.title && !fontFamilies.interactive) {
+            return themeVariant;
+        }
+
+        const fonts = { ...(themeVariant.fonts || {}) };
+        const bodyFontFamily = fontFamilies.body || fontFamilies.interactive;
+        const headlineFontFamily = fontFamilies.headline || bodyFontFamily;
+        const titleFontFamily = fontFamilies.title || headlineFontFamily;
+
+        BODY_FONT_STYLES.forEach((styleName) => {
+            if (fonts[styleName]) {
+                fonts[styleName] = { ...fonts[styleName], fontFamily: bodyFontFamily };
+            }
+        });
+
+        HEADLINE_FONT_STYLES.forEach((styleName) => {
+            if (fonts[styleName]) {
+                fonts[styleName] = { ...fonts[styleName], fontFamily: styleName === 'mega' ? titleFontFamily : headlineFontFamily };
+            }
+        });
+
+        return {
+            ...themeVariant,
+            fonts
+        };
+    }
 
     /**
      * Resolves the theme variant from the closest ancestor carrying a `data-theme-variant`
@@ -46,5 +93,61 @@ export class ThemeVariantHelper {
         ThemeVariantHelper._parsedThemes.set(themeHost, themeVariant);
 
         return themeVariant;
+    }
+
+    private static _getCustomFontFamilies(style: CSSStyleDeclaration, themeVariant: IReadonlyTheme): {
+        body?: string;
+        headline?: string;
+        title?: string;
+        interactive?: string;
+    } {
+        const slotValues: { [slot: string]: string } = {};
+
+        for (let slot = 100; slot <= 1700; slot += 100) {
+            const customFont = style.getPropertyValue(`--fontFamilyCustomFont${slot}`).trim();
+            if (customFont) {
+                slotValues[`CustomFont${slot}`] = customFont;
+            }
+        }
+
+        const themeSlots = (themeVariant as any).fontSlots;
+        const themeFaces = (themeVariant as any).fontFaces;
+
+        for (let slot = 100; slot <= 1700; slot += 100) {
+            const slotName = `CustomFont${slot}`;
+            slotValues[slotName] = slotValues[slotName] ||
+                this._extractFontFamily(themeSlots?.[slotName]) ||
+                this._extractFontFamily(themeFaces?.[slotName]);
+        }
+
+        const getFirst = (start: number, end: number): string | undefined => {
+            for (let slot = start; slot <= end; slot += 100) {
+                if (slotValues[`CustomFont${slot}`]) {
+                    return slotValues[`CustomFont${slot}`];
+                }
+            }
+            return undefined;
+        };
+
+        return {
+            body: getFirst(100, 900),
+            interactive: getFirst(400, 600),
+            headline: getFirst(1000, 1400),
+            title: getFirst(1500, 1700)
+        };
+    }
+
+    private static _extractFontFamily(value: any): string | undefined {
+        if (typeof value === 'string' && value.trim() && value !== DEFAULT_FONT_FAMILY) {
+            return value.trim();
+        }
+
+        if (value && typeof value === 'object') {
+            return this._extractFontFamily(value.fontFamily) ||
+                this._extractFontFamily(value.family) ||
+                this._extractFontFamily(value.value);
+        }
+
+        return undefined;
     }
 }
