@@ -50,9 +50,10 @@ export class ThemeVariantHelper {
             const fontStyle = fonts[styleName] as IRawStyle;
 
             if (token && fontStyle) {
+                const fallbackFontFamily = fontStyle.fontFamily || 'sans-serif';
                 fonts[styleName] = {
                     ...fontStyle,
-                    fontFamily: `var(--fontFamilyCustomFont${token}, var(--fontFamilyBase))`
+                    fontFamily: `var(--fontFamilyCustomFont${token}, var(--fontFamilyBase, ${fallbackFontFamily}))`
                 };
             }
         });

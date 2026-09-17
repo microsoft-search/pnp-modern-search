@@ -337,10 +337,12 @@ export abstract class BaseWebPart<T extends IBaseWebPartProps> extends BaseClien
      */
     private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
 
-        if (!isEqual(this._themeVariant, args.theme)) {
-            this._themeVariant = ThemeVariantHelper.resolveThemeVariant(
-                (args.theme as IReadonlyTheme) || (getTheme() as unknown as IReadonlyTheme)
-            );
+        const themeVariant = ThemeVariantHelper.resolveThemeVariant(
+            (args.theme as IReadonlyTheme) || (getTheme() as unknown as IReadonlyTheme)
+        );
+
+        if (!isEqual(this._themeVariant, themeVariant)) {
+            this._themeVariant = themeVariant;
             this.render();
         }
     }
