@@ -54,6 +54,7 @@ import { Toggle, IToggleProps } from '@fluentui/react/lib/Toggle';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
 import { FilterControlHelper } from '../../helpers/FilterControlHelper';
+import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 import { Constants } from '../../common/Constants';
 import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityConfigurationHelper';
 import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
@@ -2168,12 +2169,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.properties.filterBackgroundColor = undefined;
         this.properties.filterBorderColor = undefined;
         this.properties.filterBorderThickness = undefined;
-
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
 
         // Re-render the web part to apply changes
         this.render();
+    }
+
+    private getFilterValueSortName(value: IDataFilterResultValue): string {
+        const rawName = `${value?.name ?? ''}`;
+        return TaxonomyHelper.resolveDisplayLabel(rawName).toLocaleLowerCase();
     }
 
 
@@ -2298,7 +2303,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             }
 
             if (sortByField === 'name') {
-                filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]) : sortBy(filter.values, [item => item["name"].toLocaleLowerCase()]).reverse();
+                filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, [item => this.getFilterValueSortName(item)]) : sortBy(filter.values, [item => this.getFilterValueSortName(item)]).reverse();
             }
             else {
                 filter.values = sortDirection === FilterSortDirection.Ascending ? sortBy(filter.values, sortByField) : sortBy(filter.values, sortByField).reverse();
