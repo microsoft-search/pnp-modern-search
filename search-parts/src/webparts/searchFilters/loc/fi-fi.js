@@ -61,7 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
-                    StaticPeopleTemplate: "Staattinen henkilömalli",
+                    StaticPeopleTemplate: "Henkilöt",
                     TaxonomyPickerTemplate: "Taksonomiavalinta",
                     HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },
