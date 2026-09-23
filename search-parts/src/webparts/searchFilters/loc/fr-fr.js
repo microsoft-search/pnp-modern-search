@@ -63,7 +63,7 @@ define([], function () {
                     ComboBoxTemplate: "Zone de liste modifiable",
                     DateIntervalTemplate: "Intervalle de dates",
                     PeopleTemplate: "Modèle de personne",
-                    StaticPeopleTemplate: "Modèle de personne statique",
+                    StaticPeopleTemplate: "Personnes",
                     TaxonomyPickerTemplate: "Sélecteur de taxonomie",
                     HierarchicalFilterTemplate: "Filtre hiérarchique"
                 },
