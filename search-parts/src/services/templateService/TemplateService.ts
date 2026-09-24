@@ -1061,7 +1061,8 @@ export class TemplateService implements ITemplateService {
         await this._initAdaptiveCardsResources();
 
         let hostConfiguration: { [key: string]: any } = {
-            fontFamily: "Segoe UI, Helvetica Neue, sans-serif",
+            fontFamily: (templateContext as ISearchResultsTemplateContext).theme?.fonts?.medium?.fontFamily ||
+                "Segoe UI, Helvetica Neue, sans-serif",
         };
 
         if (
@@ -1070,6 +1071,14 @@ export class TemplateService implements ITemplateService {
         ) {
             hostConfiguration = (templateContext as ISearchResultsTemplateContext)
                 .utils.adaptiveCardsHostConfig;
+
+            if (hostConfiguration.fontFamily === "Segoe UI, Helvetica Neue, sans-serif") {
+                hostConfiguration = {
+                    ...hostConfiguration,
+                    fontFamily: (templateContext as ISearchResultsTemplateContext).theme?.fonts?.medium?.fontFamily ||
+                        hostConfiguration.fontFamily
+                };
+            }
         }
 
         hostConfiguration = new this._adaptiveCardsNS.HostConfig(hostConfiguration);
