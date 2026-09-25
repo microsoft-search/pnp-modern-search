@@ -19,7 +19,8 @@ import {
     PropertyPaneButtonType,
     DynamicDataSharedDepth,
     IPropertyPanePage,
-    IPropertyPaneGroup
+    IPropertyPaneGroup,
+    IPropertyPaneDropdownOption
 } from "@microsoft/sp-property-pane";
 const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
@@ -30,21 +31,26 @@ import { ISearchBoxWebPartProps } from './ISearchBoxWebPartProps';
 import { UrlHelper, PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
 import * as commonStrings from 'CommonStrings';
 import { ServiceScope } from '@microsoft/sp-core-library';
-import { ISuggestionProviderDefinition, BaseSuggestionProvider } from '@pnp/modern-search-extensibility';
+import {
+    BaseSuggestionProvider,
+    ISuggestionProvider,
+    ISuggestionProviderContext,
+    ISuggestionProviderDefinition,
+    ITokenService
+} from '@pnp/modern-search-extensibility';
 import { AvailableSuggestionProviders, BuiltinSuggestionProviderKeys } from '../../providers/AvailableSuggestionProviders';
-import { ISuggestionProvider } from '@pnp/modern-search-extensibility';
 import { ServiceScopeHelper } from '../../helpers/ServiceScopeHelper';
 import { Toggle, IToggleProps, MessageBar, MessageBarType, Link } from '@fluentui/react';
 import { ISuggestionProviderConfiguration } from '../../providers/ISuggestionProviderConfiguration';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { Constants } from '../../common/Constants';
-import { ITokenService } from '@pnp/modern-search-extensibility';
 import { BuiltinTokenNames, TokenService } from '../../services/tokenService/TokenService';
 import { BaseWebPart } from '../../common/BaseWebPart';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
 import commonStyles from '../../styles/Common.module.scss';
+import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 
 const LogSource = "SearchBoxWebPart";
 
@@ -87,6 +93,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private _selectedCustomProviders: ISuggestionProvider[] = [];
 
+    /**
+     * Dynamic data connection to the Search Verticals Web Part.
+     */
+    private _verticalsConnectionSourceData: DynamicProperty<IDataVerticalSourceData>;
+    private _verticalsConnectionOptions: IPropertyPaneDropdownOption[] = [];
+
     private _pushStateCallback = null;
 
     /**
@@ -127,6 +139,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this._handleQueryStringChange();
 
         this.context.dynamicDataSourceManager.initializeSource(this);
+        this.ensureDynamicDataSourcesConnection();
 
         return super.onInit();
     }
@@ -240,6 +253,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             themeVariant: this._themeVariant,
             onSearch: this._onSearch,
             suggestionProviders: this._selectedCustomProviders,
+            suggestionProviderContext: this.getSuggestionProviderContext(),
             numberOfSuggestionsPerGroup: this.properties.numberOfSuggestionsPerGroup,
             tokenService: this.tokenService,
             searchBoxBorderColor: this.properties.searchBoxBorderColor,
@@ -289,6 +303,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         window.removeEventListener('hashchange', this._boundRender);
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
+        }
+        if (this._verticalsConnectionSourceData) {
+            this._verticalsConnectionSourceData.unregister(this._onVerticalsDataChanged);
         }
         // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with render in renderCompleted
         ReactDom.unmountComponentAtNode(this.domElement);
@@ -423,6 +440,15 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             });
         }
 
+        if (propertyPath.localeCompare('useVerticals') === 0 && !newValue) {
+            this.properties.verticalsDataSourceReference = undefined;
+        }
+
+        if (propertyPath.localeCompare('useVerticals') === 0
+            || propertyPath.localeCompare('verticalsDataSourceReference') === 0) {
+            this.ensureDynamicDataSourcesConnection();
+        }
+
         if (propertyPath.localeCompare('extensibilityLibraryConfiguration') === 0) {
 
             // Remove duplicates if any
@@ -439,6 +465,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected async onPropertyPaneConfigurationStart() {
         await this.loadPropertyPaneResources();
+        this._verticalsConnectionOptions = await this.dynamicDataService.getAvailableDataSourcesByType(ComponentType.SearchVerticals);
     }
 
     public getPropertyDefinitions(): IDynamicDataPropertyDefinition[] {
@@ -486,6 +513,22 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     sharedConfiguration: {
                         depth: DynamicDataSharedDepth.Source,
                     }
+                })
+            );
+        }
+
+        searchAvailabeConnectionsConfigFields.push(
+            PropertyPaneToggle('useVerticals', {
+                label: commonStrings.PropertyPane.ConnectionsPage.UseDataVerticalsWebPartLabel,
+                checked: this.properties.useVerticals
+            })
+        );
+
+        if (this.properties.useVerticals) {
+            searchAvailabeConnectionsConfigFields.push(
+                PropertyPaneDropdown('verticalsDataSourceReference', {
+                    options: this._verticalsConnectionOptions,
+                    label: commonStrings.PropertyPane.ConnectionsPage.UseDataVerticalsFromComponentLabel
                 })
             );
         }
@@ -851,6 +894,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.openBehavior = this.properties.openBehavior ? this.properties.openBehavior : PageOpenBehavior.Self;
         this.properties.queryPathBehavior = this.properties.queryPathBehavior ? this.properties.queryPathBehavior : QueryPathBehavior.URLFragment;
         this.properties.reQueryOnClear = this.properties.reQueryOnClear !== undefined ? this.properties.reQueryOnClear : true;
+        this.properties.useVerticals = this.properties.useVerticals ?? false;
 
         this.properties.suggestionProviderConfiguration = this.properties.suggestionProviderConfiguration ? this.properties.suggestionProviderConfiguration : [];
         this.properties.numberOfSuggestionsPerGroup = this.properties.numberOfSuggestionsPerGroup ? this.properties.numberOfSuggestionsPerGroup : 10;
@@ -874,6 +918,52 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.dynamicDataService = this.webPartInstanceServiceScope.createDefaultAndProvide(DynamicDataService.ServiceKey);
         this.dynamicDataService.dynamicDataProvider = this.context.dynamicDataProvider;
         this.webPartInstanceServiceScope.finish();
+    }
+
+    /**
+     * Connects the Search Box to the configured Search Verticals dynamic data source.
+     */
+    private ensureDynamicDataSourcesConnection(): void {
+        if (this._verticalsConnectionSourceData) {
+            this._verticalsConnectionSourceData.unregister(this._onVerticalsDataChanged);
+        }
+
+        if (this.properties.useVerticals && this.properties.verticalsDataSourceReference) {
+            if (!this._verticalsConnectionSourceData) {
+                this._verticalsConnectionSourceData = new DynamicProperty<IDataVerticalSourceData>(this.context.dynamicDataProvider);
+            }
+
+            this._verticalsConnectionSourceData.setReference(this.properties.verticalsDataSourceReference);
+            this._verticalsConnectionSourceData.register(this._onVerticalsDataChanged);
+        } else {
+            this._verticalsConnectionSourceData = undefined;
+        }
+    }
+
+    /**
+     * Gets the contextual information supplied to suggestion providers.
+     */
+    private getSuggestionProviderContext(): ISuggestionProviderContext {
+        const verticalsSourceData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData);
+
+        if (verticalsSourceData) {
+            return {
+                verticals: {
+                    selectedVertical: verticalsSourceData.selectedVertical
+                }
+            };
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Refreshes suggestion context without recreating provider instances.
+     */
+    private _onVerticalsDataChanged = (): void => {
+        if (!this._webPartDisposed) {
+            this.renderCompleted();
+        }
     }
 
     /**

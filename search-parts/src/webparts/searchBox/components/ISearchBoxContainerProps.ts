@@ -1,6 +1,6 @@
 import { PageOpenBehavior, QueryPathBehavior } from "../../../helpers/UrlHelper";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
-import { ISuggestionProvider, ITokenService } from "@pnp/modern-search-extensibility";
+import { ISuggestionProvider, ISuggestionProviderContext, ITokenService } from "@pnp/modern-search-extensibility";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 
 export interface ISearchBoxContainerProps {
@@ -54,6 +54,11 @@ export interface ISearchBoxContainerProps {
      * List of available suggestions providers
      */
     suggestionProviders: ISuggestionProvider[];
+
+    /**
+     * Context passed to suggestion providers for each request.
+     */
+    suggestionProviderContext?: ISuggestionProviderContext;
 
     /**
      * The search box input value

@@ -1,9 +1,10 @@
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ISuggestionProvider } from '@pnp/modern-search-extensibility';
+import { ISuggestionProvider, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 
 export interface ISearchBoxAutoCompleteProps {
   placeholderText: string;
   suggestionProviders: ISuggestionProvider[];
+  suggestionProviderContext?: ISuggestionProviderContext;
   inputValue: string;
   onSearch: (queryText: string, isReset?: boolean) => void;
   domElement: HTMLElement;
