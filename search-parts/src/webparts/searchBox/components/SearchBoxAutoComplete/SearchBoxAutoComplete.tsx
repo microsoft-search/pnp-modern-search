@@ -14,6 +14,8 @@ const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
 export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAutoCompleteProps, ISearchBoxAutoCompleteState> {
 
     private _onChangeDebounced = null;
+    private _suggestionsRequestId = 0;
+    private _zeroTermRequestId = 0;
     private _containerElemRef: React.RefObject<any> = null;
 
     /**
@@ -174,6 +176,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
    */
     private async _updateQuerySuggestions(inputValue: string) {
 
+        const requestId = ++this._suggestionsRequestId;
         const trimmedInputValue = inputValue ? inputValue.trim() : "";
 
         if (trimmedInputValue && trimmedInputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
@@ -186,48 +189,47 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                     proposedQuerySuggestions: [],
                 });
 
+                const suggestionProviderContext = this.props.suggestionProviderContext;
                 const allProviderPromises = this.props.suggestionProviders.map(async (provider) => {
-
-                    const suggestionProviderContext = this.props.suggestionProviderContext;
-                    let suggestions = await provider.getSuggestions(trimmedInputValue, suggestionProviderContext);
+                    const suggestions = await provider.getSuggestions(trimmedInputValue, suggestionProviderContext);
 
                     // Verify before updating proposed suggestions
                     //  1) the input value hasn't been searched
                     //  2) we have suggestions from this provider
                     //  3) the input value hasn't changed while the provider was retrieving suggestions
-                    if (!this.state.isSearchExecuted
+                    if (requestId === this._suggestionsRequestId
+                        && !this.state.isSearchExecuted
                         && isEqual(suggestionProviderContext, this.props.suggestionProviderContext)
                         && suggestions.length > 0
-                        && (!this.state.termToSuggestFrom || inputValue === this.state.searchInputValue)) {
-                        this.setState({
-                            proposedQuerySuggestions: this.state.proposedQuerySuggestions.concat(suggestions), // Merge suggestions
-                            termToSuggestFrom: inputValue, // The term that was used as basis to get the suggestions from
+                        && inputValue === this.state.searchInputValue) {
+                        this.setState(previousState => requestId === this._suggestionsRequestId ? {
+                            proposedQuerySuggestions: previousState.proposedQuerySuggestions.concat(suggestions),
+                            termToSuggestFrom: inputValue,
                             isRetrievingSuggestions: false
-                        });
+                        } : null);
                     }
                 });
 
                 // After all suggestion providers have finished, hide the loading indicator if it hasn't already been hid
-                Promise.all(allProviderPromises).then(() => {
-                    if (this.state.isRetrievingSuggestions) {
-                        this.setState({
-                            isRetrievingSuggestions: false
-                        });
-                    }
-                });
+                await Promise.all(allProviderPromises);
+                if (requestId === this._suggestionsRequestId && isEqual(suggestionProviderContext, this.props.suggestionProviderContext)) {
+                    this.setState({ isRetrievingSuggestions: false });
+                }
 
             } catch (error) {
-
-                this.setState({
-                    errorMessage: error.message,
-                    proposedQuerySuggestions: [],
-                    isRetrievingSuggestions: false
-                });
+                if (requestId === this._suggestionsRequestId) {
+                    this.setState({
+                        errorMessage: error.message,
+                        proposedQuerySuggestions: [],
+                        isRetrievingSuggestions: false
+                    });
+                }
             }
 
         }
         else {
 
+            this.setState({ isRetrievingSuggestions: false });
             try {
 
                 //render zero term query suggestions
@@ -258,11 +260,13 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             return;
         }
 
+        const requestId = ++this._zeroTermRequestId;
         const hasZeroTermProvider = this.props.suggestionProviders?.some(provider => provider.isZeroTermSuggestionsEnabled);
         if (!hasZeroTermProvider) {
             this.setState(previousState => ({
                 zeroTermQuerySuggestions: [],
                 hasRetrievedZeroTermSuggestions: true,
+                isRetrievingZeroTermSuggestions: false,
                 proposedQuerySuggestions: showSuggestions ? [] : previousState.proposedQuerySuggestions,
             }));
             return;
@@ -270,34 +274,44 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         this.setState({
             zeroTermQuerySuggestions: [],
+            hasRetrievedZeroTermSuggestions: false,
             isRetrievingZeroTermSuggestions: true,
         });
 
         const suggestionProviderContext = this.props.suggestionProviderContext;
-        const mergedSuggestions = await this._getZeroTermSuggestions(suggestionProviderContext);
+        try {
+            const mergedSuggestions = await this._getZeroTermSuggestions(suggestionProviderContext);
 
-        if (isEqual(suggestionProviderContext, this.props.suggestionProviderContext)) {
-            this.setState(previousState => ({
-                hasRetrievedZeroTermSuggestions: true,
-                isRetrievingZeroTermSuggestions: false,
-                zeroTermQuerySuggestions: mergedSuggestions,
-                proposedQuerySuggestions: showSuggestions && !previousState.searchInputValue
-                    ? mergedSuggestions
-                    : previousState.proposedQuerySuggestions,
-            }));
+            if (requestId === this._zeroTermRequestId && isEqual(suggestionProviderContext, this.props.suggestionProviderContext)) {
+                this.setState(previousState => requestId === this._zeroTermRequestId ? {
+                    hasRetrievedZeroTermSuggestions: true,
+                    isRetrievingZeroTermSuggestions: false,
+                    zeroTermQuerySuggestions: mergedSuggestions,
+                    proposedQuerySuggestions: showSuggestions && !previousState.searchInputValue
+                        ? mergedSuggestions
+                        : previousState.proposedQuerySuggestions,
+                } : null);
+            }
+        } catch (error) {
+            if (requestId === this._zeroTermRequestId) {
+                this.setState({
+                    errorMessage: error.message,
+                    isRetrievingZeroTermSuggestions: false,
+                });
+            }
         }
     }
 
     private async _getZeroTermSuggestions(suggestionProviderContext?: ISuggestionProviderContext): Promise<ISuggestion[]> {
         const allZeroTermSuggestions = await Promise.all(this.props.suggestionProviders.map(async (provider): Promise<ISuggestion[]> => {
-            if (!provider || !provider.isZeroTermSuggestionsEnabled) {
+            if (!provider?.isZeroTermSuggestionsEnabled) {
                 return [];
             }
 
             return provider.getZeroTermSuggestions(suggestionProviderContext);
         }));
 
-        return allZeroTermSuggestions.reduce((allSuggestions, suggestions) => allSuggestions.concat(suggestions), []);
+        return allZeroTermSuggestions.flat();
     }
 
     /**
@@ -452,9 +466,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     }
 
     private _handleOnSearch = () => {
+        ++this._suggestionsRequestId;
         this.props.onSearch(this.state.searchInputValue);
         this.setState({
             isSearchExecuted: true,
+            isRetrievingSuggestions: false,
             proposedQuerySuggestions: []
         });
     }
@@ -479,6 +495,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     }
 
     public componentWillUnmount() {
+        ++this._suggestionsRequestId;
+        ++this._zeroTermRequestId;
         document.removeEventListener('click', this._handleClickOutsideContainer);
     }
 
@@ -489,15 +507,20 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         const suggestionContextChanged = !isEqual(prevProps.suggestionProviderContext, this.props.suggestionProviderContext);
 
         if (suggestionProvidersChanged || suggestionContextChanged) {
+            ++this._zeroTermRequestId;
             const trimmedInputValue = this.state.searchInputValue ? this.state.searchInputValue.trim() : "";
             const showZeroTermSuggestions = trimmedInputValue.length === 0 && this.state.proposedQuerySuggestions.length > 0;
 
+            this.setState({
+                hasRetrievedZeroTermSuggestions: false,
+                isRetrievingZeroTermSuggestions: false,
+                zeroTermQuerySuggestions: [],
+                proposedQuerySuggestions: [],
+            });
             if (trimmedInputValue.length >= SUGGESTION_CHAR_COUNT_TRIGGER) {
                 this._updateQuerySuggestions(this.state.searchInputValue);
             } else {
-                this.setState({
-                    proposedQuerySuggestions: [],
-                });
+                ++this._suggestionsRequestId;
                 this._ensureZeroTermQuerySuggestions(true, showZeroTermSuggestions);
             }
         }
@@ -570,6 +593,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             style={{ ...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                             //data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
                             onChange={(event) => {
+                                ++this._suggestionsRequestId;
                                 if (!this._onChangeDebounced) {
                                     this._onChangeDebounced = debounce((newValue) => {
                                         this._updateQuerySuggestions(newValue);
