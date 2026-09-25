@@ -1147,7 +1147,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
                                     defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.ComboBox ? false : item.expandByDefault,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.ComboBox,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.ComboBox || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople,
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
@@ -1163,8 +1163,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         onCustomRender: (field, value, onUpdate, item: IDataFilterConfiguration, itemId) => {
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
-                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || !this.supportsFilterOption(item.selectedTemplate, 'valuesCount') ? false : item.showCount,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || !this.supportsFilterOption(item.selectedTemplate, 'valuesCount'),
+                                    defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople || !this.supportsFilterOption(item.selectedTemplate, 'valuesCount') ? false : item.showCount,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.DateRange || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople || !this.supportsFilterOption(item.selectedTemplate, 'valuesCount'),
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
@@ -1237,7 +1237,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortByCount
                                             },
                                         ],
-                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.selectedTemplate === BuiltinFilterTemplates.Hierarchical,
+                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.selectedTemplate === BuiltinFilterTemplates.StaticPeople || currentItem.selectedTemplate === BuiltinFilterTemplates.Hierarchical,
                                         defaultSelectedKey: item.sortBy,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)
@@ -1265,7 +1265,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                                 text: webPartStrings.PropertyPane.DataFilterCollection.SortDescending
                                             },
                                         ],
-                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.selectedTemplate === BuiltinFilterTemplates.Hierarchical,
+                                        disabled: currentItem.selectedTemplate === BuiltinFilterTemplates.DateRange || currentItem.selectedTemplate === BuiltinFilterTemplates.DateInterval || currentItem.selectedTemplate === BuiltinFilterTemplates.StaticPeople || currentItem.selectedTemplate === BuiltinFilterTemplates.Hierarchical,
                                         defaultSelectedKey: item.sortDirection,
                                         onChange: (ev, option) => onUpdate(field.id, option.key),
                                     } as IDropdownProps)

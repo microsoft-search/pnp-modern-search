@@ -61,7 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Casella combinata",
                     DateIntervalTemplate: "Intervallo di tempo",
                     PeopleTemplate: "Modello di persona",
-                    StaticPeopleTemplate: "Modello persona statico",
+                    StaticPeopleTemplate: "Persone",
                     TaxonomyPickerTemplate: "Selettore di tassonomia",
                     HierarchicalFilterTemplate: "Filtro gerarchico"
                 },
