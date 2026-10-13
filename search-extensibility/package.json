@@ -26,9 +26,6 @@
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0"
     },
-    "resolutions": {
-        "@types/react": "17.0.45"
-    },
     "directories": {
         "lib": "lib"
     },
@@ -50,5 +47,6 @@
     ],
     "engines": {
         "node": ">=22.14.0 < 23.0.0"
-    }
+    },
+    "packageManager": "pnpm@11.9.0"
 }
