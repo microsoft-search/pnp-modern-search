@@ -1,4 +1,6 @@
 autoInstallPeers: false
+strictPeerDependencies: false
+nodeLinker: hoisted
 
 overrides:
   '@types/react': 17.0.45
