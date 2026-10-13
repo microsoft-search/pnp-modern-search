@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Laskeva"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Tyhjennä kaikki suodattimet",
+                ShowClearAllFiltersToggleLabel: "Näytä \"Tyhjennä kaikki\" -painike",
+                ClearAllActionText: "Tyhjennä kaikki",
                 AvailableLayoutsGroupName: "Tarjolla olevat muotoilut",
                 LayoutTemplateOptionsGroupName: "Muotoiluvaihtoehdot",
                 TemplateUrlFieldLabel: "Käytä ulkoisen templaatin URL-osoitetta",

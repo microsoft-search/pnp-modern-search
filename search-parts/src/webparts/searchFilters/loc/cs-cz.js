@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Sestupně"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Vymazat všechny filtry",
+                ShowClearAllFiltersToggleLabel: "Zobrazit tlačítko \"Vymazat vše\"",
+                ClearAllActionText: "Vymazat vše",
                 AvailableLayoutsGroupName: "Dostupná rozvržení",
                 LayoutTemplateOptionsGroupName: "Možnosti rozvržení",
                 TemplateUrlFieldLabel: "Použít externí šablonu URL",

@@ -1,17 +1,25 @@
 jest.mock('../../../controls/TemplateRenderer/TemplateRenderer', () => ({}));
 jest.mock('../../../components/StyledWebPartTitle', () => ({}));
-jest.mock('SearchFiltersWebPartStrings', () => ({}), { virtual: true });
+jest.mock('SearchFiltersWebPartStrings', () => ({
+    PropertyPane: { LayoutPage: { ClearAllActionText: 'Clear all' } }
+}), { virtual: true });
 jest.mock('CommonStrings', () => ({}), { virtual: true });
 jest.mock('@pnp/modern-search-extensibility', () => ({}));
 jest.mock('@microsoft/sp-core-library', () => ({}));
 jest.mock('../../../helpers/DataFilterHelper', () => ({}));
 jest.mock('../../../helpers/TaxonomyHelper', () => ({}));
 jest.mock('../../../helpers/UrlHelper', () => ({}));
-jest.mock('../../../layouts/AvailableTemplates', () => ({}));
+jest.mock('../../../layouts/AvailableTemplates', () => ({
+    BuiltinFilterTemplates: {
+        People: 'People'
+    }
+}));
 jest.mock('@fluentui/react/lib/MessageBar', () => ({}));
+jest.mock('../../../styles/Common.module.scss', () => ({ linkButton: 'linkButton' }));
 jest.mock('@microsoft/sp-lodash-subset', () => ({
     cloneDeep: require('lodash/cloneDeep'),
-    sortBy: require('lodash/sortBy')
+    sortBy: require('lodash/sortBy'),
+    isEqual: require('lodash/isEqual')
 }));
 
 import type { IDataFilter, IDataFilterConfiguration, IDataFilterInternal } from '@pnp/modern-search-extensibility';
@@ -51,8 +59,10 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
     function createContainer(uiFilter: IDataFilterInternal, submittedFilters: IDataFilter[]): SearchFiltersContainer {
         const container: SearchFiltersContainer = Object.create(SearchFiltersContainer.prototype);
         container.state = { currentUiFilters: [uiFilter], submittedFilters };
-        jest.spyOn(container, 'setState').mockImplementation(state => {
-            Object.assign(container.state, state);
+        jest.spyOn(container, 'setState').mockImplementation((state, callback) => {
+            const nextState = typeof state === 'function' ? state(container.state, (container as any).props) : state;
+            Object.assign(container.state, nextState);
+            callback?.();
         });
         return container;
     }
@@ -116,5 +126,95 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
         await container['getFiltersToDisplay']([], [uiFilter], []);
 
         expect(container.state.currentUiFilters).toEqual([]);
+    });
+
+    it('renders the global clear action when enabled and disables it when no filters are applied', () => {
+        const container = createContainer(createUiFilter(true), [submittedFilter]);
+        (container as any).props = { properties: { showClearAllFilters: false } };
+
+        expect(container['getClearAllFiltersAction']()).toBeNull();
+
+        (container as any).props.properties.showClearAllFilters = true;
+        const action = container['getClearAllFiltersAction']();
+
+        expect(action).not.toBeNull();
+        expect(action?.props.children).toBe('Clear all');
+        expect(action?.props.disabled).toBe(false);
+
+        Object.assign(container.state, { submittedFilters: [] });
+        const disabledAction = container['getClearAllFiltersAction']();
+        expect(disabledAction).not.toBeNull();
+        expect(disabledAction?.props.disabled).toBe(true);
+    });
+
+    it('does not reset active filters when showClearAllFilters toggle changes in properties', () => {
+        const uiFilter = createUiFilter(true);
+        const container = createContainer(uiFilter, [submittedFilter]);
+        const onUpdateFilters = jest.fn();
+        (container as any).props = {
+            properties: { showClearAllFilters: true },
+            selectedLayoutKey: 'Vertical',
+            availableFilters: [],
+            filtersConfiguration: [configuration],
+            onUpdateFilters
+        };
+        const prevProps = {
+            properties: { showClearAllFilters: false },
+            selectedLayoutKey: 'Vertical',
+            availableFilters: [],
+            filtersConfiguration: [configuration],
+            onUpdateFilters
+        };
+        const prevState = { ...container.state };
+
+        container.componentDidUpdate(prevProps as any, prevState as any);
+
+        expect(onUpdateFilters).not.toHaveBeenCalled();
+        expect(container.state.currentUiFilters).toEqual([uiFilter]);
+        expect(container.state.submittedFilters).toEqual([submittedFilter]);
+    });
+
+    it('clears all applied refiners and invalidates a queued filter update', () => {
+        const container = createContainer(createUiFilter(true), [submittedFilter]);
+        const otherUiFilter = {
+            ...createUiFilter(true),
+            filterName: 'Owner',
+            values: [{ name: 'Adele', value: 'Adele', selected: true, selectedOnce: true, count: 0 }]
+        } as IDataFilterInternal;
+        const otherSubmittedFilter: IDataFilter = {
+            filterName: 'Owner',
+            values: [{ name: 'Adele', value: 'Adele' }]
+        };
+        container.state.currentUiFilters.push(otherUiFilter);
+        container.state.submittedFilters.push(otherSubmittedFilter);
+
+        const onUpdateFilters = jest.fn();
+        (container as any).props = {
+            properties: { showClearAllFilters: true },
+            availableFilters: [],
+            filtersConfiguration: [configuration],
+            onUpdateFilters
+        };
+        (container as any)._filterUpdateVersion = 4;
+        (container as any)._latestDeferredSubmittedFilters = [submittedFilter];
+        (container as any)._deferredSubmittedUpdateTimer = setTimeout(() => undefined, 10000);
+
+        jest.spyOn(container as any, 'beginResultsUpdate').mockImplementation((...args: unknown[]) => {
+            const onReady = args[1] as (() => void) | undefined;
+            onReady?.();
+        });
+        jest.spyOn(container as any, 'getFiltersToDisplay').mockResolvedValue(undefined);
+        jest.spyOn(container as any, 'resetFiltersDeepLink').mockImplementation(() => undefined);
+
+        container['clearAllFilters']();
+
+        expect(container.state.submittedFilters).toEqual([]);
+        expect(container.state.currentUiFilters.every(filter => filter.values.length === 0)).toBe(true);
+        expect(onUpdateFilters).toHaveBeenCalledWith([]);
+        expect(container['resetFiltersDeepLink']).toHaveBeenCalled();
+        expect(container['getFiltersToDisplay']).toHaveBeenCalledWith([], container.state.currentUiFilters, [configuration]);
+        expect((container as any)._filterUpdateVersion).toBe(5);
+        expect((container as any)._latestDeferredSubmittedFilters).toBeNull();
+        expect((container as any)._deferredSubmittedUpdateTimer).toBeNull();
     });
 });

@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Fallande"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Rensa alla filter",
+                ShowClearAllFiltersToggleLabel: "Visa knappen \"Rensa alla\"",
+                ClearAllActionText: "Rensa alla",
                 AvailableLayoutsGroupName: "Tillgängliga layouter",
                 LayoutTemplateOptionsGroupName: "Layoutalternativ",
                 TemplateUrlFieldLabel: "Använd en extern URL för mall",

@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Decrescente"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Cancella tutti i filtri",
+                ShowClearAllFiltersToggleLabel: "Mostra il pulsante \"Cancella tutto\"",
+                ClearAllActionText: "Cancella tutto",
                 AvailableLayoutsGroupName: "Layout disponibili",
                 LayoutTemplateOptionsGroupName: "Opzioni del layout",
                 TemplateUrlFieldLabel: "Usa un URL di modello esterno",

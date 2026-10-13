@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Absteigend"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Alle Filter löschen",
+                ShowClearAllFiltersToggleLabel: "Schaltfläche \"Alle löschen\" anzeigen",
+                ClearAllActionText: "Alle löschen",
                 AvailableLayoutsGroupName: "Verfügbare Layouts",
                 LayoutTemplateOptionsGroupName: "Layout Optionen",
                 TemplateUrlFieldLabel: "Benutze ein externe Vorlagen URL.",

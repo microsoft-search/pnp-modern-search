@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Descendente"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Limpar todos os filtros",
+                ShowClearAllFiltersToggleLabel: "Mostrar botão \"Limpar tudo\"",
+                ClearAllActionText: "Limpar tudo",
                 AvailableLayoutsGroupName: "Layout disponíveis",
                 LayoutTemplateOptionsGroupName: "Opções de layout",
                 TemplateUrlFieldLabel: "Usar um URL de modelo externo",

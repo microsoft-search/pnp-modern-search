@@ -76,6 +76,9 @@ declare interface ISearchFiltersWebPartStrings {
         LayoutPage: {
             AvailableLayoutsGroupName: string;
             LayoutTemplateOptionsGroupName: string;
+            ClearAllFiltersGroupName: string;
+            ShowClearAllFiltersToggleLabel: string;
+            ClearAllActionText: string;
             TemplateUrlFieldLabel: string;
             TemplateUrlPlaceholder: string;
             ErrorTemplateExtension: string;

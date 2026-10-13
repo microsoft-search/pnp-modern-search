@@ -51,6 +51,11 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
     useVerticals: boolean;
 
     /**
+     * Determines whether the global Clear all action is shown
+     */
+    showClearAllFilters?: boolean;
+
+    /**
      * Dynamic data connection references for verticals
      */
     verticalsDataSourceReference: string;

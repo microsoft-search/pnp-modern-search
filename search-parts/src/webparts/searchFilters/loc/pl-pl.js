@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Malejąco"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Wyczyść wszystkie filtry",
+                ShowClearAllFiltersToggleLabel: "Pokaż przycisk „Wyczyść wszystko”",
+                ClearAllActionText: "Wyczyść wszystko",
                 AvailableLayoutsGroupName: "Dostępne układy",
                 LayoutTemplateOptionsGroupName: "Ustawienia układu",
                 TemplateUrlFieldLabel: "Użyj adresu URL zewnętrznego szablonu",

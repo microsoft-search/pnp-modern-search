@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Faldende"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Ryd alle filtre",
+                ShowClearAllFiltersToggleLabel: "Vis knappen \"Ryd alle\"",
+                ClearAllActionText: "Ryd alle",
                 AvailableLayoutsGroupName: "Mulige layouts",
                 LayoutTemplateOptionsGroupName: "Layout-muligheder",
                 TemplateUrlFieldLabel: "Anvend en ekstern URL til skabelonen",

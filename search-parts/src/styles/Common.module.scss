@@ -19,10 +19,16 @@
     padding: 0;
     text-decoration: none;
 
-    &:hover,
-    &:focus-visible {
+    &:hover:not(:disabled),
+    &:focus-visible:not(:disabled) {
         color: var(--linkHovered, "[theme: themeDarkAlt, default: #106ebe]");
         text-decoration: underline;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.55;
+        text-decoration: none;
     }
 }
 
