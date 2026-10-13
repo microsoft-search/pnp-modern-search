@@ -44,4 +44,15 @@ export interface IDataResultSourceData {
      * can inherit these through their existing dynamic-data connection.
      */
     extensibilityLibraryConfiguration?: IExtensibilityConfiguration[];
+
+    /**
+     * The vertical currently selected in the Search Verticals Web Part this results Web Part is connected to.
+     * Lets Search Filters Web Parts connected only to results detect vertical changes.
+     */
+    selectedVerticalKey?: string;
+
+    /**
+     * Whether the connected Search Verticals Web Part clears filters when the selected vertical changes.
+     */
+    clearFiltersOnVerticalChange?: boolean;
 }

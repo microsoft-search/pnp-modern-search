@@ -459,6 +459,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                     .filter(configuration => configuration.enabled)
                     .map(configuration => ({ ...configuration }));
 
+                const connectedVerticalData = this._verticalsConnectionSourceData ? DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData) : undefined;
+                this._currentDataResultsSourceData.selectedVerticalKey = connectedVerticalData?.selectedVertical?.key;
+                this._currentDataResultsSourceData.clearFiltersOnVerticalChange = connectedVerticalData?.clearFiltersOnVerticalChange;
+
                 return this._currentDataResultsSourceData;
 
             case DynamicDataProperties.AvailableFieldValuesFromResults:

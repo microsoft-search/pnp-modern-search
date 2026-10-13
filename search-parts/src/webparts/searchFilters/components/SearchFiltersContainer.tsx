@@ -1861,6 +1861,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             availableFilters.map(availableFilter => this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext))
         )).filter((filter): filter is IDataFilterInternal => Boolean(filter));
 
+        // Keep applied filters visible and checked when connected results temporarily stop returning them
+        // (e.g. while switching verticals between results Web Parts); otherwise they stay applied but appear unchecked.
+        currentUiFilters.forEach(uiFilter => {
+            const isStillAvailable = updatedFilters.some(filter => filter.filterName === uiFilter.filterName);
+            const isConfigured = filtersConfiguration.some(configuration => configuration.filterName === uiFilter.filterName);
+            if (!isStillAvailable && isConfigured && uiFilter.values?.some(value => value.selected)) {
+                updatedFilters.push(uiFilter);
+            }
+        });
+
         const sortStartedAt = performance.now();
         const sortedFilters = sortBy(updatedFilters, 'sortIdx');
 

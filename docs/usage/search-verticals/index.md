@@ -25,6 +25,12 @@ The options for a vertical are as follow:
 | **Show link icon** |  If the tab is an hyperlink, display or hide an icon next to the tab name indicating the tab is a link (same page or external). |
 | **Audience** | Microsoft Entra ID (Azure AD) security groups that this vertical will be visible to. If left empty the vertical will be visible for all users. See note below about limitations. |
 
+### Vertical settings
+
+| **Setting** | **Description** | **Default value**
+|------------|---------------- | ----------
+| **Clear filters when changing verticals** | When enabled, selected filters in connected 'Search Filters' Web Parts are cleared when the user switches to another vertical, matching the out-of-the-box Microsoft Search experience. This applies whether the filters Web Part is connected directly to the verticals Web Part or only to the 'Search Results' Web Parts connected to it. Turn it off to keep the selected filters across verticals. | _On_
+
 ### Vertical styling
 
 The vertical styling section allows you to customize the visual appearance of the vertical tabs to match your branding and design requirements.
