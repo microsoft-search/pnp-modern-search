@@ -96,7 +96,7 @@ export class FilterValueOperator extends React.Component<IFilterValueOperatorPro
                                                             },
                                                             'label.is-checked span.ms-ChoiceFieldLabel, label.is-checked:hover, label.is-checked span.ms-ChoiceFieldLabel:hover': {
                                                                 fontWeight: 700,
-                                                                color: theme.palette.themePrimary
+                                                                color: theme.semanticColors.link
                                                             },
                                                             'label span.ms-ChoiceFieldLabel, label span.ms-ChoiceFieldLabel:hover': {
                                                                 color: textColor
