@@ -124,7 +124,12 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
             <div className={styles.paginationContainer}>
                 <div className={styles.paginationContainer__paginationContainer}>
                     <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
-                        <div className={`${isThemeInverted ? styles.inverted : styles.standard}`}>
+                        <div
+                            className={`${isThemeInverted ? styles.inverted : styles.standard}`}
+                            style={{
+                                '--link': this.props.themeVariant?.semanticColors?.link,
+                                '--listItemBackgroundHovered': this.props.themeVariant?.semanticColors?.listItemBackgroundHovered
+                            } as React.CSSProperties}>
                             {this.props.hidePageNumbers === true
                                 ? this.renderSimplePagination(pageLinks, isThemeInverted)
                                 : this.renderNumberedPagination(pageLinks, isThemeInverted)}
