@@ -47,7 +47,7 @@
 		{
 			"type": "TextBlock",
 			"wrap": true,
-			"text": "<pnp-pagination data-total-items='${$root.data.totalItemsCount}' data-hide-page-numbers='${$root.properties.paging.hidePageNumbers}' data-current-items-count='${count($root.data.items)}' data-hide-first-last-pages='${$root.properties.paging.hideFirstLastPages}' data-hide-disabled='${$root.properties.paging.hideDisabled}' data-hide-navigation='${$root.properties.paging.hideNavigation}' data-range='${$root.properties.paging.pagingRange}' data-items-count-per-page='${$root.properties.paging.itemsCountPerPage}' data-current-page-number='${$root.paging.currentPageNumber}'></pnp-pagination>",
+			"text": "<pnp-pagination data-total-items='${$root.data.totalItemsCount}' data-hide-page-numbers='${$root.properties.paging.hidePageNumbers}' data-current-items-count='${count($root.data.items)}' data-hide-first-last-pages='${$root.properties.paging.hideFirstLastPages}' data-hide-disabled='${$root.properties.paging.hideDisabled}' data-hide-navigation='${$root.properties.paging.hideNavigation}' data-range='${$root.properties.paging.pagingRange}' data-items-count-per-page='${$root.properties.paging.itemsCountPerPage}' data-current-page-number='${$root.paging.currentPageNumber}' data-theme-variant='${jsonStringify($root.theme)}'></pnp-pagination>",
 			"horizontalAlignment": "center",
 			"$when": "${$root.properties.paging.showPaging}"
 		}
