@@ -161,7 +161,7 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                 <div className={styles.paginationContainer__paginationContainer}>
                     <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
                         <div className={`${isThemeInverted ? styles.inverted : styles.standard}`}>
-                            {this.props.hidePageNumbers !== false ? this.renderSimplePagination(pageLinks, isThemeInverted) : <Pagination
+                            {this.props.hidePageNumbers === true ? this.renderSimplePagination(pageLinks, isThemeInverted) : <Pagination
                                 activePage={this.state.currentPageNumber}
                                 firstPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
                                 lastPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
@@ -214,7 +214,7 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
             return null;
         }
 
-        const renderButton = (label: string, targetPage: number, content: JSX.Element): JSX.Element =>
+        const renderButton = (targetPage: number, content: JSX.Element, label?: string): JSX.Element =>
             <li>
                 <button type="button" aria-label={label} onClick={() => updatePage(targetPage)}>
                     {content}
@@ -223,13 +223,11 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         const chevron = (iconName: string): JSX.Element => <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} />;
 
         return <ul>
-            {hasPreviousPage && renderButton(strings.Layouts.Slider.PreviousPageLabel, currentPage - 1, chevron('ChevronLeft'))}
+            {hasPreviousPage && renderButton(currentPage - 1, chevron('ChevronLeft'), strings.Layouts.Slider.PreviousPageLabel)}
             {hasPreviousPage && <li><span className={isInverted ? styles.active__inverted : styles.active} aria-current="page">{currentPage}</span></li>}
-            {hasNextPage && renderButton(
-                strings.Layouts.Slider.NextPageLabel,
-                currentPage + 1,
-                hasPreviousPage ? chevron('ChevronRight') : <>{strings.Layouts.Slider.NextLabel}{chevron('ChevronRight')}</>
-            )}
+            {hasNextPage && (hasPreviousPage
+                ? renderButton(currentPage + 1, chevron('ChevronRight'), strings.Layouts.Slider.NextPageLabel)
+                : renderButton(currentPage + 1, <>{strings.Layouts.Slider.NextLabel}{chevron('ChevronRight')}</>))}
         </ul>;
     }
 }

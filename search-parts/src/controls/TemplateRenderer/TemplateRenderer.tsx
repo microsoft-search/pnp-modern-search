@@ -47,6 +47,7 @@ export class TemplateRenderer extends React.Component<
                 (prevProps.templateContext as ISearchResultsTemplateContext).data,
                 (nextProps.templateContext as ISearchResultsTemplateContext).data
             ) ||
+            !isEqual(prevProps.templateContext.paging, nextProps.templateContext.paging) ||
             !isEqual(prevProps.templateContext.filters, nextProps.templateContext.filters) ||
             !isEqual(prevProps.templateContext.properties, nextProps.templateContext.properties) ||
             !isEqual(prevProps.templateContext.theme, nextProps.templateContext.theme) ||

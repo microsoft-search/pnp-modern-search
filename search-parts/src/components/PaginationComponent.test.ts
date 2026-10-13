@@ -27,6 +27,7 @@ describe('PaginationComponent', () => {
             hideFirstLastPages: false,
             hideNavigation: false,
             hideDisabled: true,
+            hidePageNumbers: true,
             pageLinks: undefined,
             onPageUpdate: jest.fn()
         };
@@ -44,7 +45,7 @@ describe('PaginationComponent', () => {
 
     const click = (label: string): void => {
         const button = Array.from(container.querySelectorAll('button')).find(element =>
-            element.getAttribute('aria-label') === label || element.textContent === label);
+            element.getAttribute('aria-label') === label || element.textContent.startsWith(label));
         expect(button).toBeDefined();
         act(() => { button.click(); });
     };
@@ -55,9 +56,9 @@ describe('PaginationComponent', () => {
         expect(container.querySelector('[aria-current="page"]')).toBeNull();
         expect(container.textContent).toContain('Next');
         expect(container.querySelectorAll('button')).toHaveLength(1);
-        expect(container.querySelector('button').getAttribute('aria-label')).toBe('Next page');
         expect(container.querySelectorAll('a[aria-label^="Go to page"]')).toHaveLength(0);
-        click('Next page');
+        expect(container.querySelector('button').getAttribute('aria-label')).toBeNull();
+        click('Next');
         expect(props.onPageUpdate).toHaveBeenCalledWith(2, undefined, []);
     });
 
@@ -94,7 +95,7 @@ describe('PaginationComponent', () => {
 
     it('uses page links rather than page fullness when supplied', () => {
         render({ currentItemsCount: '0', pageLinks: ['first', 'second'] });
-        click('Next page');
+        click('Next');
         expect(props.onPageUpdate).toHaveBeenCalledWith(2, 'second', ['first', 'second']);
         expect(container.querySelectorAll('button')).toHaveLength(1);
         click('Previous page');
@@ -114,9 +115,14 @@ describe('PaginationComponent', () => {
         expect(container.querySelectorAll('button')).toHaveLength(1);
     });
 
+    it('keeps numbered pagination for templates that do not pass hidePageNumbers', () => {
+        render({ hidePageNumbers: undefined });
+        expect(container.querySelectorAll('a').length).toBeGreaterThan(0);
+    });
+
     it('allows legacy custom templates without current item counts to navigate', () => {
         render({ currentItemsCount: undefined });
-        click('Next page');
+        click('Next');
         expect(props.onPageUpdate).toHaveBeenCalledWith(2, undefined, []);
     });
 
