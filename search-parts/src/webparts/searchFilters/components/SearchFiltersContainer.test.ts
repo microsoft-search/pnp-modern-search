@@ -9,12 +9,17 @@ jest.mock('@microsoft/sp-core-library', () => ({}));
 jest.mock('../../../helpers/DataFilterHelper', () => ({}));
 jest.mock('../../../helpers/TaxonomyHelper', () => ({}));
 jest.mock('../../../helpers/UrlHelper', () => ({}));
-jest.mock('../../../layouts/AvailableTemplates', () => ({}));
+jest.mock('../../../layouts/AvailableTemplates', () => ({
+    BuiltinFilterTemplates: {
+        People: 'People'
+    }
+}));
 jest.mock('@fluentui/react/lib/MessageBar', () => ({}));
 jest.mock('../../../styles/Common.module.scss', () => ({ linkButton: 'linkButton' }));
 jest.mock('@microsoft/sp-lodash-subset', () => ({
     cloneDeep: require('lodash/cloneDeep'),
-    sortBy: require('lodash/sortBy')
+    sortBy: require('lodash/sortBy'),
+    isEqual: require('lodash/isEqual')
 }));
 
 import type { IDataFilter, IDataFilterConfiguration, IDataFilterInternal } from '@pnp/modern-search-extensibility';
@@ -140,6 +145,33 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
         const disabledAction = container['getClearAllFiltersAction']();
         expect(disabledAction).not.toBeNull();
         expect(disabledAction?.props.disabled).toBe(true);
+    });
+
+    it('does not reset active filters when showClearAllFilters toggle changes in properties', () => {
+        const uiFilter = createUiFilter(true);
+        const container = createContainer(uiFilter, [submittedFilter]);
+        const onUpdateFilters = jest.fn();
+        (container as any).props = {
+            properties: { showClearAllFilters: true },
+            selectedLayoutKey: 'Vertical',
+            availableFilters: [],
+            filtersConfiguration: [configuration],
+            onUpdateFilters
+        };
+        const prevProps = {
+            properties: { showClearAllFilters: false },
+            selectedLayoutKey: 'Vertical',
+            availableFilters: [],
+            filtersConfiguration: [configuration],
+            onUpdateFilters
+        };
+        const prevState = { ...container.state };
+
+        container.componentDidUpdate(prevProps as any, prevState as any);
+
+        expect(onUpdateFilters).not.toHaveBeenCalled();
+        expect(container.state.currentUiFilters).toEqual([uiFilter]);
+        expect(container.state.submittedFilters).toEqual([submittedFilter]);
     });
 
     it('clears all applied refiners and invalidates a queued filter update', () => {

@@ -1857,8 +1857,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         // When filters configuration is updated or the layout is changed 
+        const prevPropertiesForComparison = { ...prevProps.properties, showClearAllFilters: undefined };
+        const currentPropertiesForComparison = { ...this.props.properties, showClearAllFilters: undefined };
         if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey)
-            || !isEqual(prevProps.properties, this.props.properties)) {
+            || !isEqual(prevPropertiesForComparison, currentPropertiesForComparison)) {
 
             const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
             const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
