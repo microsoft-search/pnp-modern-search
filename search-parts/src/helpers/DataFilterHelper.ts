@@ -218,7 +218,7 @@ export class DataFilterHelper {
 
                     // Enclose bare string operands containing spaces or pipes, but leave FQL expressions executable.
                     const isFqlExpression = /^(?:or|and|range)\(/i.test(value);
-                    if ((!isFqlExpression && (/\s/.test(value) || value.includes('|')) && !/^".*"$/.test(value)) || (filter.filterName.includes("RefinableString") && /^\d+$/.test(value))) {
+                    if ((!isFqlExpression && (/\s/.test(value) || value.includes('|')) && !/^".*"$/.test(value)) || (filter.filterName.includes("RefinableString") && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value))) {
                         value = DataFilterHelper.quoteStringRefinementValue(value);
                     }
 

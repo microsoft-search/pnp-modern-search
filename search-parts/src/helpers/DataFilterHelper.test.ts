@@ -100,6 +100,27 @@ describe('DataFilterHelper.buildFqlRefinementString', () => {
         expect(result).toEqual(['RefinableString00:"L0|#0123456789abcdef0123456789abcdef|Strange"']);
     });
 
+    it('quotes decimal numeric labels in hierarchical taxonomy refinements', () => {
+        const selectedFilters: IDataFilter[] = [
+            {
+                filterName: 'RefinableString01',
+                operator: 'or' as IDataFilter['operator'],
+                values: [
+                    { name: '1008604.141', value: 'L0|#0123456789abcdef0123456789abcdef|Placements:Placements mobiliers:Mandats de gestion:1008604.141' },
+                    { name: '1008604.141', value: '"ǂǂ4750507c2331323334353637383961626364656630313233343536373839616263646566"' },
+                    { name: '1008604.141', value: '"ǂǂ4750307c2331323334353637383961626364656630313233343536373839616263646566"' },
+                    { name: '1008604.141', value: '1008604.141' }
+                ]
+            }
+        ];
+
+        const result = DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined);
+
+        expect(result).toEqual([
+            'RefinableString01:or("L0|#0123456789abcdef0123456789abcdef|Placements:Placements mobiliers:Mandats de gestion:1008604.141","ǂǂ4750507c2331323334353637383961626364656630313233343536373839616263646566","ǂǂ4750307c2331323334353637383961626364656630313233343536373839616263646566","1008604.141")'
+        ]);
+    });
+
     it('does not quote executable FQL expressions containing taxonomy pipes', () => {
         const selectedFilters: IDataFilter[] = [
             {
