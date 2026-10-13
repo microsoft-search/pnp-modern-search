@@ -134,4 +134,21 @@ describe('PaginationComponent', () => {
         act(() => { secondPage.click(); });
         expect(props.onPageUpdate).toHaveBeenCalledWith(2, undefined, []);
     });
+
+    it.each([true, false])('maps the section theme to CSS variables (hidePageNumbers=%s)', hidePageNumbers => {
+        render({
+            hidePageNumbers,
+            themeVariant: { semanticColors: { link: '#ffffff', listItemBackgroundHovered: '#112233' } } as any
+        });
+        const wrapper = container.querySelector('[style*="--link"]') as HTMLElement;
+        expect(wrapper).not.toBeNull();
+        expect(wrapper.style.getPropertyValue('--link')).toBe('#ffffff');
+        expect(wrapper.style.getPropertyValue('--listItemBackgroundHovered')).toBe('#112233');
+        expect(wrapper.querySelector('button, a')).not.toBeNull();
+    });
+
+    it('leaves the CSS variables unset without a theme variant', () => {
+        render();
+        expect(container.querySelector('[style*="--link"]')).toBeNull();
+    });
 });
