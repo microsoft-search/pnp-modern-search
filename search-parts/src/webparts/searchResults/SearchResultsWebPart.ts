@@ -72,6 +72,7 @@ import defaultCustomTemplate from '../../layouts/resultTypes/default_custom.html
 import defaultPeopleTemplate from '../../layouts/resultTypes/default_people.html';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Link } from '@fluentui/react/lib/Link';
+import type { ITheme } from '@fluentui/react/lib/Styling';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
 
@@ -2636,9 +2637,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // SharePoint/SPFx page navigation can intercept anchors rendered in the title area,
         // so use a button and handle navigation explicitly to preserve the configured tab behavior.
-        return React.createElement('button', {
+        return React.createElement(Link, {
             type: 'button',
-            className: commonStyles.linkButton,
+            theme: this._themeVariant as ITheme,
+            styles: { root: { fontWeight: 600 } },
             onClick: () => {
                 this.navigateToTitleLink(linkUrl, this.properties.titleLinkOpenInNewTab);
             },

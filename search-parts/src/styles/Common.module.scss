@@ -6,24 +6,6 @@
     }
 }
 
-.linkButton {
-    appearance: none;
-    background: none;
-    border: 0;
-    color: "[theme: themePrimary, default: #005a9e]";
-    cursor: pointer;
-    font: inherit;
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
-
-    &:hover,
-    &:focus-visible {
-        color: "[theme: themeDarkAlt, default: #106ebe]";
-        text-decoration: underline;
-    }
-}
-
 // Fix PropertyFieldCollectionData table layout broken by FluentUI/SPFx CSS upgrades.
 // Applied via tableClassName prop on the PropertyFieldCollectionData control.
 .slotTable {
