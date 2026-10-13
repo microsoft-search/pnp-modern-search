@@ -975,8 +975,19 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             ]
         });
 
-        // Add web part title styling group
-        groups.push(this.getTitleStylingPropertyPaneGroup());
+        // Add web part title styling and clear-all groups
+        groups = groups.concat([
+            this.getTitleStylingPropertyPaneGroup(),
+            {
+                groupName: webPartStrings.PropertyPane.LayoutPage.ClearAllFiltersGroupName,
+                isCollapsed: false,
+                groupFields: [
+                    PropertyPaneToggle('showClearAllFilters', {
+                        label: webPartStrings.PropertyPane.LayoutPage.ShowClearAllFiltersToggleLabel
+                    })
+                ]
+            }
+        ]);
 
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
@@ -1867,6 +1878,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.properties.selectedLayoutKey = this.properties.selectedLayoutKey ? this.properties.selectedLayoutKey : BuiltinLayoutsKeys.Vertical;
         this.properties.inlineTemplateContent = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : '';
         this.properties.filterOperator = this.properties.filterOperator ? this.properties.filterOperator : FilterConditionOperator.OR;
+        this.properties.showClearAllFilters = this.properties.showClearAllFilters ?? false;
         this.properties.layoutProperties = this.properties.layoutProperties ? this.properties.layoutProperties : {};
         this.properties.dataResultsDataSourceReferences = this.properties.dataResultsDataSourceReferences ? this.properties.dataResultsDataSourceReferences : [];
 

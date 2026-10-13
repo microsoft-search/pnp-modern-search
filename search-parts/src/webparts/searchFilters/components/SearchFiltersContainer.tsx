@@ -28,6 +28,7 @@ import { TaxonomyHelper } from '../../../helpers/TaxonomyHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import commonStyles from '../../../styles/Common.module.scss';
 
 const DEEPLINK_QUERYSTRING_PARAM_BASE = 'f';
 
@@ -1693,6 +1694,50 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
     }
 
+    private getClearAllFiltersAction(): JSX.Element | null {
+        if (!this.props.properties.showClearAllFilters) {
+            return null;
+        }
+
+        const hasAppliedFilters = this.hasAppliedFilters(this.state.submittedFilters);
+        return React.createElement('button', {
+            type: 'button',
+            className: commonStyles.linkButton,
+            disabled: this.state.isUpdatingResults || !hasAppliedFilters,
+            style: {
+                '--link': this.props.themeVariant?.semanticColors?.link,
+                '--linkHovered': this.props.themeVariant?.semanticColors?.linkHovered
+            } as React.CSSProperties,
+            onClick: () => this.clearAllFilters()
+        }, webPartStrings.PropertyPane.LayoutPage.ClearAllActionText);
+    }
+
+    private clearAllFilters(): void {
+        if (this.state.isUpdatingResults || !this.hasAppliedFilters(this.state.submittedFilters)) {
+            return;
+        }
+
+        this._filterUpdateVersion++;
+        if (this._deferredSubmittedUpdateTimer) {
+            clearTimeout(this._deferredSubmittedUpdateTimer);
+            this._deferredSubmittedUpdateTimer = null;
+        }
+        this._latestDeferredSubmittedFilters = null;
+
+        this.beginResultsUpdate(undefined, () => {
+            this.setState(prevState => ({
+                currentUiFilters: this.resetSelectedFilterValues(prevState.currentUiFilters),
+                submittedFilters: []
+            }), () => {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration).catch(() => {
+                    // Ignore UI refresh errors during clear-all
+                });
+                this.resetFiltersDeepLink();
+                this.props.onUpdateFilters([]);
+            });
+        });
+    }
+
     public render(): React.ReactElement<ISearchFiltersContainerProps> {
 
         let renderWpContent: JSX.Element = null;
@@ -1703,6 +1748,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             titleFontSize={this.props.titleFontSize}
             titleFontColor={this.props.titleFontColor}
             webPartTitleProps={this.props.webPartTitleProps}
+            titleAction={this.getClearAllFiltersAction()}
         />;
 
         // If no filter 

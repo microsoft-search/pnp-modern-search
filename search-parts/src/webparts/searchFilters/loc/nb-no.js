@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Synkende"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Fjern alle filtre",
+                ShowClearAllFiltersToggleLabel: "Vis knappen \"Fjern alle\"",
+                ClearAllActionText: "Fjern alle",
                 AvailableLayoutsGroupName: "Tilgjengelige maler",
                 LayoutTemplateOptionsGroupName: "Malvalg",
                 TemplateUrlFieldLabel: "Bruk URL for mal",

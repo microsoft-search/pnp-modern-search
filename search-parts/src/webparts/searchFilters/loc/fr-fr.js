@@ -75,6 +75,9 @@ define([], function () {
                 SortDescending: "Décroissant"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Effacer tous les filtres",
+                ShowClearAllFiltersToggleLabel: "Afficher le bouton « Tout effacer »",
+                ClearAllActionText: "Tout effacer",
                 AvailableLayoutsGroupName: "Mises en page disponibles",
                 LayoutTemplateOptionsGroupName: "Options de mise en page",
                 TemplateUrlFieldLabel: "Utiliser une adresse URL de modèle externe",

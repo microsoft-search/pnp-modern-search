@@ -73,6 +73,9 @@ define([], function () {
                 SortDescending: "Aflopend"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Alle filters wissen",
+                ShowClearAllFiltersToggleLabel: "Knop \"Alles wissen\" weergeven",
+                ClearAllActionText: "Alles wissen",
                 AvailableLayoutsGroupName: "Beschikbare indelingen",
                 LayoutTemplateOptionsGroupName: "Indelingsopties",
                 TemplateUrlFieldLabel: "Gebruik een externe sjabloon URL",
