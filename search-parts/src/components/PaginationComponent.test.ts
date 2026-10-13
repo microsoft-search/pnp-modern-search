@@ -1,7 +1,7 @@
 jest.mock('./PaginationComponent.module.scss', () => ({}), { virtual: true });
 jest.mock('@pnp/modern-search-extensibility', () => ({ BaseWebComponent: class {} }));
 jest.mock('CommonStrings', () => ({
-    Layouts: { Slider: { PreviousPageLabel: 'Previous page', NextPageLabel: 'Next page' } }
+    Layouts: { Slider: { PreviousPageLabel: 'Previous page', NextPageLabel: 'Next page', NextLabel: 'Next' } }
 }), { virtual: true });
 
 import * as React from 'react';
@@ -49,12 +49,14 @@ describe('PaginationComponent', () => {
         act(() => { button.click(); });
     };
 
-    it('defaults to Next only on page one', () => {
+    it('shows only Next on page one', () => {
         render();
-        expect(container.querySelector('.ms-Button-label').textContent).toBe('Next page');
+        expect(container.querySelector('.ms-Button-label')).toBeNull();
         expect(container.querySelector('[aria-current="page"]')).toBeNull();
+        expect(container.textContent).toContain('Next');
         expect(container.querySelectorAll('button')).toHaveLength(1);
-        expect(container.querySelectorAll('a')).toHaveLength(0);
+        expect(container.querySelector('button').getAttribute('aria-label')).toBe('Next page');
+        expect(container.querySelectorAll('a[aria-label^="Go to page"]')).toHaveLength(0);
         click('Next page');
         expect(props.onPageUpdate).toHaveBeenCalledWith(2, undefined, []);
     });
@@ -70,9 +72,10 @@ describe('PaginationComponent', () => {
     it('shows the current page and both arrows after page one', () => {
         render({ currentPageNumber: '2' });
         expect(container.querySelector('[aria-current="page"]').textContent).toBe('2');
+        expect(container.querySelectorAll('button')).toHaveLength(2);
+        expect(container.textContent).not.toContain('Next');
         click('Previous page');
         expect(props.onPageUpdate).toHaveBeenCalledWith(1, undefined, []);
-        expect(container.querySelector('.ms-Button-label').textContent).toBe('Next page');
     });
 
     it.each(['0', '4'])('keeps Previous but removes Next for a page with %s of 10 items', currentItemsCount => {
@@ -105,8 +108,9 @@ describe('PaginationComponent', () => {
 
     it('synchronizes the current page when changed by query or browser navigation', () => {
         render({ currentPageNumber: '3' });
+        expect(container.querySelector('[aria-current="page"]').textContent).toBe('3');
         render({ currentPageNumber: '1' });
-        expect(container.querySelector('.ms-Button-label').textContent).toBe('Next page');
+        expect(container.querySelector('[aria-current="page"]')).toBeNull();
         expect(container.querySelectorAll('button')).toHaveLength(1);
     });
 

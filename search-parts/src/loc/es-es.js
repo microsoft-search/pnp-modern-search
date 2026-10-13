@@ -300,6 +300,7 @@ define([], function () {
                 SlideWidth: "Ancho de la diapositiva (en px)",
                 PreviousPageLabel: "Página anterior",
                 NextPageLabel: "Página siguiente",
+                NextLabel: "Siguiente",
                 GoToPageLabel: "Ir a la página {0}"
             },
             People: {

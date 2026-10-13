@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import Pagination from 'react-js-pagination';
-import { Icon, IconButton, DefaultButton, ITheme, getTheme } from '@fluentui/react';
+import { Icon, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './PaginationComponent.module.scss';
 import * as strings from 'CommonStrings';
@@ -161,12 +161,12 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                 <div className={styles.paginationContainer__paginationContainer}>
                     <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
                         <div className={`${isThemeInverted ? styles.inverted : styles.standard}`}>
-                            {this.props.hidePageNumbers !== false ? this.renderSimplePagination(pageLinks) : <Pagination
+                            {this.props.hidePageNumbers !== false ? this.renderSimplePagination(pageLinks, isThemeInverted) : <Pagination
                                 activePage={this.state.currentPageNumber}
-                                firstPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
-                                lastPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
-                                prevPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
-                                nextPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
+                                firstPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
+                                lastPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
+                                prevPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
+                                nextPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
                                 activeLinkClass={`${styles.active} ${isThemeInverted ? styles.active__inverted : ''}`}
                                 itemsCountPerPage={parseInt(this.props.itemsCountPerPage)}
                                 totalItemsCount={totalCount}
@@ -198,7 +198,7 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         );
     }
 
-    private renderSimplePagination(pageLinks: string[]): JSX.Element {
+    private renderSimplePagination(pageLinks: string[], isInverted: boolean): JSX.Element {
         const currentPage = this.state.currentPageNumber;
         const theme = (this.props.themeVariant as ITheme) || getTheme();
         const hasNextPage = this.props.pageLinks
@@ -209,32 +209,25 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
             this.props.onPageUpdate(pageNumber, pageLinks[pageNumber - 1], pageLinks);
         };
 
-        return <div>
-            {currentPage > 1 && <>
-                <IconButton
-                    theme={theme}
-                    iconProps={{ iconName: 'ChevronLeft' }}
-                    ariaLabel={strings.Layouts.Slider.PreviousPageLabel}
-                    onClick={() => updatePage(currentPage - 1)}
-                />
-                <span aria-current="page">{currentPage}</span>
-            </>}
-            {hasNextPage && (currentPage === 1
-                ? <DefaultButton
-                    theme={theme}
-                    text={strings.Layouts.Slider.NextPageLabel}
-                    ariaLabel={strings.Layouts.Slider.NextPageLabel}
-                    iconProps={{ iconName: 'ChevronRight' }}
-                    styles={{ flexContainer: { flexDirection: 'row-reverse' } }}
-                    onClick={() => updatePage(currentPage + 1)}
-                />
-                : <IconButton
-                    theme={theme}
-                    iconProps={{ iconName: 'ChevronRight' }}
-                    ariaLabel={strings.Layouts.Slider.NextPageLabel}
-                    onClick={() => updatePage(currentPage + 1)}
-                />)}
-        </div>;
+        const hasPreviousPage = currentPage > 1;
+        if (!hasPreviousPage && !hasNextPage) {
+            return null;
+        }
+
+        // Same controls on every page so the first page matches the following ones
+        const renderChevron = (iconName: string, label: string, targetPage: number): JSX.Element =>
+            <li>
+                <button type="button" aria-label={label} onClick={() => updatePage(targetPage)}>
+                    <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} />
+                </button>
+            </li>;
+
+        return <ul>
+            {hasPreviousPage && renderChevron('ChevronLeft', strings.Layouts.Slider.PreviousPageLabel, currentPage - 1)}
+            {hasPreviousPage && <li><a className={isInverted ? styles.active__inverted : styles.active} aria-current="page">{currentPage}</a></li>}
+            {hasNextPage && !hasPreviousPage && <li onClick={() => updatePage(currentPage + 1)}><a>{strings.Layouts.Slider.NextLabel}</a></li>}
+            {hasNextPage && renderChevron('ChevronRight', strings.Layouts.Slider.NextPageLabel, currentPage + 1)}
+        </ul>;
     }
 }
 

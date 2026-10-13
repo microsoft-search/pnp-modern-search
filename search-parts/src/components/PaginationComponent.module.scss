@@ -8,12 +8,24 @@
             display: inline-block;
             text-align: center;
 
-            .inverted a {
+            .inverted a,
+            .inverted button {
                 color: "[theme: black, default: #000000]";
             }
 
-            .standard a {
+            .standard a,
+            .standard button {
                 color: "[theme: themePrimary, default: #005a9e]";
+            }
+
+            .pagerIcon {
+                padding: 4px;
+                margin: -4px;
+                border-radius: 2px;
+            }
+
+            li:hover .pagerIcon {
+                background-color: "[theme: neutralLighter, default: #f3f2f1]";
             }
 
             ul {
@@ -25,6 +37,20 @@
 
                 li {
                     display: inline;
+
+                    button {
+                        float: left;
+                        margin: 0;
+                        padding: 5px 5px;
+                        border: 0;
+                        background: none;
+                        cursor: pointer;
+                        font: inherit;
+
+                        i {
+                            font-size: 10px;
+                        }
+                    }
 
                     a {
                         float: left;

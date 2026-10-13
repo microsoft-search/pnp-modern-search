@@ -297,6 +297,7 @@ define([], function () {
                 SlideWidth: "Leveys (px)",
                 PreviousPageLabel: "Edellinen sivu",
                 NextPageLabel: "Seuraava sivu",
+                NextLabel: "Seuraava",
                 GoToPageLabel: "Siirry sivulle {0}"
             },
             People: {

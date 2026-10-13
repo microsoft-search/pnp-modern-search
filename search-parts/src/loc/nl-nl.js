@@ -299,6 +299,7 @@ define([], function () {
                 SlideWidth: "Slide breedte (in px)",
                 PreviousPageLabel: "Vorige pagina",
                 NextPageLabel: "Volgende pagina",
+                NextLabel: "Volgende",
                 GoToPageLabel: "Ga naar pagina {0}"
             },
             People: {

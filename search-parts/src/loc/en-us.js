@@ -300,6 +300,7 @@ define([], function () {
                 SlideWidth: "Slide width (in px)",
                 PreviousPageLabel: "Previous page",
                 NextPageLabel: "Next page",
+                NextLabel: "Next",
                 GoToPageLabel: "Go to page {0}"
             },
             People: {
