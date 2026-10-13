@@ -99,8 +99,10 @@
 
         {{#if @root.properties.paging.showPaging}}
 
-            {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
+            {{#if (or @root.properties.paging.hidePageNumbers (gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage))}}
                 <pnp-pagination 
+                    data-hide-page-numbers="{{@root.properties.paging.hidePageNumbers}}"
+                    data-current-items-count="{{@root.data.items.length}}"
                     data-total-items="{{@root.data.totalItemsCount}}" 
                     data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
                     data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
@@ -111,7 +113,7 @@
                     data-theme-variant="{{JSONstringify @root.theme}}"
                 >
                 </pnp-pagination>
-            {{/gt}}
+            {{/if}}
             
         {{/if}}
 

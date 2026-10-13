@@ -2,9 +2,10 @@ import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import Pagination from 'react-js-pagination';
-import { Icon, ITheme, getTheme } from '@fluentui/react';
+import { Icon, IconButton, DefaultButton, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './PaginationComponent.module.scss';
+import * as strings from 'CommonStrings';
 
 export type PageUpdateCallback = (pageNumber: number, pageLink: string, pageLinks: string[]) => void;
 
@@ -32,6 +33,16 @@ export interface IPaginationComponentProps {
      * The total number of items retrieved from the data source if known.
      */
     totalItems: string;
+
+    /**
+     * The number of items returned on the current page, independent of the estimated total.
+     */
+    currentItemsCount?: string;
+
+    /**
+     * Use previous/next navigation by default.
+     */
+    hidePageNumbers?: boolean;
 
     /**
      * The number of items per page
@@ -99,6 +110,12 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         };
     }
 
+    public componentDidUpdate(prevProps: IPaginationComponentProps): void {
+        if (prevProps.currentPageNumber !== this.props.currentPageNumber) {
+            this.setState({ currentPageNumber: parseInt(this.props.currentPageNumber) });
+        }
+    }
+
     public render() {
 
         let pageLinks: string[] = [];
@@ -144,19 +161,19 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                 <div className={styles.paginationContainer__paginationContainer}>
                     <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
                         <div className={`${isThemeInverted ? styles.inverted : styles.standard}`}>
-                            <Pagination
+                            {this.props.hidePageNumbers !== false ? this.renderSimplePagination(pageLinks) : <Pagination
                                 activePage={this.state.currentPageNumber}
                                 firstPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
                                 lastPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
                                 prevPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
                                 nextPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
                                 activeLinkClass={`${styles.active} ${isThemeInverted ? styles.active__inverted : ''}`}
-                                itemsCountPerPage={this.props.itemsCountPerPage}
+                                itemsCountPerPage={parseInt(this.props.itemsCountPerPage)}
                                 totalItemsCount={totalCount}
                                 hideDisabled={this.props.hideDisabled ? this.props.hideDisabled : false}
                                 hideNavigation={this.props.hideNavigation ? this.props.hideNavigation : false}
                                 hideFirstLastPages={this.props.hideFirstLastPages ? this.props.hideFirstLastPages : false}
-                                pageRangeDisplayed={this.props.range ? this.props.range : 5}
+                                pageRangeDisplayed={this.props.range !== undefined ? parseInt(this.props.range) : 5}
                                 onChange={((pageNumber: number) => {
 
                                     // Can't select the current page more than one
@@ -173,12 +190,51 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                                     }
 
                                 }).bind(this)}
-                            />
+                            />}
                         </div>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    private renderSimplePagination(pageLinks: string[]): JSX.Element {
+        const currentPage = this.state.currentPageNumber;
+        const theme = (this.props.themeVariant as ITheme) || getTheme();
+        const hasNextPage = this.props.pageLinks
+            ? !!pageLinks[currentPage]
+            : this.props.currentItemsCount === undefined || parseInt(this.props.currentItemsCount) >= parseInt(this.props.itemsCountPerPage);
+        const updatePage = (pageNumber: number): void => {
+            this.setState({ currentPageNumber: pageNumber });
+            this.props.onPageUpdate(pageNumber, pageLinks[pageNumber - 1], pageLinks);
+        };
+
+        return <div>
+            {currentPage > 1 && <>
+                <IconButton
+                    theme={theme}
+                    iconProps={{ iconName: 'ChevronLeft' }}
+                    ariaLabel={strings.Layouts.Slider.PreviousPageLabel}
+                    onClick={() => updatePage(currentPage - 1)}
+                />
+                <span aria-current="page">{currentPage}</span>
+            </>}
+            {hasNextPage && (currentPage === 1
+                ? <DefaultButton
+                    theme={theme}
+                    text={strings.Layouts.Slider.NextPageLabel}
+                    ariaLabel={strings.Layouts.Slider.NextPageLabel}
+                    iconProps={{ iconName: 'ChevronRight' }}
+                    styles={{ flexContainer: { flexDirection: 'row-reverse' } }}
+                    onClick={() => updatePage(currentPage + 1)}
+                />
+                : <IconButton
+                    theme={theme}
+                    iconProps={{ iconName: 'ChevronRight' }}
+                    ariaLabel={strings.Layouts.Slider.NextPageLabel}
+                    onClick={() => updatePage(currentPage + 1)}
+                />)}
+        </div>;
     }
 }
 

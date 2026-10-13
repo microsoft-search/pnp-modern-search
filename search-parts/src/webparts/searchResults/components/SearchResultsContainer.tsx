@@ -136,7 +136,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         // Determine if the component should show content according to Web Part parameters  
         if (this.state.data && this.state.data.items.length === 0) {
 
-            if (this.props.properties.showBlankIfNoResult) {
+            if (this.props.properties.showBlankIfNoResult && !(this.props.properties.paging.showPaging
+                && this.props.properties.paging.hidePageNumbers !== false && this.props.dataContext.pageNumber > 1)) {
 
                 // Edit mode
                 if (this.props.webPartTitleProps.displayMode === DisplayMode.Edit) {
