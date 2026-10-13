@@ -106,13 +106,13 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         super(props);
 
         this.state = {
-            currentPageNumber: parseInt(props.currentPageNumber)
+            currentPageNumber: Number.parseInt(props.currentPageNumber)
         };
     }
 
     public componentDidUpdate(prevProps: IPaginationComponentProps): void {
         if (prevProps.currentPageNumber !== this.props.currentPageNumber) {
-            this.setState({ currentPageNumber: parseInt(this.props.currentPageNumber) });
+            this.setState({ currentPageNumber: Number.parseInt(this.props.currentPageNumber) });
         }
     }
 
@@ -141,14 +141,14 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         }
 
         // Calculate the total items count
-        let totalCount: number = parseInt(this.props.totalItems); // Take the attribute value by default for count
+        let totalCount: number = Number.parseInt(this.props.totalItems); // Take the attribute value by default for count
 
         if (pageLinks.length > 0) {
 
             // pageLinks.length - 1 ==> Means at least X pages has been fully filled with items. We can't determine the last one so we exclude it (-1)
             // * this.props.itemsCountPerPage ==> How many items filled in these X pages
             // + 1 ==> if we have a last page, it means at least 1 item is present to generate a new page
-            totalCount = ((pageLinks.length - 1) * parseInt(this.props.itemsCountPerPage)) + 1;
+            totalCount = ((pageLinks.length - 1) * Number.parseInt(this.props.itemsCountPerPage)) + 1;
         }
 
         let isThemeInverted = false;
@@ -168,12 +168,12 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                                 prevPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
                                 nextPageText={<Icon className={styles.pagerIcon} theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
                                 activeLinkClass={`${styles.active} ${isThemeInverted ? styles.active__inverted : ''}`}
-                                itemsCountPerPage={parseInt(this.props.itemsCountPerPage)}
+                                itemsCountPerPage={Number.parseInt(this.props.itemsCountPerPage)}
                                 totalItemsCount={totalCount}
                                 hideDisabled={this.props.hideDisabled ? this.props.hideDisabled : false}
                                 hideNavigation={this.props.hideNavigation ? this.props.hideNavigation : false}
                                 hideFirstLastPages={this.props.hideFirstLastPages ? this.props.hideFirstLastPages : false}
-                                pageRangeDisplayed={this.props.range !== undefined ? parseInt(this.props.range) : 5}
+                                pageRangeDisplayed={this.props.range !== undefined ? Number.parseInt(this.props.range) : 5}
                                 onChange={((pageNumber: number) => {
 
                                     // Can't select the current page more than one
@@ -203,7 +203,7 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         const theme = (this.props.themeVariant as ITheme) || getTheme();
         const hasNextPage = this.props.pageLinks
             ? !!pageLinks[currentPage]
-            : this.props.currentItemsCount === undefined || parseInt(this.props.currentItemsCount) >= parseInt(this.props.itemsCountPerPage);
+            : this.props.currentItemsCount === undefined || Number.parseInt(this.props.currentItemsCount) >= Number.parseInt(this.props.itemsCountPerPage);
         const updatePage = (pageNumber: number): void => {
             this.setState({ currentPageNumber: pageNumber });
             this.props.onPageUpdate(pageNumber, pageLinks[pageNumber - 1], pageLinks);
