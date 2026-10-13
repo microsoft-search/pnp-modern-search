@@ -10,16 +10,18 @@
     appearance: none;
     background: none;
     border: 0;
-    color: "[theme: themePrimary, default: #005a9e]";
+    // Section theme variants expose semantic colors as CSS variables; fall back to the page theme slots.
+    color: var(--link, "[theme: themePrimary, default: #005a9e]");
     cursor: pointer;
     font: inherit;
+    font-weight: 600;
     margin: 0;
     padding: 0;
     text-decoration: none;
 
     &:hover,
     &:focus-visible {
-        color: "[theme: themeDarkAlt, default: #106ebe]";
+        color: var(--linkHovered, "[theme: themeDarkAlt, default: #106ebe]");
         text-decoration: underline;
     }
 }
