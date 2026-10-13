@@ -5,6 +5,7 @@ import Pagination from 'react-js-pagination';
 import { Icon, ITheme, getTheme } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './PaginationComponent.module.scss';
+import * as strings from 'CommonStrings';
 
 export type PageUpdateCallback = (pageNumber: number, pageLink: string, pageLinks: string[]) => void;
 
@@ -32,6 +33,16 @@ export interface IPaginationComponentProps {
      * The total number of items retrieved from the data source if known.
      */
     totalItems: string;
+
+    /**
+     * The number of items returned on the current page, independent of the estimated total.
+     */
+    currentItemsCount?: string;
+
+    /**
+     * Use previous/next navigation by default.
+     */
+    hidePageNumbers?: boolean;
 
     /**
      * The number of items per page
@@ -95,90 +106,111 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
         super(props);
 
         this.state = {
-            currentPageNumber: parseInt(props.currentPageNumber)
+            currentPageNumber: Number.parseInt(props.currentPageNumber)
         };
     }
 
+    public componentDidUpdate(prevProps: IPaginationComponentProps): void {
+        if (prevProps.currentPageNumber !== this.props.currentPageNumber) {
+            this.setState({ currentPageNumber: Number.parseInt(this.props.currentPageNumber) });
+        }
+    }
+
     public render() {
-
-        let pageLinks: string[] = [];
-        let firstLink: string;
-        let lastLink: string;
-        let currentLink: string;
-        let prevLink: string;
-        let nextLink: string;
-
-        if (this.props.pageLinks) {
-
-            // Determine page links
-            pageLinks = this.props.pageLinks as string[];
-
-            firstLink = pageLinks[0];
-            lastLink = pageLinks[pageLinks.length - 1];
-            currentLink = pageLinks[this.state.currentPageNumber - 1];
-            prevLink = pageLinks[this.state.currentPageNumber - 2];
-            nextLink = pageLinks[this.state.currentPageNumber];
-
-            // By default the page link is the current link
-            this._pagelink = currentLink;
-        }
-
-        // Calculate the total items count
-        let totalCount: number = parseInt(this.props.totalItems); // Take the attribute value by default for count
-
-        if (pageLinks.length > 0) {
-
-            // pageLinks.length - 1 ==> Means at least X pages has been fully filled with items. We can't determine the last one so we exclude it (-1)
-            // * this.props.itemsCountPerPage ==> How many items filled in these X pages
-            // + 1 ==> if we have a last page, it means at least 1 item is present to generate a new page
-            totalCount = ((pageLinks.length - 1) * parseInt(this.props.itemsCountPerPage)) + 1;
-        }
-
-        let isThemeInverted = false;
-        if (this.props.themeVariant && this.props.themeVariant.isInverted) {
-            isThemeInverted = true;
-        }
+        const pageLinks: string[] = this.props.pageLinks ? this.props.pageLinks as string[] : [];
+        const isThemeInverted = !!this.props.themeVariant?.isInverted;
 
         return (
             <div className={styles.paginationContainer}>
                 <div className={styles.paginationContainer__paginationContainer}>
                     <div className={`${styles.paginationContainer__paginationContainer__pagination}`}>
                         <div className={`${isThemeInverted ? styles.inverted : styles.standard}`}>
-                            <Pagination
-                                activePage={this.state.currentPageNumber}
-                                firstPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronLeft' onClick={() => { this._pagelink = firstLink; }} />}
-                                lastPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='DoubleChevronRight' onClick={() => { this._pagelink = lastLink; }} />}
-                                prevPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronLeft' onClick={() => { this._pagelink = prevLink; }} />}
-                                nextPageText={<Icon theme={(this.props.themeVariant as ITheme) || getTheme()} iconName='ChevronRight' onClick={() => { this._pagelink = nextLink; }} />}
-                                activeLinkClass={`${styles.active} ${isThemeInverted ? styles.active__inverted : ''}`}
-                                itemsCountPerPage={this.props.itemsCountPerPage}
-                                totalItemsCount={totalCount}
-                                hideDisabled={this.props.hideDisabled ? this.props.hideDisabled : false}
-                                hideNavigation={this.props.hideNavigation ? this.props.hideNavigation : false}
-                                hideFirstLastPages={this.props.hideFirstLastPages ? this.props.hideFirstLastPages : false}
-                                pageRangeDisplayed={this.props.range ? this.props.range : 5}
-                                onChange={((pageNumber: number) => {
-
-                                    // Can't select the current page more than one
-                                    if (pageNumber !== this.state.currentPageNumber) {
-
-                                        let pageLink = this._pagelink;
-                                        pageLink = pageLinks[pageNumber - 1];
-
-                                        this.setState({
-                                            currentPageNumber: pageNumber
-                                        });
-
-                                        this.props.onPageUpdate(pageNumber, pageLink, pageLinks);
-                                    }
-
-                                }).bind(this)}
-                            />
+                            {this.props.hidePageNumbers === true
+                                ? this.renderSimplePagination(pageLinks, isThemeInverted)
+                                : this.renderNumberedPagination(pageLinks, isThemeInverted)}
                         </div>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    private renderNumberedPagination(pageLinks: string[], isThemeInverted: boolean): JSX.Element {
+        const currentPage = this.state.currentPageNumber;
+        const theme = (this.props.themeVariant as ITheme) || getTheme();
+        const itemsCountPerPage = Number.parseInt(this.props.itemsCountPerPage);
+
+        const firstLink = pageLinks[0];
+        const lastLink = pageLinks[pageLinks.length - 1];
+        const prevLink = pageLinks[currentPage - 2];
+        const nextLink = pageLinks[currentPage];
+
+        // By default the page link is the current link
+        this._pagelink = pageLinks[currentPage - 1];
+
+        // pageLinks.length - 1 ==> at least X pages are fully filled; the last one can't be determined so it is excluded
+        // + 1 ==> if we have a last page, at least 1 item is present to generate a new page
+        const totalCount = pageLinks.length > 0
+            ? ((pageLinks.length - 1) * itemsCountPerPage) + 1
+            : Number.parseInt(this.props.totalItems);
+
+        const icon = (iconName: string, link: string): JSX.Element =>
+            <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} onClick={() => { this._pagelink = link; }} />;
+
+        return <Pagination
+            activePage={currentPage}
+            firstPageText={icon('DoubleChevronLeft', firstLink)}
+            lastPageText={icon('DoubleChevronRight', lastLink)}
+            prevPageText={icon('ChevronLeft', prevLink)}
+            nextPageText={icon('ChevronRight', nextLink)}
+            activeLinkClass={`${styles.active} ${isThemeInverted ? styles.active__inverted : ''}`}
+            itemsCountPerPage={itemsCountPerPage}
+            totalItemsCount={totalCount}
+            hideDisabled={this.props.hideDisabled ?? false}
+            hideNavigation={this.props.hideNavigation ?? false}
+            hideFirstLastPages={this.props.hideFirstLastPages ?? false}
+            pageRangeDisplayed={this.props.range !== undefined ? Number.parseInt(this.props.range) : 5}
+            onChange={(pageNumber: number) => {
+                // Can't select the current page more than once
+                if (pageNumber !== currentPage) {
+                    this.setState({ currentPageNumber: pageNumber });
+                    this.props.onPageUpdate(pageNumber, pageLinks[pageNumber - 1], pageLinks);
+                }
+            }}
+        />;
+    }
+
+    private renderSimplePagination(pageLinks: string[], isInverted: boolean): JSX.Element {
+        const currentPage = this.state.currentPageNumber;
+        const theme = (this.props.themeVariant as ITheme) || getTheme();
+        const hasNextPage = this.props.pageLinks
+            ? !!pageLinks[currentPage]
+            : this.props.currentItemsCount === undefined || Number.parseInt(this.props.currentItemsCount) >= Number.parseInt(this.props.itemsCountPerPage);
+        const updatePage = (pageNumber: number): void => {
+            this.setState({ currentPageNumber: pageNumber });
+            this.props.onPageUpdate(pageNumber, pageLinks[pageNumber - 1], pageLinks);
+        };
+
+        const hasPreviousPage = currentPage > 1;
+        if (!hasPreviousPage && !hasNextPage) {
+            return null;
+        }
+
+        const renderButton = (targetPage: number, content: JSX.Element, label?: string): JSX.Element =>
+            <li>
+                <button type="button" aria-label={label} onClick={() => updatePage(targetPage)}>
+                    {content}
+                </button>
+            </li>;
+        const chevron = (iconName: string): JSX.Element => <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} />;
+
+        return <ul>
+            {hasPreviousPage && renderButton(currentPage - 1, chevron('ChevronLeft'), strings.Layouts.Slider.PreviousPageLabel)}
+            {hasPreviousPage && <li><span className={isInverted ? styles.active__inverted : styles.active} aria-current="page">{currentPage}</span></li>}
+            {hasNextPage && (hasPreviousPage
+                ? renderButton(currentPage + 1, chevron('ChevronRight'), strings.Layouts.Slider.NextPageLabel)
+                : renderButton(currentPage + 1, <>{strings.Layouts.Slider.NextLabel}{chevron('ChevronRight')}</>))}
+        </ul>;
     }
 }
 

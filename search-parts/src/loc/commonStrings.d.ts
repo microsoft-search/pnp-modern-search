@@ -299,6 +299,7 @@ declare interface ICommonStrings {
         SlideHeight: string;
         PreviousPageLabel: string;
         NextPageLabel: string;
+        NextLabel: string;
         GoToPageLabel: string;
       };
       People: {

@@ -300,6 +300,7 @@ define([], function () {
                 SlideWidth: "Szerokość slajdu (w pikselach)",
                 PreviousPageLabel: "Poprzednia strona",
                 NextPageLabel: "Następna strona",
+                NextLabel: "Dalej",
                 GoToPageLabel: "Przejdź do strony {0}"
             },
             People: {

@@ -1545,6 +1545,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 itemsCountPerPage: 10,
                 pagingRange: 5,
                 showPaging: true,
+                hidePageNumbers: true,
                 hideDisabled: true,
                 hideFirstLastPages: false,
                 hideNavigation: false,
@@ -1556,6 +1557,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Backfill `enableQueryString` for web parts saved before this setting existed so
         // the property pane Toggle binds to a defined boolean instead of `undefined`.
         this.properties.paging.enableQueryString = this.properties.paging.enableQueryString ?? false;
+        this.properties.paging.hidePageNumbers = this.properties.paging.hidePageNumbers ?? true;
 
         // Default adaptive cards host config
         if (!this.properties.adaptiveCardsHostConfig) {
@@ -1690,6 +1692,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         disabled: !this.properties.paging.showPaging,
                         key: 'paging.itemsCountPerPage'
                     }),
+                    PropertyPaneToggle('paging.hidePageNumbers', {
+                        label: webPartStrings.PropertyPane.DataSourcePage.HidePageNumbersFieldName,
+                        disabled: !this.properties.paging.showPaging
+                    }),
                     PropertyPaneSlider('paging.pagingRange', {
                         label: webPartStrings.PropertyPane.DataSourcePage.PagingRangeFieldName,
                         max: 50,
@@ -1697,20 +1703,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         step: 1,
                         showValue: true,
                         value: this.properties.paging.pagingRange,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneHorizontalRule(),
                     PropertyPaneToggle('paging.hideNavigation', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideNavigationFieldName,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneToggle('paging.hideFirstLastPages', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideFirstLastPagesFieldName,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneToggle('paging.hideDisabled', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideDisabledFieldName,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneToggle('paging.enableQueryString', {
                         label: webPartStrings.PropertyPane.DataSourcePage.EnableQueryStringFieldName,
