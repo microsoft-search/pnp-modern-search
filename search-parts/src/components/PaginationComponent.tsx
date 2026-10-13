@@ -207,14 +207,14 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
                     {content}
                 </button>
             </li>;
-        const chevron = (iconName: string): JSX.Element => <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} />;
+        const chevron = (iconName: string, className: string = styles.pagerIcon): JSX.Element => <Icon className={className} theme={theme} iconName={iconName} />;
 
         return <ul>
             {hasPreviousPage && renderButton(currentPage - 1, chevron('ChevronLeft'), strings.Layouts.Slider.PreviousPageLabel)}
             {hasPreviousPage && <li><span className={isInverted ? styles.active__inverted : styles.active} aria-current="page">{currentPage}</span></li>}
             {hasNextPage && (hasPreviousPage
                 ? renderButton(currentPage + 1, chevron('ChevronRight'), strings.Layouts.Slider.NextPageLabel)
-                : renderButton(currentPage + 1, <>{strings.Layouts.Slider.NextLabel}{chevron('ChevronRight')}</>))}
+                : renderButton(currentPage + 1, <>{strings.Layouts.Slider.NextLabel}{chevron('ChevronRight', `${styles.pagerIcon} ${styles.pagerIconAfterText}`)}</>))}
         </ul>;
     }
 }

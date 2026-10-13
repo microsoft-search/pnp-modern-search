@@ -22,6 +22,11 @@
                 border-radius: 2px;
             }
 
+            // Keep the hover background from covering the "Next" label
+            .pagerIconAfterText {
+                margin-left: 4px;
+            }
+
             li:hover .pagerIcon {
                 background-color: var(--listItemBackgroundHovered, "[theme: neutralLighter, default: #f3f2f1]");
             }
