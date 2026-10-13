@@ -8,14 +8,12 @@
             display: inline-block;
             text-align: center;
 
+            // --link and --listItemBackgroundHovered are set from the SPFx section theme variant
             .inverted a,
-            .inverted button {
-                color: "[theme: black, default: #000000]";
-            }
-
+            .inverted button,
             .standard a,
             .standard button {
-                color: "[theme: themePrimary, default: #005a9e]";
+                color: var(--link, "[theme: themePrimary, default: #005a9e]");
             }
 
             .pagerIcon {
@@ -25,7 +23,7 @@
             }
 
             li:hover .pagerIcon {
-                background-color: "[theme: neutralLighter, default: #f3f2f1]";
+                background-color: var(--listItemBackgroundHovered, "[theme: neutralLighter, default: #f3f2f1]");
             }
 
             ul {
@@ -68,14 +66,10 @@
                         }
                     }
 
-                    .active {
-                        font-weight: bold;
-                        color: "[theme: themePrimary, default: #005a9e]";
-                    }
-
+                    .active,
                     .active__inverted {
                         font-weight: bold;
-                        color: "[theme: black, default: #000000]";
+                        color: var(--link, "[theme: themePrimary, default: #005a9e]");
                     }
 
                     a:visited {
