@@ -99,11 +99,36 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _lastSelectedVerticalKey: string = undefined;
     private _verticalChangeVersion: number = 0;
 
-    private _resetFiltersForChangedVertical(): boolean {
-        const verticalData = DynamicPropertyHelper.tryGetValueSafe(this._verticalsSourceData);
-        const selectedVerticalKey = verticalData?.selectedVertical?.key;
+    /**
+     * Resolves the selected vertical from the directly connected Search Verticals Web Part or, when not connected,
+     * from the connected Search Results Web Parts (they all share the same verticals connection).
+     */
+    private _getConnectedVerticalState(): { selectedVerticalKey: string; clearFiltersOnVerticalChange: boolean } {
+        const verticalData = this._verticalsSourceData ? DynamicPropertyHelper.tryGetValueSafe(this._verticalsSourceData) : undefined;
+        if (verticalData?.selectedVertical?.key) {
+            return {
+                selectedVerticalKey: verticalData.selectedVertical.key,
+                clearFiltersOnVerticalChange: verticalData.clearFiltersOnVerticalChange === true
+            };
+        }
 
-        if (verticalData?.clearFiltersOnVerticalChange === true && selectedVerticalKey && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== selectedVerticalKey) {
+        for (const dataSourceDynamicProperty of this._dataSourceDynamicProperties) {
+            const resultsData = DynamicPropertyHelper.tryGetValueSafe(dataSourceDynamicProperty);
+            if (resultsData?.selectedVerticalKey) {
+                return {
+                    selectedVerticalKey: resultsData.selectedVerticalKey,
+                    clearFiltersOnVerticalChange: resultsData.clearFiltersOnVerticalChange === true
+                };
+            }
+        }
+
+        return { selectedVerticalKey: undefined, clearFiltersOnVerticalChange: false };
+    }
+
+    private _resetFiltersForChangedVertical(): boolean {
+        const { selectedVerticalKey, clearFiltersOnVerticalChange } = this._getConnectedVerticalState();
+
+        if (clearFiltersOnVerticalChange && selectedVerticalKey && this._lastSelectedVerticalKey && this._lastSelectedVerticalKey !== selectedVerticalKey) {
             this._selectedFilters = [];
             this._verticalChangeVersion++;
             this._lastSelectedVerticalKey = selectedVerticalKey;
@@ -374,6 +399,11 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
         if (this.context.propertyPane.isPropertyPaneOpen()) {
             this.context.propertyPane.refresh();
+        }
+
+        // Filters connected only to Search Results Web Parts learn about vertical changes through their data
+        if (this._resetFiltersForChangedVertical()) {
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchFilters);
         }
 
         return this.renderCompleted();

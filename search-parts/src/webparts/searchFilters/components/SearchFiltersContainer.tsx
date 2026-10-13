@@ -1861,6 +1861,22 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             availableFilters.map(availableFilter => this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext))
         )).filter((filter): filter is IDataFilterInternal => Boolean(filter));
 
+        // Keep selected or committed filters visible when results omit them, including pending removals before Apply.
+        currentUiFilters.forEach(uiFilter => {
+            const isStillAvailable = updatedFilters.some(filter => filter.filterName === uiFilter.filterName);
+            const isConfigured = filtersConfiguration.some(configuration => configuration.filterName === uiFilter.filterName);
+            const hasSubmittedValues = this.state.submittedFilters.some(filter =>
+                filter.filterName === uiFilter.filterName && filter.values.length > 0
+            );
+            if (!isStillAvailable && isConfigured && (uiFilter.values?.some(value => value.selected) || hasSubmittedValues)) {
+                const retainedFilter = cloneDeep(uiFilter);
+                retainedFilter.values.forEach(value => {
+                    value.count = 0;
+                });
+                updatedFilters.push(retainedFilter);
+            }
+        });
+
         const sortStartedAt = performance.now();
         const sortedFilters = sortBy(updatedFilters, 'sortIdx');
 

@@ -277,7 +277,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             case ComponentType.SearchVerticals:
                 return {
                     selectedVertical: this._selectedVertical,
-                    clearFiltersOnVerticalChange: this.properties.clearFiltersOnVerticalChange,
+                    clearFiltersOnVerticalChange: this.properties.clearFiltersOnVerticalChange !== false,
                     verticalsConfiguration: this.properties.verticals,
                 } as IDataVerticalSourceData;
 
@@ -530,7 +530,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                 label: webPartStrings.PropertyPane.Verticals.ClearFiltersOnVerticalChangeLabel,
                 onText: commonStrings.General.OnTextLabel,
                 offText: commonStrings.General.OffTextLabel,
-                checked: this.properties.clearFiltersOnVerticalChange === true
+                checked: this.properties.clearFiltersOnVerticalChange !== false
             }),
             PropertyPaneTextField('defaultVerticalQueryStringParam', {
                 label: webPartStrings.PropertyPane.Verticals.DefaultVerticalQueryStringParamLabel,

@@ -153,8 +153,8 @@ importers:
         specifier: 1.11.19
         version: 1.11.19
       dompurify:
-        specifier: 3.4.13
-        version: 3.4.13
+        specifier: 3.4.16
+        version: 3.4.16
       handlebars:
         specifier: 4.7.9
         version: 4.7.9
@@ -165,8 +165,8 @@ importers:
         specifier: 0.4.0
         version: 0.4.0
       markdown-it:
-        specifier: 14.2.0
-        version: 14.2.0
+        specifier: 14.3.1
+        version: 14.3.1
       react:
         specifier: 17.0.1
         version: 17.0.1
@@ -1838,37 +1838,46 @@ packages:
 
   '@microsoft/mgt-components@3.1.3':
     resolution: {integrity: sha512-EwMBOhKGp3uF4BZyLmphDBumvy/gSx+10b2hO3LIZW78Ct2yA1aXcKWru2XNteWZf2U9fzvzdxiIEzhxvIBtHw==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/mgt-components@4.6.0':
     resolution: {integrity: sha512-7KC2eq+4GccNbFPwtUGTSDGJR+cVI3KI2IQpkqpyr3S9rl9d3BwEfPlVYMPdI0xI4Kpl31IyyV1ebf2FZHgqOQ==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/mgt-element@3.1.3':
     resolution: {integrity: sha512-Wvt/PO83MJrcV8Z/Tx0pnCeDB3yulHr5xCrxN47v1KLr7vXj8BFqK73g7PMSOJ0ptDvYB1GEoyYVPACrPPZR0Q==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/mgt-element@4.6.0':
     resolution: {integrity: sha512-h9fQqfqf4kzxjsa7zCPI9Lz7MUtBoTaHZyalwl2Q8wVqkEoMUim9OK/Y6uElsefegbtVAK0ucPkVL5y1zzqHJQ==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/mgt-react@3.1.3':
     resolution: {integrity: sha512-k6AuX0SzFkmRpFPzqsFb4f2KG+BIGCQ51VtuezupzBZk+aHYBQxSS2Unajkfs8boyYW3OLnhKbRQAnkoD1pJuA==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
     peerDependencies:
       react: ^17.0.1 || ^18.0.0
       react-dom: ^17.0.1 || ^18.0.0
 
   '@microsoft/mgt-react@4.6.0':
     resolution: {integrity: sha512-605OVIOtfISKXWKyzLHpAn5OdSA3HYT0lj7v0/JJrZxDkrTvzFxUgW6lU3RqxI3F/GqRwuh0ioTXgp5YlOY6lw==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
     peerDependencies:
       react: ^17.0.1 || ^18.0.0
       react-dom: ^17.0.1 || ^18.0.0
 
   '@microsoft/mgt-sharepoint-provider@3.1.3':
     resolution: {integrity: sha512-kzhghGa9iIIxBCDnsNwwhE16XLJBxQbzYXarqgzZhkEMYOMralsWjJCUgBpMEjVsXfStgoNm0gRCqZMAPGNmVg==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/mgt-sharepoint-provider@4.6.0':
     resolution: {integrity: sha512-gWGlwZPY2xU7UnIcurhshAeElLMJSHDVTNohiuVE4u1uBECanBmQ4uXGr9xTLeD/d2LRZtyCbDdeiuskNICzDg==}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/mgt-spfx@3.1.3':
     resolution: {integrity: sha512-3lg2sBiN38+yn4J/+3FHEO0qYs5Rzu/5eswyHGgo6BMyLbO4ILr9E6+ULs8FhIoAw0qGV6+GxicCkyFlAVhhJA==}
     engines: {node: '>=16.13.0 <17.0.0 || >=18.17.1 <19.0.0'}
+    deprecated: 'Microsoft Graph Toolkit was retired on 2026-08-28 and is no longer maintained. You are welcome to fork the repository to maintain your own version: https://github.com/microsoftgraph/microsoft-graph-toolkit'
 
   '@microsoft/microsoft-graph-client@1.7.2-spfx':
     resolution: {integrity: sha512-BQN50r3tohWYOaQ0de7LJ5eCRjI6eg4RQqLhGDlgRmZIZhWzH0bhR6QBMmmxtYtwKWifhPhJSxYDW+cP67TJVw==}
@@ -2990,6 +2999,7 @@ packages:
   '@xmldom/xmldom@0.8.13':
     resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xobotyi/scrollbar-width@1.9.5':
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
@@ -3730,8 +3740,8 @@ packages:
     resolution: {integrity: sha512-GrwoxYN+uWlzO8uhUXRl0P+kHE4GtVPfYzVLcUxPL7KNdHKj66vvlhiweIHqYYXWlw+T8iLMp42Lm67ghw4WMQ==}
     engines: {node: '>= 4'}
 
-  dompurify@3.4.13:
-    resolution: {integrity: sha512-2vmYIoqjze2d+kakP8S/nS5shfsl587kzwEjcGlTdiksUVgFHnFCsLYDVj/JNqJVOQZGSYBTmuycv0PodwmnMQ==}
+  dompurify@3.4.16:
+    resolution: {integrity: sha512-sqo+pNp3qRhCIpbgRi1y8Tgk27Bo2Ry7w0dC1NBeNTdZChWjz9Xb/KOoZbRP/R6pQZ80Qw8YhXw13hWWBbMRnQ==}
 
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
@@ -3919,6 +3929,7 @@ packages:
   eslint@9.37.0:
     resolution: {integrity: sha512-XyLmROnACWqSxiGYArdef1fItQd47weqB7iwtfr9JHwRrqIXZdcFMvvEcL9xHCmL0SNsOvF0c42lWyM1U5dgig==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -4934,8 +4945,8 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  linkify-it@5.0.1:
-    resolution: {integrity: sha512-wVoTjP4Q6R0NW5hiZkVJaFZPWgtXfoGF+6LucL3/FtiNjmcHhYjEr5f1Kqjirc1nBW07J/ZuRFumqr2oqccEWg==}
+  linkify-it@5.0.2:
+    resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==}
 
   lit-element@3.3.3:
     resolution: {integrity: sha512-XbeRxmTHubXENkV4h8RIPyr8lXc+Ff28rkcQzw3G6up2xg5E8Zu1IgOWIwBLEQsu3cOVFqdYwiVi0hv0SlpqUA==}
@@ -5037,8 +5048,8 @@ packages:
     resolution: {integrity: sha512-ALyFxgtd5R+65UqZ/++lOqwWcC0SNho9c27fYSyLmG7AfnAul2o46F05aDJGPbFU57wos9dgcIySHs0Xe6ia3A==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
-  markdown-it@14.2.0:
-    resolution: {integrity: sha512-1TGiQiJVRQ3NPmZH6sx5Cfnmg6GQm9jvC1ch4TK511NjSJvjzKLzn5pPfZRNZkRPZP0HqCioSndqH8v2nRaWVQ==}
+  markdown-it@14.3.1:
+    resolution: {integrity: sha512-4Ej49aYTDFIQ+uBkfX8GBvJGccoARxxPep+7aWTs55ozbjQJpW9M26Fe53vnGgvLeVzva/amzjQQaQu9w0vMhA==}
     hasBin: true
 
   markdown-to-jsx@7.4.0:
@@ -5054,8 +5065,8 @@ packages:
   mdn-data@2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
 
-  mdurl@2.0.0:
-    resolution: {integrity: sha512-Lf+9+2r+Tdp5wXDXC4PcIBjTDtq4UKjCPMQhKIuzpJNW0b96kVqSwW0bT7FhRSfmAiFYgP+SCRvdrDozfh0U5w==}
+  mdurl@2.1.0:
+    resolution: {integrity: sha512-1+HBaOx0zi/dQWht8rNv9MYf9qqpqL/kxI0hXImU6Y547zM6Sni8BQibt7ifgMcYtQg41ao3Ivd6cnSM86inpg==}
 
   media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
@@ -5781,8 +5792,8 @@ packages:
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
-  react-is@19.2.8:
-    resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
+  react-is@19.3.0:
+    resolution: {integrity: sha512-UpMYezM4v5/18F28aC66AEsjXIgE02kyEMH6yLdgLXu/UTfa1Ntwck/nNLrbqJsEXW7gPb0coNO9FQse9WTovA==}
 
   react-js-pagination@3.0.3:
     resolution: {integrity: sha512-podyA6Rd0uxc8uQakXWXxnonoOPI6NnFOROXfc6qPKNYm44s+Bgpn0JkyflcfbHf/GFKahnL8JN8rxBHZiBskg==}
@@ -10874,7 +10885,7 @@ snapshots:
       jotai: 2.20.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@17.0.45)(react@17.0.1)
       lodash: 4.18.0
       maplibre-gl: 5.24.0
-      markdown-it: 14.2.0
+      markdown-it: 14.3.1
       monaco-editor: 0.29.1
       nano-css: 5.6.2(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       pmtiles: 4.4.1
@@ -12715,7 +12726,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.4.13:
+  dompurify@3.4.16:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -14291,7 +14302,7 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  linkify-it@5.0.1:
+  linkify-it@5.0.2:
     dependencies:
       uc.micro: 2.1.0
 
@@ -14413,12 +14424,12 @@ snapshots:
       quickselect: 3.0.0
       tinyqueue: 3.0.0
 
-  markdown-it@14.2.0:
+  markdown-it@14.3.1:
     dependencies:
       argparse: 2.0.1
       entities: 4.5.0
-      linkify-it: 5.0.1
-      mdurl: 2.0.0
+      linkify-it: 5.0.2
+      mdurl: 2.1.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
@@ -14430,7 +14441,7 @@ snapshots:
 
   mdn-data@2.0.14: {}
 
-  mdurl@2.0.0: {}
+  mdurl@2.1.0: {}
 
   media-typer@0.3.0: {}
 
@@ -15003,7 +15014,7 @@ snapshots:
       '@jest/schemas': 30.4.1
       ansi-styles: 5.2.0
       react-is-18: react-is@18.3.1
-      react-is-19: react-is@19.2.8
+      react-is-19: react-is@19.3.0
 
   process-nextick-args@2.0.1: {}
 
@@ -15116,7 +15127,7 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-is@19.2.8: {}
+  react-is@19.3.0: {}
 
   react-js-pagination@3.0.3:
     dependencies:
