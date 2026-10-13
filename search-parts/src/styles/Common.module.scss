@@ -10,7 +10,7 @@
     appearance: none;
     background: none;
     border: 0;
-    // Section theme variants expose semantic colors as CSS variables; fall back to the page theme slots.
+    // --link/--linkHovered are set inline from the SPFx section theme; fall back to the page theme slots.
     color: var(--link, "[theme: themePrimary, default: #005a9e]");
     cursor: pointer;
     font: inherit;
