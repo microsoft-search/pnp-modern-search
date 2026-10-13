@@ -10,6 +10,7 @@ jest.mock('../../../helpers/UrlHelper', () => ({}));
 jest.mock('../../../layouts/AvailableTemplates', () => ({}));
 jest.mock('@fluentui/react/lib/MessageBar', () => ({}));
 jest.mock('@microsoft/sp-lodash-subset', () => ({
+    cloneDeep: require('lodash/cloneDeep'),
     sortBy: require('lodash/sortBy')
 }));
 
@@ -36,7 +37,7 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
             filterName: 'Category',
             displayName: 'Category',
             selectedTemplate: 'Checkbox',
-            values: [{ name: 'Marketing', value: 'Marketing', selected, selectedOnce: true }],
+            values: [{ name: 'Marketing', value: 'Marketing', selected, selectedOnce: true, count: 0 }],
             expandByDefault: true,
             showCount: true,
             isMulti: true,
@@ -89,6 +90,23 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
         await container['getFiltersToDisplay']([], [uiFilter], [configuration]);
 
         expect(container.state.currentUiFilters).toEqual([]);
+    });
+
+    it.each([true, false])('resets retained bucket counts without mutating selections (selected: %s)', async selected => {
+        const uiFilter = createUiFilter(selected);
+        uiFilter.values[0].count = 12;
+        const container = createContainer(uiFilter, [submittedFilter]);
+
+        await container['getFiltersToDisplay']([], [uiFilter], [configuration]);
+
+        const retainedFilter = container.state.currentUiFilters[0];
+        expect(retainedFilter).not.toBe(uiFilter);
+        expect(retainedFilter.values[0]).not.toBe(uiFilter.values[0]);
+        expect(retainedFilter.values[0].count).toBe(0);
+        expect(retainedFilter.values[0].selected).toBe(selected);
+        expect(retainedFilter.canApply).toBe(uiFilter.canApply);
+        expect(uiFilter.values[0].count).toBe(12);
+        expect(container.state.submittedFilters).toEqual([submittedFilter]);
     });
 
     it('does not retain a filter removed from the configuration', async () => {

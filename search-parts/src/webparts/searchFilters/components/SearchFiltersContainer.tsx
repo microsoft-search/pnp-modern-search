@@ -1869,7 +1869,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 filter.filterName === uiFilter.filterName && filter.values.length > 0
             );
             if (!isStillAvailable && isConfigured && (uiFilter.values?.some(value => value.selected) || hasSubmittedValues)) {
-                updatedFilters.push(uiFilter);
+                const retainedFilter = cloneDeep(uiFilter);
+                retainedFilter.values.forEach(value => {
+                    value.count = 0;
+                });
+                updatedFilters.push(retainedFilter);
             }
         });
 
