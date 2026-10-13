@@ -214,19 +214,22 @@ export class PaginationComponent extends React.Component<IPaginationComponentPro
             return null;
         }
 
-        // Same controls on every page so the first page matches the following ones
-        const renderChevron = (iconName: string, label: string, targetPage: number): JSX.Element =>
+        const renderButton = (label: string, targetPage: number, content: JSX.Element): JSX.Element =>
             <li>
                 <button type="button" aria-label={label} onClick={() => updatePage(targetPage)}>
-                    <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} />
+                    {content}
                 </button>
             </li>;
+        const chevron = (iconName: string): JSX.Element => <Icon className={styles.pagerIcon} theme={theme} iconName={iconName} />;
 
         return <ul>
-            {hasPreviousPage && renderChevron('ChevronLeft', strings.Layouts.Slider.PreviousPageLabel, currentPage - 1)}
-            {hasPreviousPage && <li><a className={isInverted ? styles.active__inverted : styles.active} aria-current="page">{currentPage}</a></li>}
-            {hasNextPage && !hasPreviousPage && <li onClick={() => updatePage(currentPage + 1)}><a>{strings.Layouts.Slider.NextLabel}</a></li>}
-            {hasNextPage && renderChevron('ChevronRight', strings.Layouts.Slider.NextPageLabel, currentPage + 1)}
+            {hasPreviousPage && renderButton(strings.Layouts.Slider.PreviousPageLabel, currentPage - 1, chevron('ChevronLeft'))}
+            {hasPreviousPage && <li><span className={isInverted ? styles.active__inverted : styles.active} aria-current="page">{currentPage}</span></li>}
+            {hasNextPage && renderButton(
+                strings.Layouts.Slider.NextPageLabel,
+                currentPage + 1,
+                hasPreviousPage ? chevron('ChevronRight') : <>{strings.Layouts.Slider.NextLabel}{chevron('ChevronRight')}</>
+            )}
         </ul>;
     }
 }
