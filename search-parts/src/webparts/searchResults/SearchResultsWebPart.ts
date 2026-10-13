@@ -2649,6 +2649,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return React.createElement('button', {
             type: 'button',
             className: commonStyles.linkButton,
+            // Section-aware colors come from the SPFx theme variant, consumed by the SCSS via CSS variables
+            style: {
+                '--link': this._themeVariant?.semanticColors?.link,
+                '--linkHovered': this._themeVariant?.semanticColors?.linkHovered
+            } as React.CSSProperties,
             onClick: () => {
                 this.navigateToTitleLink(linkUrl, this.properties.titleLinkOpenInNewTab);
             },
