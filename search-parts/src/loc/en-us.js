@@ -199,7 +199,8 @@ define([], function () {
             SortByPlaceholderText: "Sort by...",
             SortByDefaultOptionText: "Default",
             DownloadButtonText: "Download",
-            DownloadCSVButtonText: "Download as CSV"
+            DownloadCSVButtonText: "Download selected as CSV",
+            DownloadCurrentDataAsCSVButtonText: "Download current data as CSV"
         },
         Layouts: {
             Debug: {
@@ -247,6 +248,10 @@ define([], function () {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
+                EnableCurrentDataCsvExport: "Enable download of current data as CSV",
+                ExportColumnsJsonLabel: "Export columns (JSON)",
+                ExportColumnsJsonDescription: "Enter a JSON object mapping managed property names to CSV column headers. Example: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Enter a valid JSON object with at least one managed-property-to-column-header mapping.",
                 EnableDetails: "Enable details",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",

@@ -200,7 +200,8 @@ define([], function () {
             TextFieldApplyButtonText: "Tillämpa",
             SortByPlaceholderText: "Sortera efter...",
             DownloadButtonText: "Ladda ner",
-            DownloadCSVButtonText: "Ladda ner som CSV"
+            DownloadCSVButtonText: "Ladda ned markerade som CSV",
+            DownloadCurrentDataAsCSVButtonText: "Ladda ned aktuella data som CSV"
         },
         Layouts: {
             Debug: {
@@ -248,6 +249,10 @@ define([], function () {
                 EnableStickyHeader: "Aktivera fast rubrik",
                 StickyHeaderListViewHeight: "Höjd för listvy (px)",
                 EnableDownload: "Aktivera nedladdning",
+                EnableCurrentDataCsvExport: "Aktivera nedladdning av aktuella data som CSV",
+                ExportColumnsJsonLabel: "Exportkolumner (JSON)",
+                ExportColumnsJsonDescription: "Ange ett JSON-objekt som mappar namn på hanterade egenskaper till CSV-kolumnrubriker. Exempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Ange ett giltigt JSON-objekt med minst en mappning från hanterad egenskap till kolumnrubrik.",
                 EnableDetails: "Aktivera detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",

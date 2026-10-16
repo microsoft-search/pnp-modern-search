@@ -199,6 +199,7 @@ declare interface ICommonStrings {
       SortByDefaultOptionText: string;
       DownloadButtonText: string;
       DownloadCSVButtonText: string;
+      DownloadCurrentDataAsCSVButtonText: string;
     },
     Layouts: {
       Debug: {
@@ -246,6 +247,10 @@ declare interface ICommonStrings {
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
         EnableDownload: string;
+        EnableCurrentDataCsvExport: string;
+        ExportColumnsJsonLabel: string;
+        ExportColumnsJsonDescription: string;
+        ExportColumnsJsonValidationError: string;
         EnableDetails: string;
         DetailsButtonLabel: string;
         DetailsPanelHeader: string;

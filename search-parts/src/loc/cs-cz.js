@@ -199,7 +199,8 @@ define([], function () {
             SortByPlaceholderText: "Řadit podle...",
             SortByDefaultOptionText: "Výchozí",
             DownloadButtonText: "Stáhnout",
-            DownloadCSVButtonText: "Stáhnout jako CSV"
+            DownloadCSVButtonText: "Stáhnout vybrané jako CSV",
+            DownloadCurrentDataAsCSVButtonText: "Stáhnout aktuální data jako CSV"
         },
         Layouts: {
             Debug: {
@@ -245,6 +246,10 @@ define([], function () {
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
                 EnableDownload: "Povolit stažení",
+                EnableCurrentDataCsvExport: "Povolit stažení aktuálních dat jako CSV",
+                ExportColumnsJsonLabel: "Sloupce exportu (JSON)",
+                ExportColumnsJsonDescription: "Zadejte objekt JSON mapující názvy spravovaných vlastností na záhlaví sloupců CSV. Příklad: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Zadejte platný objekt JSON s alespoň jedním mapováním spravované vlastnosti na záhlaví sloupce.",
                 EnableDetails: "Povolit podrobnosti",
                 DetailsButtonLabel: "Podrobnosti",
                 DetailsPanelHeader: "Podrobnosti",

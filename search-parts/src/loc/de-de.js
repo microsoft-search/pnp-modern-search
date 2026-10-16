@@ -199,7 +199,8 @@ define([], function () {
             SortByPlaceholderText: "Standardsortierung",
             SortByDefaultOptionText: "Standard",
             DownloadButtonText: "Herunterladen",
-            DownloadCSVButtonText: "Als CSV herunterladen"
+            DownloadCSVButtonText: "Ausgewählte als CSV herunterladen",
+            DownloadCurrentDataAsCSVButtonText: "Aktuelle Daten als CSV herunterladen"
         },
         Layouts: {
             Debug: {
@@ -247,6 +248,10 @@ define([], function () {
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
                 StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
                 EnableDownload: "Download aktivieren",
+                EnableCurrentDataCsvExport: "Download der aktuellen Daten als CSV aktivieren",
+                ExportColumnsJsonLabel: "Exportspalten (JSON)",
+                ExportColumnsJsonDescription: "Geben Sie ein JSON-Objekt ein, das verwaltete Eigenschaftsnamen den CSV-Spaltenüberschriften zuordnet. Beispiel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Geben Sie ein gültiges JSON-Objekt mit mindestens einer Zuordnung von verwalteter Eigenschaft zu Spaltenüberschrift ein.",
                 EnableDetails: "Details aktivieren",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",

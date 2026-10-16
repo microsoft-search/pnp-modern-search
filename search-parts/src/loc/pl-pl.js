@@ -200,7 +200,8 @@ define([], function () {
             SortByPlaceholderText: "Sortuj według...",
             SortByDefaultOptionText: "Domyślna",
             DownloadButtonText: "Pobierz",
-            DownloadCSVButtonText: "Pobierz jako CSV"
+            DownloadCSVButtonText: "Pobierz wybrane jako CSV",
+            DownloadCurrentDataAsCSVButtonText: "Pobierz bieżące dane jako CSV"
         },
         Layouts: {
             Debug: {
@@ -248,6 +249,10 @@ define([], function () {
                 EnableStickyHeader: "Włącz lepką nagłówkę",
                 StickyListViewHeight: "Wysokość listy ze szczegółami (px)",
                 EnableDownload: "Włącz pobieranie",
+                EnableCurrentDataCsvExport: "Włącz pobieranie bieżących danych jako CSV",
+                ExportColumnsJsonLabel: "Eksportowane kolumny (JSON)",
+                ExportColumnsJsonDescription: "Wprowadź obiekt JSON mapujący nazwy właściwości zarządzanych na nagłówki kolumn CSV. Przykład: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Wprowadź prawidłowy obiekt JSON z co najmniej jednym mapowaniem właściwości zarządzanej na nagłówek kolumny.",
                 EnableDetails: "Włącz szczegóły",
                 DetailsButtonLabel: "Szczegóły",
                 DetailsPanelHeader: "Szczegóły",

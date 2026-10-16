@@ -197,7 +197,8 @@ define([], function () {
             SortByPlaceholderText: "Järjestä...",
             SortByDefaultOptionText: "Oletus",
             DownloadButtonText: "Lataa",
-            DownloadCSVButtonText: "Lataa CSV-muodossa"
+            DownloadCSVButtonText: "Lataa valitut CSV-muodossa",
+            DownloadCurrentDataAsCSVButtonText: "Lataa nykyiset tiedot CSV-muodossa"
         },
         Layouts: {
             Debug: {
@@ -245,6 +246,10 @@ define([], function () {
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
                 EnableDownload: "Salli lataus",
+                EnableCurrentDataCsvExport: "Ota nykyisten tietojen lataus CSV-muodossa käyttöön",
+                ExportColumnsJsonLabel: "Vietävät sarakkeet (JSON)",
+                ExportColumnsJsonDescription: "Määritä JSON-objekti, joka yhdistää hallittujen ominaisuuksien nimet CSV-sarakkeiden otsikoihin. Esimerkki: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Anna kelvollinen JSON-objekti, jossa on vähintään yksi hallitun ominaisuuden ja sarakeotsikon määritys.",
                 EnableDetails: "Ota tiedot käyttöön",
                 DetailsButtonLabel: "Tiedot",
                 DetailsPanelHeader: "Tiedot",

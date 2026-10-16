@@ -199,7 +199,8 @@ define([], function () {
             SortByPlaceholderText: "Sorter etter",
             SortByDefaultOptionText: "Misligholde",
             DownloadButtonText: "Last ned",
-            DownloadCSVButtonText: "Last ned som CSV"
+            DownloadCSVButtonText: "Last ned valgte som CSV",
+            DownloadCurrentDataAsCSVButtonText: "Last ned gjeldende data som CSV"
         },
         Layouts: {
             Debug: {
@@ -246,6 +247,10 @@ define([], function () {
                 EnableStickyHeader: "Aktiver klebrig overskrift",
                 StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
                 EnableDownload: "Aktiver nedlasting",
+                EnableCurrentDataCsvExport: "Aktiver nedlasting av gjeldende data som CSV",
+                ExportColumnsJsonLabel: "Eksportkolonner (JSON)",
+                ExportColumnsJsonDescription: "Angi et JSON-objekt som tilordner navn på administrerte egenskaper til CSV-kolonneoverskrifter. Eksempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Angi et gyldig JSON-objekt med minst én tilordning mellom en administrert egenskap og en kolonneoverskrift.",
                 EnableDetails: "Aktiver detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",

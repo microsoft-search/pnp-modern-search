@@ -23,7 +23,7 @@
             </pnp-selectedfilters>
         {{/if}}
         
-        {{#or @root.properties.showResultsCount (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) (and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection) (and @root.properties.itemSelectionProps.allowItemSelection properties.itemSelectionProps.allowMulti) }}
+        {{#or @root.properties.showResultsCount (and @root.properties.layoutProperties.enableCsvExport) (and properties.layoutProperties.enableDownload @root.properties.itemSelectionProps.allowItemSelection) (and properties.layoutProperties.enableDetails @root.properties.itemSelectionProps.allowItemSelection) (and @root.properties.itemSelectionProps.allowItemSelection properties.itemSelectionProps.allowMulti) }}
           <div class="template--toolbar">
             <div class="template--resultCount">
               {{#if @root.properties.showResultsCount}}
@@ -51,6 +51,14 @@
                 >
                 </pnp-download-selected-items-button>
               {{/and}}
+                            {{#if properties.layoutProperties.enableCsvExport}}
+                                <pnp-export-current-results-button
+                                    data-items="{{JSONstringify data.items}}"
+                                      data-export-columns="{{properties.layoutProperties.exportColumns}}"
+                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                >
+                                </pnp-export-current-results-button>
+                            {{/if}}
             </div>
           </div>
         {{/or}}

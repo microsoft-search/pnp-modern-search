@@ -20,6 +20,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Overlay } from '@fluentui/react/lib/Overlay';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { Shimmer, ShimmerElementsGroup, ShimmerElementType } from '@fluentui/react/lib/Shimmer';
+import { EXPORT_CURRENT_DATA_PAGE_SIZE, EXPORT_CURRENT_DATA_REQUEST_EVENT, IExportCurrentDataRequest } from '../../../helpers/CsvExportHelper';
 
 const LogSource = "SearchResultsContainer";
 const RESET_RESULTS_SELECTION_EVENT = "resetResultsSelection";
@@ -76,6 +77,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         this._onSelectionChanged = this._onSelectionChanged.bind(this);
         this._onResetResultsSelection = this._onResetResultsSelection.bind(this);
+        this._onExportCurrentDataRequested = this._onExportCurrentDataRequested.bind(this);
 
         this._selection = new Selection({
             onSelectionChanged: this._onSelectionChanged,
@@ -220,11 +222,40 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
     public async componentDidMount() {
         this._resultsContainerRef?.addEventListener(RESET_RESULTS_SELECTION_EVENT, this._onResetResultsSelection as EventListener);
+        this._resultsContainerRef?.addEventListener(EXPORT_CURRENT_DATA_REQUEST_EVENT, this._onExportCurrentDataRequested);
         await this.getDataFromDataSource(this.props.dataContext.pageNumber);
     }
 
     public componentWillUnmount(): void {
         this._resultsContainerRef?.removeEventListener(RESET_RESULTS_SELECTION_EVENT, this._onResetResultsSelection as EventListener);
+        this._resultsContainerRef?.removeEventListener(EXPORT_CURRENT_DATA_REQUEST_EVENT, this._onExportCurrentDataRequested);
+    }
+
+    private async _onExportCurrentDataRequested(event: Event): Promise<void> {
+        const exportEvent = event as CustomEvent<IExportCurrentDataRequest>;
+        try {
+            const dataSource = this.props.dataSource;
+            const baseDataContext = cloneDeep(this.props.dataContext);
+            const slots = this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots);
+            const totalItemsCount = this._totalItemsCount || dataSource.getItemCount();
+            const pageSize = EXPORT_CURRENT_DATA_PAGE_SIZE;
+            const pageCount = Math.ceil(totalItemsCount / pageSize);
+            const items: Record<string, unknown>[] = [];
+
+            for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
+                const dataContext = cloneDeep(baseDataContext);
+                dataContext.pageNumber = pageNumber;
+                dataContext.itemsCountPerPage = pageSize;
+
+                let pageData = await dataSource.getData(dataContext);
+                pageData = await dataSource.getItemsPreview(pageData, slots);
+                items.push(...pageData.items);
+            }
+
+            exportEvent.detail.resolve(items);
+        } catch (error) {
+            exportEvent.detail.reject(error instanceof Error ? error : new Error(String(error)));
+        }
     }
 
     public async componentDidUpdate(prevProps: ISearchResultsContainerProps, prevState: ISearchResultsContainerState) {
