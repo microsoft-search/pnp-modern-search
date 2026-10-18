@@ -75,7 +75,7 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
                     multiline: true,
                     rows: 8,
                     validateOnFocusOut: true,
-                    onGetErrorMessage: validateExportColumnsJson
+                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
                 })
             );
         }

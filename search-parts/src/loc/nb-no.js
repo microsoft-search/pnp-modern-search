@@ -249,6 +249,7 @@ define([], function () {
                 EnableDownload: "Aktiver nedlasting",
                 EnableCurrentDataCsvExport: "Aktiver nedlasting av gjeldende data som CSV",
                 ExportColumnsJsonLabel: "Eksportkolonner (JSON)",
+                ExportColumnsMissingPropertiesError: "Disse eksportegenskapene finnes ikke blant datakildens valgte egenskaper: {0}. Legg dem til i de valgte egenskapene, eller fjern dem fra eksporttilordningen.",
                 ExportColumnsJsonDescription: "Angi et JSON-objekt som tilordner navn på administrerte egenskaper til CSV-kolonneoverskrifter. Eksempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Angi et gyldig JSON-objekt med minst én tilordning mellom en administrert egenskap og en kolonneoverskrift.",
                 EnableDetails: "Aktiver detaljer",

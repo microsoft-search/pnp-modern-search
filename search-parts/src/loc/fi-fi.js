@@ -248,6 +248,7 @@ define([], function () {
                 EnableDownload: "Salli lataus",
                 EnableCurrentDataCsvExport: "Ota nykyisten tietojen lataus CSV-muodossa käyttöön",
                 ExportColumnsJsonLabel: "Vietävät sarakkeet (JSON)",
+                ExportColumnsMissingPropertiesError: "Nämä vientiominaisuudet puuttuvat tietolähteen valituista ominaisuuksista: {0}. Lisää ne valittuihin ominaisuuksiin tai poista ne vientimäärityksestä.",
                 ExportColumnsJsonDescription: "Määritä JSON-objekti, joka yhdistää hallittujen ominaisuuksien nimet CSV-sarakkeiden otsikoihin. Esimerkki: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Anna kelvollinen JSON-objekti, jossa on vähintään yksi hallitun ominaisuuden ja sarakeotsikon määritys.",
                 EnableDetails: "Ota tiedot käyttöön",

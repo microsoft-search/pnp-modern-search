@@ -248,6 +248,7 @@ define([], function () {
                 EnableDownload: "Povolit stažení",
                 EnableCurrentDataCsvExport: "Povolit stažení aktuálních dat jako CSV",
                 ExportColumnsJsonLabel: "Sloupce exportu (JSON)",
+                ExportColumnsMissingPropertiesError: "Tyto vlastnosti exportu nejsou mezi vybranými vlastnostmi zdroje dat: {0}. Přidejte je mezi vybrané vlastnosti nebo je odeberte z mapování exportu.",
                 ExportColumnsJsonDescription: "Zadejte objekt JSON mapující názvy spravovaných vlastností na záhlaví sloupců CSV. Příklad: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Zadejte platný objekt JSON s alespoň jedním mapováním spravované vlastnosti na záhlaví sloupce.",
                 EnableDetails: "Povolit podrobnosti",

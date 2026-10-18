@@ -440,7 +440,7 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     multiline: true,
                     rows: 8,
                     validateOnFocusOut: true,
-                    onGetErrorMessage: validateExportColumnsJson
+                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
                 })
             ] : [])
         );

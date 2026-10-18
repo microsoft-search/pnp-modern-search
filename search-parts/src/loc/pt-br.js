@@ -250,6 +250,7 @@ define([], function () {
                 EnableDownload: "Habilitar download",
                 EnableCurrentDataCsvExport: "Habilitar download dos dados atuais como CSV",
                 ExportColumnsJsonLabel: "Colunas de exportação (JSON)",
+                ExportColumnsMissingPropertiesError: "Estas propriedades de exportação não estão nas propriedades selecionadas da fonte de dados: {0}. Adicione-as ou remova-as do mapeamento de exportação.",
                 ExportColumnsJsonDescription: "Insira um objeto JSON que mapeie nomes de propriedades gerenciadas para cabeçalhos de coluna CSV. Exemplo: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Insira um objeto JSON válido com pelo menos um mapeamento de propriedade gerenciada para cabeçalho de coluna.",
                 EnableDetails: "Habilitar detalhes",

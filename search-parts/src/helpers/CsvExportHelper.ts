@@ -8,7 +8,7 @@ export interface IExportCurrentDataRequest {
     reject: (error: Error) => void;
 }
 
-export function validateExportColumnsJson(value: string): string {
+export function validateExportColumnsJson(value: string, selectedProperties?: string[]): string {
     const errorMessage = strings.Layouts.DetailsList.ExportColumnsJsonValidationError;
 
     try {
@@ -21,6 +21,15 @@ export function validateExportColumnsJson(value: string): string {
         if (entries.length === 0 || entries.some(([managedProperty, csvHeader]) =>
             !managedProperty.trim() || typeof csvHeader !== 'string' || !csvHeader.trim())) {
             return errorMessage;
+        }
+
+        if (selectedProperties !== undefined) {
+            const selectedFields = new Set(selectedProperties);
+            const missingFields = entries.map(([managedProperty]) => managedProperty)
+                .filter(managedProperty => !selectedFields.has(managedProperty));
+            if (missingFields.length > 0) {
+                return strings.Layouts.DetailsList.ExportColumnsMissingPropertiesError.replace('{0}', missingFields.join(', '));
+            }
         }
     } catch {
         return errorMessage;

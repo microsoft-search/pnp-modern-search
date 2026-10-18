@@ -137,7 +137,7 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
                                         multiline: true,
                                         rows: 8,
                                         validateOnFocusOut: true,
-                                        onGetErrorMessage: validateExportColumnsJson
+                                        onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
                                 })
                         );
                 }

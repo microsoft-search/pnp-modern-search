@@ -36,6 +36,52 @@ By default, the following layouts are provided:
 
 ## Common settings
 
+### Export search results to CSV
+
+The built-in **Cards**, **Details List**, **Simple list**, and **Slider** layouts support the **Export Search result** action. Export uses the current query, applied filters, selected vertical, and sorting from the Results web part's data source. It retrieves additional pages independently of the displayed page size, so it is not restricted to the visible page or selected items.
+
+#### Configuration
+
+1. Edit the Search Results web part and open its **Layouts** property-pane page.
+2. Enable **Enable download of current data as CSV** in the selected layout's settings. This toggle is off by default. It appears after **Enable download**, or after **Use Alternating Background Color** in Details List.
+3. In the **Export columns (JSON)** textbox that appears below the toggle, enter a JSON object mapping data-source property names to CSV column headers.
+4. Ensure the mapped properties are returned by the data source. For SharePoint Search, include the managed properties in **Selected properties**; the export mapping does not add them to the search request automatically.
+5. Save the configuration. Users can then select **Export Search result** in the Results toolbar without selecting individual items or enabling **Allow items selection**.
+
+![CSV export configuration showing the enabled export toggle and JSON column mapping](../../../assets/webparts/search-results/layouts/export-search-results-configuration.png){: .center}
+
+Example:
+
+```json
+{
+  "Title": "Title",
+  "AuthorOWSUSER": "Created by",
+  "Created": "Created date",
+  "Path": "URL"
+}
+```
+
+Keys are the property names returned in the result data, not display names or Handlebars expressions. Values are the CSV headers. The mapping is independent of Details List's **Manage columns** configuration. Use one JSON object, not an array of objects. It must contain at least one entry, with non-empty property names and non-empty string headers. Validation runs when the textbox loses focus and checks that every key appears in the data source's selected properties, using exact field names. If any are missing, an error lists them; add those fields to the selected properties or remove them from the export mapping. The mapping does not add missing fields automatically.
+
+The action is disabled when there are no loaded results, when no usable export mapping is configured, and while export is running.
+
+#### Exported file
+
+- The file is named `SearchResults_<timestamp>.csv`.
+- CSV fields are separated by semicolons. Headers and non-null values are quoted, with embedded double quotes escaped; commas, semicolons, and line breaks in values are preserved.
+- The file uses UTF-8 with a byte order mark (BOM), helping Excel recognize accents and non-English characters.
+- Export uses property values from the data source, including its preview enrichment. It does not evaluate layout column HTML or Handlebars expressions, reformat date strings, or perform additional taxonomy-label extraction. Missing or null values produce empty cells; objects and arrays are serialized as JSON text.
+
+Export fetches results in batches of 500 using the data source's reported result count. Search API limits, throttling, count estimates, and changes to indexed content can affect the exported dataset. Large exports take longer and are assembled in browser memory; the reported result count is not a guarantee of an exact row count.
+
+#### Compared with selected-item downloads
+
+**Export Search result** exports the current matching dataset across pages using **Export columns (JSON)**. It does not require item selection.
+
+The existing **Enable download** setting remains separate. With item selection enabled, **Download selected as CSV** exports only selected list items from the current page; documents and folders use the existing file/ZIP download behavior instead.
+
+### Other common settings
+
 For all layouts, some common settings are available:
 
 !["Common options"](../../../assets/webparts/search-results/layouts/common_options.png){: .center}

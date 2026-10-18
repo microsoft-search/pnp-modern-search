@@ -52,6 +52,12 @@ The search results Web Part configuration is divided into four parts each corres
 3. [**Connections**](./connections/index.md): How the Web Part will be connected to others in the page.
 4. [**Extensibility**](../../extensibility/index.md): How the Web Part will be connected to others in the page.
 
+## Export Search Results
+
+The Cards, Details List, Simple list, and Slider layouts can display an **Export Search result** action. It exports the dataset matching the current query, applied filters, selected vertical, and sort settings to CSV, rather than just the visible page or selected items.
+
+The feature is disabled by default. Enable **Enable download of current data as CSV** in the layout settings and configure **Export columns (JSON)**. See [Export search results to CSV](./layouts/index.md#export-search-results-to-csv) for configuration and an example column mapping.
+
 ## Styling
 
 ### Results styling
