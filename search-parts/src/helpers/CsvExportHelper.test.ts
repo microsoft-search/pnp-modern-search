@@ -7,7 +7,7 @@ jest.mock('CommonStrings', () => ({
     }
 }), { virtual: true });
 
-import { collectExportItems, formatCsvField, validateExportColumnsJson } from './CsvExportHelper';
+import { collectExportItems, formatCsvField, getExportCurrentDataPageSize, validateExportColumnsJson } from './CsvExportHelper';
 
 describe('collectExportItems', () => {
     it('collects all matching pages in export-sized batches', async () => {
@@ -31,6 +31,24 @@ describe('collectExportItems', () => {
         const fetchPage = jest.fn(async () => []);
         await expect(collectExportItems(500, fetchPage, () => false)).rejects.toThrow('Search context changed');
         expect(fetchPage).not.toHaveBeenCalled();
+    });
+
+    it('uses the Microsoft Search message and event page limit for every page and offset', async () => {
+        const fetchPage = jest.fn(async (pageNumber: number, pageSize: number) =>
+            Array.from({ length: Math.min(pageSize, 60 - ((pageNumber - 1) * pageSize)) }, (_, index) => ({ Title: `${pageNumber}-${index}` })));
+        const pageSize = getExportCurrentDataPageSize(true, ['listItem', 'message']);
+
+        const items = await collectExportItems(60, fetchPage, () => true, pageSize);
+
+        expect(pageSize).toBe(25);
+        expect(items).toHaveLength(60);
+        expect(fetchPage.mock.calls).toEqual([[1, 25], [2, 25], [3, 25]]);
+    });
+
+    it('keeps the standard batch size for other sources and Microsoft Search entities', () => {
+        expect(getExportCurrentDataPageSize(false, ['message'])).toBe(500);
+        expect(getExportCurrentDataPageSize(true, ['listItem'])).toBe(500);
+        expect(getExportCurrentDataPageSize(true, ['event'])).toBe(25);
     });
 });
 

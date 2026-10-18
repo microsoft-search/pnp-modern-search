@@ -21,7 +21,8 @@ describe('ExportCurrentResultsButtonComponent error feedback', () => {
     const originalCreateObjectURL = URL.createObjectURL;
     const originalRevokeObjectURL = URL.revokeObjectURL;
 
-    function createComponent(controller = new CsvExportController(async () => [])): ExportCurrentResultsButtonComponent {
+    function createComponent(controller = new CsvExportController(async () => []), isAvailable = true): ExportCurrentResultsButtonComponent {
+        controller.setAvailable(isAvailable);
         const component = new ExportCurrentResultsButtonComponent({
             items: [{ Title: 'Example' }],
             exportColumns: { Title: 'Title' }
@@ -58,6 +59,15 @@ describe('ExportCurrentResultsButtonComponent error feedback', () => {
     it('does not show a status message before export', () => {
         const component = createComponent();
         expect(component.render().props.children[1]).toBe('');
+    });
+
+    it('blocks export while results are loading', async () => {
+        const fetchItems = jest.fn(async () => []);
+        const component = createComponent(new CsvExportController(fetchItems), false);
+
+        expect(component.render().props.children[0].props.disabled).toBe(true);
+        await component['_downloadCurrentData']();
+        expect(fetchItems).not.toHaveBeenCalled();
     });
 
     it('shows a localized, dismissible alert on failure and retains diagnostics', async () => {

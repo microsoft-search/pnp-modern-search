@@ -20,7 +20,8 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Overlay } from '@fluentui/react/lib/Overlay';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { Shimmer, ShimmerElementsGroup, ShimmerElementType } from '@fluentui/react/lib/Shimmer';
-import { collectExportItems, CsvExportController, EXPORT_CURRENT_DATA_REQUEST_EVENT, IExportCurrentDataRequest } from '../../../helpers/CsvExportHelper';
+import { collectExportItems, CsvExportController, EXPORT_CURRENT_DATA_REQUEST_EVENT, getExportCurrentDataPageSize, IExportCurrentDataRequest } from '../../../helpers/CsvExportHelper';
+import { BuiltinDataSourceProviderKeys } from '../../../dataSources/AvailableDataSources';
 
 const LogSource = "SearchResultsContainer";
 const RESET_RESULTS_SELECTION_EVENT = "resetResultsSelection";
@@ -248,6 +249,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         const totalItemsCount = this._totalItemsCount || dataSource.getItemCount();
         const exportContextVersion = this._exportContextVersion;
         const sourceProperties = cloneDeep(this.props.properties.dataSourceProperties);
+        const entityTypes = sourceProperties?.entityTypes || [];
+        const pageSize = getExportCurrentDataPageSize(
+            this.props.dataSourceKey === BuiltinDataSourceProviderKeys.MicrosoftSearch,
+            entityTypes
+        );
         const submittedQueryId = this.props.lastSubmittedQueryId;
         const queryTokenVersion = this.props.getQueryTokenVersion?.();
         return collectExportItems(totalItemsCount, async (pageNumber, pageSize) => {
@@ -263,7 +269,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             && dataSource === this.props.dataSource
             && submittedQueryId === this.props.lastSubmittedQueryId
             && isEqual(baseDataContext, this.props.dataContext)
-            && isEqual(sourceProperties, this.props.properties.dataSourceProperties));
+            && isEqual(sourceProperties, this.props.properties.dataSourceProperties), pageSize);
     }
 
     public async componentDidUpdate(prevProps: ISearchResultsContainerProps, prevState: ISearchResultsContainerState) {
@@ -305,6 +311,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
      */
     private async getDataFromDataSource(pageNumber: number): Promise<void> {
 
+        this._exportController.setAvailable(false);
         this.props.onDataLoadingChanged(true);
         this.setState({
             isLoading: true,
@@ -356,6 +363,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
             // Persist the total items count
             this._totalItemsCount = totalItemsCount;
+            this._exportController.setAvailable(true);
 
             this.setState({
                 isLoading: false,

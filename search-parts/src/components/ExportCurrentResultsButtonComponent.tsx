@@ -20,7 +20,7 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
 
     public constructor(props: IExportCurrentResultsButtonProps) {
         super(props);
-        this.state = { isExporting: false, errorMessage: '' };
+        this.state = { isAvailable: false, isExporting: false, errorMessage: '' };
     }
 
     public componentDidMount(): void {
@@ -78,7 +78,7 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
                 <ActionButton
                     text={strings.Controls.DownloadCurrentDataAsCSVButtonText}
                     iconProps={downloadIcon}
-                    disabled={!this._controller || this.state.isExporting || !this.props.items?.length || columns.length === 0}
+                    disabled={!this._controller || !this.state.isAvailable || this.state.isExporting || !this.props.items?.length || columns.length === 0}
                     onClick={this._downloadCurrentData}
                     theme={theme}
                 />

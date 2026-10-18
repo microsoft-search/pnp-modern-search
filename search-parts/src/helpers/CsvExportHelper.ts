@@ -2,6 +2,7 @@ import * as strings from 'CommonStrings';
 
 export const EXPORT_CURRENT_DATA_REQUEST_EVENT = 'pnpExportCurrentDataRequest';
 export const EXPORT_CURRENT_DATA_PAGE_SIZE = 500;
+export const EXPORT_CURRENT_DATA_SMALL_PAGE_SIZE = 25;
 
 export interface IExportCurrentDataRequest {
     resolve: (controller: CsvExportController) => void;
@@ -13,12 +14,13 @@ export interface IExportColumn {
 }
 
 export interface ICsvExportState {
+    isAvailable: boolean;
     isExporting: boolean;
     errorMessage: string;
 }
 
 export class CsvExportController {
-    private _state: ICsvExportState = { isExporting: false, errorMessage: '' };
+    private _state: ICsvExportState = { isAvailable: false, isExporting: false, errorMessage: '' };
     private _listeners = new Set<(state: ICsvExportState) => void>();
     private _isDisposed = false;
 
@@ -34,6 +36,12 @@ export class CsvExportController {
         this._setState({ ...this._state, errorMessage: '' });
     }
 
+    public setAvailable(isAvailable: boolean): void {
+        if (this._state.isAvailable !== isAvailable) {
+            this._setState({ ...this._state, isAvailable });
+        }
+    }
+
     public dispose(): void {
         this._isDisposed = true;
         this._listeners.clear();
@@ -45,11 +53,11 @@ export class CsvExportController {
     }
 
     public async export(columns: IExportColumn[]): Promise<void> {
-        if (this._isDisposed || this._state.isExporting || columns.length === 0) {
+        if (this._isDisposed || !this._state.isAvailable || this._state.isExporting || columns.length === 0) {
             return;
         }
 
-        this._setState({ isExporting: true, errorMessage: '' });
+        this._setState({ ...this._state, isExporting: true, errorMessage: '' });
         let objectUrl: string | undefined;
         try {
             const items = await this._loadItems();
@@ -75,7 +83,7 @@ export class CsvExportController {
         } catch (error) {
             console.error('ExportCurrentResultsButton: failed to retrieve current results', error);
             if (!this._isDisposed) {
-                this._setState({ isExporting: true, errorMessage: strings.Controls.ExportSearchResultsError });
+                this._setState({ ...this._state, isExporting: true, errorMessage: strings.Controls.ExportSearchResultsError });
             }
         } finally {
             if (objectUrl) {
@@ -91,10 +99,11 @@ export class CsvExportController {
 export async function collectExportItems(
     totalItemsCount: number,
     fetchPage: (pageNumber: number, pageSize: number) => Promise<Record<string, unknown>[]>,
-    isCurrent: () => boolean
+    isCurrent: () => boolean,
+    pageSize: number = EXPORT_CURRENT_DATA_PAGE_SIZE
 ): Promise<Record<string, unknown>[]> {
     const items: Record<string, unknown>[] = [];
-    const pageCount = Math.ceil(totalItemsCount / EXPORT_CURRENT_DATA_PAGE_SIZE);
+    const pageCount = Math.ceil(totalItemsCount / pageSize);
     const assertCurrent = (): void => {
         if (!isCurrent()) {
             throw new Error('Search context changed during export.');
@@ -103,13 +112,19 @@ export async function collectExportItems(
 
     for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
         assertCurrent();
-        const pageItems = await fetchPage(pageNumber, EXPORT_CURRENT_DATA_PAGE_SIZE);
+        const pageItems = await fetchPage(pageNumber, pageSize);
         assertCurrent();
         items.push(...pageItems);
     }
 
     assertCurrent();
     return items;
+}
+
+export function getExportCurrentDataPageSize(isMicrosoftSearch: boolean, entityTypes: string[] = []): number {
+    return isMicrosoftSearch && entityTypes.some(entityType => entityType === 'message' || entityType === 'event')
+        ? EXPORT_CURRENT_DATA_SMALL_PAGE_SIZE
+        : EXPORT_CURRENT_DATA_PAGE_SIZE;
 }
 
 export function formatCsvField(value: unknown): string {

@@ -63,7 +63,7 @@ Example:
 
 Keys are the property names returned in the result data, not display names or Handlebars expressions. Values are the CSV headers. The mapping is independent of Details List's **Manage columns** configuration. Use one JSON object, not an array of objects. It must contain at least one entry, with non-empty property names and non-empty string headers. Validation runs when the textbox loses focus and checks that every key appears in the data source's selected properties, using exact field names. If any are missing, an error lists them; add those fields to the selected properties or remove them from the export mapping. The mapping does not add missing fields automatically.
 
-The action is disabled when there are no loaded results, when no usable export mapping is configured, and while export is running.
+The action is disabled when results are loading, when there are no loaded results, when no usable export mapping is configured, and while export is running.
 
 Successful exports do not display a status message. If export fails, a localized, dismissible error is announced to assistive technologies. Changing the search inputs, filters, vertical, sorting, or paging during export cancels it and discards collected rows to avoid mixing results from different queries. Retry the export for the updated search.
 
@@ -77,7 +77,7 @@ Selecting or deselecting result items does not cancel a full-dataset export. The
 - The file uses UTF-8 with a byte order mark (BOM), helping Excel recognize accents and non-English characters.
 - Export uses property values from the data source, including its preview enrichment. It does not evaluate layout column HTML or Handlebars expressions, reformat date strings, or perform additional taxonomy-label extraction. Missing or null values produce empty cells; objects and arrays are serialized as JSON text.
 
-Export fetches results in batches of 500 using the data source's reported result count. Search API limits, throttling, count estimates, and changes to indexed content can affect the exported dataset. Large exports take longer and are assembled in browser memory; the reported result count is not a guarantee of an exact row count.
+Export fetches results using the data source's reported result count, in batches of up to 500. Microsoft Search message and event searches use batches of 25 to comply with Graph paging limits. Search API limits, throttling, count estimates, and changes to indexed content can affect the exported dataset. Large exports take longer and are assembled in browser memory; the reported result count is not a guarantee of an exact row count.
 
 #### Compared with selected-item downloads
 
