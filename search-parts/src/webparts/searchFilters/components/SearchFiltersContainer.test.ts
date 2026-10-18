@@ -32,6 +32,8 @@ import SearchFiltersContainer from './SearchFiltersContainer';
 
 describe('SearchFiltersContainer deep-link compatibility', () => {
     const instanceId = 'filter-instance-1';
+    const createFilterHost = (id: string, mounted: boolean = true): string =>
+        `<div data-sp-feature-tag="pnpSearchFiltersWebPart web part (PnP - Search Filters)" data-sp-feature-instance-id="${id}">${mounted ? `<div data-instance-id="${id}"></div>` : ''}</div>`;
 
     function createDeepLinkContainer(): SearchFiltersContainer {
         const container: SearchFiltersContainer = Object.create(SearchFiltersContainer.prototype);
@@ -46,7 +48,7 @@ describe('SearchFiltersContainer deep-link compatibility', () => {
     });
 
     it('prefers the scoped parameter when it and legacy f are both present', () => {
-        document.body.innerHTML = '<div data-search-filters-instance-id="filter-instance-1"></div><div data-search-filters-instance-id="filter-instance-2"></div>';
+        document.body.innerHTML = `${createFilterHost('filter-instance-1')}${createFilterHost('filter-instance-2')}`;
         globalThis.history.replaceState({}, '', '/?f_filter-instance-1=scoped-value&f=legacy-value');
         (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f_filter-instance-1' ? 'scoped-value' : 'legacy-value');
 
@@ -58,7 +60,7 @@ describe('SearchFiltersContainer deep-link compatibility', () => {
     });
 
     it('falls back to legacy f when this is the only Search Filters instance', () => {
-        document.body.innerHTML = '<div data-search-filters-instance-id="filter-instance-1"></div>';
+        document.body.innerHTML = createFilterHost('filter-instance-1');
         globalThis.history.replaceState({}, '', '/?f=legacy-value');
         (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f' ? 'legacy-value' : null);
 
@@ -68,7 +70,7 @@ describe('SearchFiltersContainer deep-link compatibility', () => {
     });
 
     it('ignores ambiguous legacy f when multiple Search Filters instances are present', () => {
-        document.body.innerHTML = '<div data-search-filters-instance-id="filter-instance-1"></div><div data-search-filters-instance-id="filter-instance-2"></div>';
+        document.body.innerHTML = `${createFilterHost('filter-instance-1')}${createFilterHost('filter-instance-2', false)}`;
         globalThis.history.replaceState({}, '', '/?f=legacy-value');
         (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f' ? 'legacy-value' : null);
         const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -80,6 +82,15 @@ describe('SearchFiltersContainer deep-link compatibility', () => {
         expect(queryString).toBeNull();
         expect(warning).toHaveBeenCalledTimes(1);
         expect(warning).toHaveBeenCalledWith(expect.stringContaining('Use \'f_<instanceId>\' to target a specific web part.'));
+    });
+
+    it('preserves spaces and plus signs in scoped URL values when removing legacy f', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        const container = createDeepLinkContainer() as any;
+        const url = 'https://example.test/page.aspx?f=legacy&f_filter-instance-1=North%20America%2BGroup#section';
+
+        expect(container.removeLegacyFiltersDeepLink(url))
+            .toBe('https://example.test/page.aspx?f_filter-instance-1=North%20America%2BGroup#section');
     });
 });
 

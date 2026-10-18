@@ -1783,7 +1783,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`
         };
 
-        return <div ref={this.componentRef} data-instance-id={this.props.instanceId} data-search-filters-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
+        return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
             {renderTitle}
             {renderWpContent}
         </div>;
@@ -2606,8 +2606,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private isOnlySearchFiltersInstanceOnPage(): boolean {
-        const instanceIds = Array.from(document.querySelectorAll('[data-search-filters-instance-id]'))
-            .map(element => element.getAttribute('data-search-filters-instance-id'))
+        const instanceIds = Array.from(document.querySelectorAll('[data-sp-feature-tag^="pnpSearchFiltersWebPart"]'))
+            .map(element => element.getAttribute('data-sp-feature-instance-id'))
             .filter((instanceId): instanceId is string => !!instanceId);
 
         return instanceIds.length === 1 && instanceIds[0] === this.props.instanceId;
@@ -2618,13 +2618,25 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return url;
         }
 
-        const parsedUrl = new URL(url);
-        if (!parsedUrl.searchParams.has(DEEPLINK_QUERYSTRING_PARAM_BASE)) {
+        const hashIndex = url.indexOf('#');
+        const hash = hashIndex === -1 ? '' : url.substring(hashIndex);
+        const urlWithoutHash = hashIndex === -1 ? url : url.substring(0, hashIndex);
+        const queryIndex = urlWithoutHash.indexOf('?');
+        if (queryIndex === -1) {
             return url;
         }
 
-        parsedUrl.searchParams.delete(DEEPLINK_QUERYSTRING_PARAM_BASE);
-        return parsedUrl.toString();
+        const baseUrl = urlWithoutHash.substring(0, queryIndex);
+        const parameters = urlWithoutHash.substring(queryIndex + 1).split('&');
+        const remainingParameters = parameters.filter(parameter =>
+            parameter.split('=', 1)[0] !== DEEPLINK_QUERYSTRING_PARAM_BASE
+        );
+
+        if (remainingParameters.length === parameters.length) {
+            return url;
+        }
+
+        return `${baseUrl}${remainingParameters.length > 0 ? `?${remainingParameters.join('&')}` : ''}${hash}`;
     }
 
     private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
