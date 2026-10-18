@@ -2642,7 +2642,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const baseUrl = urlWithoutHash.substring(0, queryIndex);
         const parameters = urlWithoutHash.substring(queryIndex + 1).split('&');
         const remainingParameters = parameters.filter(parameter =>
-            parameter.split('=', 1)[0] !== DEEPLINK_QUERYSTRING_PARAM_BASE
+            parameter.split('=', 1)[0].toLowerCase() !== DEEPLINK_QUERYSTRING_PARAM_BASE.toLowerCase()
         );
 
         if (remainingParameters.length === parameters.length) {

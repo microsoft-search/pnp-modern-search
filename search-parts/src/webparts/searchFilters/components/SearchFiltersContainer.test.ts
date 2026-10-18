@@ -114,6 +114,15 @@ describe('SearchFiltersContainer deep-link compatibility', () => {
         expect(container.removeLegacyFiltersDeepLink(url))
             .toBe('https://example.test/page.aspx?f_filter-instance-1=North%20America%2BGroup#section');
     });
+
+    it('removes uppercase legacy F when clearing filters', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        const container = createDeepLinkContainer() as any;
+        const url = 'https://example.test/page.aspx?F=legacy&f_filter-instance-1=North%20America%2BGroup#section';
+
+        expect(container.removeLegacyFiltersDeepLink(url))
+            .toBe('https://example.test/page.aspx?f_filter-instance-1=North%20America%2BGroup#section');
+    });
 });
 
 describe('SearchFiltersContainer.getFiltersToDisplay', () => {
