@@ -9,6 +9,7 @@ import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 import sharedStyles from '../../../styles/Common.module.scss';
+import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
 /**
  * Details List Builtin Layout
@@ -75,6 +76,8 @@ export interface IDetailsListLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+    enableCsvExport: boolean;
+    exportColumns: string;
 
     /**
     * If the details action should be available for selected items
@@ -97,6 +100,9 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
     private _customCollectionFieldType: any = null;
 
     public async onInit(): Promise<void> {
+
+        this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
+        this.properties.exportColumns = this.properties.exportColumns ?? '';
 
         // Setup default values
         this.properties.detailsListColumns = this.properties.detailsListColumns ? this.properties.detailsListColumns :
@@ -419,7 +425,25 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             PropertyPaneToggle('layoutProperties.useAlternatingBackgroundColor', {
                 label: strings.Layouts.DetailsList.UseAlternatingBackgroundColor || 'Use Alternating Background color',
                 checked: this.properties.useAlternatingBackgroundColor
-            }));
+            })
+        );
+
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableCsvExport', {
+                label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
+                checked: this.properties.enableCsvExport
+            }),
+            ...(this.properties.enableCsvExport ? [
+                PropertyPaneTextField('layoutProperties.exportColumns', {
+                    label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
+                    description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
+                    multiline: true,
+                    rows: 8,
+                    validateOnFocusOut: true,
+                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                })
+            ] : [])
+        );
 
         return propertyPaneFields;
     }

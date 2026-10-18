@@ -1,11 +1,12 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
+import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneTextField } from '@microsoft/sp-property-pane';
 import { IComponentFieldsConfiguration } from '../../../models/common/IComponentFieldsConfiguration';
 import * as strings from 'CommonStrings';
 import { Icon, IIconProps, IComboBoxOption } from '@fluentui/react';
 import * as React from "react";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
 import commonStyles from '../../../styles/Common.module.scss';
+import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
 export interface ICardsLayoutProperties {
 
@@ -43,6 +44,8 @@ export interface ICardsLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+    enableCsvExport: boolean;
+    exportColumns: string;
 
     /**
     * If the details action should be visible
@@ -61,6 +64,9 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
     private _propertyFieldCalloutTriggers: any = null;
 
     public async onInit(): Promise<void> {
+
+        this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
+        this.properties.exportColumns = this.properties.exportColumns ?? '';
 
         // Setup default values
         this.properties.documentCardFields = this.properties.documentCardFields ? this.properties.documentCardFields :
@@ -145,7 +151,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
         const availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
-        return [
+        const propertyPaneFields: IPropertyPaneField<any>[] = [
 
             // Careful, the property names should match the React components props. These will be injected in the Handlebars template context and passed as web component attributes
             this._propertyFieldCollectionData('layoutProperties.documentCardFields', {
@@ -247,6 +253,28 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
             })
 
         ];
+
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableCsvExport', {
+                label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
+                checked: this.properties.enableCsvExport
+            })
+        );
+
+        if (this.properties.enableCsvExport) {
+            propertyPaneFields.push(
+                PropertyPaneTextField('layoutProperties.exportColumns', {
+                    label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
+                    description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
+                    multiline: true,
+                    rows: 8,
+                    validateOnFocusOut: true,
+                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                })
+            );
+        }
+
+        return propertyPaneFields;
     }
 
     public onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any) {

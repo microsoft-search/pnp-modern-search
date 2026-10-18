@@ -197,7 +197,10 @@ define([], function () {
             SortByPlaceholderText: "Järjestä...",
             SortByDefaultOptionText: "Oletus",
             DownloadButtonText: "Lataa",
-            DownloadCSVButtonText: "Lataa CSV-muodossa"
+            DownloadCSVButtonText: "Lataa valitut CSV-muodossa",
+            DownloadCurrentDataAsCSVButtonText: "Vie hakutulos",
+            ExportSearchResultsError: "Vientiä ei voitu suorittaa loppuun. Yritä uudelleen. Jos haku muuttui, vie päivitetyt tulokset.",
+            ExportSearchResultsDismissError: "Sulje vientivirhe"
         },
         Layouts: {
             Debug: {
@@ -245,6 +248,11 @@ define([], function () {
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
                 EnableDownload: "Salli lataus",
+                EnableCurrentDataCsvExport: "Ota nykyisten tietojen lataus CSV-muodossa käyttöön",
+                ExportColumnsJsonLabel: "Vietävät sarakkeet (JSON)",
+                ExportColumnsMissingPropertiesError: "Nämä vientiominaisuudet puuttuvat tietolähteen valituista ominaisuuksista: {0}. Lisää ne valittuihin ominaisuuksiin tai poista ne vientimäärityksestä.",
+                ExportColumnsJsonDescription: "Määritä JSON-objekti, joka yhdistää hallittujen ominaisuuksien nimet CSV-sarakkeiden otsikoihin. Esimerkki: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Anna kelvollinen JSON-objekti, jossa on vähintään yksi hallitun ominaisuuden ja sarakeotsikon määritys.",
                 EnableDetails: "Ota tiedot käyttöön",
                 DetailsButtonLabel: "Tiedot",
                 DetailsPanelHeader: "Tiedot",

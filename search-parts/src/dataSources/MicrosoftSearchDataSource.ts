@@ -25,6 +25,7 @@ import { AutoCalculatedDataSourceFields, SortableFields } from "../common/Consta
 import LocalizationHelper from "../helpers/LocalizationHelper";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import { BuiltinFilterTemplates } from "../layouts/AvailableTemplates";
+import { flattenMissingResourceRootProperties } from "./MicrosoftSearchDataSourceHelper";
 
 const EDIT_MODE_AGGREGATION_LIMIT = 100;
 
@@ -1992,6 +1993,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             Object.keys(hit.resource[propertiesFieldName]).forEach(field => {
                 this.copyFieldWithAliases(hit, field, hit.resource[propertiesFieldName][field]);
             });
+            if (propertiesFieldName === 'fields') {
+                flattenMissingResourceRootProperties(hit, this.copyFieldWithAliases.bind(this));
+            }
         } else {
             // For entity types without properties or fields (bookmark, acronym, person, etc.), 
             // flatten root properties from resource directly

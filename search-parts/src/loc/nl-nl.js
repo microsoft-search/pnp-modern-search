@@ -199,7 +199,10 @@ define([], function () {
             SortByPlaceholderText: "Sorteer op...",
             SortByDefaultOptionText: "Standaard",
             DownloadButtonText: "Download",
-            DownloadCSVButtonText: "Download als CSV"
+            DownloadCSVButtonText: "Geselecteerde downloaden als CSV",
+            DownloadCurrentDataAsCSVButtonText: "Zoekresultaat exporteren",
+            ExportSearchResultsError: "De export kon niet worden voltooid. Probeer het opnieuw. Als de zoekopdracht is gewijzigd, exporteer dan de bijgewerkte resultaten.",
+            ExportSearchResultsDismissError: "Exportfout sluiten"
         },
         Layouts: {
             Debug: {
@@ -246,6 +249,11 @@ define([], function () {
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
                 EnableDownload: "Downloaden inschakelen",
+                EnableCurrentDataCsvExport: "Download van huidige gegevens als CSV inschakelen",
+                ExportColumnsJsonLabel: "Exportkolommen (JSON)",
+                ExportColumnsMissingPropertiesError: "Deze exporteigenschappen ontbreken in de geselecteerde eigenschappen van de gegevensbron: {0}. Voeg ze toe of verwijder ze uit de exportkoppeling.",
+                ExportColumnsJsonDescription: "Voer een JSON-object in dat beheerde eigenschapsnamen aan CSV-kolomkoppen koppelt. Voorbeeld: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Voer een geldig JSON-object in met ten minste één koppeling tussen een beheerde eigenschap en een kolomkop.",
                 EnableDetails: "Details inschakelen",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",

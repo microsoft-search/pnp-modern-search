@@ -199,7 +199,10 @@ define([], function () {
             SortByPlaceholderText: "Řadit podle...",
             SortByDefaultOptionText: "Výchozí",
             DownloadButtonText: "Stáhnout",
-            DownloadCSVButtonText: "Stáhnout jako CSV"
+            DownloadCSVButtonText: "Stáhnout vybrané jako CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání",
+            ExportSearchResultsError: "Export se nepodařilo dokončit. Zkuste to znovu. Pokud se hledání změnilo, exportujte aktualizované výsledky.",
+            ExportSearchResultsDismissError: "Zavřít chybu exportu"
         },
         Layouts: {
             Debug: {
@@ -245,6 +248,11 @@ define([], function () {
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
                 EnableDownload: "Povolit stažení",
+                EnableCurrentDataCsvExport: "Povolit stažení aktuálních dat jako CSV",
+                ExportColumnsJsonLabel: "Sloupce exportu (JSON)",
+                ExportColumnsMissingPropertiesError: "Tyto vlastnosti exportu nejsou mezi vybranými vlastnostmi zdroje dat: {0}. Přidejte je mezi vybrané vlastnosti nebo je odeberte z mapování exportu.",
+                ExportColumnsJsonDescription: "Zadejte objekt JSON mapující názvy spravovaných vlastností na záhlaví sloupců CSV. Příklad: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Zadejte platný objekt JSON s alespoň jedním mapováním spravované vlastnosti na záhlaví sloupce.",
                 EnableDetails: "Povolit podrobnosti",
                 DetailsButtonLabel: "Podrobnosti",
                 DetailsPanelHeader: "Podrobnosti",

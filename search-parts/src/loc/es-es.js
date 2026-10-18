@@ -200,7 +200,10 @@ define([], function () {
             SortByPlaceholderText: "Ordenar por...",
             SortByDefaultOptionText: "Defecto",
             DownloadButtonText: "Descargar",
-            DownloadCSVButtonText: "Descargar como CSV"
+            DownloadCSVButtonText: "Descargar selección como CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exportar resultado de búsqueda",
+            ExportSearchResultsError: "No se pudo completar la exportación. Inténtelo de nuevo. Si cambió la búsqueda, exporte los resultados actualizados.",
+            ExportSearchResultsDismissError: "Cerrar error de exportación"
         },
         Layouts: {
             Debug: {
@@ -248,6 +251,11 @@ define([], function () {
                 EnableStickyHeader: "Activar el encabezado fijo",
                 StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)",
                 EnableDownload: "Activar la descarga de archivos",
+                EnableCurrentDataCsvExport: "Habilitar la descarga de los datos actuales como CSV",
+                ExportColumnsJsonLabel: "Columnas de exportación (JSON)",
+                ExportColumnsMissingPropertiesError: "Estas propiedades de exportación no están entre las propiedades seleccionadas del origen de datos: {0}. Agréguelas o elimínelas de la asignación de exportación.",
+                ExportColumnsJsonDescription: "Escriba un objeto JSON que asigne nombres de propiedades administradas a los encabezados de columna CSV. Ejemplo: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Escriba un objeto JSON válido con al menos una asignación de propiedad administrada a encabezado de columna.",
                 EnableDetails: "Habilitar detalles",
                 DetailsButtonLabel: "Detalles",
                 DetailsPanelHeader: "Detalles",

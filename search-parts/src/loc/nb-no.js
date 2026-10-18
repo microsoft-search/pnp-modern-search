@@ -199,7 +199,10 @@ define([], function () {
             SortByPlaceholderText: "Sorter etter",
             SortByDefaultOptionText: "Misligholde",
             DownloadButtonText: "Last ned",
-            DownloadCSVButtonText: "Last ned som CSV"
+            DownloadCSVButtonText: "Last ned valgte som CSV",
+            DownloadCurrentDataAsCSVButtonText: "Eksporter søkeresultat",
+            ExportSearchResultsError: "Eksporten kunne ikke fullføres. Prøv igjen. Hvis søket ble endret, eksporter de oppdaterte resultatene.",
+            ExportSearchResultsDismissError: "Lukk eksportfeil"
         },
         Layouts: {
             Debug: {
@@ -246,6 +249,11 @@ define([], function () {
                 EnableStickyHeader: "Aktiver klebrig overskrift",
                 StickyHeaderListViewHeight: "Høyde på listevisning med klebrig overskrift (px)",
                 EnableDownload: "Aktiver nedlasting",
+                EnableCurrentDataCsvExport: "Aktiver nedlasting av gjeldende data som CSV",
+                ExportColumnsJsonLabel: "Eksportkolonner (JSON)",
+                ExportColumnsMissingPropertiesError: "Disse eksportegenskapene finnes ikke blant datakildens valgte egenskaper: {0}. Legg dem til i de valgte egenskapene, eller fjern dem fra eksporttilordningen.",
+                ExportColumnsJsonDescription: "Angi et JSON-objekt som tilordner navn på administrerte egenskaper til CSV-kolonneoverskrifter. Eksempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Angi et gyldig JSON-objekt med minst én tilordning mellom en administrert egenskap og en kolonneoverskrift.",
                 EnableDetails: "Aktiver detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",

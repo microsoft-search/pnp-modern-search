@@ -27,6 +27,7 @@ import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorCo
 import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
 import { DownloadSelectedItemsButtonWebComponent } from './DownloadSelectedItemsButtonComponent';
+import { ExportCurrentResultsButtonWebComponent } from './ExportCurrentResultsButtonComponent';
 import { DetailsSelectedItemButtonWebComponent } from './DetailsSelectedItemButtonComponent';
 import { FilterHierarchicalWebComponent } from './filters/FilterHierarchicalComponent';
 
@@ -147,6 +148,10 @@ export class AvailableComponents {
         {
             componentName: "pnp-download-selected-items-button",
             componentClass: DownloadSelectedItemsButtonWebComponent
+        },
+        {
+            componentName: "pnp-export-current-results-button",
+            componentClass: ExportCurrentResultsButtonWebComponent
         },
         {
             componentName: "pnp-details-selected-item-button",

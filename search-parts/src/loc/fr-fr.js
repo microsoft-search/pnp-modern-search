@@ -199,7 +199,10 @@ define([], function () {
             SortByPlaceholderText: "Trier par...",
             SortByDefaultOptionText: "Défaut",
             DownloadButtonText: "Télécharger",
-            DownloadCSVButtonText: "Télécharger en CSV"
+            DownloadCSVButtonText: "Télécharger la sélection au format CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exporter le résultat de recherche",
+            ExportSearchResultsError: "L'exportation n'a pas pu être terminée. Réessayez. Si la recherche a changé, exportez les résultats actualisés.",
+            ExportSearchResultsDismissError: "Fermer l'erreur d'exportation"
         },
         Layouts: {
             Debug: {
@@ -247,6 +250,11 @@ define([], function () {
                 EnableStickyHeader: "Activer l’en-tête collant",
                 StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
                 EnableDownload: "Activer le téléchargement",
+                EnableCurrentDataCsvExport: "Activer le téléchargement des données actuelles au format CSV",
+                ExportColumnsJsonLabel: "Colonnes à exporter (JSON)",
+                ExportColumnsMissingPropertiesError: "Ces propriétés d'exportation ne figurent pas parmi les propriétés sélectionnées de la source de données : {0}. Ajoutez-les ou retirez-les du mappage d'exportation.",
+                ExportColumnsJsonDescription: "Saisissez un objet JSON associant les noms des propriétés gérées aux en-têtes des colonnes CSV. Exemple : {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Saisissez un objet JSON valide contenant au moins une association entre une propriété gérée et un en-tête de colonne.",
                 EnableDetails: "Activer les détails",
                 DetailsButtonLabel: "Détails",
                 DetailsPanelHeader: "Détails",

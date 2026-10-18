@@ -199,7 +199,10 @@ define([], function () {
             SortByPlaceholderText: "Sort by...",
             SortByDefaultOptionText: "Default",
             DownloadButtonText: "Download",
-            DownloadCSVButtonText: "Download as CSV"
+            DownloadCSVButtonText: "Download selected as CSV",
+            DownloadCurrentDataAsCSVButtonText: "Export Search result",
+            ExportSearchResultsError: "The export could not be completed. Try again. If the search changed, export the updated results.",
+            ExportSearchResultsDismissError: "Dismiss export error"
         },
         Layouts: {
             Debug: {
@@ -247,6 +250,11 @@ define([], function () {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
+                EnableCurrentDataCsvExport: "Enable download of current data as CSV",
+                ExportColumnsJsonLabel: "Export columns (JSON)",
+                ExportColumnsMissingPropertiesError: "These export properties are not in the data source's selected properties: {0}. Add them to the selected properties or remove them from the export mapping.",
+                ExportColumnsJsonDescription: "Enter a JSON object mapping managed property names to CSV column headers. Example: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Enter a valid JSON object with at least one managed-property-to-column-header mapping.",
                 EnableDetails: "Enable details",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
