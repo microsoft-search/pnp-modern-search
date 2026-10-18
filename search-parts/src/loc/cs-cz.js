@@ -200,7 +200,7 @@ define([], function () {
             SortByDefaultOptionText: "Výchozí",
             DownloadButtonText: "Stáhnout",
             DownloadCSVButtonText: "Stáhnout vybrané jako CSV",
-            DownloadCurrentDataAsCSVButtonText: "Stáhnout aktuální data jako CSV"
+            DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání"
         },
         Layouts: {
             Debug: {

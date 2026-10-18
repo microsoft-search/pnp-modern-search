@@ -198,7 +198,7 @@ define([], function () {
             SortByDefaultOptionText: "Oletus",
             DownloadButtonText: "Lataa",
             DownloadCSVButtonText: "Lataa valitut CSV-muodossa",
-            DownloadCurrentDataAsCSVButtonText: "Lataa nykyiset tiedot CSV-muodossa"
+            DownloadCurrentDataAsCSVButtonText: "Vie hakutulos"
         },
         Layouts: {
             Debug: {

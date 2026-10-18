@@ -201,7 +201,7 @@ define([], function () {
             SortByDefaultOptionText: "Domyślna",
             DownloadButtonText: "Pobierz",
             DownloadCSVButtonText: "Pobierz wybrane jako CSV",
-            DownloadCurrentDataAsCSVButtonText: "Pobierz bieżące dane jako CSV"
+            DownloadCurrentDataAsCSVButtonText: "Eksportuj wynik wyszukiwania"
         },
         Layouts: {
             Debug: {

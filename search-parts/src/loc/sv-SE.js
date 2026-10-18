@@ -201,7 +201,7 @@ define([], function () {
             SortByPlaceholderText: "Sortera efter...",
             DownloadButtonText: "Ladda ner",
             DownloadCSVButtonText: "Ladda ned markerade som CSV",
-            DownloadCurrentDataAsCSVButtonText: "Ladda ned aktuella data som CSV"
+            DownloadCurrentDataAsCSVButtonText: "Exportera sökresultat"
         },
         Layouts: {
             Debug: {
