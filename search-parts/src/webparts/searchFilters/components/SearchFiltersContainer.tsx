@@ -92,6 +92,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private readonly deeplinkQueryStringParam: string;
     private _isUpdatingDeepLink: boolean = false;
     private _lastProcessedDeepLink: string = '';
+    private _lastWarnedAmbiguousLegacyDeepLink: string | null = null;
     private _nextUpdateDebugEventId: number = 0;
     private _skipNextUiRefreshFromLocalSelection: boolean = false;
     private readonly _enableUpdateDebugLogging: boolean = false;
@@ -1804,7 +1805,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
         this.bindFilterValueOperatorUpdated();
 
-        const hasDeepLink = !!UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const hasDeepLink = !!this.getFiltersDeepLinkQueryString();
 
         // Process deep links first so restored selections are not overwritten by an empty initial UI refresh.
         if (hasDeepLink) {
@@ -2389,7 +2390,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
      */
     private getFiltersDeepLink() {
 
-        const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const queryString = this.getFiltersDeepLinkQueryString();
 
         if (!queryString) {
             this._lastProcessedDeepLink = '';
@@ -2522,6 +2523,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
         }
 
+        filtersDeepLinkUrl = this.removeLegacyFiltersDeepLink(filtersDeepLinkUrl);
+
         this._lastProcessedDeepLink = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, filtersDeepLinkUrl) || '';
 
         this._isUpdatingDeepLink = true;
@@ -2531,7 +2534,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private resetFiltersDeepLink() {
         // Reset filters query string
-        const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const filtersDeepLinkUrl = this.removeLegacyFiltersDeepLink(
+            UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href)
+        );
         this._lastProcessedDeepLink = '';
         this._isUpdatingDeepLink = true;
         globalThis.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
@@ -2557,7 +2562,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // When the browser 'back' or 'forward' button is pressed
         globalThis.onpopstate = () => {
 
-            const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+            const queryString = this.getFiltersDeepLinkQueryString();
 
             // Initial state where no filter are selected
             if (!queryString) {
@@ -2573,6 +2578,78 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             this.getFiltersDeepLink();
         };
+    }
+
+    private getFiltersDeepLinkQueryString(): string | null {
+        const href = globalThis.location.href;
+        const queryParams = new URL(href).searchParams;
+        const scopedParameterName = this.findQueryStringParameterName(queryParams, this.deeplinkQueryStringParam);
+
+        if (scopedParameterName !== null) {
+            return UrlHelper.getQueryStringParam(scopedParameterName, href) || '';
+        }
+
+        const legacyParameterName = this.findQueryStringParameterName(queryParams, DEEPLINK_QUERYSTRING_PARAM_BASE);
+        if (legacyParameterName === null) {
+            return null;
+        }
+
+        const legacyQueryString = UrlHelper.getQueryStringParam(legacyParameterName, href);
+        if (this.isOnlySearchFiltersInstanceOnPage()) {
+            return legacyQueryString;
+        }
+
+        if (legacyQueryString && this._lastWarnedAmbiguousLegacyDeepLink !== legacyQueryString) {
+            console.warn(`[PnP Modern Search][Search Filters] Ignoring legacy 'f' URL parameter for instance '${this.props.instanceId}' because multiple Search Filters web parts are present. Use 'f_<instanceId>' to target a specific web part.`);
+            this._lastWarnedAmbiguousLegacyDeepLink = legacyQueryString;
+        }
+
+        return null;
+    }
+
+    private findQueryStringParameterName(queryParams: URLSearchParams, expectedName: string): string | null {
+        const normalizedName = expectedName.toLowerCase();
+        let matchedName: string | null = null;
+        queryParams.forEach((_value, name) => {
+            if (matchedName === null && name.toLowerCase() === normalizedName) {
+                matchedName = name;
+            }
+        });
+        return matchedName;
+    }
+
+    private isOnlySearchFiltersInstanceOnPage(): boolean {
+        const instanceIds = Array.from(document.querySelectorAll('[data-sp-feature-tag^="pnpSearchFiltersWebPart"]'))
+            .map(element => element.getAttribute('data-sp-feature-instance-id'))
+            .filter((instanceId): instanceId is string => !!instanceId);
+
+        return instanceIds.length === 1 && instanceIds[0] === this.props.instanceId;
+    }
+
+    private removeLegacyFiltersDeepLink(url: string): string {
+        if (!this.isOnlySearchFiltersInstanceOnPage()) {
+            return url;
+        }
+
+        const hashIndex = url.indexOf('#');
+        const hash = hashIndex === -1 ? '' : url.substring(hashIndex);
+        const urlWithoutHash = hashIndex === -1 ? url : url.substring(0, hashIndex);
+        const queryIndex = urlWithoutHash.indexOf('?');
+        if (queryIndex === -1) {
+            return url;
+        }
+
+        const baseUrl = urlWithoutHash.substring(0, queryIndex);
+        const parameters = urlWithoutHash.substring(queryIndex + 1).split('&');
+        const remainingParameters = parameters.filter(parameter =>
+            parameter.split('=', 1)[0].toLowerCase() !== DEEPLINK_QUERYSTRING_PARAM_BASE.toLowerCase()
+        );
+
+        if (remainingParameters.length === parameters.length) {
+            return url;
+        }
+
+        return `${baseUrl}${remainingParameters.length > 0 ? `?${remainingParameters.join('&')}` : ''}${hash}`;
     }
 
     private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {

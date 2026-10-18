@@ -8,7 +8,11 @@ jest.mock('@pnp/modern-search-extensibility', () => ({}));
 jest.mock('@microsoft/sp-core-library', () => ({}));
 jest.mock('../../../helpers/DataFilterHelper', () => ({}));
 jest.mock('../../../helpers/TaxonomyHelper', () => ({}));
-jest.mock('../../../helpers/UrlHelper', () => ({}));
+jest.mock('../../../helpers/UrlHelper', () => ({
+    UrlHelper: {
+        getQueryStringParam: jest.fn()
+    }
+}));
 jest.mock('../../../layouts/AvailableTemplates', () => ({
     BuiltinFilterTemplates: {
         People: 'People'
@@ -23,7 +27,103 @@ jest.mock('@microsoft/sp-lodash-subset', () => ({
 }));
 
 import type { IDataFilter, IDataFilterConfiguration, IDataFilterInternal } from '@pnp/modern-search-extensibility';
+import { UrlHelper } from '../../../helpers/UrlHelper';
 import SearchFiltersContainer from './SearchFiltersContainer';
+
+describe('SearchFiltersContainer deep-link compatibility', () => {
+    const instanceId = 'filter-instance-1';
+    const createFilterHost = (id: string, mounted: boolean = true): string =>
+        `<div data-sp-feature-tag="pnpSearchFiltersWebPart web part (PnP - Search Filters)" data-sp-feature-instance-id="${id}">${mounted ? `<div data-instance-id="${id}"></div>` : ''}</div>`;
+
+    function createDeepLinkContainer(): SearchFiltersContainer {
+        const container: SearchFiltersContainer = Object.create(SearchFiltersContainer.prototype);
+        (container as any).props = { instanceId };
+        (container as any).deeplinkQueryStringParam = `f_${instanceId}`;
+        return container;
+    }
+
+    beforeEach(() => {
+        document.body.innerHTML = '';
+        jest.clearAllMocks();
+    });
+
+    it('prefers the scoped parameter when it and legacy f are both present', () => {
+        document.body.innerHTML = `${createFilterHost('filter-instance-1')}${createFilterHost('filter-instance-2')}`;
+        globalThis.history.replaceState({}, '', '/?f_filter-instance-1=scoped-value&f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f_filter-instance-1' ? 'scoped-value' : 'legacy-value');
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('scoped-value');
+        expect(UrlHelper.getQueryStringParam).toHaveBeenCalledWith('f_filter-instance-1', globalThis.location.href);
+        expect(UrlHelper.getQueryStringParam).not.toHaveBeenCalledWith('f', globalThis.location.href);
+    });
+
+    it('recognizes mixed-case scoped parameter names', () => {
+        document.body.innerHTML = `${createFilterHost('filter-instance-1')}${createFilterHost('filter-instance-2')}`;
+        globalThis.history.replaceState({}, '', '/?F_FILTER-INSTANCE-1=scoped-value&f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key.toLowerCase() === 'f_filter-instance-1' ? 'scoped-value' : 'legacy-value');
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('scoped-value');
+        expect(UrlHelper.getQueryStringParam).toHaveBeenCalledWith('F_FILTER-INSTANCE-1', globalThis.location.href);
+    });
+
+    it('does not fall back to legacy f when a mixed-case scoped parameter is empty', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        globalThis.history.replaceState({}, '', '/?F_FILTER-INSTANCE-1=&f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key.toLowerCase() === 'f_filter-instance-1' ? '' : 'legacy-value');
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('');
+        expect(UrlHelper.getQueryStringParam).not.toHaveBeenCalledWith('f', globalThis.location.href);
+    });
+
+    it('falls back to legacy f when this is the only Search Filters instance', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        globalThis.history.replaceState({}, '', '/?f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f' ? 'legacy-value' : null);
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('legacy-value');
+    });
+
+    it('ignores ambiguous legacy f when multiple Search Filters instances are present', () => {
+        document.body.innerHTML = `${createFilterHost('filter-instance-1')}${createFilterHost('filter-instance-2', false)}`;
+        globalThis.history.replaceState({}, '', '/?f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f' ? 'legacy-value' : null);
+        const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+        const container = createDeepLinkContainer() as any;
+        const queryString = container.getFiltersDeepLinkQueryString();
+        container.getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBeNull();
+        expect(warning).toHaveBeenCalledTimes(1);
+        expect(warning).toHaveBeenCalledWith(expect.stringContaining('Use \'f_<instanceId>\' to target a specific web part.'));
+    });
+
+    it('preserves spaces and plus signs in scoped URL values when removing legacy f', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        const container = createDeepLinkContainer() as any;
+        const url = 'https://example.test/page.aspx?f=legacy&f_filter-instance-1=North%20America%2BGroup#section';
+
+        expect(container.removeLegacyFiltersDeepLink(url))
+            .toBe('https://example.test/page.aspx?f_filter-instance-1=North%20America%2BGroup#section');
+    });
+
+    it('removes uppercase legacy F when clearing filters', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        const container = createDeepLinkContainer() as any;
+        const url = 'https://example.test/page.aspx?F=legacy&f_filter-instance-1=North%20America%2BGroup#section';
+
+        expect(container.removeLegacyFiltersDeepLink(url))
+            .toBe('https://example.test/page.aspx?f_filter-instance-1=North%20America%2BGroup#section');
+    });
+});
 
 describe('SearchFiltersContainer.getFiltersToDisplay', () => {
     const configuration: IDataFilterConfiguration = {
