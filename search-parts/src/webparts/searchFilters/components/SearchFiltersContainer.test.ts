@@ -59,6 +59,28 @@ describe('SearchFiltersContainer deep-link compatibility', () => {
         expect(UrlHelper.getQueryStringParam).not.toHaveBeenCalledWith('f', globalThis.location.href);
     });
 
+    it('recognizes mixed-case scoped parameter names', () => {
+        document.body.innerHTML = `${createFilterHost('filter-instance-1')}${createFilterHost('filter-instance-2')}`;
+        globalThis.history.replaceState({}, '', '/?F_FILTER-INSTANCE-1=scoped-value&f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key.toLowerCase() === 'f_filter-instance-1' ? 'scoped-value' : 'legacy-value');
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('scoped-value');
+        expect(UrlHelper.getQueryStringParam).toHaveBeenCalledWith('F_FILTER-INSTANCE-1', globalThis.location.href);
+    });
+
+    it('does not fall back to legacy f when a mixed-case scoped parameter is empty', () => {
+        document.body.innerHTML = createFilterHost('filter-instance-1');
+        globalThis.history.replaceState({}, '', '/?F_FILTER-INSTANCE-1=&f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key.toLowerCase() === 'f_filter-instance-1' ? '' : 'legacy-value');
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('');
+        expect(UrlHelper.getQueryStringParam).not.toHaveBeenCalledWith('f', globalThis.location.href);
+    });
+
     it('falls back to legacy f when this is the only Search Filters instance', () => {
         document.body.innerHTML = createFilterHost('filter-instance-1');
         globalThis.history.replaceState({}, '', '/?f=legacy-value');

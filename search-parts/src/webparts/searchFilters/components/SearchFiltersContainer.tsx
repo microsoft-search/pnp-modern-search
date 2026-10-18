@@ -2583,16 +2583,18 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private getFiltersDeepLinkQueryString(): string | null {
         const href = globalThis.location.href;
         const queryParams = new URL(href).searchParams;
+        const scopedParameterName = this.findQueryStringParameterName(queryParams, this.deeplinkQueryStringParam);
 
-        if (queryParams.has(this.deeplinkQueryStringParam)) {
-            return UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, href) || '';
+        if (scopedParameterName !== null) {
+            return UrlHelper.getQueryStringParam(scopedParameterName, href) || '';
         }
 
-        if (!queryParams.has(DEEPLINK_QUERYSTRING_PARAM_BASE)) {
+        const legacyParameterName = this.findQueryStringParameterName(queryParams, DEEPLINK_QUERYSTRING_PARAM_BASE);
+        if (legacyParameterName === null) {
             return null;
         }
 
-        const legacyQueryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM_BASE, href);
+        const legacyQueryString = UrlHelper.getQueryStringParam(legacyParameterName, href);
         if (this.isOnlySearchFiltersInstanceOnPage()) {
             return legacyQueryString;
         }
@@ -2603,6 +2605,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         return null;
+    }
+
+    private findQueryStringParameterName(queryParams: URLSearchParams, expectedName: string): string | null {
+        const normalizedName = expectedName.toLowerCase();
+        let matchedName: string | null = null;
+        queryParams.forEach((_value, name) => {
+            if (matchedName === null && name.toLowerCase() === normalizedName) {
+                matchedName = name;
+            }
+        });
+        return matchedName;
     }
 
     private isOnlySearchFiltersInstanceOnPage(): boolean {
