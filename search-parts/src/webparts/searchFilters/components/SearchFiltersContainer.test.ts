@@ -8,7 +8,11 @@ jest.mock('@pnp/modern-search-extensibility', () => ({}));
 jest.mock('@microsoft/sp-core-library', () => ({}));
 jest.mock('../../../helpers/DataFilterHelper', () => ({}));
 jest.mock('../../../helpers/TaxonomyHelper', () => ({}));
-jest.mock('../../../helpers/UrlHelper', () => ({}));
+jest.mock('../../../helpers/UrlHelper', () => ({
+    UrlHelper: {
+        getQueryStringParam: jest.fn()
+    }
+}));
 jest.mock('../../../layouts/AvailableTemplates', () => ({
     BuiltinFilterTemplates: {
         People: 'People'
@@ -23,7 +27,61 @@ jest.mock('@microsoft/sp-lodash-subset', () => ({
 }));
 
 import type { IDataFilter, IDataFilterConfiguration, IDataFilterInternal } from '@pnp/modern-search-extensibility';
+import { UrlHelper } from '../../../helpers/UrlHelper';
 import SearchFiltersContainer from './SearchFiltersContainer';
+
+describe('SearchFiltersContainer deep-link compatibility', () => {
+    const instanceId = 'filter-instance-1';
+
+    function createDeepLinkContainer(): SearchFiltersContainer {
+        const container: SearchFiltersContainer = Object.create(SearchFiltersContainer.prototype);
+        (container as any).props = { instanceId };
+        (container as any).deeplinkQueryStringParam = `f_${instanceId}`;
+        return container;
+    }
+
+    beforeEach(() => {
+        document.body.innerHTML = '';
+        jest.clearAllMocks();
+    });
+
+    it('prefers the scoped parameter when it and legacy f are both present', () => {
+        document.body.innerHTML = '<div data-search-filters-instance-id="filter-instance-1"></div><div data-search-filters-instance-id="filter-instance-2"></div>';
+        globalThis.history.replaceState({}, '', '/?f_filter-instance-1=scoped-value&f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f_filter-instance-1' ? 'scoped-value' : 'legacy-value');
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('scoped-value');
+        expect(UrlHelper.getQueryStringParam).toHaveBeenCalledWith('f_filter-instance-1', globalThis.location.href);
+        expect(UrlHelper.getQueryStringParam).not.toHaveBeenCalledWith('f', globalThis.location.href);
+    });
+
+    it('falls back to legacy f when this is the only Search Filters instance', () => {
+        document.body.innerHTML = '<div data-search-filters-instance-id="filter-instance-1"></div>';
+        globalThis.history.replaceState({}, '', '/?f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f' ? 'legacy-value' : null);
+
+        const queryString = (createDeepLinkContainer() as any).getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBe('legacy-value');
+    });
+
+    it('ignores ambiguous legacy f when multiple Search Filters instances are present', () => {
+        document.body.innerHTML = '<div data-search-filters-instance-id="filter-instance-1"></div><div data-search-filters-instance-id="filter-instance-2"></div>';
+        globalThis.history.replaceState({}, '', '/?f=legacy-value');
+        (UrlHelper.getQueryStringParam as jest.Mock).mockImplementation((key: string) => key === 'f' ? 'legacy-value' : null);
+        const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+        const container = createDeepLinkContainer() as any;
+        const queryString = container.getFiltersDeepLinkQueryString();
+        container.getFiltersDeepLinkQueryString();
+
+        expect(queryString).toBeNull();
+        expect(warning).toHaveBeenCalledTimes(1);
+        expect(warning).toHaveBeenCalledWith(expect.stringContaining('Use \'f_<instanceId>\' to target a specific web part.'));
+    });
+});
 
 describe('SearchFiltersContainer.getFiltersToDisplay', () => {
     const configuration: IDataFilterConfiguration = {

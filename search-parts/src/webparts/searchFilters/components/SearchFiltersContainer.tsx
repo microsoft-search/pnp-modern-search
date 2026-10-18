@@ -92,6 +92,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private readonly deeplinkQueryStringParam: string;
     private _isUpdatingDeepLink: boolean = false;
     private _lastProcessedDeepLink: string = '';
+    private _lastWarnedAmbiguousLegacyDeepLink: string | null = null;
     private _nextUpdateDebugEventId: number = 0;
     private _skipNextUiRefreshFromLocalSelection: boolean = false;
     private readonly _enableUpdateDebugLogging: boolean = false;
@@ -1782,7 +1783,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`
         };
 
-        return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
+        return <div ref={this.componentRef} data-instance-id={this.props.instanceId} data-search-filters-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
             {renderTitle}
             {renderWpContent}
         </div>;
@@ -1804,7 +1805,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
         this.bindFilterValueOperatorUpdated();
 
-        const hasDeepLink = !!UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const hasDeepLink = !!this.getFiltersDeepLinkQueryString();
 
         // Process deep links first so restored selections are not overwritten by an empty initial UI refresh.
         if (hasDeepLink) {
@@ -2389,7 +2390,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
      */
     private getFiltersDeepLink() {
 
-        const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const queryString = this.getFiltersDeepLinkQueryString();
 
         if (!queryString) {
             this._lastProcessedDeepLink = '';
@@ -2522,6 +2523,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
         }
 
+        filtersDeepLinkUrl = this.removeLegacyFiltersDeepLink(filtersDeepLinkUrl);
+
         this._lastProcessedDeepLink = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, filtersDeepLinkUrl) || '';
 
         this._isUpdatingDeepLink = true;
@@ -2531,7 +2534,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private resetFiltersDeepLink() {
         // Reset filters query string
-        const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const filtersDeepLinkUrl = this.removeLegacyFiltersDeepLink(
+            UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href)
+        );
         this._lastProcessedDeepLink = '';
         this._isUpdatingDeepLink = true;
         globalThis.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
@@ -2557,7 +2562,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // When the browser 'back' or 'forward' button is pressed
         globalThis.onpopstate = () => {
 
-            const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+            const queryString = this.getFiltersDeepLinkQueryString();
 
             // Initial state where no filter are selected
             if (!queryString) {
@@ -2573,6 +2578,53 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             this.getFiltersDeepLink();
         };
+    }
+
+    private getFiltersDeepLinkQueryString(): string | null {
+        const href = globalThis.location.href;
+        const queryParams = new URL(href).searchParams;
+
+        if (queryParams.has(this.deeplinkQueryStringParam)) {
+            return UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, href) || '';
+        }
+
+        if (!queryParams.has(DEEPLINK_QUERYSTRING_PARAM_BASE)) {
+            return null;
+        }
+
+        const legacyQueryString = UrlHelper.getQueryStringParam(DEEPLINK_QUERYSTRING_PARAM_BASE, href);
+        if (this.isOnlySearchFiltersInstanceOnPage()) {
+            return legacyQueryString;
+        }
+
+        if (legacyQueryString && this._lastWarnedAmbiguousLegacyDeepLink !== legacyQueryString) {
+            console.warn(`[PnP Modern Search][Search Filters] Ignoring legacy 'f' URL parameter for instance '${this.props.instanceId}' because multiple Search Filters web parts are present. Use 'f_<instanceId>' to target a specific web part.`);
+            this._lastWarnedAmbiguousLegacyDeepLink = legacyQueryString;
+        }
+
+        return null;
+    }
+
+    private isOnlySearchFiltersInstanceOnPage(): boolean {
+        const instanceIds = Array.from(document.querySelectorAll('[data-search-filters-instance-id]'))
+            .map(element => element.getAttribute('data-search-filters-instance-id'))
+            .filter((instanceId): instanceId is string => !!instanceId);
+
+        return instanceIds.length === 1 && instanceIds[0] === this.props.instanceId;
+    }
+
+    private removeLegacyFiltersDeepLink(url: string): string {
+        if (!this.isOnlySearchFiltersInstanceOnPage()) {
+            return url;
+        }
+
+        const parsedUrl = new URL(url);
+        if (!parsedUrl.searchParams.has(DEEPLINK_QUERYSTRING_PARAM_BASE)) {
+            return url;
+        }
+
+        parsedUrl.searchParams.delete(DEEPLINK_QUERYSTRING_PARAM_BASE);
+        return parsedUrl.toString();
     }
 
     private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
