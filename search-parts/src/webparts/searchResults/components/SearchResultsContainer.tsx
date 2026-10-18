@@ -20,7 +20,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Overlay } from '@fluentui/react/lib/Overlay';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { Shimmer, ShimmerElementsGroup, ShimmerElementType } from '@fluentui/react/lib/Shimmer';
-import { collectExportItems, EXPORT_CURRENT_DATA_REQUEST_EVENT, IExportCurrentDataRequest } from '../../../helpers/CsvExportHelper';
+import { collectExportItems, CsvExportController, EXPORT_CURRENT_DATA_REQUEST_EVENT, IExportCurrentDataRequest } from '../../../helpers/CsvExportHelper';
 
 const LogSource = "SearchResultsContainer";
 const RESET_RESULTS_SELECTION_EVENT = "resetResultsSelection";
@@ -61,6 +61,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     private _searchWebPartRef: HTMLElement;
     private _resultsContainerRef: HTMLDivElement;
     private _exportContextVersion: number = 0;
+    private _exportController: CsvExportController;
 
     public constructor(props: ISearchResultsContainerProps) {
 
@@ -79,6 +80,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         this._onSelectionChanged = this._onSelectionChanged.bind(this);
         this._onResetResultsSelection = this._onResetResultsSelection.bind(this);
         this._onExportCurrentDataRequested = this._onExportCurrentDataRequested.bind(this);
+        this._exportController = new CsvExportController(() => this._getCurrentExportItems());
 
         this._selection = new Selection({
             onSelectionChanged: this._onSelectionChanged,
@@ -229,40 +231,39 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
     public componentWillUnmount(): void {
         this._exportContextVersion++;
+        this._exportController.dispose();
         this._resultsContainerRef?.removeEventListener(RESET_RESULTS_SELECTION_EVENT, this._onResetResultsSelection as EventListener);
         this._resultsContainerRef?.removeEventListener(EXPORT_CURRENT_DATA_REQUEST_EVENT, this._onExportCurrentDataRequested);
     }
 
-    private async _onExportCurrentDataRequested(event: Event): Promise<void> {
+    private _onExportCurrentDataRequested(event: Event): void {
         const exportEvent = event as CustomEvent<IExportCurrentDataRequest>;
-        try {
-            const dataSource = this.props.dataSource;
-            const baseDataContext = cloneDeep(this.props.dataContext);
-            const slots = this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots);
-            const totalItemsCount = this._totalItemsCount || dataSource.getItemCount();
-            const exportContextVersion = this._exportContextVersion;
-            const sourceProperties = cloneDeep(this.props.properties.dataSourceProperties);
-            const submittedQueryId = this.props.lastSubmittedQueryId;
-            const queryTokenVersion = this.props.getQueryTokenVersion?.();
-            const items = await collectExportItems(totalItemsCount, async (pageNumber, pageSize) => {
-                const dataContext = cloneDeep(baseDataContext);
-                dataContext.pageNumber = pageNumber;
-                dataContext.itemsCountPerPage = pageSize;
+        exportEvent.detail.resolve(this._exportController);
+    }
 
-                let pageData = await dataSource.getData(dataContext);
-                pageData = await dataSource.getItemsPreview(pageData, slots);
-                return pageData.items;
-            }, () => exportContextVersion === this._exportContextVersion
-                && queryTokenVersion === this.props.getQueryTokenVersion?.()
-                && dataSource === this.props.dataSource
-                && submittedQueryId === this.props.lastSubmittedQueryId
-                && isEqual(baseDataContext, this.props.dataContext)
-                && isEqual(sourceProperties, this.props.properties.dataSourceProperties));
+    private async _getCurrentExportItems(): Promise<Record<string, unknown>[]> {
+        const dataSource = this.props.dataSource;
+        const baseDataContext = cloneDeep(this.props.dataContext);
+        const slots = this.convertTemplateSlotsToHashtable(this.props.properties.templateSlots);
+        const totalItemsCount = this._totalItemsCount || dataSource.getItemCount();
+        const exportContextVersion = this._exportContextVersion;
+        const sourceProperties = cloneDeep(this.props.properties.dataSourceProperties);
+        const submittedQueryId = this.props.lastSubmittedQueryId;
+        const queryTokenVersion = this.props.getQueryTokenVersion?.();
+        return collectExportItems(totalItemsCount, async (pageNumber, pageSize) => {
+            const dataContext = cloneDeep(baseDataContext);
+            dataContext.pageNumber = pageNumber;
+            dataContext.itemsCountPerPage = pageSize;
 
-            exportEvent.detail.resolve(items);
-        } catch (error) {
-            exportEvent.detail.reject(error instanceof Error ? error : new Error(String(error)));
-        }
+            let pageData = await dataSource.getData(dataContext);
+            pageData = await dataSource.getItemsPreview(pageData, slots);
+            return pageData.items;
+        }, () => exportContextVersion === this._exportContextVersion
+            && queryTokenVersion === this.props.getQueryTokenVersion?.()
+            && dataSource === this.props.dataSource
+            && submittedQueryId === this.props.lastSubmittedQueryId
+            && isEqual(baseDataContext, this.props.dataContext)
+            && isEqual(sourceProperties, this.props.properties.dataSourceProperties));
     }
 
     public async componentDidUpdate(prevProps: ISearchResultsContainerProps, prevState: ISearchResultsContainerState) {

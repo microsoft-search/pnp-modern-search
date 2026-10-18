@@ -67,6 +67,8 @@ The action is disabled when there are no loaded results, when no usable export m
 
 Successful exports do not display a status message. If export fails, a localized, dismissible error is announced to assistive technologies. Changing the search inputs, filters, vertical, sorting, or paging during export cancels it and discards collected rows to avoid mixing results from different queries. Retry the export for the updated search.
 
+Selecting or deselecting result items does not cancel a full-dataset export. The active export and its busy/error state are retained when selection updates replace the toolbar, preventing duplicate exports and allowing the original download to finish.
+
 #### Exported file
 
 - The file is named `SearchResults_<timestamp>.csv`.
