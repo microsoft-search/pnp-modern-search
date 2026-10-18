@@ -200,7 +200,9 @@ define([], function () {
             SortByDefaultOptionText: "Výchozí",
             DownloadButtonText: "Stáhnout",
             DownloadCSVButtonText: "Stáhnout vybrané jako CSV",
-            DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání"
+            DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání",
+            ExportSearchResultsError: "Export se nepodařilo dokončit. Zkuste to znovu. Pokud se hledání změnilo, exportujte aktualizované výsledky.",
+            ExportSearchResultsDismissError: "Zavřít chybu exportu"
         },
         Layouts: {
             Debug: {

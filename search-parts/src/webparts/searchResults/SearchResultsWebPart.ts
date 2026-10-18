@@ -259,6 +259,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The current DataContext - is updated in render method
      */
     private _currentDataContext: IDataContext;
+    private _queryTokenVersion: number = 0;
 
     /**
      * Tracks whether other Web Parts on the page could potentially consume data from this Search
@@ -541,6 +542,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
                 dataContext: this._currentDataContext,
+                getQueryTokenVersion: () => this._queryTokenVersion,
                 lastSubmittedQueryId: GlobalSettings.getValue<number>(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, 0),
                 themeVariant: this._themeVariant,
                 serviceScope: this.webPartInstanceServiceScope,
@@ -2176,6 +2178,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Set token values from Web Part property bag
      */
     private async setTokens() {
+        this._queryTokenVersion++;
         const tokenSetter = new TokenSetter(
             this.tokenService,
             this._filtersConnectionSourceData,

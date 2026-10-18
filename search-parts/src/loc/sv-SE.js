@@ -201,7 +201,9 @@ define([], function () {
             SortByPlaceholderText: "Sortera efter...",
             DownloadButtonText: "Ladda ner",
             DownloadCSVButtonText: "Ladda ned markerade som CSV",
-            DownloadCurrentDataAsCSVButtonText: "Exportera sökresultat"
+            DownloadCurrentDataAsCSVButtonText: "Exportera sökresultat",
+            ExportSearchResultsError: "Exporten kunde inte slutföras. Försök igen. Om sökningen ändrades, exportera de uppdaterade resultaten.",
+            ExportSearchResultsDismissError: "Stäng exportfel"
         },
         Layouts: {
             Debug: {

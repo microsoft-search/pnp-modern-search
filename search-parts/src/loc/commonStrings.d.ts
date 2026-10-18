@@ -200,6 +200,8 @@ declare interface ICommonStrings {
       DownloadButtonText: string;
       DownloadCSVButtonText: string;
       DownloadCurrentDataAsCSVButtonText: string;
+      ExportSearchResultsError: string;
+      ExportSearchResultsDismissError: string;
     },
     Layouts: {
       Debug: {

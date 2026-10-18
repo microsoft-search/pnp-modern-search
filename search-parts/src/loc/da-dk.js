@@ -200,7 +200,9 @@ define([], function () {
             SortByDefaultOptionText: "Standard",
             DownloadButtonText: "Download",
             DownloadCSVButtonText: "Download markerede som CSV",
-            DownloadCurrentDataAsCSVButtonText: "Eksportér søgeresultat"
+            DownloadCurrentDataAsCSVButtonText: "Eksportér søgeresultat",
+            ExportSearchResultsError: "Eksporten kunne ikke fuldføres. Prøv igen. Hvis søgningen blev ændret, skal du eksportere de opdaterede resultater.",
+            ExportSearchResultsDismissError: "Luk eksportfejl"
         },
         Layouts: {
             Debug: {

@@ -201,7 +201,9 @@ define([], function () {
             SortByDefaultOptionText: "Defecto",
             DownloadButtonText: "Descargar",
             DownloadCSVButtonText: "Descargar selección como CSV",
-            DownloadCurrentDataAsCSVButtonText: "Exportar resultado de búsqueda"
+            DownloadCurrentDataAsCSVButtonText: "Exportar resultado de búsqueda",
+            ExportSearchResultsError: "No se pudo completar la exportación. Inténtelo de nuevo. Si cambió la búsqueda, exporte los resultados actualizados.",
+            ExportSearchResultsDismissError: "Cerrar error de exportación"
         },
         Layouts: {
             Debug: {

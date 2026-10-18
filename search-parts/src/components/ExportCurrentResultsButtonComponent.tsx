@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { ActionButton, getTheme, IIconProps, ITheme } from '@fluentui/react';
+import { ActionButton, getTheme, IIconProps, ITheme, MessageBar, MessageBarType } from '@fluentui/react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { EXPORT_CURRENT_DATA_REQUEST_EVENT, IExportCurrentDataRequest } from '../helpers/CsvExportHelper';
+import { EXPORT_CURRENT_DATA_REQUEST_EVENT, formatCsvField, IExportCurrentDataRequest } from '../helpers/CsvExportHelper';
 import * as strings from 'CommonStrings';
 
 interface IExportCurrentResultsButtonProps {
@@ -19,15 +19,21 @@ interface IExportColumn {
 
 interface IExportCurrentResultsButtonState {
     isExporting: boolean;
+    errorMessage: string;
 }
 
 export class ExportCurrentResultsButtonComponent extends React.Component<IExportCurrentResultsButtonProps, IExportCurrentResultsButtonState> {
 
-    private _rootRef = React.createRef<HTMLSpanElement>();
+    private _rootRef = React.createRef<HTMLDivElement>();
+    private _isDisposed = false;
 
     public constructor(props: IExportCurrentResultsButtonProps) {
         super(props);
-        this.state = { isExporting: false };
+        this.state = { isExporting: false, errorMessage: '' };
+    }
+
+    public componentWillUnmount(): void {
+        this._isDisposed = true;
     }
 
     private _getExportColumns(): IExportColumn[] {
@@ -47,15 +53,6 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
         return Object.entries(mapping)
             .filter(([managedProperty, csvHeader]) => managedProperty.trim().length > 0 && typeof csvHeader === 'string')
             .map(([managedProperty, csvHeader]) => ({ managedProperty, csvHeader }));
-    }
-
-    private _formatCsvField(value: unknown): string {
-        if (value === null || value === undefined) {
-            return '';
-        }
-
-        const text = typeof value === 'object' ? JSON.stringify(value) : String(value);
-        return `"${text.replace(/"/g, '""')}"`;
     }
 
     private _requestCurrentData(): Promise<Record<string, unknown>[]> {
@@ -79,15 +76,18 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
             return;
         }
 
-        this.setState({ isExporting: true });
+        this.setState({ isExporting: true, errorMessage: '' });
         let objectUrl: string | undefined;
 
         try {
             const items = await this._requestCurrentData();
+            if (this._isDisposed) {
+                return;
+            }
             const rows = [
-                columns.map(column => this._formatCsvField(column.csvHeader)).join(';'),
+                columns.map(column => formatCsvField(column.csvHeader)).join(';'),
                 ...items.map(item => columns
-                    .map(column => this._formatCsvField(item[column.managedProperty]))
+                    .map(column => formatCsvField(item[column.managedProperty]))
                     .join(';'))
             ];
             const blob = new Blob(['\uFEFF', rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
@@ -104,11 +104,16 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
             }
         } catch (error) {
             console.error('ExportCurrentResultsButton: failed to retrieve current results', error);
+            if (!this._isDisposed) {
+                this.setState({ errorMessage: strings.Controls.ExportSearchResultsError });
+            }
         } finally {
             if (objectUrl) {
                 window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
             }
-            this.setState({ isExporting: false });
+            if (!this._isDisposed) {
+                this.setState({ isExporting: false });
+            }
         }
     };
 
@@ -119,7 +124,7 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
         const theme = (this.props.themeVariant as ITheme) || getTheme();
 
         return (
-            <span ref={this._rootRef}>
+            <div ref={this._rootRef} style={{ display: 'inline-block' }}>
                 <ActionButton
                     text={strings.Controls.DownloadCurrentDataAsCSVButtonText}
                     iconProps={downloadIcon}
@@ -127,7 +132,18 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
                     onClick={this._downloadCurrentData}
                     theme={theme}
                 />
-            </span>
+                {this.state.errorMessage && (
+                    <MessageBar
+                        messageBarType={MessageBarType.error}
+                        role="alert"
+                        theme={theme}
+                        onDismiss={() => this.setState({ errorMessage: '' })}
+                        dismissButtonAriaLabel={strings.Controls.ExportSearchResultsDismissError}
+                    >
+                        {this.state.errorMessage}
+                    </MessageBar>
+                )}
+            </div>
         );
     }
 }

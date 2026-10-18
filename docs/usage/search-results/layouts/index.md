@@ -38,7 +38,7 @@ By default, the following layouts are provided:
 
 ### Export search results to CSV
 
-The built-in **Cards**, **Details List**, **Simple list**, and **Slider** layouts support the **Export Search result** action. Export uses the current query, applied filters, selected vertical, and sorting from the Results web part's data source. It retrieves additional pages independently of the displayed page size, so it is not restricted to the visible page or selected items.
+The built-in Handlebars **Cards**, **Details List**, **Simple list**, and **Slider** layouts support the **Export Search result** action. Adaptive Cards layouts do not expose the export action or its settings. Export uses the current query, applied filters, selected vertical, and sorting from the Results web part's data source. It retrieves additional pages independently of the displayed page size, so it is not restricted to the visible page or selected items.
 
 #### Configuration
 
@@ -65,10 +65,13 @@ Keys are the property names returned in the result data, not display names or Ha
 
 The action is disabled when there are no loaded results, when no usable export mapping is configured, and while export is running.
 
+Successful exports do not display a status message. If export fails, a localized, dismissible error is announced to assistive technologies. Changing the search inputs, filters, vertical, sorting, or paging during export cancels it and discards collected rows to avoid mixing results from different queries. Retry the export for the updated search.
+
 #### Exported file
 
 - The file is named `SearchResults_<timestamp>.csv`.
 - CSV fields are separated by semicolons. Headers and non-null values are quoted, with embedded double quotes escaped; commas, semicolons, and line breaks in values are preserved.
+- String values and headers that could be interpreted as spreadsheet formulas are prefixed with an apostrophe, including formula markers following whitespace or control characters. Actual numeric values are preserved as numbers in the CSV text.
 - The file uses UTF-8 with a byte order mark (BOM), helping Excel recognize accents and non-English characters.
 - Export uses property values from the data source, including its preview enrichment. It does not evaluate layout column HTML or Handlebars expressions, reformat date strings, or perform additional taxonomy-label extraction. Missing or null values produce empty cells; objects and arrays are serialized as JSON text.
 

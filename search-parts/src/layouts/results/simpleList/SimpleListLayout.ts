@@ -30,6 +30,8 @@ export interface ISimpleListLayoutProperties {
 
 export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
 
+    protected supportsCsvExport = true;
+
     public async onInit(): Promise<void> {
 
         this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
@@ -60,6 +62,10 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
             })
         ];
 
+        if (!this.supportsCsvExport) {
+            return propertyPaneFields;
+        }
+
         propertyPaneFields.push(
             PropertyPaneToggle('layoutProperties.enableCsvExport', {
                 label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
@@ -82,4 +88,8 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
 
         return propertyPaneFields;
     }
+}
+
+export class AdaptiveCardsSimpleListLayout extends SimpleListLayout {
+    protected supportsCsvExport = false;
 }

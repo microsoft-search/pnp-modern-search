@@ -8,6 +8,54 @@ export interface IExportCurrentDataRequest {
     reject: (error: Error) => void;
 }
 
+export async function collectExportItems(
+    totalItemsCount: number,
+    fetchPage: (pageNumber: number, pageSize: number) => Promise<Record<string, unknown>[]>,
+    isCurrent: () => boolean
+): Promise<Record<string, unknown>[]> {
+    const items: Record<string, unknown>[] = [];
+    const pageCount = Math.ceil(totalItemsCount / EXPORT_CURRENT_DATA_PAGE_SIZE);
+    const assertCurrent = (): void => {
+        if (!isCurrent()) {
+            throw new Error('Search context changed during export.');
+        }
+    };
+
+    for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
+        assertCurrent();
+        const pageItems = await fetchPage(pageNumber, EXPORT_CURRENT_DATA_PAGE_SIZE);
+        assertCurrent();
+        items.push(...pageItems);
+    }
+
+    assertCurrent();
+    return items;
+}
+
+export function formatCsvField(value: unknown): string {
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    let text = typeof value === 'object' ? JSON.stringify(value) : String(value);
+    if (typeof value === 'string') {
+        let firstContentIndex = 0;
+        while (firstContentIndex < text.length) {
+            const codePoint = text.charCodeAt(firstContentIndex);
+            if (codePoint > 0x1f && (codePoint < 0x7f || codePoint > 0x9f)
+                && !/\s/.test(text.charAt(firstContentIndex))) {
+                break;
+            }
+            firstContentIndex++;
+        }
+        if (['=', '+', '-', '@'].includes(text.charAt(firstContentIndex))) {
+            text = `'${text}`;
+        }
+    }
+
+    return `"${text.replace(/"/g, '""')}"`;
+}
+
 export function validateExportColumnsJson(value: string, selectedProperties?: string[]): string {
     const errorMessage = strings.Layouts.DetailsList.ExportColumnsJsonValidationError;
 

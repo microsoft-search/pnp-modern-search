@@ -54,7 +54,7 @@ The search results Web Part configuration is divided into four parts each corres
 
 ## Export Search Results
 
-The Cards, Details List, Simple list, and Slider layouts can display an **Export Search result** action. It exports the dataset matching the current query, applied filters, selected vertical, and sort settings to CSV, rather than just the visible page or selected items.
+The Handlebars Cards, Details List, Simple list, and Slider layouts can display an **Export Search result** action. It exports the dataset matching the current query, applied filters, selected vertical, and sort settings to CSV, rather than just the visible page or selected items. Adaptive Cards layouts do not expose this action or its settings.
 
 The feature is disabled by default. Enable **Enable download of current data as CSV** in the layout settings and configure **Export columns (JSON)**. See [Export search results to CSV](./layouts/index.md#export-search-results-to-csv) for configuration and an example column mapping.
 

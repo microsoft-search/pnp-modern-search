@@ -198,7 +198,9 @@ define([], function () {
             SortByDefaultOptionText: "Oletus",
             DownloadButtonText: "Lataa",
             DownloadCSVButtonText: "Lataa valitut CSV-muodossa",
-            DownloadCurrentDataAsCSVButtonText: "Vie hakutulos"
+            DownloadCurrentDataAsCSVButtonText: "Vie hakutulos",
+            ExportSearchResultsError: "Vientiä ei voitu suorittaa loppuun. Yritä uudelleen. Jos haku muuttui, vie päivitetyt tulokset.",
+            ExportSearchResultsDismissError: "Sulje vientivirhe"
         },
         Layouts: {
             Debug: {

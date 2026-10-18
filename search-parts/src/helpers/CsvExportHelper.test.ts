@@ -7,7 +7,50 @@ jest.mock('CommonStrings', () => ({
     }
 }), { virtual: true });
 
-import { validateExportColumnsJson } from './CsvExportHelper';
+import { collectExportItems, formatCsvField, validateExportColumnsJson } from './CsvExportHelper';
+
+describe('collectExportItems', () => {
+    it('collects all matching pages in export-sized batches', async () => {
+        const fetchPage = jest.fn(async (pageNumber: number) => [{ Title: `Page ${pageNumber}` }]);
+        expect(await collectExportItems(501, fetchPage, () => true))
+            .toEqual([{ Title: 'Page 1' }, { Title: 'Page 2' }]);
+        expect(fetchPage.mock.calls).toEqual([[1, 500], [2, 500]]);
+    });
+
+    it('discards an in-flight batch when the query or shared token context changes', async () => {
+        let current = true;
+        const fetchPage = jest.fn(async () => {
+            current = false;
+            return [{ Title: 'Results from the changed query' }];
+        });
+        await expect(collectExportItems(1000, fetchPage, () => current)).rejects.toThrow('Search context changed');
+        expect(fetchPage).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not query after an export has already been invalidated', async () => {
+        const fetchPage = jest.fn(async () => []);
+        await expect(collectExportItems(500, fetchPage, () => false)).rejects.toThrow('Search context changed');
+        expect(fetchPage).not.toHaveBeenCalled();
+    });
+});
+
+describe('formatCsvField', () => {
+    it.each(['=HYPERLINK("https://example.test")', '+SUM(1,2)', '-1+2', '@SUM(1,2)', '  =1+2', '\t=1+2', '\r\n+1', '\u0000=1', '\u0085@SUM(1,2)'])(
+        'neutralizes spreadsheet formulas in strings: %s', value => {
+            expect(formatCsvField(value)).toBe(`"'${value.replace(/"/g, '""')}"`);
+        }
+    );
+
+    it('preserves actual numeric values', () => {
+        expect(formatCsvField(-42)).toBe('"-42"');
+        expect(formatCsvField(0)).toBe('"0"');
+    });
+
+    it('quotes delimiters, line breaks and embedded quotes', () => {
+        expect(formatCsvField('one;two,three\n"four"')).toBe('"one;two,three\n""four"""');
+        expect(formatCsvField(null)).toBe('');
+    });
+});
 
 describe('validateExportColumnsJson', () => {
     it('accepts a subset of selected properties', () => {
