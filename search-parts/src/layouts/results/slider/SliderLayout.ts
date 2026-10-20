@@ -36,6 +36,8 @@ export interface ISliderLayoutProperties {
 
 export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
 
+    private _exportColumnsDraft: string | undefined;
+
     public async onInit(): Promise<void> {
 
         this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
@@ -132,18 +134,22 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
         if (this.properties.enableCsvExport) {
             groupFields.push(
                 PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
                     description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
                     multiline: true,
                     rows: 8,
                     validateOnFocusOut: true,
-                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
                 }),
                 PropertyPaneButton('layoutProperties.validateExportColumns', {
                     buttonType: PropertyPaneButtonType.Normal,
                     text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
                     onClick: () => {
-                        const error = validateExportColumnsJson(this.properties.exportColumns || '', availableFields);
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
                         window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
                     }
                 })

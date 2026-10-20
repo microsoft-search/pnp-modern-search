@@ -22,6 +22,10 @@ jest.mock('CommonStrings', () => ({
 import { AdaptiveCardsSimpleListLayout, SimpleListLayout } from './SimpleListLayout';
 
 describe('Simple List export settings', () => {
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it('exposes export settings for the Handlebars layout', async () => {
         const layout = new SimpleListLayout({});
         await layout.onInit();
@@ -55,6 +59,35 @@ describe('Simple List export settings', () => {
 
         expect(fields).not.toContain('layoutProperties.exportColumns');
         expect(fields).not.toContain('layoutProperties.validateExportColumns');
+    });
+
+    it.each([
+        ['{', 'Invalid mapping'],
+        ['', 'Invalid mapping'],
+        ['{"Title":"Title","Author":"Author"}', 'Missing selected properties: Author']
+    ])('validates the rejected draft after a property-pane refresh: %s', async (draft, expectedError) => {
+        const layout = new SimpleListLayout({});
+        await layout.onInit();
+        layout.properties.enableCsvExport = true;
+        layout.properties.exportColumns = '{"Title":"Title"}';
+        const fields = layout.getPropertyPaneFieldsConfiguration(['Title']);
+        const textbox = fields.find(field => field.targetProperty === 'layoutProperties.exportColumns');
+        const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => undefined);
+
+        expect(textbox.properties.onGetErrorMessage(draft)).toBe(expectedError);
+        expect(layout.properties.exportColumns).toBe('{"Title":"Title"}');
+        fields.find(field => field.targetProperty === 'layoutProperties.validateExportColumns').properties.onClick();
+        expect(alertSpy).toHaveBeenLastCalledWith(expectedError);
+
+        const refreshedFields = layout.getPropertyPaneFieldsConfiguration(['Title']);
+        const refreshedTextbox = refreshedFields.find(field => field.targetProperty === 'layoutProperties.exportColumns');
+        expect(refreshedTextbox.properties.value).toBe(draft);
+        refreshedFields.find(field => field.targetProperty === 'layoutProperties.validateExportColumns').properties.onClick();
+        expect(alertSpy).toHaveBeenLastCalledWith(expectedError);
+
+        expect(refreshedTextbox.properties.onGetErrorMessage('{"Title":"Corrected"}')).toBe('');
+        refreshedFields.find(field => field.targetProperty === 'layoutProperties.validateExportColumns').properties.onClick();
+        expect(alertSpy).toHaveBeenLastCalledWith('All selected');
     });
 
     it('hides unsupported export settings in Adaptive Cards mode, even if previously enabled', async () => {
