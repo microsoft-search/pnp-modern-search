@@ -254,6 +254,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "Disse eksportegenskapene finnes ikke blant datakildens valgte egenskaper: {0}. Legg dem til i de valgte egenskapene, eller fjern dem fra eksporttilordningen.",
                 ExportColumnsJsonDescription: "Angi et JSON-objekt som tilordner navn på administrerte egenskaper til CSV-kolonneoverskrifter. Eksempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Angi et gyldig JSON-objekt med minst én tilordning mellom en administrert egenskap og en kolonneoverskrift.",
+                ValidateJsonButtonLabel: "Valider JSON",
+                ExportColumnsJsonValid: "JSON-en er gyldig, og alle tilordnede egenskaper er valgt.",
                 EnableDetails: "Aktiver detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",
@@ -469,4 +471,3 @@ define([], function () {
         }
     }
 })
-

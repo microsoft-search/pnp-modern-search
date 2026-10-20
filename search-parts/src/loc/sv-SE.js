@@ -256,6 +256,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "Dessa exportegenskaper saknas bland datakällans valda egenskaper: {0}. Lägg till dem eller ta bort dem från exportmappningen.",
                 ExportColumnsJsonDescription: "Ange ett JSON-objekt som mappar namn på hanterade egenskaper till CSV-kolumnrubriker. Exempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Ange ett giltigt JSON-objekt med minst en mappning från hanterad egenskap till kolumnrubrik.",
+                ValidateJsonButtonLabel: "Validera JSON",
+                ExportColumnsJsonValid: "JSON är giltig och alla mappade egenskaper är markerade.",
                 EnableDetails: "Aktivera detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",

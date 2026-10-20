@@ -1,5 +1,5 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
+import { IPropertyPaneField, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'CommonStrings';
 import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
@@ -82,6 +82,14 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
                     rows: 8,
                     validateOnFocusOut: true,
                     onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this.properties.exportColumns || '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
                 })
             );
         }

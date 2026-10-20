@@ -255,6 +255,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "These export properties are not in the data source's selected properties: {0}. Add them to the selected properties or remove them from the export mapping.",
                 ExportColumnsJsonDescription: "Enter a JSON object mapping managed property names to CSV column headers. Example: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Enter a valid JSON object with at least one managed-property-to-column-header mapping.",
+                ValidateJsonButtonLabel: "Validate JSON",
+                ExportColumnsJsonValid: "The JSON is valid and all mapped properties are selected.",
                 EnableDetails: "Enable details",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",

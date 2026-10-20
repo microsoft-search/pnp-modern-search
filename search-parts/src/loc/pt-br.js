@@ -255,6 +255,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "Estas propriedades de exportação não estão nas propriedades selecionadas da fonte de dados: {0}. Adicione-as ou remova-as do mapeamento de exportação.",
                 ExportColumnsJsonDescription: "Insira um objeto JSON que mapeie nomes de propriedades gerenciadas para cabeçalhos de coluna CSV. Exemplo: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Insira um objeto JSON válido com pelo menos um mapeamento de propriedade gerenciada para cabeçalho de coluna.",
+                ValidateJsonButtonLabel: "Validar JSON",
+                ExportColumnsJsonValid: "O JSON é válido e todas as propriedades mapeadas estão selecionadas.",
                 EnableDetails: "Habilitar detalhes",
                 DetailsButtonLabel: "Detalhes",
                 DetailsPanelHeader: "Detalhes",

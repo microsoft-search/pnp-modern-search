@@ -255,6 +255,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "Diese Exporteigenschaften fehlen in den ausgewählten Eigenschaften der Datenquelle: {0}. Fügen Sie sie hinzu oder entfernen Sie sie aus der Exportzuordnung.",
                 ExportColumnsJsonDescription: "Geben Sie ein JSON-Objekt ein, das verwaltete Eigenschaftsnamen den CSV-Spaltenüberschriften zuordnet. Beispiel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Geben Sie ein gültiges JSON-Objekt mit mindestens einer Zuordnung von verwalteter Eigenschaft zu Spaltenüberschrift ein.",
+                ValidateJsonButtonLabel: "JSON überprüfen",
+                ExportColumnsJsonValid: "Das JSON ist gültig und alle zugeordneten Eigenschaften sind ausgewählt.",
                 EnableDetails: "Details aktivieren",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",

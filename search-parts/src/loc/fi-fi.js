@@ -253,6 +253,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "Nämä vientiominaisuudet puuttuvat tietolähteen valituista ominaisuuksista: {0}. Lisää ne valittuihin ominaisuuksiin tai poista ne vientimäärityksestä.",
                 ExportColumnsJsonDescription: "Määritä JSON-objekti, joka yhdistää hallittujen ominaisuuksien nimet CSV-sarakkeiden otsikoihin. Esimerkki: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Anna kelvollinen JSON-objekti, jossa on vähintään yksi hallitun ominaisuuden ja sarakeotsikon määritys.",
+                ValidateJsonButtonLabel: "Vahvista JSON",
+                ExportColumnsJsonValid: "JSON on kelvollinen ja kaikki määritetyt ominaisuudet on valittu.",
                 EnableDetails: "Ota tiedot käyttöön",
                 DetailsButtonLabel: "Tiedot",
                 DetailsPanelHeader: "Tiedot",

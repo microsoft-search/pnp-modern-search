@@ -441,6 +441,14 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                     rows: 8,
                     validateOnFocusOut: true,
                     onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this.properties.exportColumns || '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
                 })
             ] : [])
         );

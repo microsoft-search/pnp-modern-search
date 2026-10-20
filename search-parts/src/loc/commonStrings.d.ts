@@ -254,6 +254,8 @@ declare interface ICommonStrings {
         ExportColumnsJsonDescription: string;
         ExportColumnsJsonValidationError: string;
         ExportColumnsMissingPropertiesError: string;
+        ValidateJsonButtonLabel: string;
+        ExportColumnsJsonValid: string;
         EnableDetails: string;
         DetailsButtonLabel: string;
         DetailsPanelHeader: string;
