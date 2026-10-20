@@ -772,13 +772,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const searchQuery = {
             Querytext: '*',
             Refiners: 'ManagedProperties(filter=50000/0/*,deephits=50000,sort=name/ascending)',
-            RowLimit: 1,
-            SortList: [
-                {
-                    Property: '[DocId]',
-                    Direction: 0
-                }
-            ]
+            RowLimit: 1
+            // No SortList here: sorting by [DocId] makes some tenants reject this query with HTTP 400 (#4994).
+            // The refiner spec above already sorts the managed properties by name.
         };
 
         const response = await this._spHttpClient.post(searchEndpointUrl, SPHttpClient.configurations.v1, {
