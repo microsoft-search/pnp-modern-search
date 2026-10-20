@@ -45,7 +45,7 @@ The built-in Handlebars **Cards**, **Details List**, **Simple list**, and **Slid
 1. Edit the Search Results web part and open its **Layouts** property-pane page.
 2. Enable **Enable download of current data as CSV** in the selected layout's settings. This toggle is off by default. It appears after **Enable download**, or after **Use Alternating Background Color** in Details List.
 3. In the **Export columns (JSON)** textbox that appears below the toggle, enter a JSON object mapping data-source property names to CSV column headers.
-4. Ensure the mapped properties are returned by the data source. For SharePoint Search, include the managed properties in **Selected properties**; the export mapping does not add them to the search request automatically.
+4. Ensure the mapped properties are returned by the data source. For SharePoint Search, include the managed properties in **Selected properties**; the export mapping does not add them to the search request automatically. Select **Validate JSON** below the textbox to check its current contents and confirm that every mapped property is selected, including edits that have not been accepted as a valid configuration. A dialog reports success or lists validation errors. This button is shown only when CSV export is enabled.
 5. Save the configuration. Users can then select **Export Search result** in the Results toolbar without selecting individual items or enabling **Allow items selection**.
 
 ![CSV export configuration showing the enabled export toggle and JSON column mapping](../../../assets/webparts/search-results/layouts/export-search-results-configuration.png){: .center}
@@ -144,4 +144,3 @@ In case you use a custom template, you can still benefit from this feature follo
 ```
 
 Handlebars [partials](https://handlebarsjs.com/guide/partials.html) are used behind the scenes and conditions are built dynamically using a recursive if/else structure.
-

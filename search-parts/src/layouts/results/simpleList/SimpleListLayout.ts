@@ -1,5 +1,5 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
+import { IPropertyPaneField, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'CommonStrings';
 import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
@@ -29,6 +29,8 @@ export interface ISimpleListLayoutProperties {
 }
 
 export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
+
+    private _exportColumnsDraft: string | undefined;
 
     protected supportsCsvExport = true;
 
@@ -76,12 +78,24 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
         if (this.properties.enableCsvExport) {
             propertyPaneFields.push(
                 PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
                     description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
                     multiline: true,
                     rows: 8,
                     validateOnFocusOut: true,
-                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
                 })
             );
         }

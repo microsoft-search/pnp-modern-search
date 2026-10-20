@@ -55,6 +55,8 @@ export interface ICardsLayoutProperties {
 
 export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
+    private _exportColumnsDraft: string | undefined;
+
     /**
      * Dynamically loaded components for property pane
      */
@@ -264,12 +266,24 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
         if (this.properties.enableCsvExport) {
             propertyPaneFields.push(
                 PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
                     description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
                     multiline: true,
                     rows: 8,
                     validateOnFocusOut: true,
-                    onGetErrorMessage: value => validateExportColumnsJson(value, availableFields)
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
                 })
             );
         }

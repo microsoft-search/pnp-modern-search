@@ -254,6 +254,8 @@ define([], function () {
                 ExportColumnsMissingPropertiesError: "Deze exporteigenschappen ontbreken in de geselecteerde eigenschappen van de gegevensbron: {0}. Voeg ze toe of verwijder ze uit de exportkoppeling.",
                 ExportColumnsJsonDescription: "Voer een JSON-object in dat beheerde eigenschapsnamen aan CSV-kolomkoppen koppelt. Voorbeeld: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
                 ExportColumnsJsonValidationError: "Voer een geldig JSON-object in met ten minste één koppeling tussen een beheerde eigenschap en een kolomkop.",
+                ValidateJsonButtonLabel: "JSON valideren",
+                ExportColumnsJsonValid: "De JSON is geldig en alle gekoppelde eigenschappen zijn geselecteerd.",
                 EnableDetails: "Details inschakelen",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
