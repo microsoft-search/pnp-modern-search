@@ -25,34 +25,40 @@ jest.mock("../services/tokenService/TokenService", () => ({
 }));
 
 import type { IDataFilter } from '@pnp/modern-search-extensibility';
+import { FilterComparisonOperator, FilterConditionOperator } from '@pnp/modern-search-extensibility';
 
 const { DataFilterHelper } = require('./DataFilterHelper') as typeof import('./DataFilterHelper');
+const dayjs = require('dayjs') as typeof import('dayjs');
 
 // Hex encoded UTF-8 representation of 'Avancé' as returned by SharePoint as a 'RefinementToken'
 const ACCENTED_HEX_TOKEN = '"ǂǂ4176616e63c3a9"';
 
 describe('DataFilterHelper.buildFqlRefinementString', () => {
-    it('decodes a single hex-encoded refinement token containing accented characters into a plain quoted string', () => {
+    it.each([
+        ['Avancé', ACCENTED_HEX_TOKEN],
+        ['Contoso', '"ǂǂ436f6e746f736f"'],
+        ['Stedfæstet', '"ǂǂ5374656466c3a673746574"']
+    ])('preserves the exact refinement token for %s', (name, value) => {
         const selectedFilters: IDataFilter[] = [
             {
                 filterName: 'RefinableString00',
                 operator: 'or' as IDataFilter['operator'],
                 values: [
-                    { name: 'Avancé', value: ACCENTED_HEX_TOKEN }
+                    { name, value, operator: FilterComparisonOperator.Eq }
                 ]
             }
         ];
 
         const result = DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined);
 
-        expect(result).toEqual(['RefinableString00:"Avancé"']);
+        expect(result).toEqual([`RefinableString00:${value}`]);
     });
 
-    it('decodes multiple hex-encoded refinement tokens containing accented characters into plain quoted strings', () => {
+    it.each([FilterConditionOperator.OR, FilterConditionOperator.AND])('preserves tokens when combining multiple selections with %s', operator => {
         const selectedFilters: IDataFilter[] = [
             {
                 filterName: 'RefinableString00',
-                operator: 'or' as IDataFilter['operator'],
+                operator,
                 values: [
                     { name: 'Avancé', value: ACCENTED_HEX_TOKEN },
                     { name: 'Essentiel', value: '"ǂǂ457373656e7469656c"' }
@@ -62,7 +68,80 @@ describe('DataFilterHelper.buildFqlRefinementString', () => {
 
         const result = DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined);
 
-        expect(result).toEqual(['RefinableString00:or("Avancé","Essentiel")']);
+        expect(result).toEqual([`RefinableString00:${operator}(${ACCENTED_HEX_TOKEN},"ǂǂ457373656e7469656c")`]);
+    });
+
+    it('preserves exact tokens restored from a JSON deep link rather than using the display label', () => {
+        const selectedFilters: IDataFilter[] = JSON.parse('[{"filterName":"RefinableString144","operator":"or","values":[{"name":"Localized status label","value":"\\"ǂǂ5374656466c3a673746574\\"","operator":0}]}]');
+
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined))
+            .toEqual(['RefinableString144:"ǂǂ5374656466c3a673746574"']);
+    });
+
+    it.each([false, true])('retains optional URL encoding for tokens (multiple selections: %s)', multiple => {
+        const selectedFilters: IDataFilter[] = [{
+            filterName: 'RefinableString00',
+            operator: 'or' as IDataFilter['operator'],
+            values: [
+                { name: 'Avancé', value: ACCENTED_HEX_TOKEN },
+                ...(multiple ? [{ name: 'Contoso', value: '"ǂǂ436f6e746f736f"' }] : [])
+            ]
+        }];
+
+        const expectedValues = selectedFilters[0].values.map(value => encodeURIComponent(value.value));
+        const expected = multiple ? `or(${expectedValues.join(',')})` : expectedValues[0];
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined, true))
+            .toEqual([`RefinableString00:${expected}`]);
+    });
+
+    it('keeps literal custom filter values unchanged', () => {
+        const selectedFilters: IDataFilter[] = [{
+            filterName: 'RefinableString00',
+            values: [{ name: 'Display label', value: '"Custom value"' }]
+        }];
+
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined))
+            .toEqual(['RefinableString00:"Custom value"']);
+    });
+
+    it('keeps Yes/No token conversion for single and multiple selections', () => {
+        const selectedFilters: IDataFilter[] = [{
+            filterName: 'RefinableYesNo00',
+            operator: 'or' as IDataFilter['operator'],
+            values: [{ name: 'Yes', value: '"ǂǂ54727565"' }]
+        }];
+
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined))
+            .toEqual(['RefinableYesNo00:true']);
+        selectedFilters[0].values.push({ name: 'No', value: '"ǂǂ46616c7365"' });
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined))
+            .toEqual(['RefinableYesNo00:or(true,false)']);
+    });
+
+    it('keeps single-ended and bounded date ranges', () => {
+        const selectedFilters: IDataFilter[] = [{
+            filterName: 'Created',
+            operator: 'and' as IDataFilter['operator'],
+            values: [{ name: 'From', value: '2026-01-01T00:00:00Z', operator: FilterComparisonOperator.Geq }]
+        }];
+
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, dayjs))
+            .toEqual(['Created:range(2026-01-01T00:00:00Z,max)']);
+        selectedFilters[0].values.push({ name: 'To', value: '2026-02-01T00:00:00Z', operator: FilterComparisonOperator.Lt });
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, dayjs))
+            .toEqual(['Created:range(2026-01-01T00:00:00Z,2026-02-01T00:00:00Z,from="GE",to="LT")']);
+    });
+
+    it('keeps hierarchical taxonomy parent and descendant expansion', () => {
+        const parentToken = '"ǂǂ4750507c2331323334353637383961626364656630313233343536373839616263646566"';
+        const exactToken = '"ǂǂ4750307c2331323334353637383961626364656630313233343536373839616263646566"';
+        const selectedFilters: IDataFilter[] = [{
+            filterName: 'RefinableString01',
+            values: [{ name: 'Parent term', value: parentToken }]
+        }];
+
+        expect(DataFilterHelper.buildFqlRefinementString(selectedFilters, undefined))
+            .toEqual([`RefinableString01:or(${parentToken},${exactToken})`]);
     });
 
     it('leaves taxonomy (GP0) hex-encoded tokens untouched', () => {
