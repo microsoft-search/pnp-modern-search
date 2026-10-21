@@ -42,6 +42,12 @@ The filter settings are as follow:
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
 
+### Exact text refiner matching
+
+For SharePoint Search, selected text refiner values retain the original refinement tokens returned by SharePoint, including tokens containing accented characters. These tokens are sent in `RefinementFilters` using FQL syntax rather than converted into plain-text search expressions. This keeps selecting a value such as `Contoso` from also matching a different refiner value such as `Not Contoso`.
+
+Multiple selected values continue to use the configured **Operator between values** (OR/AND). Date ranges, Yes/No filters, and hierarchical taxonomy selections retain their existing handling. Custom filters that supply literal text instead of SharePoint refinement tokens are not automatically converted into exact-match tokens.
+
 ### Refiner value limit warning
 
 Use **Show warning when limit is reached** together with **# of values** when a filter can return many refiner or aggregation values.
