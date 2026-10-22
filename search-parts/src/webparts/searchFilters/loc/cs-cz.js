@@ -61,7 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
-                    StaticPeopleTemplate: "Statická šablona osoby",
+                    StaticPeopleTemplate: "Osoby",
                     TaxonomyPickerTemplate: "Výběr taxonomie",
                     HierarchicalFilterTemplate: "Hierarchický filtr"
                 },
