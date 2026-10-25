@@ -84,6 +84,22 @@
     }
 }
 
+.filterSettingsTable {
+    min-width: 1600px !important;
+
+    :global {
+        .PropertyFieldCollectionData__panel__table-head > span:nth-child(2),
+        .PropertyFieldCollectionData__panel__table-row > span:nth-child(2) {
+            min-width: 200px;
+        }
+
+        .PropertyFieldCollectionData__panel__table-head > span:nth-child(3),
+        .PropertyFieldCollectionData__panel__table-row > span:nth-child(3) {
+            min-width: 260px;
+        }
+    }
+}
+
 // Restore broken native styles for "No data" label and action buttons
 // in all PropertyFieldCollectionData panels after FluentUI/SPFx CSS upgrades.
 :global {
