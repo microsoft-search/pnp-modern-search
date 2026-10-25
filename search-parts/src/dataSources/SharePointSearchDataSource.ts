@@ -46,6 +46,7 @@ import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 const HIDDEN_TAXONOMY_REFINER_VALUE_REGEX = /^(GT0|GP0|GTSet|GPP)\|#/i;
+const HIDDEN_TERM_SET_REFINER_VALUE_REGEX = /^(GTSet|GPP)\|#/i;
 const EDIT_MODE_REFINER_LIMIT = 100;
 
 export enum BuiltinSourceIds {
@@ -1324,10 +1325,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         } else {
                             // If the term already exists (duplicate from different site/language), 
                             // combine the FQL filter values with OR to match all variants,
-                            // but keep the original count (don't double-count results)
+                            // and keep the highest count (summing could double-count items tagged with several variants)
                             const existingValue = updatedValues[existingFilterIdx].value;
                             if (existingValue !== fqlFilterValue && existingValue.indexOf(fqlFilterValue) === -1) {
                                 updatedValues[existingFilterIdx].value = `or(${existingValue},${fqlFilterValue})`;
+                            }
+                            if ((value.count ?? 0) > (updatedValues[existingFilterIdx].count ?? 0)) {
+                                updatedValues[existingFilterIdx].count = value.count;
                             }
                         }
                     });
@@ -1456,6 +1460,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                 filter.values = filter.values.map((value) => {
 
+                    // Keep only terms (L0 or GP0). The crawl property ows_taxid_xxx return term sets too.
+                    // GP0 values should be kept as they represent actual terms when maxBuckets is used.
+                    // Check the raw token before the name is replaced by a label that could contain 'GPP' or 'GTSet'
+                    if (HIDDEN_TERM_SET_REFINER_VALUE_REGEX.test(`${value.name ?? ''}`.trim())) {
+                        return undefined;
+                    }
+
                     // Does a translation exist for that value?
                     const existingFilters = localizedTerms.filter((e) => { return e.uniqueIdentifier === value.value; });
 
@@ -1482,11 +1493,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         value.name = existingFilters[0].localizedTermLabel;
                     }
 
-                    // Keep only terms (L0 or GP0). The crawl property ows_taxid_xxx return term sets too.
-                    // GP0 values should be kept as they represent actual terms when maxBuckets is used
-                    if (!(/(GTSet|GPP)/i).test(value.name)) {
-                        return value;
-                    }
+                    return value;
 
                 }).filter(v => v); // Get non-null values
 
