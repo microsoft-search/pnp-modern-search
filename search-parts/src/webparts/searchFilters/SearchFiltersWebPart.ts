@@ -1086,7 +1086,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 panelDescription: webPartStrings.PropertyPane.DataFilterCollection.CustomizeFiltersDescription,
                 label: webPartStrings.PropertyPane.DataFilterCollection.CustomizeFiltersFieldLabel,
                 value: this.properties.filtersConfiguration,
-                tableClassName: commonStyles.slotTable,
+                tableClassName: `${commonStyles.slotTable} ${commonStyles.filterSettingsTable}`,
                 fields: [
                     {
                         id: 'displayValue',
