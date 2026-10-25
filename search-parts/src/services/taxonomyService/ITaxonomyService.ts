@@ -11,6 +11,12 @@ export interface ITaxonomyService {
     getTermsById(siteUrl: string, termIds: string[]): Promise<ITerm[]>;
 
     /**
+     * Gets the default language (LCID) of the default site collection term store
+     * @param siteUrl The site URL to use for the taxonomy session
+     */
+    getTermStoreDefaultLanguage(siteUrl: string): Promise<number>;
+
+    /**
      * Gets all terms from a term set using the current taxonomy context
      */
     getTermsByTermSetId(siteUrl: string, termSetId: string, termGroupId: string, cacheDurationDays?: number): Promise<ITerm[]>;

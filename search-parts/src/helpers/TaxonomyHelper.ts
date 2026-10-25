@@ -8,6 +8,10 @@ export class TaxonomyHelper {
         return /^#?(?:[0-9a-fA-F]{17,}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})$/.test(value);
     }
 
+    private static containsTaxonomyTokenMarker(value: string): boolean {
+        return /(?:L0|GP0|GPP|GT0|GTSet)\|#/i.test(value);
+    }
+
     private static isTaxonomyTokenPrefix(value: string): boolean {
         return /^(?:L0|GP0|GPP)$/i.test(value);
     }
@@ -74,6 +78,7 @@ export class TaxonomyHelper {
             && this.containsReadableLetter(cleanedValue)
             && !this.containsNonPrintableCharacter(cleanedValue)
             && !this.containsEncodedTokenMarker(cleanedValue)
+            && !this.containsTaxonomyTokenMarker(cleanedValue)
             && !this.isGuidLikeToken(cleanedValue)
             && !this.extractTaxonomyLabel(cleanedValue)
             && !this.extractClaimsLabel(cleanedValue)

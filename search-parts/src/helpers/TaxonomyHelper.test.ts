@@ -14,6 +14,12 @@ describe('TaxonomyHelper display labels', () => {
             .toBe('Alejandro Ahmed');
     });
 
+    it('does not classify a localized taxonomy refinement expression as a plain pipe label', () => {
+        // Issue #4981: the localized filter value must not outrank the term label
+        expect(TaxonomyHelper.isReadablePlainLabelWithPipe('or(GP0|#16a764e9-ab0f-47de-8edc-76abd9d54881,L0|#016a764e9-ab0f-47de-8edc-76abd9d54881)'))
+            .toBe(false);
+    });
+
     it('does not classify a people identity value as a plain pipe label', () => {
         expect(TaxonomyHelper.isReadablePlainLabelWithPipe('| Alejandro Ahmed | identity i:0#.f|membership|alejandro.ahmed@example.com'))
             .toBe(false);

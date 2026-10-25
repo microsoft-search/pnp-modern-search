@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import { IDataSourceData, BaseDataSource, ITokenService, ITemplateSlot, IDataFilterResult, IDataFilterResultValue, BuiltinTemplateSlots, FilterBehavior, FilterSortType, FilterSortDirection, FilterType } from "@pnp/modern-search-extensibility";
 import {
     IPropertyPaneGroup,
@@ -10,7 +10,7 @@ import {
     PropertyPaneSlider
 } from "@microsoft/sp-property-pane";
 import * as commonStrings from 'CommonStrings';
-import { ServiceScope, Guid, Text } from '@microsoft/sp-core-library';
+import { ServiceScope, Guid, Text, Log } from '@microsoft/sp-core-library';
 import { sortBy, isEmpty, uniq, cloneDeep } from "@microsoft/sp-lodash-subset";
 import { PagingBehavior } from "@pnp/modern-search-extensibility";
 import { DataSourceHelper } from '../helpers/DataSourceHelper';
@@ -46,6 +46,7 @@ import { PnPClientStorage } from "@pnp/common/storage";
 
 const TAXONOMY_REFINER_REGEX = /((L0|GP0)\|#.?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}))\|?/;
 const HIDDEN_TAXONOMY_REFINER_VALUE_REGEX = /^(GT0|GP0|GTSet|GPP)\|#/i;
+const HIDDEN_TERM_SET_REFINER_VALUE_REGEX = /^(GTSet|GPP)\|#/i;
 const EDIT_MODE_REFINER_LIMIT = 100;
 
 export enum BuiltinSourceIds {
@@ -262,10 +263,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         };
 
         if (!this.properties.enableLocalization) {
-            data.filters = this.removeHiddenTaxonomyRefinerValues(data.filters || []);
+            const rawFilters = data.filters || [];
+            data.filters = this.removeHiddenTaxonomyRefinerValues(rawFilters);
+            this.logRefinerCounts(dataContext, data.filters);
+            data.filters = await this._getMergedTaxonomyFilters(rawFilters, data.filters);
+        } else {
+            this.logRefinerCounts(dataContext, data.filters || []);
         }
-
-        this.logRefinerCounts(dataContext, data.filters || []);
 
         // Translates taxonomy refiners and result values by using terms ID if applicable
         if (this.properties.enableLocalization) {
@@ -286,6 +290,30 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ...filter,
             values: (filter.values || []).filter((value) => !this.isHiddenTaxonomyRefinerValueName(value?.name))
         }));
+    }
+
+    /**
+     * When localization is disabled, the same term can be indexed with a different label per site language
+     * (e.g. 'L0|#0<id>|Finance' and 'L0|#0<id>|Økonomi'). Merge those variants by term ID and display the
+     * page language label (or the term store default language label if missing) so each term is shown once.
+     * @param rawFilters the refiners as returned by SharePoint search (including hidden GP0/GTSet values)
+     * @param fallbackFilters the refiners to return if the taxonomy lookup fails
+     */
+    private async _getMergedTaxonomyFilters(rawFilters: IDataFilterResult[], fallbackFilters: IDataFilterResult[]): Promise<IDataFilterResult[]> {
+        const hasTaxonomyValues = rawFilters.some(filter => (filter.values || []).some(value => TAXONOMY_REFINER_REGEX.test(`${value?.name ?? ''}`)));
+        if (!hasTaxonomyValues) {
+            return fallbackFilters;
+        }
+
+        try {
+            // Keep the metadata computed on the fallback filters (e.g. max buckets info) but use the raw values
+            const filtersToMerge = rawFilters.map((rawFilter, idx) => ({ ...fallbackFilters[idx], values: rawFilter.values }));
+            const mergedFilters = await this._getLocalizedFilters(filtersToMerge, this._currentLocaleId, true);
+            return this.removeHiddenTaxonomyRefinerValues(mergedFilters);
+        } catch (error) {
+            Log.warn('SharePointSearchDataSource', `Unable to resolve taxonomy default labels for refiners: ${error}`);
+            return fallbackFilters;
+        }
     }
 
     private isHiddenTaxonomyRefinerValueName(valueName: string): boolean {
@@ -1237,12 +1265,15 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * By default SharePoint stores the taxonomy values according to the current site language. Because we can't create a communication site in French (as of 08/12/2017)
      * we need to do the translation afterwards
      * @param rawFilters The raw refinement results to translate coming from SharePoint search results
-     * @param lcid the current culture UI number (ex: '1044')
+     * @param lcid the current culture UI number (ex: '1044'). Falls back to the term store default language label when the term has no label for it
+     * @param mergeTermVariantsOnly true when localization is disabled: only taxonomy values are processed and unknown terms keep their indexed label
      */
-    private async _getLocalizedFilters(rawFilters: IDataFilterResult[], lcid: number): Promise<IDataFilterResult[]> {
+    private async _getLocalizedFilters(rawFilters: IDataFilterResult[], lcid: number, mergeTermVariantsOnly: boolean = false): Promise<IDataFilterResult[]> {
         let termsToLocalize: { uniqueIdentifier: string, termId: string, localizedTermLabel: string }[] = [];
         let updatedFilters: IDataFilterResult[] = [];
         let localizedTerms = [];
+        // Label found in the indexed value, used as fallback when the term no longer exists in the term store
+        const indexedLabelByTermId = new Map<string, string>();
 
         // 1. Break down multi value strings like property bag properties formated with ';' into single filter value entries
         // The ';' is a reserved character so it can't appear in taxonomy labels
@@ -1274,6 +1305,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         // Using the GP0 refinement will ensure content will be filtered regardless of translations
                         const strippedTerm = matches[1];
 
+                        const indexedLabel = term.substring(matches.index + matches[0].length).trim();
+                        if (indexedLabel && !indexedLabelByTermId.has(matches[3])) {
+                            indexedLabelByTermId.set(matches[3], indexedLabel);
+                        }
+
                         // Use FQL expression here to get the correct output. Otherwise a full match is performed
                         const fqlFilterValue = `"ǂǂ${StringHelper._bytesToHex(StringHelper._stringToUTF8Bytes(term))}"`;
                         const existingFilterIdx = updatedValues.map(updatedValue => updatedValue.name).indexOf(strippedTerm);
@@ -1289,15 +1325,18 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         } else {
                             // If the term already exists (duplicate from different site/language), 
                             // combine the FQL filter values with OR to match all variants,
-                            // but keep the original count (don't double-count results)
+                            // and keep the highest count (summing could double-count items tagged with several variants)
                             const existingValue = updatedValues[existingFilterIdx].value;
                             if (existingValue !== fqlFilterValue && existingValue.indexOf(fqlFilterValue) === -1) {
                                 updatedValues[existingFilterIdx].value = `or(${existingValue},${fqlFilterValue})`;
                             }
+                            if ((value.count ?? 0) > (updatedValues[existingFilterIdx].count ?? 0)) {
+                                updatedValues[existingFilterIdx].count = value.count;
+                            }
                         }
                     });
                 } else {
-                    if (filterResult.filterName.toString().indexOf("RefinableYesNo") > -1) {
+                    if (!mergeTermVariantsOnly && filterResult.filterName.toString().indexOf("RefinableYesNo") > -1) {
                         let localizedValue = commonStrings.General[value.name] || value.name
                         value.name = localizedValue;
                         updatedValues.push(value);
@@ -1351,7 +1390,26 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
             // Get the terms from taxonomy
             // If a term doesn't exist anymore, it won't be retrieved by the API so the termValues count could be less than termsToLocalize count
-            const termValues = await this._taxonomyService.getTermsById(this._pageContext.site.absoluteUrl, termsToLocalize.map((t) => { return t.termId; }));
+            const siteUrl = this._pageContext.site.absoluteUrl;
+            const termValues = await this._taxonomyService.getTermsById(siteUrl, termsToLocalize.map((t) => { return t.termId; }));
+
+            const getLabelsForLanguage = (term: ITerm, language: number): any[] => {
+                const labels = term["Labels"]._Child_Items_.filter((label: any) => label.Language === language);
+                // Prefer the default label over synonyms for that language
+                const defaultLabels = labels.filter((label: any) => label.IsDefaultForLanguage);
+                return defaultLabels.length > 0 ? defaultLabels : labels;
+            };
+
+            // Only query the term store default language when a term has no label for the page language
+            let termStoreDefaultLanguage: number;
+            const isPageLanguageMissing = termValues.some((term: ITerm) => getLabelsForLanguage(term, lcid).length === 0);
+            if (isPageLanguageMissing) {
+                try {
+                    termStoreDefaultLanguage = await this._taxonomyService.getTermStoreDefaultLanguage(siteUrl);
+                } catch (error) {
+                    Log.warn('SharePointSearchDataSource', `Unable to retrieve the term store default language: ${error}`);
+                }
+            }
 
             termsToLocalize.forEach((termToLocalize) => {
 
@@ -1368,11 +1426,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     // It supposes the 'Label' property has been selected in the underlying call
                     // A term always have a default label so the collection can't be empty
-                    let localizedLabel = termFromTaxonomy["Labels"]._Child_Items_.filter((label: any) => {
-                        return label.Language === lcid;
-                    });
+                    let localizedLabel = getLabelsForLanguage(termFromTaxonomy, lcid);
 
-                    // Term does not have a translation for this LCID, get the default label
+                    // Term does not have a translation for this LCID, use the term store default language label
+                    if (localizedLabel.length === 0 && termStoreDefaultLanguage !== undefined) {
+                        localizedLabel = getLabelsForLanguage(termFromTaxonomy, termStoreDefaultLanguage);
+                    }
+
                     if (localizedLabel.length === 0) {
                         localizedLabel = termFromTaxonomy["Labels"]._Child_Items_;
                     }
@@ -1384,10 +1444,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     });
 
                 } else {
+                    const indexedLabel = indexedLabelByTermId.get(termToLocalize.termId);
                     localizedTerms.push({
                         uniqueIdentifier: termToLocalize.uniqueIdentifier,
                         termId: termToLocalize.termId,
-                        localizedTermLabel: Text.format(commonStrings.DataSources.SharePointSearch.TermNotFound, termToLocalize.termId)
+                        localizedTermLabel: mergeTermVariantsOnly && indexedLabel
+                            ? indexedLabel
+                            : Text.format(commonStrings.DataSources.SharePointSearch.TermNotFound, termToLocalize.termId)
                     });
                 }
             });
@@ -1396,6 +1459,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             updatedFilters = updatedFilters.map((filter) => {
 
                 filter.values = filter.values.map((value) => {
+
+                    // Keep only terms (L0 or GP0). The crawl property ows_taxid_xxx return term sets too.
+                    // GP0 values should be kept as they represent actual terms when maxBuckets is used.
+                    // Check the raw token before the name is replaced by a label that could contain 'GPP' or 'GTSet'
+                    if (HIDDEN_TERM_SET_REFINER_VALUE_REGEX.test(`${value.name ?? ''}`.trim())) {
+                        return undefined;
+                    }
 
                     // Does a translation exist for that value?
                     const existingFilters = localizedTerms.filter((e) => { return e.uniqueIdentifier === value.value; });
@@ -1423,11 +1493,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                         value.name = existingFilters[0].localizedTermLabel;
                     }
 
-                    // Keep only terms (L0 or GP0). The crawl property ows_taxid_xxx return term sets too.
-                    // GP0 values should be kept as they represent actual terms when maxBuckets is used
-                    if (!(/(GTSet|GPP)/i).test(value.name)) {
-                        return value;
-                    }
+                    return value;
 
                 }).filter(v => v); // Get non-null values
 
@@ -1436,16 +1502,20 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         }
 
         // Remove duplicate filter values (same name and value) that might appear due to multi-source indexing
+        // Keep the highest count: the language agnostic GP0 bucket counts every item tagged with the term
         updatedFilters = updatedFilters.map(filter => {
             const uniqueValues: IDataFilterResultValue[] = [];
-            const seenKeys = new Set<string>();
+            const uniqueValueIdxByKey = new Map<string, number>();
 
             filter.values.forEach(value => {
                 // Create a unique key combining name and value
                 const key = `${value.name}|||${value.value}`;
-                if (!seenKeys.has(key)) {
-                    seenKeys.add(key);
+                const existingIdx = uniqueValueIdxByKey.get(key);
+                if (existingIdx === undefined) {
+                    uniqueValueIdxByKey.set(key, uniqueValues.length);
                     uniqueValues.push(value);
+                } else if ((value.count ?? 0) > (uniqueValues[existingIdx].count ?? 0)) {
+                    uniqueValues[existingIdx] = value;
                 }
             });
 
