@@ -15,6 +15,8 @@ export class TaxonomyService implements ITaxonomyService {
 
     private readonly guidPattern = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 
+    private readonly termStoreDefaultLanguageBySite: Map<string, Promise<number>> = new Map<string, Promise<number>>();
+
     /**
      * The SPHttpClient instance
      */
@@ -73,6 +75,52 @@ export class TaxonomyService implements ITaxonomyService {
         }
 
         return terms;
+    }
+
+    public getTermStoreDefaultLanguage(siteUrl: string): Promise<number> {
+        const cacheKey = `${siteUrl ?? ''}`.toLowerCase();
+        let defaultLanguage = this.termStoreDefaultLanguageBySite.get(cacheKey);
+
+        if (!defaultLanguage) {
+            defaultLanguage = this.fetchTermStoreDefaultLanguage(siteUrl);
+            this.termStoreDefaultLanguageBySite.set(cacheKey, defaultLanguage);
+            // Do not cache failures so a transient error can be retried on the next query
+            defaultLanguage.catch(() => this.termStoreDefaultLanguageBySite.delete(cacheKey));
+        }
+
+        return defaultLanguage;
+    }
+
+    private async fetchTermStoreDefaultLanguage(siteUrl: string): Promise<number> {
+        const clientServiceUrl = `${siteUrl}/_vti_bin/client.svc/ProcessQuery`;
+        const data = `<Request xmlns="http://schemas.microsoft.com/sharepoint/clientquery/2009" SchemaVersion="15.0.0.0" LibraryVersion="16.0.0.0" ApplicationName="pnp"><Actions><ObjectPath Id="1" ObjectPathId="0"/><ObjectPath Id="3" ObjectPathId="2"/><Query Id="4" ObjectPathId="2"><Query SelectAllProperties="false"><Properties><Property Name="DefaultLanguage" ScalarProperty="true"/></Properties></Query></Query></Actions><ObjectPaths><StaticMethod Id="0" Name="GetTaxonomySession" TypeId="{981cbc68-9edc-4f8d-872f-71146fcbb84f}"/><Method Id="2" ParentId="0" Name="GetDefaultSiteCollectionTermStore"/></ObjectPaths></Request>`;
+
+        const response = await this.spHttpClient.post(clientServiceUrl, SPHttpClient.configurations.v1, {
+            headers: {
+                'Accept': 'application/json;odata.metadata=none',
+                'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
+                'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG,
+                'Content-Type': 'application/xml'
+            },
+            body: data
+        });
+
+        if (response.status !== 200) {
+            Log.error(TaxonomyService_ServiceKey, new Error(response.statusText));
+            throw new Error(response.statusText);
+        }
+
+        const responseJson = await response.json();
+        const termStore = Array.isArray(responseJson)
+            ? responseJson.find((r: { [x: string]: unknown; }) => r && r['_ObjectType_'] === 'SP.Taxonomy.TermStore')
+            : undefined;
+        const defaultLanguage = termStore?.DefaultLanguage;
+
+        if (typeof defaultLanguage !== 'number') {
+            throw new Error('Unable to resolve the term store default language.');
+        }
+
+        return defaultLanguage;
     }
 
     /**
