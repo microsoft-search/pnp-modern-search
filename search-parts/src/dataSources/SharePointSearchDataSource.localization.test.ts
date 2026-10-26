@@ -87,20 +87,46 @@ describe('SharePointSearchDataSource taxonomy refiner labels', () => {
         ]
     }];
 
-    it('merges language variants per term, keeps the highest count and uses the page language label', async () => {
-        const dataSource = createDataSource();
+    it('merges language variants per term, keeps the highest count and uses the term store default language label when localization is off', async () => {
+        const dataSource = createDataSource(1030);
+
+        const [filter] = await dataSource._getLocalizedFilters(rawFilters(), undefined, true);
+
+        expect(filter.values.map((v: any) => [v.name, v.count])).toEqual([['Økonomi', 3], ['Infrastruktur', 1]]);
+        expect(filter.values[0].value).toBe(`or(GP0|#${FINANCE_ID},L0|#0${FINANCE_ID})`);
+    });
+
+    it('ignores the page language when localization is off', async () => {
+        const dataSource = createDataSource(1030);
 
         const [filter] = await dataSource._getLocalizedFilters(rawFilters(), 1033, true);
 
-        expect(filter.values.map((v: any) => [v.name, v.count])).toEqual([['Finance', 3], ['Infrastructure', 1]]);
-        expect(filter.values[0].value).toBe(`or(GP0|#${FINANCE_ID},L0|#0${FINANCE_ID})`);
+        expect(filter.values.map((v: any) => v.name)).toEqual(['Økonomi', 'Infrastruktur']);
+        expect(dataSource._taxonomyService.getTermStoreDefaultLanguage).toHaveBeenCalled();
+    });
+
+    it('uses the first label when localization is off and the term store default language cannot be retrieved', async () => {
+        const dataSource = createDataSource();
+        dataSource._taxonomyService.getTermStoreDefaultLanguage = jest.fn().mockRejectedValue(new Error('boom'));
+
+        const [filter] = await dataSource._getLocalizedFilters(rawFilters(), undefined, true);
+
+        expect(filter.values.map((v: any) => v.name)).toEqual(['Økonomi', 'Infrastruktur']);
+    });
+
+    it('uses the page language label when localization is on', async () => {
+        const dataSource = createDataSource(1030);
+
+        const [filter] = await dataSource._getLocalizedFilters(rawFilters(), 1033);
+
+        expect(filter.values.map((v: any) => v.name)).toEqual(['Finance', 'Infrastructure']);
         expect(dataSource._taxonomyService.getTermStoreDefaultLanguage).not.toHaveBeenCalled();
     });
 
-    it('falls back to the term store default language when the page language has no label', async () => {
+    it('falls back to the term store default language when localization is on and the page language has no label', async () => {
         const dataSource = createDataSource(1030);
 
-        const [filter] = await dataSource._getLocalizedFilters(rawFilters(), 1036, true);
+        const [filter] = await dataSource._getLocalizedFilters(rawFilters(), 1036);
 
         expect(filter.values.map((v: any) => v.name)).toEqual(['Økonomi', 'Infrastruktur']);
     });

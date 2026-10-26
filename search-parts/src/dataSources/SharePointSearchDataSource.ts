@@ -295,7 +295,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     /**
      * When localization is disabled, the same term can be indexed with a different label per site language
      * (e.g. 'L0|#0<id>|Finance' and 'L0|#0<id>|Økonomi'). Merge those variants by term ID and display the
-     * page language label (or the term store default language label if missing) so each term is shown once.
+     * term store default language label (regardless of the page language) so each term is shown once.
      * @param rawFilters the refiners as returned by SharePoint search (including hidden GP0/GTSet values)
      * @param fallbackFilters the refiners to return if the taxonomy lookup fails
      */
@@ -308,7 +308,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         try {
             // Keep the metadata computed on the fallback filters (e.g. max buckets info) but use the raw values
             const filtersToMerge = rawFilters.map((rawFilter, idx) => ({ ...fallbackFilters[idx], values: rawFilter.values }));
-            const mergedFilters = await this._getLocalizedFilters(filtersToMerge, this._currentLocaleId, true);
+            const mergedFilters = await this._getLocalizedFilters(filtersToMerge, undefined, true);
             return this.removeHiddenTaxonomyRefinerValues(mergedFilters);
         } catch (error) {
             Log.warn('SharePointSearchDataSource', `Unable to resolve taxonomy default labels for refiners: ${error}`);
@@ -1266,7 +1266,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
      * we need to do the translation afterwards
      * @param rawFilters The raw refinement results to translate coming from SharePoint search results
      * @param lcid the current culture UI number (ex: '1044'). Falls back to the term store default language label when the term has no label for it
-     * @param mergeTermVariantsOnly true when localization is disabled: only taxonomy values are processed and unknown terms keep their indexed label
+     * @param mergeTermVariantsOnly true when localization is disabled: only taxonomy values are processed, labels always use the term store default language (lcid is ignored) and unknown terms keep their indexed label
      */
     private async _getLocalizedFilters(rawFilters: IDataFilterResult[], lcid: number, mergeTermVariantsOnly: boolean = false): Promise<IDataFilterResult[]> {
         let termsToLocalize: { uniqueIdentifier: string, termId: string, localizedTermLabel: string }[] = [];
@@ -1400,10 +1400,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 return defaultLabels.length > 0 ? defaultLabels : labels;
             };
 
-            // Only query the term store default language when a term has no label for the page language
+            // When localization is disabled, the term store default language always drives the label.
+            // Otherwise, only query it when a term has no label for the page language
             let termStoreDefaultLanguage: number;
-            const isPageLanguageMissing = termValues.some((term: ITerm) => getLabelsForLanguage(term, lcid).length === 0);
-            if (isPageLanguageMissing) {
+            const needsTermStoreDefaultLanguage = mergeTermVariantsOnly || termValues.some((term: ITerm) => getLabelsForLanguage(term, lcid).length === 0);
+            if (needsTermStoreDefaultLanguage) {
                 try {
                     termStoreDefaultLanguage = await this._taxonomyService.getTermStoreDefaultLanguage(siteUrl);
                 } catch (error) {
@@ -1426,7 +1427,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
                     // It supposes the 'Label' property has been selected in the underlying call
                     // A term always have a default label so the collection can't be empty
-                    let localizedLabel = getLabelsForLanguage(termFromTaxonomy, lcid);
+                    let localizedLabel = mergeTermVariantsOnly ? [] : getLabelsForLanguage(termFromTaxonomy, lcid);
 
                     // Term does not have a translation for this LCID, use the term store default language label
                     if (localizedLabel.length === 0 && termStoreDefaultLanguage !== undefined) {
