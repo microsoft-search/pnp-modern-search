@@ -153,6 +153,13 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.enableDetails = this.properties.enableDetails ?? legacyEnableDetails ?? false;
 
         if (this.editMode) {
+            await this.loadPropertyPaneResources();
+        }
+    }
+
+    public async loadPropertyPaneResources(): Promise<void> {
+
+        if (!this._propertyPaneWebPartInformation) {
             const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
                 /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
                 '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'

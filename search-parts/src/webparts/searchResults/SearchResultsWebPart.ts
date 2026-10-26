@@ -121,6 +121,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _customCollectionFieldType: any = null;
     private _textDialogComponent: any = null;
     private _propertyPanePropertyEditor = null;
+    private _propertyPaneResourcesRequested = false;
 
     private _connectionsPropertyPaneBuilderClass: typeof ConnectionsPropertyPaneBuilderType = null;
 
@@ -352,13 +353,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
                 if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                    this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    const dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    await this.loadComponentPropertyPaneResources(dataSource);
+                    this.dataSource = dataSource;
                     this.lastDataSourceKey = this.properties.dataSourceKey;
                 }
 
                 // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
                 if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                    this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    const layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    await this.loadComponentPropertyPaneResources(layout);
+                    this.layout = layout;
                     this.lastLayoutKey = this.properties.selectedLayoutKey;
                 }
 
@@ -1318,7 +1323,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async loadPropertyPaneResources(): Promise<void> {
 
+        this._propertyPaneResourcesRequested = true;
         await this.loadCommonPropertyPaneResources();
+        await this.loadComponentPropertyPaneResources(this.dataSource);
+        await this.loadComponentPropertyPaneResources(this.layout);
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
@@ -1412,6 +1420,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._propertyFieldMessage = PropertyFieldMessage;
 
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
+    }
+
+    /**
+     * Built-in data sources and layouts only load their property pane controls when initialized in edit mode.
+     * Single-part app pages switch to edit mode without reinitializing the Web Part, so load them on demand.
+     */
+    private async loadComponentPropertyPaneResources(component: IDataSource | ILayout): Promise<void> {
+        if (this._propertyPaneResourcesRequested) {
+            await (component as { loadPropertyPaneResources?: () => Promise<void> })?.loadPropertyPaneResources?.();
+        }
     }
 
     /**

@@ -232,6 +232,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
+            await this.loadPropertyPaneResources();
+        }
+
+        this.initProperties();
+    }
+
+    public async loadPropertyPaneResources(): Promise<void> {
+
+        if (!this._propertyPaneWebPartInformation) {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
             const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
                 /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -247,8 +256,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             this._propertyFieldCollectionData = PropertyFieldCollectionData;
             this._customCollectionFieldType = CustomCollectionFieldType;
         }
-
-        this.initProperties();
     }
 
     public getItemCount(): number {
