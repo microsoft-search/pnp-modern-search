@@ -6,6 +6,8 @@ export interface ISearchBoxAutoCompleteProps {
   suggestionProviders: ISuggestionProvider[];
   suggestionProviderContext?: ISuggestionProviderContext;
   inputValue: string;
+  inputIsDecoded?: boolean;
+  searchStateVersion?: number;
   onSearch: (queryText: string, isReset?: boolean) => void;
   domElement: HTMLElement;
 

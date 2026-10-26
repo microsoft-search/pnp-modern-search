@@ -1,5 +1,18 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Toggle: "Caixa de pesquisa avançada",
+            All: "Tudo",
+            Scope: "Escopo da pesquisa",
+            Scopes: "Configurar escopos de pesquisa",
+            Key: "Chave do escopo (valor da URL)",
+            Label: "Rótulo de exibição",
+            Property: "Propriedade gerenciada consultável",
+            QueryParameter: "Parâmetro de URL do texto da pesquisa",
+            ScopeParameter: "Parâmetro de URL do escopo da pesquisa",
+            InvalidConfiguration: "Configurações de pesquisa avançada inválidas. Use chaves de escopo exclusivas (diferentes de 'all'), rótulos preenchidos, nomes de propriedades gerenciadas válidos e nomes de parâmetros de URL distintos.",
+            InvalidScope: "Escopo desconhecido ou valor de propriedade não compatível. Verifique o valor do escopo na URL. Pesquisas por propriedade permitem um único * no final do texto, mas nenhum outro curinga, aspas duplas ou barras invertidas."
+        },
         Tokens: {
             SelectTokenLabel: "Escolha uma marcação...",
             Context: {

@@ -1153,10 +1153,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
+        // Search Box sources publish query text, not URL-encoded values.
+        const isSearchBoxQuery = this.properties.queryText?.reference?.split(':')[1] === ComponentType.SearchBox;
         if (this.properties.queryText && this.properties.useInputQueryText) {
             try {
                 inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
-                if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
+                if (!isSearchBoxQuery && inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
 
@@ -1175,7 +1177,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
         } else if (typeof (inputQueryFromDataSource) === 'string') {
-            inputQueryText = decodeURIComponent(inputQueryFromDataSource);
+            inputQueryText = isSearchBoxQuery ? inputQueryFromDataSource : decodeURIComponent(inputQueryFromDataSource);
         }
 
         //Check if any custom query modifier is active and modify the inputQueryText

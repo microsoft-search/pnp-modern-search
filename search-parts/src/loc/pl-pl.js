@@ -1,5 +1,18 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Toggle: "Zaawansowane pole wyszukiwania",
+            All: "Wszystko",
+            Scope: "Zakres wyszukiwania",
+            Scopes: "Konfiguruj zakresy wyszukiwania",
+            Key: "Klucz zakresu (wartość URL)",
+            Label: "Etykieta wyświetlana",
+            Property: "Właściwość zarządzana dostępna w zapytaniach",
+            QueryParameter: "Parametr URL tekstu wyszukiwania",
+            ScopeParameter: "Parametr URL zakresu wyszukiwania",
+            InvalidConfiguration: "Nieprawidłowe ustawienia wyszukiwania zaawansowanego. Użyj unikatowych kluczy zakresu (innych niż 'all'), niepustych etykiet, prawidłowych nazw właściwości zarządzanych i różnych nazw parametrów URL.",
+            InvalidScope: "Nieznany zakres lub nieobsługiwana wartość właściwości. Sprawdź wartość zakresu w adresie URL. Wyszukiwania według właściwości dopuszczają jedną * na końcu tekstu, ale nie inne symbole wieloznaczne, podwójne cudzysłowy ani ukośniki odwrotne."
+        },
         Tokens: {
             SelectTokenLabel: "Wybierz token...",
             Context: {

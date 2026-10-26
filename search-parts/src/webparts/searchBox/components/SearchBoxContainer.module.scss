@@ -2,6 +2,17 @@
 
   position: relative;
 
+  .advancedSearchRow {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+  }
+
+  .advancedSearchInput {
+      flex: 1 1 auto;
+      min-width: 0;
+  }
+
   .searchBoxWrapper {
       display: flex;
       border: 1px solid #c2c2c2;

@@ -1,5 +1,18 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Toggle: "Tarkennettu hakukenttä",
+            All: "Kaikki",
+            Scope: "Haun kohde",
+            Scopes: "Määritä haun kohteet",
+            Key: "Kohteen avain (URL-arvo)",
+            Label: "Näyttönimi",
+            Property: "Kyseltävä hallittu ominaisuus",
+            QueryParameter: "Hakutekstin URL-parametri",
+            ScopeParameter: "Haun kohteen URL-parametri",
+            InvalidConfiguration: "Virheelliset tarkennetun haun asetukset. Käytä yksilöllisiä kohdeavaimia (ei 'all'), täytettyjä nimiä, kelvollisia hallittujen ominaisuuksien nimiä ja eri URL-parametrien nimiä.",
+            InvalidScope: "Tuntematon haun kohde tai ominaisuusarvo, jota ei tueta. Tarkista kohteen URL-arvo. Ominaisuushaku sallii yhden *-merkin tekstin lopussa, mutta ei muita yleismerkkejä, lainausmerkkejä tai kenoviivoja."
+        },
         Tokens: {
             SelectTokenLabel: "Valitse token...",
             Context: {

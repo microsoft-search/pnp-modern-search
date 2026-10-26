@@ -1,5 +1,18 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Toggle: "Avansert søkeboks",
+            All: "Alle",
+            Scope: "Søkeområde",
+            Scopes: "Konfigurer søkeområder",
+            Key: "Områdenøkkel (URL-verdi)",
+            Label: "Visningsnavn",
+            Property: "Administrert egenskap som kan spørres",
+            QueryParameter: "URL-parameter for søketekst",
+            ScopeParameter: "URL-parameter for søkeområde",
+            InvalidConfiguration: "Ugyldige innstillinger for avansert søk. Bruk unike områdenøkler (ikke 'all'), utfylte navn, gyldige administrerte egenskapsnavn og forskjellige URL-parameternavn.",
+            InvalidScope: "Ukjent søkeområde eller egenskapsverdi som ikke støttes. Kontroller områdeverdien i URL-en. Egenskapssøk tillater én avsluttende * etter tekst, men ingen andre jokertegn, doble anførselstegn eller omvendte skråstreker."
+        },
         Tokens: {
             SelectTokenLabel: "Velg token…",
             Context: {

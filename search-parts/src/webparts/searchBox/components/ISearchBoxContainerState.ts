@@ -1,4 +1,5 @@
 export interface ISearchBoxContainerState {
+    selectedScopeKey: string;
 
     /**
      * The current value of the input string

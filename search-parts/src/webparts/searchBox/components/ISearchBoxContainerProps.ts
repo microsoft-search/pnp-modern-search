@@ -2,13 +2,19 @@ import { PageOpenBehavior, QueryPathBehavior } from "../../../helpers/UrlHelper"
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { ISuggestionProvider, ISuggestionProviderContext, ITokenService } from "@pnp/modern-search-extensibility";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
+import { ISearchScope } from "../../../helpers/SearchScopeHelper";
 
 export interface ISearchBoxContainerProps {
+    advancedSearch?: boolean;
+    searchScopes?: ISearchScope[];
+    selectedScopeKey?: string;
+    scopeQueryStringParameter?: string;
+    searchStateVersion?: number;
 
     /**
      * Callback handler when the search query text is submitted
      */
-    onSearch: (searchQueryText: string) => void;
+    onSearch: (searchQueryText: string, scopeKey?: string) => void;
 
     /**
      * Flag indicating in the search query text should be sent to an other page

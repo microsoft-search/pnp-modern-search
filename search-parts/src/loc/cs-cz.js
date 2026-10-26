@@ -1,5 +1,18 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Toggle: "Rozšířené vyhledávací pole",
+            All: "Vše",
+            Scope: "Rozsah hledání",
+            Scopes: "Konfigurovat rozsahy hledání",
+            Key: "Klíč rozsahu (hodnota URL)",
+            Label: "Zobrazovaný název",
+            Property: "Dotazovatelná spravovaná vlastnost",
+            QueryParameter: "Parametr URL pro hledaný text",
+            ScopeParameter: "Parametr URL pro rozsah hledání",
+            InvalidConfiguration: "Neplatná nastavení rozšířeného hledání. Použijte jedinečné klíče rozsahu (ne 'all'), neprázdné názvy, platné názvy spravovaných vlastností a odlišné názvy parametrů URL.",
+            InvalidScope: "Neznámý rozsah hledání nebo nepodporovaná hodnota vlastnosti. Zkontrolujte hodnotu rozsahu v URL. Hledání podle vlastnosti povoluje jednu * na konci textu, ale žádné jiné zástupné znaky, dvojité uvozovky ani zpětná lomítka."
+        },
         Tokens: {
             SelectTokenLabel: "Vyberte token...",
             Context: {

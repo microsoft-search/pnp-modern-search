@@ -37,7 +37,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             hasRetrievedZeroTermSuggestions: false,
             isRetrievingZeroTermSuggestions: false,
             isRetrievingSuggestions: false,
-            searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
+            searchInputValue: props.inputIsDecoded ? (props.inputValue || '') : ((props.inputValue) ? decodeURIComponent(props.inputValue) : ''),
             termToSuggestFrom: null,
             errorMessage: null,
             isSearchExecuted: false
@@ -525,7 +525,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             }
         }
 
-        if (!isEqual(prevProps.inputValue, this.props.inputValue)) {
+        if (!isEqual(prevProps.inputValue, this.props.inputValue) || prevProps.searchStateVersion !== this.props.searchStateVersion) {
             // Reset the inout value
             this.setState({
                 searchInputValue: this.props.inputValue

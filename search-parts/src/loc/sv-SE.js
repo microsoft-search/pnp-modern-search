@@ -1,5 +1,18 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Toggle: "Avancerad sökruta",
+            All: "Alla",
+            Scope: "Sökomfång",
+            Scopes: "Konfigurera sökomfång",
+            Key: "Omfångsnyckel (URL-värde)",
+            Label: "Visningsnamn",
+            Property: "Hanterad egenskap som kan frågas",
+            QueryParameter: "URL-parameter för söktext",
+            ScopeParameter: "URL-parameter för sökomfång",
+            InvalidConfiguration: "Ogiltiga inställningar för avancerad sökning. Använd unika omfångsnycklar (inte 'all'), ifyllda namn, giltiga hanterade egenskapsnamn och olika URL-parameternamn.",
+            InvalidScope: "Okänt sökomfång eller egenskapsvärde som inte stöds. Kontrollera omfångsvärdet i URL:en. Egenskapssökningar tillåter en avslutande * efter text, men inga andra jokertecken, dubbla citattecken eller omvända snedstreck."
+        },
         Tokens: {
             SelectTokenLabel: "Välj tecken...",
             Context: {

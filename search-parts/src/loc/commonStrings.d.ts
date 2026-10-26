@@ -1,4 +1,17 @@
 declare interface ICommonStrings {
+    AdvancedSearch: {
+      Toggle: string;
+      All: string;
+      Scope: string;
+      Scopes: string;
+      Key: string;
+      Label: string;
+      Property: string;
+      QueryParameter: string;
+      ScopeParameter: string;
+      InvalidConfiguration: string;
+      InvalidScope: string;
+    };
     Tokens: {
       SelectTokenLabel: string;
       Context: {

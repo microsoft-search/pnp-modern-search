@@ -1,0 +1,151 @@
+jest.mock('./SearchBoxContainer.module.scss', () => ({}));
+jest.mock('./SearchBoxAutoComplete/SearchBoxAutoComplete', () => ({ default: () => null }));
+jest.mock('../../../components/StyledWebPartTitle', () => ({ StyledWebPartTitle: () => null }));
+jest.mock('../../../services/tokenService/TokenService', () => ({ BuiltinTokenNames: { inputQueryText: 'inputQueryText' } }));
+jest.mock('SearchBoxWebPartStrings', () => ({ SearchBox: { DefaultPlaceholder: 'Search', SearchButtonLabel: 'Search' } }), { virtual: true });
+jest.mock('CommonStrings', () => ({ AdvancedSearch: { All: 'All', Scope: 'Scope', InvalidScope: 'Invalid scope' } }), { virtual: true });
+jest.mock('@microsoft/sp-core-library', () => ({ DisplayMode: { Read: 1 } }));
+
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { act, Simulate } from 'react-dom/test-utils';
+import { DisplayMode } from '@microsoft/sp-core-library';
+import SearchBoxContainer from './SearchBoxContainer';
+import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
+import { PageOpenBehavior, QueryPathBehavior } from '../../../helpers/UrlHelper';
+
+const createProps = (overrides: Partial<ISearchBoxContainerProps> = {}): ISearchBoxContainerProps => ({
+    advancedSearch: true,
+    searchScopes: [{ key: 'caseId', label: 'CaseId', managedProperty: 'zfm_CaseNumber' }],
+    selectedScopeKey: 'all',
+    queryStringParameter: 'q',
+    scopeQueryStringParameter: 'scope',
+    inputValue: '',
+    onSearch: jest.fn(),
+    enableQuerySuggestions: false,
+    searchInNewPage: false,
+    reQueryOnClear: true,
+    pageUrl: 'https://example.com/search?keep=yes#section',
+    queryPathBehavior: QueryPathBehavior.URLFragment,
+    inputTemplate: '{inputQueryText}',
+    openBehavior: PageOpenBehavior.Self,
+    suggestionProviders: [],
+    numberOfSuggestionsPerGroup: 5,
+    themeVariant: undefined,
+    domElement: document.createElement('div'),
+    placeholderText: 'Search',
+    webPartTitleProps: { title: '', displayMode: DisplayMode.Read, updateProperty: jest.fn() },
+    tokenService: {
+        setTokenValue: jest.fn(),
+        getTokenValue: jest.fn(),
+        resolveTokens: jest.fn(async text => text),
+        getPageProperties: jest.fn(),
+        getUserProfileProperties: jest.fn()
+    },
+    ...overrides
+});
+
+describe('advanced Search Box', () => {
+    let host: HTMLDivElement;
+    let component: SearchBoxContainer;
+    const mount = (props: ISearchBoxContainerProps) => {
+        act(() => {
+            ReactDom.render(<SearchBoxContainer {...props} ref={value => { component = value; }} />, host);
+        });
+    };
+    beforeEach(() => {
+        host = document.createElement('div');
+        document.body.appendChild(host);
+    });
+    afterEach(() => {
+        act(() => { ReactDom.unmountComponentAtNode(host); });
+        host.remove();
+        jest.restoreAllMocks();
+    });
+
+    it('does not add a scope selector when advanced mode is off', () => {
+        mount(createProps({ advancedSearch: false }));
+        expect(host.querySelector('[role="combobox"]')).toBeNull();
+        expect(host.querySelector('button[aria-haspopup="menu"]')).toBeNull();
+    });
+
+    it('changes scope without searching, then submits raw text with that scope', async () => {
+        const props = createProps();
+        mount(props);
+        const scopeButton = host.querySelector<HTMLElement>('button[aria-label="Scope: All"]');
+        expect(scopeButton).not.toBeNull();
+        act(() => { Simulate.click(scopeButton); });
+        const scopeItem = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+            .find(item => item.textContent.includes('CaseId'));
+        expect(scopeItem).toBeDefined();
+        act(() => { Simulate.click(scopeItem); });
+        await act(async () => { await new Promise(resolve => setTimeout(resolve, 50)); });
+        expect(props.onSearch).not.toHaveBeenCalled();
+        expect(component.state.selectedScopeKey).toBe('caseId');
+        expect(host.querySelector('button[aria-label="Scope: CaseId"]').textContent).toContain('CaseId');
+        await act(async () => { await component._onSearch('23432432'); });
+        expect(props.onSearch).toHaveBeenCalledWith('23432432', 'caseId');
+    });
+
+    it('restores URL-derived text and scope without decoding the input again', () => {
+        mount(createProps({ inputValue: '100% %22', selectedScopeKey: 'caseId' }));
+        expect(component.state.searchInputValue).toBe('100% %22');
+        expect(component.state.selectedScopeKey).toBe('caseId');
+        expect(host.querySelector('button[aria-label="Scope: CaseId"]').textContent).toContain('CaseId');
+        mount(createProps({ inputValue: 'Contoso', selectedScopeKey: 'all' }));
+        expect(component.state.searchInputValue).toBe('Contoso');
+        expect(component.state.selectedScopeKey).toBe('all');
+        expect(host.querySelector('button[aria-label="Scope: All"]').textContent).toContain('All');
+    });
+
+    it('clears text without clearing the selected scope', async () => {
+        const props = createProps({ inputValue: '234', selectedScopeKey: 'caseId' });
+        mount(props);
+        await act(async () => { await component._onSearch('', true); });
+        expect(props.onSearch).toHaveBeenCalledWith('', 'caseId');
+        expect(component.state.selectedScopeKey).toBe('caseId');
+    });
+
+    it('restores submitted URL state even when only unsubmitted drafts have changed', () => {
+        const props = createProps({ inputValue: 'budget', searchStateVersion: 0 });
+        mount(props);
+        act(() => { component.setState({ searchInputValue: 'draft', selectedScopeKey: 'caseId' }); });
+        mount({ ...props, searchStateVersion: 1 });
+        expect(component.state.searchInputValue).toBe('budget');
+        expect(component.state.selectedScopeKey).toBe('all');
+    });
+
+    it('submits a property prefix search without a validation error', async () => {
+        const props = createProps({ selectedScopeKey: 'caseId' });
+        mount(props);
+        await act(async () => { await component._onSearch('203004*'); });
+        expect(props.onSearch).toHaveBeenCalledWith('203004*', 'caseId');
+        expect(component.state.errorMessage).toBeNull();
+    });
+
+    it('shows a validation error instead of submitting property query syntax', async () => {
+        const props = createProps({ selectedScopeKey: 'caseId' });
+        mount(props);
+        await act(async () => { await component._onSearch('a" OR Path:*'); });
+        await act(async () => { await new Promise(resolve => setTimeout(resolve, 50)); });
+        expect(props.onSearch).not.toHaveBeenCalled();
+        expect(host.textContent).toContain('Invalid scope');
+    });
+
+    it('sends raw text and the stable scope key to a new page using custom parameters', async () => {
+        const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+        const props = createProps({
+            searchInNewPage: true, selectedScopeKey: 'caseId',
+            queryStringParameter: 'text', scopeQueryStringParameter: 'field'
+        });
+        mount(props);
+        await act(async () => { await component._onSearch('123 & 456'); });
+        const url = new URL(String(open.mock.calls[0][0]));
+        expect(url.searchParams.get('text')).toBe('123 & 456');
+        expect(url.searchParams.get('field')).toBe('caseId');
+        expect(url.searchParams.get('keep')).toBe('yes');
+        expect(url.hash).toBe('#section');
+        expect(props.onSearch).not.toHaveBeenCalled();
+        expect(props.tokenService.resolveTokens).toHaveBeenCalledTimes(1);
+    });
+});

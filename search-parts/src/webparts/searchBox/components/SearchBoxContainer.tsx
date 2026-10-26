@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, createTheme } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -10,6 +10,8 @@ import styles from './SearchBoxContainer.module.scss';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
+import * as commonStrings from 'CommonStrings';
+import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, SearchScopeError, writeScopedSearchUrl } from '../../../helpers/SearchScopeHelper';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -18,7 +20,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         super(props);
 
         this.state = {
-            searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
+            searchInputValue: props.advancedSearch ? (props.inputValue || '') : ((props.inputValue) ? decodeURIComponent(props.inputValue) : ''),
+            selectedScopeKey: props.selectedScopeKey || ALL_SEARCH_SCOPE,
             errorMessage: null,
             showClearButton: !!props.inputValue,
         };
@@ -139,6 +142,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             searchButtonDisplayMode={this.props.searchButtonDisplayMode}
             searchIconName={this.props.searchIconName}
             searchButtonText={this.props.searchButtonText}
+            inputIsDecoded={this.props.advancedSearch}
+            searchStateVersion={this.props.searchStateVersion}
         />;
     }
 
@@ -214,13 +219,33 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         // Don't send empty value
         if (queryText || isReset) {
+            if (this.props.advancedSearch) {
+                try {
+                    buildScopedSearchQuery(queryText, this.state.selectedScopeKey, this.props.searchScopes);
+                } catch (error) {
+                    if (!(error instanceof SearchScopeError)) {
+                        throw error;
+                    }
+                    this.setState({ errorMessage: commonStrings.AdvancedSearch.InvalidScope });
+                    return;
+                }
+            }
 
             this.setState({
                 searchInputValue: queryText,
-                showClearButton: !isReset
+                showClearButton: !isReset,
+                errorMessage: null
             });
 
             if (this.props.searchInNewPage && !isReset && this.props.pageUrl) {
+                if (this.props.advancedSearch) {
+                    this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
+                    const pageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
+                    const url = writeScopedSearchUrl(pageUrl, this.props.queryStringParameter, this.props.scopeQueryStringParameter,
+                        queryText, this.state.selectedScopeKey);
+                    window.open(url, this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self');
+                    return;
+                }
 
                 this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
                 queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
@@ -246,23 +271,29 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             } else {
 
                 // Notify the dynamic data controller
-                this.props.onSearch(queryText);
+                this.props.onSearch(queryText, this.props.advancedSearch ? this.state.selectedScopeKey : undefined);
             }
         }
     }
 
 
     public componentDidUpdate(prevProps: ISearchBoxContainerProps, prevState: ISearchBoxContainerState) {
+        if (prevProps.selectedScopeKey !== this.props.selectedScopeKey || prevProps.advancedSearch !== this.props.advancedSearch
+            || (this.props.advancedSearch && (prevProps.inputValue !== this.props.inputValue || prevProps.searchStateVersion !== this.props.searchStateVersion))) {
+            this.setState({ selectedScopeKey: this.props.selectedScopeKey || ALL_SEARCH_SCOPE, errorMessage: null });
+        }
 
-        if (!isEqual(prevProps.inputValue, this.props.inputValue)) {
+        if (!isEqual(prevProps.inputValue, this.props.inputValue)
+            || (this.props.advancedSearch && prevProps.searchStateVersion !== this.props.searchStateVersion)) {
 
             let query = this.props.inputValue;
-            try {
-                query = decodeURIComponent(this.props.inputValue);
-
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (error) {
-                // Likely issue when q=%25 in spfx
+            if (!this.props.advancedSearch) {
+                try {
+                    query = decodeURIComponent(this.props.inputValue);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (error) {
+                    // Likely issue when q=%25 in spfx
+                }
             }
 
             this.setState({
@@ -299,11 +330,57 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const renderSearchBox = this.props.enableQuerySuggestions ?
             this.renderSearchBoxWithAutoComplete() :
             this.renderBasicSearchBox();
+        const scopeOptions = [
+            { key: ALL_SEARCH_SCOPE, text: commonStrings.AdvancedSearch.All },
+            ...(this.props.searchScopes || []).map(scope => ({ key: scope.key, text: scope.label }))
+        ];
+        const selectedScopeLabel = scopeOptions.find(scope => scope.key === this.state.selectedScopeKey)?.text || commonStrings.AdvancedSearch.All;
+        const scopeLabel = `${commonStrings.AdvancedSearch.Scope}: ${selectedScopeLabel}`;
+        const scopeTheme = createTheme(this.props.themeVariant);
+        const hasPropertyScope = this.state.selectedScopeKey !== ALL_SEARCH_SCOPE;
         return (
             <div className={styles.searchBox}>
                 {renderErrorMessage}
                 {renderTitle}
-                {renderSearchBox}
+                {this.props.advancedSearch ? <div className={styles.advancedSearchRow}>
+                    <div className={styles.advancedSearchInput}>{renderSearchBox}</div>
+                    <DefaultButton
+                        text={selectedScopeLabel}
+                        iconProps={{ iconName: 'Filter' }}
+                        ariaLabel={scopeLabel}
+                        title={scopeLabel}
+                        menuProps={{
+                            ariaLabel: commonStrings.AdvancedSearch.Scope,
+                            items: scopeOptions.map(scope => ({
+                                ...scope,
+                                role: 'menuitemradio',
+                                canCheck: true,
+                                checked: scope.key === this.state.selectedScopeKey,
+                                onClick: () => this.setState({ selectedScopeKey: scope.key, errorMessage: null })
+                            }))
+                        }}
+                        theme={scopeTheme}
+                        styles={{
+                            root: {
+                                minWidth: 0,
+                                maxWidth: '40%',
+                                height: this.props.searchBoxHeight || 32,
+                                flexShrink: 0,
+                                padding: '0 8px',
+                                backgroundColor: hasPropertyScope ? scopeTheme.palette.themeLighter : undefined,
+                                color: hasPropertyScope ? scopeTheme.palette.themeDark : undefined
+                            },
+                            flexContainer: { minWidth: 0, width: '100%' },
+                            label: {
+                                display: 'block',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                fontWeight: hasPropertyScope ? 600 : 400
+                            }
+                        }}
+                    />
+                </div> : renderSearchBox}
             </div>
         );
     }
