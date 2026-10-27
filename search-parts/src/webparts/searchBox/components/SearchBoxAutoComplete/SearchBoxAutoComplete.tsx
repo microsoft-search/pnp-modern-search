@@ -356,6 +356,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         const displayMode = this.props.searchButtonDisplayMode || 'icon';
         const buttonText = this.props.searchButtonText || 'Search';
         const iconName = this.props.searchIconName || 'Forward';
+        const textColor = this.props.searchButtonTextColor || 'white';
 
         const commonStyles = {
             root: {
@@ -364,7 +365,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 height: '100%',
                 minWidth: '32px',
                 padding: '0 12px', // More padding on left and right
-                color: 'white',
+                color: textColor,
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -386,7 +387,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                         ...commonStyles,
                         icon: {
                             fontSize: iconFontSize,
-                            color: 'white'
+                            color: textColor
                         }
                     }}
                 />
@@ -401,7 +402,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                     styles={{
                         ...commonStyles,
                         label: {
-                            color: 'white',
+                            color: textColor,
                             fontSize: textFontSize,
                             fontWeight: '400'
                         }
@@ -425,7 +426,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 >
                     <span style={{
                         marginRight: '6px',
-                        color: 'white',
+                        color: textColor,
                         fontSize: textFontSize,
                         fontWeight: '400'
                     }}>{buttonText}</span>
@@ -433,7 +434,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                         iconName={iconName}
                         style={{
                             fontSize: iconFontSize,
-                            color: 'white'
+                            color: textColor
                         }}
                     />
                 </DefaultButton>
@@ -614,10 +615,11 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             }}
                         />
                         {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
-                            <div className={styles.searchButton} style={this.props.searchButtonColor ? {
+                            <div className={styles.searchButton} style={{
                                 '--search-button-color': this.props.searchButtonColor,
-                                '--search-button-color-hovered': this.props.searchButtonColor
-                            } as React.CSSProperties : undefined}>
+                                '--search-button-color-hovered': this.props.searchButtonColor,
+                                '--search-button-text-color': this.props.searchButtonTextColor
+                            } as React.CSSProperties}>
                                 {this.renderSearchButton()}
                             </div>
                         }

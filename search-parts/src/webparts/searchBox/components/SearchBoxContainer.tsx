@@ -30,6 +30,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const displayMode = this.props.searchButtonDisplayMode || 'icon';
         const buttonText = this.props.searchButtonText || 'Search';
         const iconName = this.props.searchIconName || 'Forward';
+        const textColor = this.props.searchButtonTextColor || 'white';
 
         const commonStyles = {
             root: {
@@ -38,7 +39,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 height: '100%',
                 minWidth: '32px',
                 padding: '0 12px', // More padding on left and right
-                color: 'white',
+                color: textColor,
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -60,7 +61,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         ...commonStyles,
                         icon: {
                             fontSize: iconFontSize,
-                            color: 'white'
+                            color: textColor
                         }
                     }}
                 />
@@ -75,7 +76,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     styles={{
                         ...commonStyles,
                         label: {
-                            color: 'white',
+                            color: textColor,
                             fontSize: textFontSize,
                             fontWeight: '400'
                         }
@@ -103,7 +104,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 >
                     <span style={{ 
                         marginRight: '6px',
-                        color: 'white',
+                        color: textColor,
                         fontSize: textFontSize,
                         fontWeight: '400'
                     }}>{buttonText}</span>
@@ -111,7 +112,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         iconName={iconName} 
                         style={{ 
                             fontSize: iconFontSize, 
-                            color: 'white'
+                            color: textColor
                         }} 
                     />
                 </DefaultButton>
@@ -133,6 +134,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             searchBoxHeight={this.props.searchBoxHeight}
             searchBoxFontSize={this.props.searchBoxFontSize}
             searchButtonColor={this.props.searchButtonColor}
+            searchButtonTextColor={this.props.searchButtonTextColor}
             placeholderTextColor={this.props.placeholderTextColor}
             searchBoxTextColor={this.props.searchBoxTextColor}
             showSearchButtonWhenEmpty={this.props.showSearchButtonWhenEmpty}
@@ -198,10 +200,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     }}
                 />
                 {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
-                    <div className={styles.searchButton} style={this.props.searchButtonColor ? {
+                    <div className={styles.searchButton} style={{
                         '--search-button-color': this.props.searchButtonColor,
-                        '--search-button-color-hovered': this.props.searchButtonColor
-                    } as React.CSSProperties : undefined}>
+                        '--search-button-color-hovered': this.props.searchButtonColor,
+                        '--search-button-text-color': this.props.searchButtonTextColor
+                    } as React.CSSProperties}>
                         {this.renderSearchButton()}
                     </div>
                 }

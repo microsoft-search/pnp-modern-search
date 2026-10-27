@@ -25,6 +25,7 @@ define([], function() {
                 HeightLabel: "Hauteur (px)",
                 FontSizeLabel: "Taille de police (px)",
                 ButtonColorLabel: "Couleur du bouton de recherche",
+                ButtonTextColorLabel: "Couleur du texte du bouton de recherche",
                 PlaceholderTextColorLabel: "Couleur du texte d'espace réservé",
                 BackgroundColorLabel: "Couleur d'arrière-plan",
                 TextColorLabel: "Couleur du texte",

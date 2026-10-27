@@ -24,6 +24,7 @@ define([], function() {
                 BorderRadiusLabel: "Kantradius (px)",
                 HeightLabel: "Højde (px)",
                 ButtonColorLabel: "Søgeknappens farve",
+                ButtonTextColorLabel: "Søgeknappens tekstfarve",
                 ButtonHoverColorLabel: "Søgeknappens hover-farve",
                 PlaceholderTextColorLabel: "Pladsholdertekstens farve",
                 BackgroundColorLabel: "Baggrundsfarve",

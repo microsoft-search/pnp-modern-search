@@ -25,6 +25,7 @@ define([], function() {
                 HeightLabel: "Hoogte (px)",
                 FontSizeLabel: "Lettergrootte (px)",
                 ButtonColorLabel: "Zoekknop kleur",
+                ButtonTextColorLabel: "Zoekknop tekstkleur",
                 PlaceholderTextColorLabel: "Placeholder tekst kleur",
                 BackgroundColorLabel: "Achtergrondkleur",
                 TextColorLabel: "Tekstkleur",

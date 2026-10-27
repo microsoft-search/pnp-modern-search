@@ -25,6 +25,7 @@ define([], function() {
                 HeightLabel: "Input field height (px)",
                 FontSizeLabel: "Font size (px)",
                 ButtonColorLabel: "Search button color",
+                ButtonTextColorLabel: "Search button text color",
                 PlaceholderTextColorLabel: "Placeholder text color",
                 BackgroundColorLabel: "Background color",
                 TextColorLabel: "Text color",

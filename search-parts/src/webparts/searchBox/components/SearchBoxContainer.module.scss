@@ -49,7 +49,7 @@
       }
   }
 
-  // --search-button-color / --search-button-color-hovered are set inline when a custom button color is configured
+  // --search-button-color / --search-button-color-hovered / --search-button-text-color are set inline when custom button colors are configured
   .searchButton {
       background: var(--search-button-color, '[theme:primaryButtonBackground, default:#0078d7]') !important;
 
@@ -67,9 +67,9 @@
       }
 
       & i {
-        color: '[theme:primaryButtonText, default:#ffffff]';
+        color: var(--search-button-text-color, '[theme:primaryButtonText, default:#ffffff]');
         &:hover {
-          color: '[theme:primaryButtonTextHovered, default:#ffffff]';
+          color: var(--search-button-text-color, '[theme:primaryButtonTextHovered, default:#ffffff]');
         }
       }
   }

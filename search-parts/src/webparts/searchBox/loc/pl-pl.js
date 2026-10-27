@@ -24,6 +24,7 @@ define([], function() {
                 BorderRadiusLabel: "Promień obramowania (px)",
                 HeightLabel: "Wysokość (px)",
                 ButtonColorLabel: "Kolor przycisku wyszukiwania",
+                ButtonTextColorLabel: "Kolor tekstu przycisku wyszukiwania",
                 ButtonHoverColorLabel: "Kolor najechania przycisku wyszukiwania",
                 PlaceholderTextColorLabel: "Kolor tekstu zastępczego",
                 BackgroundColorLabel: "Kolor tła",
