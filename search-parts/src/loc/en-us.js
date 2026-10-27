@@ -1,6 +1,8 @@
 define([], function () {
     return {
         AdvancedSearch: {
+            Translations: "Translations",
+            Language: "Language",
             Toggle: "Advanced Search box",
             All: "All",
             Scope: "Search scope",

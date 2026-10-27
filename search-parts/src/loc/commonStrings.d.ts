@@ -1,5 +1,7 @@
 declare interface ICommonStrings {
     AdvancedSearch: {
+      Translations: string;
+      Language: string;
       Toggle: string;
       All: string;
       Scope: string;

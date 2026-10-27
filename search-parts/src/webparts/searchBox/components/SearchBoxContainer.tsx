@@ -11,7 +11,8 @@ import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
 import * as commonStrings from 'CommonStrings';
-import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, SearchScopeError, writeScopedSearchUrl } from '../../../helpers/SearchScopeHelper';
+import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, getSearchScopeLabel, SearchScopeError, writeScopedSearchUrl } from '../../../helpers/SearchScopeHelper';
+import { searchBoxIconProps } from './SearchBoxIcon';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
 
@@ -32,7 +33,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     private renderSearchButton(): JSX.Element {
         const displayMode = this.props.searchButtonDisplayMode || 'icon';
         const buttonText = this.props.searchButtonText || 'Search';
-        const iconName = this.props.searchIconName || 'Forward';
+        const iconProps = this.props.searchIconName ? { iconName: this.props.searchIconName } : searchBoxIconProps;
 
         const commonStyles = {
             root: {
@@ -57,7 +58,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             return (
                 <IconButton
                     onClick={() => this._onSearch(this.state.searchInputValue)}
-                    iconProps={{ iconName }}
+                    iconProps={iconProps}
+                    onRenderIcon={() => <Icon {...iconProps} style={{ fontSize: iconFontSize, color: 'white', display: 'inline-flex' }} />}
                     ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                     styles={{
                         ...commonStyles,
@@ -111,7 +113,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         fontWeight: '400'
                     }}>{buttonText}</span>
                     <Icon 
-                        iconName={iconName} 
+                        {...iconProps}
                         style={{ 
                             fontSize: iconFontSize, 
                             color: 'white'
@@ -178,10 +180,12 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         return (
             <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
                 <SearchBox
+                    iconProps={searchBoxIconProps}
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    className={styles.searchTextField}
+                    className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
+                    clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                     value={this.state.searchInputValue}
                     autoComplete="off"
                     style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
@@ -332,7 +336,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             this.renderBasicSearchBox();
         const scopeOptions = [
             { key: ALL_SEARCH_SCOPE, text: commonStrings.AdvancedSearch.All },
-            ...(this.props.searchScopes || []).map(scope => ({ key: scope.key, text: scope.label }))
+            ...(this.props.searchScopes || []).map(scope => ({ key: scope.key, text: getSearchScopeLabel(scope, this.props.uiLanguage) }))
         ];
         const selectedScopeLabel = scopeOptions.find(scope => scope.key === this.state.selectedScopeKey)?.text || commonStrings.AdvancedSearch.All;
         const scopeLabel = `${commonStrings.AdvancedSearch.Scope}: ${selectedScopeLabel}`;
@@ -343,7 +347,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 {renderErrorMessage}
                 {renderTitle}
                 {this.props.advancedSearch ? <div className={styles.advancedSearchRow}>
-                    <div className={styles.advancedSearchInput}>{renderSearchBox}</div>
                     <DefaultButton
                         text={selectedScopeLabel}
                         iconProps={{ iconName: 'Filter' }}
@@ -364,7 +367,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                             root: {
                                 minWidth: 0,
                                 maxWidth: '40%',
-                                height: this.props.searchBoxHeight || 32,
+                                borderRadius: '4px 0 0 4px',
+                                borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+                                height: 'auto',
+                                minHeight: this.props.searchBoxHeight || 32,
+                                alignSelf: 'stretch',
                                 flexShrink: 0,
                                 padding: '0 8px',
                                 backgroundColor: hasPropertyScope ? scopeTheme.palette.themeLighter : undefined,
@@ -380,6 +387,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                             }
                         }}
                     />
+                    <div className={styles.advancedSearchInput}>{renderSearchBox}</div>
                 </div> : renderSearchBox}
             </div>
         );

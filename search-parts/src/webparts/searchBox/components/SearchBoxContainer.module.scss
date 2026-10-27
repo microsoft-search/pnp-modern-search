@@ -5,17 +5,26 @@
   .advancedSearchRow {
       display: flex;
       align-items: flex-start;
-      gap: 4px;
   }
 
   .advancedSearchInput {
       flex: 1 1 auto;
       min-width: 0;
+
+      .searchBoxWrapper {
+          border-left: none;
+          border-radius: 0 4px 4px 0;
+      }
+
+      .searchTextField {
+          border-radius: 0 4px 4px 0;
+      }
   }
 
   .searchBoxWrapper {
       display: flex;
       border: 1px solid #c2c2c2;
+      border-radius: 4px;
 
       &:hover {
         border-color: #272727;
@@ -24,8 +33,10 @@
 
   .searchTextField {
       width: 100%;
+      min-width: 0;
       flex: 1 1 auto;
       border: none;
+      border-radius: 4px;
       min-height: 32px; 
       height: auto;
 
@@ -51,6 +62,9 @@
       // Dynamic icon sizing for search and clear icons
       :global(.ms-SearchBox-icon) {
         font-size: var(--search-icon-size, 16px);
+        display: inline-flex;
+        align-items: center;
+        color: '[theme:themePrimary, default:#0078d4]';
       }
       
       :global(.ms-SearchBox-clearButton) {
@@ -60,8 +74,20 @@
       }
   }
 
+  .hasSearchText {
+      :global(.ms-SearchBox-iconContainer) {
+          display: none;
+      }
+
+      :global(.ms-SearchBox-clearButton) {
+          order: -1;
+      }
+  }
+
   .searchButton {
+      flex: 0 0 auto;
       background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+      border-radius: 0 3px 3px 0;
       
       &:hover {
         background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
@@ -70,6 +96,7 @@
       // Target all button types within search button container
       :global(.ms-Button) {
         background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+        border-radius: 0 3px 3px 0;
         
         &:hover {
           background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;

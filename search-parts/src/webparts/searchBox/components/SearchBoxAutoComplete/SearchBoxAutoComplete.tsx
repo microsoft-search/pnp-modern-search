@@ -7,6 +7,7 @@ import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
 import { DomPurifyHelper } from '../../../../helpers/DomPurifyHelper';
+import { searchBoxIconProps } from '../SearchBoxIcon';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
@@ -355,7 +356,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
     private renderSearchButton(): JSX.Element {
         const displayMode = this.props.searchButtonDisplayMode || 'icon';
         const buttonText = this.props.searchButtonText || 'Search';
-        const iconName = this.props.searchIconName || 'Forward';
+        const iconProps = this.props.searchIconName ? { iconName: this.props.searchIconName } : searchBoxIconProps;
 
         const commonStyles = {
             root: {
@@ -380,7 +381,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             return (
                 <IconButton
                     onClick={this._handleOnSearch}
-                    iconProps={{ iconName }}
+                    iconProps={iconProps}
+                    onRenderIcon={() => <Icon {...iconProps} style={{ fontSize: iconFontSize, color: 'white', display: 'inline-flex' }} />}
                     ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                     styles={{
                         ...commonStyles,
@@ -430,7 +432,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                         fontWeight: '400'
                     }}>{buttonText}</span>
                     <Icon
-                        iconName={iconName}
+                        {...iconProps}
                         style={{
                             fontSize: iconFontSize,
                             color: 'white'
@@ -584,10 +586,12 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 >
                     <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
                         <SearchBox
+                            iconProps={searchBoxIconProps}
                             componentRef={searchBoxRef}
                             placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                             ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                            className={styles.searchTextField}
+                            className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
+                            clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                             value={this.state.searchInputValue}
                             autoComplete="off"
                             style={{ ...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle }}

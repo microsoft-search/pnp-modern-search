@@ -2,7 +2,7 @@ jest.mock('./SearchBoxContainer.module.scss', () => ({}));
 jest.mock('./SearchBoxAutoComplete/SearchBoxAutoComplete', () => ({ default: () => null }));
 jest.mock('../../../components/StyledWebPartTitle', () => ({ StyledWebPartTitle: () => null }));
 jest.mock('../../../services/tokenService/TokenService', () => ({ BuiltinTokenNames: { inputQueryText: 'inputQueryText' } }));
-jest.mock('SearchBoxWebPartStrings', () => ({ SearchBox: { DefaultPlaceholder: 'Search', SearchButtonLabel: 'Search' } }), { virtual: true });
+jest.mock('SearchBoxWebPartStrings', () => ({ SearchBox: { DefaultPlaceholder: 'Search', SearchButtonLabel: 'Search', ClearButtonLabel: 'Clear search' } }), { virtual: true });
 jest.mock('CommonStrings', () => ({ AdvancedSearch: { All: 'All', Scope: 'Scope', InvalidScope: 'Invalid scope' } }), { virtual: true });
 jest.mock('@microsoft/sp-core-library', () => ({ DisplayMode: { Read: 1 } }));
 
@@ -69,11 +69,42 @@ describe('advanced Search Box', () => {
         expect(host.querySelector('button[aria-haspopup="menu"]')).toBeNull();
     });
 
+    it('uses the thin magnifier for the empty input without a clear or submit button', () => {
+        mount(createProps({ advancedSearch: false }));
+        expect(host.querySelector('.ms-SearchBox-icon svg')).not.toBeNull();
+        expect(host.querySelector('button[aria-label="Clear search"]')).toBeNull();
+        expect(host.querySelector('button[aria-label="Search"]')).toBeNull();
+    });
+
+    it('shows a back-arrow clear action and magnifier submit action for populated input', async () => {
+        const props = createProps({ inputValue: 'test', selectedScopeKey: 'caseId' });
+        mount(props);
+        const clearButton = host.querySelector<HTMLButtonElement>('button[aria-label="Clear search"]');
+        const submitButton = host.querySelector<HTMLButtonElement>('button[aria-label="Search"]');
+        expect(clearButton.querySelector('[data-icon-name="Back"]')).not.toBeNull();
+        expect(submitButton.querySelector('svg')).not.toBeNull();
+        await act(async () => { Simulate.click(submitButton); });
+        expect(props.onSearch).toHaveBeenCalledWith('test', 'caseId');
+        await act(async () => { Simulate.click(clearButton); });
+        expect(props.onSearch).toHaveBeenCalledWith('', 'caseId');
+        expect(host.querySelector<HTMLInputElement>('input').value).toBe('');
+        expect(document.activeElement).toBe(host.querySelector('input'));
+    });
+
+    it.each(['icon', 'both'] as const)('preserves a configured submit icon in %s mode', mode => {
+        mount(createProps({ inputValue: 'test', searchIconName: 'Forward', searchButtonDisplayMode: mode }));
+        const button = host.querySelector('button[aria-label="Search"]');
+        expect(button.querySelector('[data-icon-name="Forward"]')).not.toBeNull();
+        expect(button.querySelector('svg')).toBeNull();
+    });
+
     it('changes scope without searching, then submits raw text with that scope', async () => {
         const props = createProps();
         mount(props);
         const scopeButton = host.querySelector<HTMLElement>('button[aria-label="Scope: All"]');
         expect(scopeButton).not.toBeNull();
+        const input = host.querySelector('input');
+        expect(scopeButton.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
         act(() => { Simulate.click(scopeButton); });
         const scopeItem = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
             .find(item => item.textContent.includes('CaseId'));
@@ -96,6 +127,23 @@ describe('advanced Search Box', () => {
         expect(component.state.searchInputValue).toBe('Contoso');
         expect(component.state.selectedScopeKey).toBe('all');
         expect(host.querySelector('button[aria-label="Scope: All"]').textContent).toContain('All');
+    });
+
+    it('uses the UI-language translation in the selector and popup without changing the scope key', async () => {
+        const props = createProps({
+            uiLanguage: 'da-DK', selectedScopeKey: 'caseId',
+            searchScopes: [{ key: 'caseId', label: 'CaseId', managedProperty: 'zfm_CaseNumber', labels: { 'da-DK': 'Sagsnummer' } }]
+        });
+        mount(props);
+        const button = host.querySelector<HTMLElement>('button[aria-label="Scope: Sagsnummer"]');
+        expect(button.textContent).toContain('Sagsnummer');
+        act(() => { Simulate.click(button); });
+        const item = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+            .find(element => element.textContent.includes('Sagsnummer'));
+        expect(item).toBeDefined();
+        act(() => { Simulate.click(item); });
+        await act(async () => { await component._onSearch('123'); });
+        expect(props.onSearch).toHaveBeenCalledWith('123', 'caseId');
     });
 
     it('clears text without clearing the selected scope', async () => {

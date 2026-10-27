@@ -23,6 +23,8 @@ import {
     IPropertyPaneDropdownOption
 } from "@microsoft/sp-property-pane";
 const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
+const SearchScopeTranslations = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-scope-translations' */ './components/SearchScopeTranslations'));
+const SearchScopePropertyPicker = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-scope-property-picker' */ './components/SearchScopePropertyPicker'));
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -51,6 +53,7 @@ import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper
 import PnPTelemetry from '@pnp/telemetry-js';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
+import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, readScopedSearchUrl, SearchScopeError, validateSearchScopes, writeScopedSearchUrl } from '../../helpers/SearchScopeHelper';
 
 const LogSource = "SearchBoxWebPart";
@@ -255,6 +258,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const searchBoxElement = React.createElement(SearchBoxContainer, {
             advancedSearch: this.properties.advancedSearch,
             searchScopes: this.properties.searchScopes,
+            uiLanguage: this.context.pageContext.cultureInfo.currentUICultureName,
             selectedScopeKey: this._selectedSearchScope,
             scopeQueryStringParameter: this.properties.scopeQueryStringParameter,
             searchStateVersion: this._scopeUrlRevision,
@@ -642,6 +646,22 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     private _getAdvancedSearchFields(): IPropertyPaneField<any>[] {
+        const selectedProperties: string[] = [];
+        if (this.properties.advancedSearch) {
+            for (const source of this.context.dynamicDataProvider.getAvailableSources()) {
+                if (!source.getPropertyDefinitions().some(definition => definition.id === ComponentType.SearchResults)) {
+                    continue;
+                }
+                const results = source.getPropertyValue(ComponentType.SearchResults) as IDataResultSourceData;
+                if (results?.connectedSearchBoxSourceId === this.context.dynamicDataSourceManager.sourceId) {
+                    for (const property of results.selectedProperties || []) {
+                        if (!selectedProperties.some(existing => existing.toLowerCase() === property.toLowerCase())) {
+                            selectedProperties.push(property);
+                        }
+                    }
+                }
+            }
+        }
         const fields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle('advancedSearch', {
                 label: commonStrings.AdvancedSearch.Toggle,
@@ -657,10 +677,41 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                     manageBtnLabel: commonStrings.AdvancedSearch.Scopes,
                     panelHeader: commonStrings.AdvancedSearch.Scopes,
                     value: this.properties.searchScopes,
+                    panelProps: {
+                        // Let the Fluent v8 focus trap manage Tab instead of SharePoint's Tabster.
+                        ...{ 'data-tabster': '{"uncontrolled":{"completely":true}}' }
+                    },
                     fields: [
                         { id: 'key', title: commonStrings.AdvancedSearch.Key, type: this._customCollectionFieldType.string, required: true },
                         { id: 'label', title: commonStrings.AdvancedSearch.Label, type: this._customCollectionFieldType.string, required: true },
-                        { id: 'managedProperty', title: commonStrings.AdvancedSearch.Property, type: this._customCollectionFieldType.string, required: true }
+                        {
+                            id: 'managedProperty',
+                            title: commonStrings.AdvancedSearch.Property,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: (field, value, onUpdate) => React.createElement(
+                                React.Suspense, { fallback: null },
+                                React.createElement(SearchScopePropertyPicker, {
+                                    value,
+                                    properties: selectedProperties,
+                                    onChange: property => onUpdate(field.id, property)
+                                })
+                            )
+                        },
+                        {
+                            id: 'labels',
+                            title: commonStrings.AdvancedSearch.Translations,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value, onUpdate, item) => React.createElement(
+                                React.Suspense, { fallback: null },
+                                React.createElement(SearchScopeTranslations, {
+                                    labels: value,
+                                    defaultLabel: item.label,
+                                    uiLanguage: this.context.pageContext.cultureInfo.currentUICultureName,
+                                    onSave: labels => onUpdate(field.id, labels)
+                                })
+                            )
+                        }
                     ]
                 }),
                 PropertyPaneTextField('queryStringParameter', {
@@ -835,7 +886,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             PropertyPaneTextField('searchIconName', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameLabel,
                 value: this.properties.searchIconName || '',
-                placeholder: 'Forward',
+                placeholder: 'Search',
                 description: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameDescription,
                 disabled: this.properties.searchButtonDisplayMode === 'text'
             }),

@@ -7,6 +7,7 @@ import { ISearchScope } from "../../../helpers/SearchScopeHelper";
 export interface ISearchBoxContainerProps {
     advancedSearch?: boolean;
     searchScopes?: ISearchScope[];
+    uiLanguage?: string;
     selectedScopeKey?: string;
     scopeQueryStringParameter?: string;
     searchStateVersion?: number;

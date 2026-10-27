@@ -12,7 +12,10 @@ jest.mock('CommonStrings', () => ({
 }), { virtual: true });
 jest.mock('@microsoft/sp-component-base', () => ({ DynamicProperty: class {} }));
 jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn() } }));
-jest.mock('@microsoft/sp-property-pane', () => ({}));
+jest.mock('@microsoft/sp-property-pane', () => ({
+    PropertyPaneToggle: jest.fn(),
+    PropertyPaneTextField: jest.fn()
+}));
 jest.mock('@pnp/modern-search-extensibility', () => ({}));
 
 import SearchBoxWebPart from './SearchBoxWebPart';
@@ -36,7 +39,10 @@ describe('Search Box scoped query publication', () => {
                     searchScopes: [{ key: 'caseId', label: 'CaseId', managedProperty: 'zfm_CaseNumber' }]
                 }
             },
-            context: { value: { dynamicDataSourceManager: { notifyPropertyChanged: notify, notifySourceChanged: jest.fn() } } }
+            context: { value: {
+                dynamicDataSourceManager: { sourceId: 'search-box', notifyPropertyChanged: notify, notifySourceChanged: jest.fn() },
+                dynamicDataProvider: { getAvailableSources: jest.fn(() => []) }
+            } }
         });
         return part;
     };
@@ -50,6 +56,41 @@ describe('Search Box scoped query publication', () => {
         delete part['properties'].advancedSearch;
         part['initializeProperties']();
         expect(part['properties'].advancedSearch).toBe(false);
+    });
+
+    it('lets the collection panel manage keyboard navigation independently of SharePoint Tabster', () => {
+        const part = create();
+        const collection = jest.fn();
+        part['_propertyFieldCollectionData'] = collection;
+        part['_customCollectionFieldType'] = { string: 1, custom: 2 };
+        part['_getAdvancedSearchFields']();
+        expect(collection.mock.calls[0][1].panelProps['data-tabster'])
+            .toBe('{"uncontrolled":{"completely":true}}');
+    });
+
+    it('combines selected properties only from connected Results sources without case duplicates', () => {
+        const part = create();
+        const source = (id: string, properties: string[]) => ({
+            getPropertyDefinitions: () => [{ id: ComponentType.SearchResults }],
+            getPropertyValue: () => ({ connectedSearchBoxSourceId: id, selectedProperties: properties })
+        });
+        Object.defineProperty(part['context'].dynamicDataProvider, 'getAvailableSources', {
+            value: jest.fn(() => [
+                source('search-box', ['Title', 'RefinableString00']),
+                source('search-box', ['title', 'Author']),
+                source('another-box', ['Path'])
+            ])
+        });
+        const collection = jest.fn();
+        part['_propertyFieldCollectionData'] = collection;
+        part['_customCollectionFieldType'] = { string: 1, custom: 2 };
+        part['_getAdvancedSearchFields']();
+        const field = collection.mock.calls[0][1].fields.find(item => item.id === 'managedProperty');
+        const update = jest.fn();
+        const element = field.onCustomRender(field, 'Title', update);
+        expect(element.props.children.props.properties).toEqual(['Title', 'RefinableString00', 'Author']);
+        element.props.children.props.onChange('Author');
+        expect(update).toHaveBeenCalledWith('managedProperty', 'Author');
     });
 
     it('publishes scoped query text while retaining the raw display value', () => {

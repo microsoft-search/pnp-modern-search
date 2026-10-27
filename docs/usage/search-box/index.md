@@ -21,9 +21,15 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 
 ### Advanced Search box
 
-**Advanced Search box** is the last settings group on property-pane page 1 and is **Off** by default. When enabled, **Configure search scopes** appears immediately below the toggle, followed by the URL parameter settings. A button on the right of the Search Box shows the selected scope beside a filter icon and opens a scope selection popup. Property-specific scopes have a subtle theme-colored background. Long labels are truncated, with the full scope name available in the tooltip and accessible name. The selected scope is also checked in the popup. This indicator shows the scope for the next submission; changing it does not update the existing results until a search is submitted. The built-in **All** option keeps normal free-text/KQL search; additional options restrict the entered text to a configured SharePoint Search managed property.
+**Advanced Search box** is the last settings group on property-pane page 1 and is **Off** by default. When enabled, **Configure search scopes** appears immediately below the toggle, followed by the URL parameter settings. A button on the left of the Search Box shows the selected scope beside a filter icon and opens a scope selection popup. The selector is visually joined to the input, with the Search button at the far right. Property-specific scopes have a subtle theme-colored background. Long labels are truncated, with the full scope name available in the tooltip and accessible name. The selected scope is also checked in the popup. This indicator shows the scope for the next submission; changing it does not update the existing results until a search is submitted. The built-in **All** option keeps normal free-text/KQL search; additional options restrict the entered text to a configured SharePoint Search managed property.
 
 Use **Configure search scopes** to add options:
+
+Use Tab and Shift+Tab to move between scope fields, translation buttons, row actions and Save/Cancel. Keyboard focus stays inside the configuration panel while it is open.
+
+**Queryable managed property** is a searchable dropdown combining **Selected Properties** from all Search Results web parts connected to this Search Box. Custom entries are not accepted. Add the required property in a connected Results web part, then reopen the Search Box settings to refresh the choices. Existing scope values are preserved even if removed from Selected Properties. Selected Properties are not a queryability check: ensure the chosen property is queryable in your search schema.
+
+Each scope also has a **Translations** button with its configured language codes shown underneath (a dash means none). The editor shows all configured languages and their translated labels; select an entry to edit it. The language dropdown also includes existing translations beside their language codes. Choose a language code (for example `da-DK` or `en-US`) and enter its display label. Switch languages to edit additional translations, then save the translations and the scope configuration. Clearing a translated label removes that translation. The selector, popup and accessible name use SharePoint's current UI language, matched case-insensitively; if no translation matches, the required **Display label** is used. Scope keys, URL values and managed properties are never translated. Existing scopes require no migration.
 
 | Setting | Example | Description |
 | ------- | ------- | ----------- |
@@ -59,6 +65,8 @@ In advanced mode these parameters replace the legacy input dynamic-data connecti
 !["Search Box styling settings"](../../assets/webparts/search-box/search_box_styling.png){: .center}
 
 The search box styling section allows you to customize the visual appearance of the search box to match your branding and design requirements.
+
+Both the standard input and the suggestion-enabled input use rounded corners and a thin, theme-colored magnifying glass to match the modern SharePoint search appearance. When text is present, a back-arrow-style clear button appears on the left and the Search button appears on the right. The arrow retains the existing clear/reset behavior. The Search button uses the thin magnifying glass by default; an explicitly configured button icon still takes precedence.
 
 | Setting | Description | Default value |
 | ------- |---------------- | ---------- |

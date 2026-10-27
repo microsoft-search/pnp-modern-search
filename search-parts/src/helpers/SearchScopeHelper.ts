@@ -2,6 +2,13 @@ export interface ISearchScope {
     key: string;
     label: string;
     managedProperty: string;
+    labels?: { [language: string]: string };
+}
+
+export function getSearchScopeLabel(scope: ISearchScope, uiLanguage: string): string {
+    const language = (uiLanguage || '').toLowerCase();
+    const key = Object.keys(scope.labels || {}).find(locale => locale.toLowerCase() === language);
+    return key ? scope.labels[key] : scope.label;
 }
 
 export const ALL_SEARCH_SCOPE = 'all';
@@ -26,6 +33,20 @@ export function validateSearchScopes(scopes: ISearchScope[], queryParameter: str
             throw new SearchScopeError('configuration');
         }
         keys.add(scope.key.toLowerCase());
+        if (scope.labels !== undefined) {
+            if (!scope.labels || typeof scope.labels !== 'object' || Array.isArray(scope.labels)) {
+                throw new SearchScopeError('configuration');
+            }
+            const languages = new Set<string>();
+            for (const language of Object.keys(scope.labels)) {
+                if (!/^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8})*$/.test(language)
+                    || languages.has(language.toLowerCase())
+                    || typeof scope.labels[language] !== 'string' || !scope.labels[language].trim()) {
+                    throw new SearchScopeError('configuration');
+                }
+                languages.add(language.toLowerCase());
+            }
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 import {
     ALL_SEARCH_SCOPE, buildScopedSearchQuery, ISearchScope, readScopedSearchUrl,
-    SearchScopeError, validateSearchScopes, writeScopedSearchUrl
+    SearchScopeError, validateSearchScopes, writeScopedSearchUrl, getSearchScopeLabel
 } from './SearchScopeHelper';
 
 const scopes: ISearchScope[] = [
@@ -9,6 +9,21 @@ const scopes: ISearchScope[] = [
 ];
 
 describe('advanced search scopes', () => {
+    it('resolves language labels case-insensitively and falls back to the default label', () => {
+        const scope = { ...scopes[0], labels: { 'da-DK': 'Sagsnummer', 'en-US': 'Case number' } };
+        expect(getSearchScopeLabel(scope, 'DA-dk')).toBe('Sagsnummer');
+        expect(getSearchScopeLabel(scope, 'en-US')).toBe('Case number');
+        expect(getSearchScopeLabel(scope, 'fr-FR')).toBe('CaseId');
+        expect(getSearchScopeLabel(scopes[0], 'da-DK')).toBe('CaseId');
+        expect(buildScopedSearchQuery('123', scope.key, [scope])).toBe('zfm_CaseNumber:"123"');
+    });
+
+    it('validates translations without requiring them for existing scopes', () => {
+        expect(() => validateSearchScopes([{ ...scopes[0], labels: { 'da-DK': 'Sagsnummer' } }], 'q', 'scope')).not.toThrow();
+        for (const labels of [{ 'da-DK': ' ' }, { invalid_locale: 'Label' }, { 'da-DK': 'A', 'DA-dk': 'B' }]) {
+            expect(() => validateSearchScopes([{ ...scopes[0], labels }], 'q', 'scope')).toThrow(SearchScopeError);
+        }
+    });
     it('accepts configured properties and distinct URL parameters', () => {
         expect(() => validateSearchScopes(scopes, 'q', 'scope')).not.toThrow();
         expect(() => validateSearchScopes([], 'text', 'field')).not.toThrow();

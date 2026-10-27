@@ -1,6 +1,8 @@
 define([], function () {
     return {
         AdvancedSearch: {
+            Translations: "Traduções",
+            Language: "Idioma",
             Toggle: "Caixa de pesquisa avançada",
             All: "Tudo",
             Scope: "Escopo da pesquisa",
