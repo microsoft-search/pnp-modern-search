@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, createTheme } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, createTheme, ThemeProvider } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -42,7 +42,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 height: '100%',
                 minWidth: '32px',
                 padding: '0 12px', // More padding on left and right
-                color: 'white',
+                color: 'var(--search-button-text)',
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -59,13 +59,13 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 <IconButton
                     onClick={() => this._onSearch(this.state.searchInputValue)}
                     iconProps={iconProps}
-                    onRenderIcon={() => <Icon {...iconProps} style={{ fontSize: iconFontSize, color: 'white', display: 'inline-flex' }} />}
+                    onRenderIcon={() => <Icon {...iconProps} style={{ fontSize: iconFontSize, color: 'inherit', display: 'inline-flex' }} />}
                     ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                     styles={{
                         ...commonStyles,
                         icon: {
                             fontSize: iconFontSize,
-                            color: 'white'
+                            color: 'inherit'
                         }
                     }}
                 />
@@ -80,7 +80,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     styles={{
                         ...commonStyles,
                         label: {
-                            color: 'white',
+                            color: 'inherit',
                             fontSize: textFontSize,
                             fontWeight: '400'
                         }
@@ -108,7 +108,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 >
                     <span style={{ 
                         marginRight: '6px',
-                        color: 'white',
+                        color: 'inherit',
                         fontSize: textFontSize,
                         fontWeight: '400'
                     }}>{buttonText}</span>
@@ -116,7 +116,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         {...iconProps}
                         style={{ 
                             fontSize: iconFontSize, 
-                            color: 'white'
+                            color: 'inherit'
                         }} 
                     />
                 </DefaultButton>
@@ -155,7 +155,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         // Build dynamic styles
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
-            borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            borderColor: this.props.searchBoxBorderColor || undefined,
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
 
@@ -341,9 +341,26 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const selectedScopeLabel = scopeOptions.find(scope => scope.key === this.state.selectedScopeKey)?.text || commonStrings.AdvancedSearch.All;
         const scopeLabel = `${commonStrings.AdvancedSearch.Scope}: ${selectedScopeLabel}`;
         const scopeTheme = createTheme(this.props.themeVariant);
+        const colors = scopeTheme.semanticColors;
+        const themeStyles = {
+            backgroundColor: 'transparent',
+            '--search-border': this.props.searchBoxBorderColor || colors.inputBorder,
+            '--search-border-hover': this.props.searchBoxBorderColor || colors.inputBorderHovered,
+            '--search-background': colors.inputBackground,
+            '--search-text': this.props.searchBoxTextColor || colors.inputText,
+            '--placeholder-color': this.props.placeholderTextColor || colors.inputPlaceholderText,
+            '--search-icon-color': colors.inputIcon,
+            '--search-button-background': this.props.searchButtonColor || colors.primaryButtonBackground,
+            '--search-button-hover': this.props.searchButtonColor || colors.primaryButtonBackgroundHovered,
+            '--search-button-text': colors.primaryButtonText,
+            '--suggestion-background': colors.menuBackground,
+            '--suggestion-hover': colors.menuItemBackgroundHovered,
+            '--suggestion-text': colors.menuItemText,
+            '--suggestion-secondary': colors.bodySubtext
+        } as React.CSSProperties;
         const hasPropertyScope = this.state.selectedScopeKey !== ALL_SEARCH_SCOPE;
         return (
-            <div className={styles.searchBox}>
+            <ThemeProvider theme={scopeTheme} className={styles.searchBox} style={themeStyles}>
                 {renderErrorMessage}
                 {renderTitle}
                 {this.props.advancedSearch ? <div className={styles.advancedSearchRow}>
@@ -368,14 +385,20 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                                 minWidth: 0,
                                 maxWidth: '40%',
                                 borderRadius: '4px 0 0 4px',
-                                borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+                                borderColor: this.props.searchBoxBorderColor || colors.inputBorder,
                                 height: 'auto',
                                 minHeight: this.props.searchBoxHeight || 32,
                                 alignSelf: 'stretch',
                                 flexShrink: 0,
                                 padding: '0 8px',
-                                backgroundColor: hasPropertyScope ? scopeTheme.palette.themeLighter : undefined,
-                                color: hasPropertyScope ? scopeTheme.palette.themeDark : undefined
+                                backgroundColor: hasPropertyScope ? colors.primaryButtonBackground : colors.inputBackground,
+                                color: hasPropertyScope ? colors.primaryButtonText : colors.inputText,
+                                selectors: {
+                                    ':hover': {
+                                        backgroundColor: hasPropertyScope ? colors.primaryButtonBackgroundHovered : colors.inputBackground,
+                                        color: hasPropertyScope ? colors.primaryButtonTextHovered : colors.inputText
+                                    }
+                                }
                             },
                             flexContainer: { minWidth: 0, width: '100%' },
                             label: {
@@ -389,7 +412,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     />
                     <div className={styles.advancedSearchInput}>{renderSearchBox}</div>
                 </div> : renderSearchBox}
-            </div>
+            </ThemeProvider>
         );
     }
 }

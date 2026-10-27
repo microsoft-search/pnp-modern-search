@@ -23,11 +23,12 @@
 
   .searchBoxWrapper {
       display: flex;
-      border: 1px solid #c2c2c2;
+      border: 1px solid var(--search-border);
+      background: var(--search-background);
       border-radius: 4px;
 
       &:hover {
-        border-color: #272727;
+        border-color: var(--search-border-hover);
       }
   }
 
@@ -39,23 +40,25 @@
       border-radius: 4px;
       min-height: 32px; 
       height: auto;
+      background: var(--search-background);
 
       // Support for dynamic placeholder color
       :global(.ms-SearchBox-field) {
+        color: var(--search-text);
         &::placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &::-webkit-input-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &::-moz-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &:-ms-input-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &:-moz-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
       }
 
@@ -64,7 +67,7 @@
         font-size: var(--search-icon-size, 16px);
         display: inline-flex;
         align-items: center;
-        color: '[theme:themePrimary, default:#0078d4]';
+        color: var(--search-icon-color);
       }
       
       :global(.ms-SearchBox-clearButton) {
@@ -86,27 +89,27 @@
 
   .searchButton {
       flex: 0 0 auto;
-      background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+      background: var(--search-button-background);
       border-radius: 0 3px 3px 0;
       
       &:hover {
-        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+        background: var(--search-button-hover);
       }
 
       // Target all button types within search button container
       :global(.ms-Button) {
-        background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
+        background: var(--search-button-background);
         border-radius: 0 3px 3px 0;
         
         &:hover {
-          background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+          background: var(--search-button-hover);
         }
       }
 
       & i {
-        color: '[theme:primaryButtonText, default:#ffffff]';
+        color: var(--search-button-text);
         &:hover {
-          color: '[theme:primaryButtonTextHovered, default:#ffffff]';
+          color: var(--search-button-text);
         }
       }
   }
@@ -135,7 +138,7 @@
       padding: 6px;
       font-size: 14px;
       font-weight: 400;
-      color: #777;
+      color: var(--suggestion-secondary);
   }
 
   .suggestionItem {
@@ -147,10 +150,10 @@
       text-decoration: none;
       min-height: 28px;
       cursor: pointer;
-      color: #333;
+      color: var(--suggestion-text);
 
       &:hover {
-          background-color: #f4f4f4;
+          background-color: var(--suggestion-hover);
       }
 
       .suggestionIcon {
@@ -181,7 +184,7 @@
 
       .suggestionDescription {
           font-size: 0.9em;
-          color: #777;
+          color: var(--suggestion-secondary);
       }
 
       .suggestionAction {
@@ -197,10 +200,10 @@
       width: 100%;
       box-sizing: border-box;
       z-index: 1;
-      background-color: #ffffff;
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
-      border-right: 1px solid #ccc;
+      background-color: var(--suggestion-background);
+      border-bottom: 1px solid var(--search-border);
+      border-left: 1px solid var(--search-border);
+      border-right: 1px solid var(--search-border);
   }
 }
 

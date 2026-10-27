@@ -13,6 +13,7 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 import SearchBoxContainer from './SearchBoxContainer';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { PageOpenBehavior, QueryPathBehavior } from '../../../helpers/UrlHelper';
+import { createTheme } from '@fluentui/react';
 
 const createProps = (overrides: Partial<ISearchBoxContainerProps> = {}): ISearchBoxContainerProps => ({
     advancedSearch: true,
@@ -67,6 +68,46 @@ describe('advanced Search Box', () => {
         mount(createProps({ advancedSearch: false }));
         expect(host.querySelector('[role="combobox"]')).toBeNull();
         expect(host.querySelector('button[aria-haspopup="menu"]')).toBeNull();
+    });
+
+    it.each([false, true])('uses semantic section colors with inverted=%s', isInverted => {
+        const theme = createTheme({
+            isInverted,
+            semanticColors: {
+                inputBackground: isInverted ? '#202020' : '#ffffff',
+                inputText: isInverted ? '#eeeeee' : '#222222',
+                inputBorder: '#888888',
+                inputPlaceholderText: '#999999',
+                primaryButtonBackground: '#005a9e',
+                primaryButtonText: '#ffffff',
+                menuBackground: isInverted ? '#242424' : '#ffffff',
+                menuItemText: isInverted ? '#eeeeee' : '#222222'
+            }
+        });
+        mount(createProps({ themeVariant: theme, inputValue: 'test', selectedScopeKey: 'caseId' }));
+        const root = host.firstElementChild as HTMLElement;
+        expect(root.style.getPropertyValue('--search-background')).toBe(theme.semanticColors.inputBackground);
+        expect(root.style.getPropertyValue('--search-text')).toBe(theme.semanticColors.inputText);
+        expect(root.style.getPropertyValue('--placeholder-color')).toBe(theme.semanticColors.inputPlaceholderText);
+        expect(root.style.getPropertyValue('--suggestion-background')).toBe(theme.semanticColors.menuBackground);
+        expect(root.style.getPropertyValue('--search-button-text')).toBe(theme.semanticColors.primaryButtonText);
+        const scope = host.querySelector<HTMLElement>('button[aria-label="Scope: CaseId"]');
+        expect(getComputedStyle(scope).backgroundColor).toBe('rgb(0, 90, 158)');
+        expect(getComputedStyle(scope).color).toBe('rgb(255, 255, 255)');
+    });
+
+    it('retains explicit author color overrides over section defaults', () => {
+        mount(createProps({
+            searchBoxBorderColor: '#123456', searchBoxTextColor: '#234567',
+            placeholderTextColor: '#345678', searchButtonColor: '#456789'
+        }));
+        const root = host.firstElementChild as HTMLElement;
+        expect(root.style.getPropertyValue('--search-border')).toBe('#123456');
+        expect(root.style.getPropertyValue('--search-border-hover')).toBe('#123456');
+        expect(root.style.getPropertyValue('--search-text')).toBe('#234567');
+        expect(root.style.getPropertyValue('--placeholder-color')).toBe('#345678');
+        expect(root.style.getPropertyValue('--search-button-background')).toBe('#456789');
+        expect(root.style.getPropertyValue('--search-button-hover')).toBe('#456789');
     });
 
     it('uses the thin magnifier for the empty input without a clear or submit button', () => {
