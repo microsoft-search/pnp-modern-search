@@ -316,6 +316,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 return this.renderCompleted();
             }
 
+            // Loaded here rather than in onInit(): single-part app pages switch to edit mode without initializing the Web Part again
+            if (this.displayMode === DisplayMode.Edit && !this._placeholderComponent) {
+                const { Placeholder } = await import(
+                    /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                    '@pnp/spfx-controls-react/lib/Placeholder'
+                );
+                this._placeholderComponent = Placeholder;
+            }
+
             // Ensure extensions are loaded before rendering.
             // Use a promise guard to prevent concurrent loadExtensions calls if render() is
             // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
@@ -743,14 +752,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Initializes this component as a discoverable dynamic data source
         if (this.properties.allowWebPartConnections) {
             this.context.dynamicDataSourceManager.initializeSource(this);
-        }
-
-        if (this.displayMode === DisplayMode.Edit) {
-            const { Placeholder } = await import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@pnp/spfx-controls-react/lib/Placeholder'
-            );
-            this._placeholderComponent = Placeholder;
         }
 
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
