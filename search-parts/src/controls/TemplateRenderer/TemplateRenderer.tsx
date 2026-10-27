@@ -128,11 +128,9 @@ export class TemplateRenderer extends React.Component<
             return;
         }
 
-        const originalTemplate = template;
-        const sanitizedTemplate = this.props.templateService.sanitizeHtmlWithStylePreservation(originalTemplate);
-        const restoredTemplate = this.restoreStrippedDataAttributes(originalTemplate, sanitizedTemplate);
+        const sanitizedTemplate = this.props.templateService.sanitizeHtmlWithStylePreservation(template);
         const useMicrosoftGraphToolkit = !!props.templateContext.properties.useMicrosoftGraphToolkit;
-        const { templateRoot, styleElements } = await this.parseTemplate(restoredTemplate, useMicrosoftGraphToolkit);
+        const { templateRoot, styleElements } = await this.parseTemplate(sanitizedTemplate, useMicrosoftGraphToolkit);
         const allStyles = this.collectStyles(styleElements, props, useMicrosoftGraphToolkit);
 
         styleElements.forEach((style) => {
@@ -140,66 +138,7 @@ export class TemplateRenderer extends React.Component<
         });
 
         this.renderTemplateContent(templateRoot, allStyles, useMicrosoftGraphToolkit);
-        this._lastRenderedTemplateContent = originalTemplate;
-    }
-
-    private restoreStrippedDataAttributes(originalTemplate: string, sanitizedTemplate: string): string {
-        if (originalTemplate.length <= sanitizedTemplate.length) {
-            return sanitizedTemplate;
-        }
-
-        const dataAttributePattern = /data-[a-zA-Z][a-zA-Z0-9-]*="[^"]*"/g;
-        const originalDataAttrs: string[] = originalTemplate.match(dataAttributePattern) ?? [];
-        const sanitizedDataAttrs: string[] = sanitizedTemplate.match(dataAttributePattern) ?? [];
-        const strippedAttrs = originalDataAttrs.filter(
-            (attr) => !sanitizedDataAttrs.includes(attr)
-        );
-
-        if (strippedAttrs.length === 0) {
-            return sanitizedTemplate;
-        }
-
-        let restoredTemplate = sanitizedTemplate;
-        strippedAttrs.forEach((strippedAttr) => {
-            const attrNameMatch = /^(data-[a-zA-Z][a-zA-Z0-9-]*)/.exec(strippedAttr);
-            const attrName = attrNameMatch?.[1];
-
-            if (!attrName || restoredTemplate.includes(strippedAttr)) {
-                return;
-            }
-
-            const componentPatterns = [
-                /<(pnp-[a-zA-Z][a-zA-Z0-9-]*)([^>]*?)>/g,
-                /<([a-zA-Z][a-zA-Z0-9-]*-[a-zA-Z][a-zA-Z0-9-]*)([^>]*?)>/g,
-            ];
-
-            componentPatterns.forEach((pattern) => {
-                restoredTemplate = this.restoreAttributeForPattern(restoredTemplate, strippedAttr, attrName, pattern);
-            });
-        });
-
-        return restoredTemplate;
-    }
-
-    private restoreAttributeForPattern(template: string, strippedAttr: string, attrName: string, pattern: RegExp): string {
-        const regex = new RegExp(pattern.source, pattern.flags);
-        const matches: RegExpExecArray[] = [];
-        let match: RegExpExecArray | null;
-
-        while ((match = regex.exec(template)) !== null) {
-            matches.push(match);
-        }
-
-        return matches.reduce((updatedTemplate, componentMatch) => {
-            const [fullTag, tagName, existingAttrs] = componentMatch;
-
-            if (fullTag.includes(attrName)) {
-                return updatedTemplate;
-            }
-
-            const newTag = `<${tagName}${existingAttrs} ${strippedAttr}>`;
-            return updatedTemplate.replace(fullTag, newTag);
-        }, template);
+        this._lastRenderedTemplateContent = template;
     }
 
     private async parseTemplate(template: string, useMicrosoftGraphToolkit: boolean): Promise<{
