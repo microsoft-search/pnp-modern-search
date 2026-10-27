@@ -49,19 +49,20 @@
       }
   }
 
+  // --search-button-color / --search-button-color-hovered are set inline when a custom button color is configured
   .searchButton {
-      background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
-      
+      background: var(--search-button-color, '[theme:primaryButtonBackground, default:#0078d7]') !important;
+
       &:hover {
-        background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+        background: var(--search-button-color-hovered, '[theme:primaryButtonBackgroundHovered, default:#0078d7]') !important;
       }
 
       // Target all button types within search button container
       :global(.ms-Button) {
-        background: '[theme:primaryButtonBackground, default:#0078d7]' !important;
-        
+        background: var(--search-button-color, '[theme:primaryButtonBackground, default:#0078d7]') !important;
+
         &:hover {
-          background: '[theme:primaryButtonBackgroundHovered, default:#0078d7]' !important;
+          background: var(--search-button-color-hovered, '[theme:primaryButtonBackgroundHovered, default:#0078d7]') !important;
         }
       }
 

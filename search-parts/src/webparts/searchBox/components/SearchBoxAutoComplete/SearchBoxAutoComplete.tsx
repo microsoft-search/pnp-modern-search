@@ -614,7 +614,10 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             }}
                         />
                         {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
-                            <div className={styles.searchButton}>
+                            <div className={styles.searchButton} style={this.props.searchButtonColor ? {
+                                '--search-button-color': this.props.searchButtonColor,
+                                '--search-button-color-hovered': this.props.searchButtonColor
+                            } as React.CSSProperties : undefined}>
                                 {this.renderSearchButton()}
                             </div>
                         }
