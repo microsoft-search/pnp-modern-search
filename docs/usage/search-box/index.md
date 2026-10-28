@@ -23,23 +23,28 @@ The input uses compact SharePoint styling with small, 2-pixel corners, a theme-a
 
 ### Advanced Search box
 
-**Advanced Search box** is the last settings group on property-pane page 1 and is **Off** by default. When enabled, **Configure search scopes** appears immediately below the toggle, followed by the URL parameter settings. A filter icon at the right of the Search Box opens the scope selection popup. Selecting a property-specific scope displays its localized label followed immediately by a colon inside the input, for example **Case ID:test***. This prefix is protected: only the search text after it is editable. It is not included in query suggestions, submitted search text, or the URL text parameter. Selecting **All** removes the prefix without changing the entered text. Long labels are clipped, with the full scope name available in the tooltip and accessible name. The selected scope is also checked in the popup. The prefix shows the scope for the next submission; changing it does not update the existing results until a search is submitted. The built-in **All** option keeps normal free-text/KQL search; additional options restrict the entered text to a configured SharePoint Search managed property.
+**Advanced Search box** enables users to choose between normal free-text/KQL search (**All**) and scopes that search a specific SharePoint Search managed property. It is **Off** by default.
 
-Use **Configure search scopes** to add options:
+Selecting a scope adds its localized label followed by a colon to the search text, for example **Case ID:test***. The label is a protected prefix: it identifies the selected scope but is not part of the editable text, query suggestions, submitted search text or URL text parameter. Selecting **All** removes the prefix without changing the entered text.
 
-Use Tab and Shift+Tab to move between scope fields, translation buttons, row actions and Save/Cancel. Keyboard focus stays inside the configuration panel while it is open.
+#### Scope configuration
 
-**Queryable managed property** is a searchable dropdown combining **Selected Properties** from all Search Results web parts connected to this Search Box. Custom entries are not accepted. Add the required property in a connected Results web part, then reopen the Search Box settings to refresh the choices. Existing scope values are preserved even if removed from Selected Properties. Selected Properties are not a queryability check: ensure the chosen property is queryable in your search schema.
-
-Each scope also has a **Translations** button with its configured language codes shown underneath (a dash means none). The editor shows all configured languages and their translated labels; select an entry to edit it. The language dropdown also includes existing translations beside their language codes. Choose a language code (for example `da-DK` or `en-US`) and enter its display label. Switch languages to edit additional translations, then save the translations and the scope configuration. Clearing a translated label removes that translation. The selector, popup and accessible name use SharePoint's current UI language, matched case-insensitively; if no translation matches, the required **Display label** is used. Scope keys, URL values and managed properties are never translated. Existing scopes require no migration.
+Use **Configure search scopes** to define the available property-specific searches:
 
 | Setting | Example | Description |
 | ------- | ------- | ----------- |
 | **Scope key (URL value)** | `caseId` | Stable, unique identifier. Use letters, digits, underscores or hyphens, starting with a letter or underscore. `all` is reserved. Keys in URLs are case-sensitive; configured keys must also be unique ignoring case. |
 | **Display label** | `CaseId` | Text shown to users in the scope selection popup. |
 | **Queryable managed property** | `zfm_CaseNumber` | The SharePoint managed property to search. Use its internal name, beginning with a letter or underscore and containing only letters, digits or underscores. The property must be queryable in the search schema. |
+| **Translations** | `da-DK`: `Sagsnummer` | Optional display labels for individual UI languages. Clearing a translated label removes that translation. |
+
+**Queryable managed property** offers the combined **Selected Properties** from all Search Results web parts connected to this Search Box. Custom entries are not accepted. To make another property available, add it to a connected Results web part's Selected Properties and reopen the Search Box settings. Existing scope values are preserved if a property is later removed from Selected Properties. Inclusion in Selected Properties does not confirm queryability; verify that the property is queryable in the search schema.
+
+Translated labels use SharePoint's current UI language, matched case-insensitively against language codes such as `da-DK` or `en-US`. If no translation matches, the **Display label** is used. Translations affect only the displayed scope name, not scope keys, URL values or managed property names. Existing scopes require no migration.
 
 For example, configure `caseId` / `CaseId` / `zfm_CaseNumber` and `customer` / `Customer` / `RefinableString10`. Selecting **CaseId** and submitting `23432432` publishes `zfm_CaseNumber:"23432432"` to the connected Search Results web part. Connect Results to this Search Box as its input query text and use `{inputQueryText}` in the SharePoint Search query template.
+
+#### Search behavior
 
 Property searches use SharePoint's word/phrase matching, subject to managed-property tokenization. A single trailing `*` enables prefix matching, for example `203004*` produces `zfm_CaseNumber:"203004*"`. A phrase can have a wildcard on its final word, such as `Contoso Son*`. Leading, embedded, repeated and standalone wildcards are rejected, as are double quotes and backslashes. These are not arbitrary substring searches and do not guarantee exact identifier matching. Wildcard support also depends on the managed property's data type; numeric properties do not support text prefix matching. **All** retains normal query syntax. This mode targets SharePoint Search; it does not translate property names or queries for other data sources.
 
