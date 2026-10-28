@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Traducciones",
+            Language: "Idioma",
+            Toggle: "Cuadro de búsqueda avanzada",
+            All: "Todo",
+            Scope: "Ámbito de búsqueda",
+            Scopes: "Configurar ámbitos de búsqueda",
+            Key: "Clave del ámbito (valor URL)",
+            Label: "Etiqueta visible",
+            Property: "Propiedad administrada consultable",
+            QueryParameter: "Parámetro URL del texto de búsqueda",
+            ScopeParameter: "Parámetro URL del ámbito de búsqueda",
+            InvalidConfiguration: "Configuración de búsqueda avanzada no válida. Use claves de ámbito únicas (distintas de 'all'), etiquetas no vacías, nombres de propiedades administradas válidos y nombres de parámetros URL distintos.",
+            InvalidScope: "Ámbito desconocido o valor de propiedad no admitido. Compruebe el valor del ámbito en la URL. Las búsquedas por propiedad permiten un único * al final del texto, pero no otros comodines, comillas dobles ni barras inversas."
+        },
         Tokens: {
             SelectTokenLabel: "Seleccione un token...",
             Context: {

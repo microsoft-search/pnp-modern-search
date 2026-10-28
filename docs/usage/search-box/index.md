@@ -2,6 +2,8 @@
 
 The 'Search box' Web Part allows users to enter free text search queries connected to a 'Search Results' Web Part.
 
+The input uses compact SharePoint styling with small, 2-pixel corners, a theme-aware border and focus outline, and an inset search button. Its default height is 32 pixels; an explicitly configured height or color still takes precedence. The advanced scope icon stays inside the same input outline. Suggestions and search behavior are unchanged.
+
 !["pnp Search Box Web Part"](../../assets/webparts/search-box/search_box_wp_picker.png){: .center}
 
 !["pnp Search Box Web Part"](../../assets/webparts/search-box/search_box_wp_default.png){: .center}
@@ -19,11 +21,59 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 | **Send the query to a new page** | Sends the search query text to a new page. From here you can select the page URL, the open behavior and send method (URL fragment '#' or a query string parameter). The input value can be transformed before sending it to another page. `{inputQueryText}` is replaced with the value from the search box and [other tokens](../search-results/tokens.md) are also supported. | False.
 | **Reset query on clear** | Sends a new search query request when the search box is cleared. | True.
 
+### Advanced Search box
+
+**Advanced Search box** enables users to choose between normal free-text/KQL search (**All**) and scopes that search a specific SharePoint Search managed property. It is **Off** by default.
+
+Selecting a scope adds its localized label followed by a colon to the search text, for example **Case ID:test***. The label is a protected prefix: it identifies the selected scope but is not part of the editable text, query suggestions, submitted search text or URL text parameter. Selecting **All** removes the prefix without changing the entered text.
+
+#### Scope configuration
+
+Use **Configure search scopes** to define the available property-specific searches:
+
+| Setting | Example | Description |
+| ------- | ------- | ----------- |
+| **Scope key (URL value)** | `caseId` | Stable, unique identifier. Use letters, digits, underscores or hyphens, starting with a letter or underscore. `all` is reserved. Keys in URLs are case-sensitive; configured keys must also be unique ignoring case. |
+| **Display label** | `CaseId` | Text shown to users in the scope selection popup. |
+| **Queryable managed property** | `zfm_CaseNumber` | The SharePoint managed property to search. Use its internal name, beginning with a letter or underscore and containing only letters, digits or underscores. The property must be queryable in the search schema. |
+| **Translations** | `da-DK`: `Sagsnummer` | Optional display labels for individual UI languages. Clearing a translated label removes that translation. |
+
+**Queryable managed property** offers the combined **Selected Properties** from all Search Results web parts connected to this Search Box. Custom entries are not accepted. To make another property available, add it to a connected Results web part's Selected Properties and reopen the Search Box settings. Existing scope values are preserved if a property is later removed from Selected Properties. Inclusion in Selected Properties does not confirm queryability; verify that the property is queryable in the search schema.
+
+Translated labels use SharePoint's current UI language, matched case-insensitively against language codes such as `da-DK` or `en-US`. If no translation matches, the **Display label** is used. Translations affect only the displayed scope name, not scope keys, URL values or managed property names. Existing scopes require no migration.
+
+For example, configure `caseId` / `CaseId` / `zfm_CaseNumber` and `customer` / `Customer` / `RefinableString10`. Selecting **CaseId** and submitting `23432432` publishes `zfm_CaseNumber:"23432432"` to the connected Search Results web part. Connect Results to this Search Box as its input query text and use `{inputQueryText}` in the SharePoint Search query template.
+
+#### Search behavior
+
+Property searches use SharePoint's word/phrase matching, subject to managed-property tokenization. A single trailing `*` enables prefix matching, for example `203004*` produces `zfm_CaseNumber:"203004*"`. A phrase can have a wildcard on its final word, such as `Contoso Son*`. Leading, embedded, repeated and standalone wildcards are rejected, as are double quotes, backslashes and curly braces. Token expressions such as `{QueryString.extra}` are not supported in property-scoped values, preventing later token expansion from changing the query restriction. These are not arbitrary substring searches and do not guarantee exact identifier matching. Wildcard support also depends on the managed property's data type; numeric properties do not support text prefix matching. **All** retains normal query syntax. This mode targets SharePoint Search; it does not translate property names or queries for other data sources.
+
+Selecting a scope in the popup alone does not run a search. Press Enter, select a suggestion, or use the Search button to submit the text with the selected scope. Clearing the input removes the query restriction but retains the selected scope.
+
+#### URL state
+
+Advanced mode reads and writes two configurable query-string parameters:
+
+- **Search text URL parameter**: `q` by default.
+- **Search scope URL parameter**: `scope` by default.
+
+For example:
+
+```text
+?q=23432432&scope=caseId
+```
+
+Opening this URL restores both the raw input and the selected scope. A missing scope selects **All**. An unknown scope key also selects **All** and searches with the raw text parameter, but displays a warning below the Search Box. The unknown scope remains in the URL until the next search submission. Submitting preserves unrelated parameters and the URL fragment; clearing removes only the text parameter. Back/Forward navigation restores the submitted search. Duplicate values for either parameter, unsupported property-search values, or invalid configuration still display an error without submitting a fallback query.
+
+In advanced mode these parameters replace the legacy input dynamic-data connection and URL-fragment behavior. **Send the query to a new page** sends raw text and the scope key using these same parameter names; configure the destination Search Box with matching parameter names and scope keys. The legacy query input transformation is not applied in advanced mode. Turning advanced mode off restores the existing Search Box configuration and behavior.
+
 ### Search box styling
 
 !["Search Box styling settings"](../../assets/webparts/search-box/search_box_styling.png){: .center}
 
 The search box styling section allows you to customize the visual appearance of the search box to match your branding and design requirements.
+
+Both the standard input and the suggestion-enabled input use rounded corners and a thin, theme-colored magnifying glass to match the modern SharePoint search appearance. When text is present, a back-arrow-style clear button appears on the left and the Search button appears on the right. The arrow retains the existing clear/reset behavior. The Search button uses the thin magnifying glass by default; an explicitly configured button icon still takes precedence.
 
 | Setting | Description | Default value |
 | ------- |---------------- | ---------- |

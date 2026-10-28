@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Übersetzungen",
+            Language: "Sprache",
+            Toggle: "Erweitertes Suchfeld",
+            All: "Alle",
+            Scope: "Suchbereich",
+            Scopes: "Suchbereiche konfigurieren",
+            Key: "Bereichsschlüssel (URL-Wert)",
+            Label: "Anzeigename",
+            Property: "Abfragbare verwaltete Eigenschaft",
+            QueryParameter: "URL-Parameter für Suchtext",
+            ScopeParameter: "URL-Parameter für Suchbereich",
+            InvalidConfiguration: "Ungültige Einstellungen für die erweiterte Suche. Verwenden Sie eindeutige Bereichsschlüssel (nicht 'all'), ausgefüllte Anzeigenamen, gültige verwaltete Eigenschaftsnamen und unterschiedliche URL-Parameternamen.",
+            InvalidScope: "Unbekannter Suchbereich oder nicht unterstützter Eigenschaftswert. Prüfen Sie den URL-Bereichswert. Eigenschaftssuchen erlauben ein abschließendes * nach Text, aber keine anderen Platzhalter, doppelten Anführungszeichen oder umgekehrten Schrägstriche."
+        },
         Tokens: {
             SelectTokenLabel: "Wähle ein Token...",
             Context: {

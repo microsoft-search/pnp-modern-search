@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, createTheme, ThemeProvider, getId } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -10,15 +10,21 @@ import styles from './SearchBoxContainer.module.scss';
 import { BuiltinTokenNames } from '../../../services/tokenService/TokenService';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { StyledWebPartTitle } from '../../../components/StyledWebPartTitle';
+import * as commonStrings from 'CommonStrings';
+import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, getSearchScopeLabel, SearchScopeError, writeScopedSearchUrl } from '../../../helpers/SearchScopeHelper';
+import { searchBoxIconProps } from './SearchBoxIcon';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
+
+    private readonly _searchInputId = getId('pnp-search-input-');
 
     public constructor(props: ISearchBoxContainerProps) {
 
         super(props);
 
         this.state = {
-            searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
+            searchInputValue: props.advancedSearch ? (props.inputValue || '') : ((props.inputValue) ? decodeURIComponent(props.inputValue) : ''),
+            selectedScopeKey: props.selectedScopeKey || ALL_SEARCH_SCOPE,
             errorMessage: null,
             showClearButton: !!props.inputValue,
         };
@@ -29,7 +35,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     private renderSearchButton(): JSX.Element {
         const displayMode = this.props.searchButtonDisplayMode || 'icon';
         const buttonText = this.props.searchButtonText || 'Search';
-        const iconName = this.props.searchIconName || 'Forward';
+        const iconProps = this.props.searchIconName ? { iconName: this.props.searchIconName } : searchBoxIconProps;
 
         const commonStyles = {
             root: {
@@ -37,8 +43,8 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 width: '100%',
                 height: '100%',
                 minWidth: '32px',
-                padding: '0 12px', // More padding on left and right
-                color: 'white',
+                padding: displayMode === 'icon' ? '0 4px' : '0 12px',
+                color: 'var(--search-button-text)',
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -54,13 +60,14 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             return (
                 <IconButton
                     onClick={() => this._onSearch(this.state.searchInputValue)}
-                    iconProps={{ iconName }}
+                    iconProps={iconProps}
+                    onRenderIcon={() => <Icon {...iconProps} style={{ fontSize: iconFontSize, color: 'inherit', display: 'inline-flex' }} />}
                     ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                     styles={{
                         ...commonStyles,
                         icon: {
                             fontSize: iconFontSize,
-                            color: 'white'
+                            color: 'inherit'
                         }
                     }}
                 />
@@ -75,7 +82,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     styles={{
                         ...commonStyles,
                         label: {
-                            color: 'white',
+                            color: 'inherit',
                             fontSize: textFontSize,
                             fontWeight: '400'
                         }
@@ -103,15 +110,15 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 >
                     <span style={{ 
                         marginRight: '6px',
-                        color: 'white',
+                        color: 'inherit',
                         fontSize: textFontSize,
                         fontWeight: '400'
                     }}>{buttonText}</span>
                     <Icon 
-                        iconName={iconName} 
+                        {...iconProps}
                         style={{ 
                             fontSize: iconFontSize, 
-                            color: 'white'
+                            color: 'inherit'
                         }} 
                     />
                 </DefaultButton>
@@ -119,7 +126,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         }
     }
 
-    private renderSearchBoxWithAutoComplete(): JSX.Element {
+    private renderSearchBoxWithAutoComplete(scopeLabel?: string, scopeMenu?: React.ReactElement): JSX.Element {
         return <SearchBoxAutoComplete
             inputValue={this.props.inputValue}
             onSearch={this._onSearch}
@@ -139,24 +146,30 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             searchButtonDisplayMode={this.props.searchButtonDisplayMode}
             searchIconName={this.props.searchIconName}
             searchButtonText={this.props.searchButtonText}
+            inputIsDecoded={this.props.advancedSearch}
+            searchStateVersion={this.props.searchStateVersion}
+            scopeLabel={scopeLabel}
+            scopeMenu={scopeMenu}
         />;
     }
 
-    private renderBasicSearchBox(): JSX.Element {
+    private renderBasicSearchBox(scopeLabel?: string, scopeMenu?: React.ReactElement): JSX.Element {
 
         let searchBoxRef = React.createRef<ISearchBox>();
 
         // Build dynamic styles
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
-            borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            borderColor: this.props.searchBoxBorderColor || undefined,
+            minHeight: this.props.searchBoxHeight || 32,
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
 
-        const dynamicSearchBoxTextStyle: React.CSSProperties = {
+        const dynamicSearchBoxTextStyle = {
             color: this.props.searchBoxTextColor || undefined,
-            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined, // Account for border
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : 'auto',
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
-            padding: '0 8px' // Add space before and after text
+            padding: '0 8px',
+            paddingInlineStart: scopeLabel ? 0 : 8
         };
 
         const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
@@ -171,15 +184,20 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         } as React.CSSProperties;
 
         return (
-            <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
+            <div className={`${styles.searchBoxWrapper} ${scopeLabel ? styles.scopedSearchBox : ''}`} style={dynamicSearchBoxWrapperStyle}>
+                {scopeLabel && <label htmlFor={this._searchInputId} className={styles.scopePrefix} title={`${scopeLabel}:`}>{scopeLabel}:</label>}
                 <SearchBox
+                    id={this._searchInputId}
+                    iconProps={searchBoxIconProps}
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    className={styles.searchTextField}
+                    ariaLabel={`${scopeLabel ? `${scopeLabel}: ` : ''}${this.props.placeholderText || webPartStrings.SearchBox.DefaultPlaceholder}`}
+                    className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
+                    clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                     value={this.state.searchInputValue}
                     autoComplete="off"
-                    style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
+                    styles={{ root: dynamicSearchBoxTextStyle }}
+                    style={{ ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
                         const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
@@ -202,6 +220,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         {this.renderSearchButton()}
                     </div>
                 }
+                {scopeMenu}
             </div>
         );
     }
@@ -214,13 +233,34 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         // Don't send empty value
         if (queryText || isReset) {
+            const selectedScopeKey = this.state.selectedScopeKey;
+            if (this.props.advancedSearch) {
+                try {
+                    buildScopedSearchQuery(queryText, selectedScopeKey, this.props.searchScopes);
+                } catch (error) {
+                    if (!(error instanceof SearchScopeError)) {
+                        throw error;
+                    }
+                    this.setState({ errorMessage: commonStrings.AdvancedSearch.InvalidScope });
+                    return;
+                }
+            }
 
             this.setState({
                 searchInputValue: queryText,
-                showClearButton: !isReset
+                showClearButton: !isReset,
+                errorMessage: null
             });
 
             if (this.props.searchInNewPage && !isReset && this.props.pageUrl) {
+                if (this.props.advancedSearch) {
+                    this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
+                    const pageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
+                    const url = writeScopedSearchUrl(pageUrl, this.props.queryStringParameter, this.props.scopeQueryStringParameter,
+                        queryText, selectedScopeKey);
+                    window.open(url, this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self');
+                    return;
+                }
 
                 this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
                 queryText = await this.props.tokenService.resolveTokens(this.props.inputTemplate);
@@ -246,23 +286,29 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             } else {
 
                 // Notify the dynamic data controller
-                this.props.onSearch(queryText);
+                this.props.onSearch(queryText, this.props.advancedSearch ? selectedScopeKey : undefined);
             }
         }
     }
 
 
     public componentDidUpdate(prevProps: ISearchBoxContainerProps, prevState: ISearchBoxContainerState) {
+        if (prevProps.selectedScopeKey !== this.props.selectedScopeKey || prevProps.advancedSearch !== this.props.advancedSearch
+            || (this.props.advancedSearch && (prevProps.inputValue !== this.props.inputValue || prevProps.searchStateVersion !== this.props.searchStateVersion))) {
+            this.setState({ selectedScopeKey: this.props.selectedScopeKey || ALL_SEARCH_SCOPE, errorMessage: null });
+        }
 
-        if (!isEqual(prevProps.inputValue, this.props.inputValue)) {
+        if (!isEqual(prevProps.inputValue, this.props.inputValue)
+            || (this.props.advancedSearch && prevProps.searchStateVersion !== this.props.searchStateVersion)) {
 
             let query = this.props.inputValue;
-            try {
-                query = decodeURIComponent(this.props.inputValue);
-
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (error) {
-                // Likely issue when q=%25 in spfx
+            if (!this.props.advancedSearch) {
+                try {
+                    query = decodeURIComponent(this.props.inputValue);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (error) {
+                    // Likely issue when q=%25 in spfx
+                }
             }
 
             this.setState({
@@ -296,15 +342,78 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 {this.state.errorMessage}</MessageBar>;
         }
 
-        const renderSearchBox = this.props.enableQuerySuggestions ?
-            this.renderSearchBoxWithAutoComplete() :
-            this.renderBasicSearchBox();
+        const scopeOptions = [
+            { key: ALL_SEARCH_SCOPE, text: commonStrings.AdvancedSearch.All },
+            ...(this.props.searchScopes || []).map(scope => ({ key: scope.key, text: getSearchScopeLabel(scope, this.props.uiLanguage) }))
+        ];
+        const selectedScopeLabel = scopeOptions.find(scope => scope.key === this.state.selectedScopeKey)?.text || commonStrings.AdvancedSearch.All;
+        const scopeLabel = `${commonStrings.AdvancedSearch.Scope}: ${selectedScopeLabel}`;
+        const scopeTheme = createTheme(this.props.themeVariant);
+        const colors = scopeTheme.semanticColors;
+        const themeStyles = {
+            backgroundColor: 'transparent',
+            '--search-border': this.props.searchBoxBorderColor || colors.inputBorder,
+            '--search-border-hover': this.props.searchBoxBorderColor || colors.inputBorderHovered,
+            '--search-focus': this.props.searchBoxBorderColor || colors.inputFocusBorderAlt,
+            '--search-background': colors.inputBackground,
+            '--search-text': this.props.searchBoxTextColor || colors.inputText,
+            '--search-font-size': `${this.props.searchBoxFontSize || 14}px`,
+            '--placeholder-color': this.props.placeholderTextColor || colors.inputPlaceholderText,
+            '--search-icon-color': colors.inputIcon,
+            '--search-button-background': this.props.searchButtonColor || colors.primaryButtonBackground,
+            '--search-button-hover': this.props.searchButtonColor || colors.primaryButtonBackgroundHovered,
+            '--search-button-text': colors.primaryButtonText,
+            '--suggestion-background': colors.menuBackground,
+            '--suggestion-hover': colors.menuItemBackgroundHovered,
+            '--suggestion-text': colors.menuItemText,
+            '--suggestion-secondary': colors.bodySubtext
+        } as React.CSSProperties;
+        const scopePrefix = this.props.advancedSearch && this.state.selectedScopeKey !== ALL_SEARCH_SCOPE
+            ? selectedScopeLabel : undefined;
+        const scopeMenu = this.props.advancedSearch ? <IconButton
+            className={styles.scopeButton}
+            iconProps={{ iconName: 'Filter' }}
+            onRenderIcon={() => <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M2 4h12M4 8h8M6 12h4" fill="none" stroke="currentColor" strokeLinecap="round" />
+            </svg>}
+            ariaLabel={scopeLabel}
+            title={scopeLabel}
+            onRenderMenuIcon={() => null}
+            menuProps={{
+                ariaLabel: commonStrings.AdvancedSearch.Scope,
+                items: scopeOptions.map(scope => ({
+                    ...scope,
+                    role: 'menuitemradio',
+                    canCheck: true,
+                    checked: scope.key === this.state.selectedScopeKey,
+                    onClick: () => this.setState({ selectedScopeKey: scope.key, errorMessage: null })
+                }))
+            }}
+            theme={scopeTheme}
+            styles={{
+                root: {
+                    width: 28,
+                    minWidth: 28,
+                    height: 'auto',
+                    alignSelf: 'stretch',
+                    border: 'none',
+                    borderRadius: 2,
+                    color: colors.inputIcon,
+                    backgroundColor: colors.inputBackground
+                },
+                rootHovered: { backgroundColor: colors.buttonBackgroundHovered, color: colors.inputIcon },
+                rootPressed: { backgroundColor: colors.buttonBackgroundPressed, color: colors.inputIcon }
+            }}
+        /> : undefined;
+        const renderSearchBox = this.props.enableQuerySuggestions
+            ? this.renderSearchBoxWithAutoComplete(scopePrefix, scopeMenu)
+            : this.renderBasicSearchBox(scopePrefix, scopeMenu);
         return (
-            <div className={styles.searchBox}>
+            <ThemeProvider theme={scopeTheme} className={styles.searchBox} style={themeStyles}>
                 {renderErrorMessage}
                 {renderTitle}
                 {renderSearchBox}
-            </div>
+            </ThemeProvider>
         );
     }
 }

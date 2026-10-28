@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { ISuggestionProvider, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 
@@ -6,6 +7,10 @@ export interface ISearchBoxAutoCompleteProps {
   suggestionProviders: ISuggestionProvider[];
   suggestionProviderContext?: ISuggestionProviderContext;
   inputValue: string;
+  inputIsDecoded?: boolean;
+  searchStateVersion?: number;
+  scopeLabel?: string;
+  scopeMenu?: React.ReactElement;
   onSearch: (queryText: string, isReset?: boolean) => void;
   domElement: HTMLElement;
 

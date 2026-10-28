@@ -23,6 +23,8 @@ import {
     IPropertyPaneDropdownOption
 } from "@microsoft/sp-property-pane";
 const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
+const SearchScopeTranslations = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-scope-translations' */ './components/SearchScopeTranslations'));
+const SearchScopePropertyPicker = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-scope-property-picker' */ './components/SearchScopePropertyPicker'));
 import { DynamicDataService } from '../../services/dynamicDataService/DynamicDataService';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -51,6 +53,8 @@ import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper
 import PnPTelemetry from '@pnp/telemetry-js';
 import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
+import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
+import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, readScopedSearchUrl, SearchScopeError, validateSearchScopes, writeScopedSearchUrl } from '../../helpers/SearchScopeHelper';
 
 const LogSource = "SearchBoxWebPart";
 
@@ -77,6 +81,17 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * The search query text present in the search box
      */
     private _searchQueryText: string = '';
+    private _selectedSearchScope: string = ALL_SEARCH_SCOPE;
+    private _scopedQueryText: string = '';
+    private _advancedSearchError: string;
+    private _advancedSearchWarning: string;
+    private _scopeUrlRevision: number = 0;
+    private readonly _onScopedUrlChanged = (): void => {
+        if (this.properties.advancedSearch && !this._webPartDisposed) {
+            this._scopeUrlRevision++;
+            this.renderCompleted();
+        }
+    };
 
     /*
     * The service scope for this specific Web Part instance
@@ -139,6 +154,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this._handleQueryStringChange();
 
         this.context.dynamicDataSourceManager.initializeSource(this);
+        window.addEventListener('popstate', this._onScopedUrlChanged);
         this.ensureDynamicDataSourcesConnection();
 
         return super.onInit();
@@ -210,7 +226,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         let renderRootElement: JSX.Element = null;
 
         let inputValue = "";
-        if (this.properties.queryText) {
+        if (this.properties.advancedSearch) {
+            this.syncAdvancedSearchFromUrl();
+        } else if (this.properties.queryText) {
             try {
                 inputValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
                 if (inputValue !== undefined && typeof (inputValue) === 'string') {
@@ -239,6 +257,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         }
 
         const searchBoxElement = React.createElement(SearchBoxContainer, {
+            advancedSearch: this.properties.advancedSearch,
+            searchScopes: this.properties.searchScopes,
+            uiLanguage: this.context.pageContext.cultureInfo.currentUICultureName,
+            selectedScopeKey: this._selectedSearchScope,
+            scopeQueryStringParameter: this.properties.scopeQueryStringParameter,
+            searchStateVersion: this._scopeUrlRevision,
             domElement: this.domElement,
             enableQuerySuggestions: this.properties.enableQuerySuggestions,
             inputValue: this._searchQueryText,
@@ -281,11 +305,21 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         renderRootElement = React.createElement(React.Suspense, { fallback: null }, searchBoxElement);
 
+        if (this.properties.advancedSearch && this._advancedSearchWarning) {
+            renderRootElement = React.createElement(React.Fragment, null, renderRootElement,
+                React.createElement(MessageBar, {
+                    messageBarType: MessageBarType.warning,
+                }, this._advancedSearchWarning, React.createElement(Link, {
+                    target: '_blank',
+                    href: this.properties.documentationLink
+                }, commonStrings.General.Resources.PleaseReferToDocumentationMessage)));
+        }
+
         // Error message
-        if (this.errorMessage) {
+        if (this.errorMessage || this._advancedSearchError) {
             renderRootElement = React.createElement(MessageBar, {
                 messageBarType: MessageBarType.error,
-            }, this.errorMessage, React.createElement(Link, {
+            }, this.errorMessage || this._advancedSearchError, React.createElement(Link, {
                 target: '_blank',
                 href: this.properties.documentationLink
             }, commonStrings.General.Resources.PleaseReferToDocumentationMessage));
@@ -300,6 +334,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     protected onDispose(): void {
         this._webPartDisposed = true;
+        window.removeEventListener('popstate', this._onScopedUrlChanged);
         window.removeEventListener('hashchange', this._boundRender);
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
@@ -344,7 +379,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                         isCollapsed: true,
                         groupFields: this._getSearchBoxStylingFields()
                     },
-                    this.getTitleStylingPropertyPaneGroup()
+                    this.getTitleStylingPropertyPaneGroup(),
+                    {
+                        groupName: commonStrings.AdvancedSearch.Toggle,
+                        groupFields: this._getAdvancedSearchFields()
+                    }
                 ],
                 displayGroupsAsAccordion: true
             },
@@ -427,6 +466,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void> {
+        if (propertyPath === 'advancedSearch' && !newValue) {
+            this._advancedSearchError = undefined;
+            GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, this._searchQueryText);
+            this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
+        }
 
         if (!this.properties.useDynamicDataSource) {
             this.properties.queryText.setValue('');
@@ -481,7 +525,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     public getPropertyValue(propertyId: string) {
         switch (propertyId) {
             case ComponentType.SearchBox:
-                return this._searchQueryText;
+                return this.properties.advancedSearch ? this._scopedQueryText : this._searchQueryText;
         }
     }
 
@@ -501,7 +545,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             })
         ];
 
-        if (this.properties.useDynamicDataSource) {
+        if (this.properties.useDynamicDataSource && !this.properties.advancedSearch) {
             searchAvailabeConnectionsConfigFields.push(
                 PropertyPaneDynamicFieldSet({
                     label: webPartStrings.PropertyPane.AvailableConnectionsGroup.QueryKeywordsPropertyLabel,
@@ -612,11 +656,90 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         return searchQuerySuggestionsFields;
     }
 
+    private _getAdvancedSearchFields(): IPropertyPaneField<any>[] {
+        const selectedProperties: string[] = [];
+        if (this.properties.advancedSearch) {
+            for (const source of this.context.dynamicDataProvider.getAvailableSources()) {
+                if (!source.getPropertyDefinitions().some(definition => definition.id === ComponentType.SearchResults)) {
+                    continue;
+                }
+                const results = source.getPropertyValue(ComponentType.SearchResults) as IDataResultSourceData;
+                if (results?.connectedSearchBoxSourceId === this.context.dynamicDataSourceManager.sourceId) {
+                    for (const property of results.selectedProperties || []) {
+                        if (!selectedProperties.some(existing => existing.toLowerCase() === property.toLowerCase())) {
+                            selectedProperties.push(property);
+                        }
+                    }
+                }
+            }
+        }
+        const fields: IPropertyPaneField<any>[] = [
+            PropertyPaneToggle('advancedSearch', {
+                label: commonStrings.AdvancedSearch.Toggle,
+                checked: this.properties.advancedSearch
+            })
+        ];
+
+        if (this.properties.advancedSearch) {
+            fields.push(
+                this._propertyFieldCollectionData('searchScopes', {
+                    key: 'searchScopes',
+                    label: commonStrings.AdvancedSearch.Scopes,
+                    manageBtnLabel: commonStrings.AdvancedSearch.Scopes,
+                    panelHeader: commonStrings.AdvancedSearch.Scopes,
+                    value: this.properties.searchScopes,
+                    panelProps: {
+                        // Let the Fluent v8 focus trap manage Tab instead of SharePoint's Tabster.
+                        ...{ 'data-tabster': '{"uncontrolled":{"completely":true}}' }
+                    },
+                    fields: [
+                        { id: 'key', title: commonStrings.AdvancedSearch.Key, type: this._customCollectionFieldType.string, required: true },
+                        { id: 'label', title: commonStrings.AdvancedSearch.Label, type: this._customCollectionFieldType.string, required: true },
+                        {
+                            id: 'managedProperty',
+                            title: commonStrings.AdvancedSearch.Property,
+                            type: this._customCollectionFieldType.custom,
+                            required: true,
+                            onCustomRender: (field, value, onUpdate) => React.createElement(
+                                React.Suspense, { fallback: null },
+                                React.createElement(SearchScopePropertyPicker, {
+                                    value,
+                                    properties: selectedProperties,
+                                    onChange: property => onUpdate(field.id, property)
+                                })
+                            )
+                        },
+                        {
+                            id: 'labels',
+                            title: commonStrings.AdvancedSearch.Translations,
+                            type: this._customCollectionFieldType.custom,
+                            onCustomRender: (field, value, onUpdate, item) => React.createElement(
+                                React.Suspense, { fallback: null },
+                                React.createElement(SearchScopeTranslations, {
+                                    labels: value,
+                                    defaultLabel: item.label,
+                                    uiLanguage: this.context.pageContext.cultureInfo.currentUICultureName,
+                                    onSave: labels => onUpdate(field.id, labels)
+                                })
+                            )
+                        }
+                    ]
+                }),
+                PropertyPaneTextField('queryStringParameter', {
+                    label: commonStrings.AdvancedSearch.QueryParameter
+                }),
+                PropertyPaneTextField('scopeQueryStringParameter', {
+                    label: commonStrings.AdvancedSearch.ScopeParameter
+                })
+            );
+        }
+        return fields;
+    }
+
     /**
      * Determines the group fields for the search options inside the property pane
      */
     private _getSearchBoxSettingsFields(): IPropertyPaneField<any>[] {
-
         let searchBehaviorOptionsFields: IPropertyPaneField<any>[] = [
             PropertyPaneTextField('placeholderText', {
                 label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.PlaceholderTextLabel
@@ -629,13 +752,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             })
         ];
 
-
         if (this.properties.searchInNewPage) {
             searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
                 PropertyPaneTextField('inputTemplate', {
                     label: webPartStrings.PropertyPane.SearchBoxSettingsGroup.QueryInputTransformationLabel,
                     multiline: true,
-                    placeholder: `{${BuiltinTokenNames.inputQueryText}}`
+                    placeholder: `{${BuiltinTokenNames.inputQueryText}}`,
+                    disabled: this.properties.advancedSearch
                 }),
                 PropertyPaneTextField('pageUrl', {
                     disabled: !this.properties.searchInNewPage,
@@ -660,13 +783,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                         { key: QueryPathBehavior.URLFragment, text: webPartStrings.PropertyPane.SearchBoxSettingsGroup.UrlFragmentQueryPathBehavior },
                         { key: QueryPathBehavior.QueryParameter, text: webPartStrings.PropertyPane.SearchBoxSettingsGroup.QueryStringQueryPathBehavior }
                     ],
-                    disabled: !this.properties.searchInNewPage,
+                    disabled: !this.properties.searchInNewPage || this.properties.advancedSearch,
                     selectedKey: this.properties.queryPathBehavior
                 })
             ]);
         }
 
-        if (this.properties.searchInNewPage && this.properties.queryPathBehavior === QueryPathBehavior.QueryParameter) {
+        if (!this.properties.advancedSearch && this.properties.searchInNewPage && this.properties.queryPathBehavior === QueryPathBehavior.QueryParameter) {
             searchBehaviorOptionsFields = searchBehaviorOptionsFields.concat([
                 PropertyPaneTextField('queryStringParameter', {
                     disabled: !this.properties.searchInNewPage || this.properties.searchInNewPage && this.properties.queryPathBehavior !== QueryPathBehavior.QueryParameter,
@@ -774,7 +897,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             PropertyPaneTextField('searchIconName', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameLabel,
                 value: this.properties.searchIconName || '',
-                placeholder: 'Forward',
+                placeholder: 'Search',
                 description: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameDescription,
                 disabled: this.properties.searchButtonDisplayMode === 'text'
             }),
@@ -888,6 +1011,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Initializes required Web Part properties
      */
     private initializeProperties() {
+        this.properties.advancedSearch = this.properties.advancedSearch ?? false;
+        this.properties.searchScopes = this.properties.searchScopes || [];
+        this.properties.queryStringParameter = this.properties.queryStringParameter || 'q';
+        this.properties.scopeQueryStringParameter = this.properties.scopeQueryStringParameter || 'scope';
         this.properties.queryText = this.properties.queryText ? this.properties.queryText : new DynamicProperty<string>(this.context.dynamicDataProvider);
         this.properties.inputTemplate = this.properties.inputTemplate ? this.properties.inputTemplate : `{${BuiltinTokenNames.inputQueryText}}`;
 
@@ -969,7 +1096,17 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     /**
      * Handler used to notify data source subscribers when the input query is updated
      */
-    private _onSearch = (searchQuery: string): void => {
+    private _onSearch = (searchQuery: string, scopeKey: string = ALL_SEARCH_SCOPE): void => {
+        if (this.properties.advancedSearch) {
+            const url = writeScopedSearchUrl(window.location.href, this.properties.queryStringParameter,
+                this.properties.scopeQueryStringParameter, searchQuery, scopeKey);
+            if (url !== window.location.href) {
+                window.history.pushState({ path: url }, '', url);
+            }
+            this.syncAdvancedSearchFromUrl(true);
+            this.renderCompleted();
+            return;
+        }
 
         this._searchQueryText = searchQuery;
 
@@ -1015,7 +1152,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private _bindHashChange() {
         const queryTextSource = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
-        if (queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
+        if (!this.properties.advancedSearch && queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
             window.addEventListener('hashchange', this._boundRender);
         } else {
@@ -1204,6 +1341,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * Subscribes to URL query string change events using SharePoint page router
      */
     private _handleQueryStringChange() {
+        if (this.properties.advancedSearch) {
+            return;
+        }
 
         // To avoid pushState modification from many components on the page (ex: search box, etc.),
         // only subscribe to query string changes if the connected source is either the searc queyr or explicit query string parameter
@@ -1213,6 +1353,43 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 this._pushStateCallback = history.pushState;
                 h.pushState = this.pushStateHandler.bind(this);
             })(window.history);
+        }
+    }
+
+    private syncAdvancedSearchFromUrl(forceSubmit: boolean = false): void {
+        try {
+            validateSearchScopes(this.properties.searchScopes, this.properties.queryStringParameter, this.properties.scopeQueryStringParameter);
+            const { text, scopeKey: urlScopeKey } = readScopedSearchUrl(window.location.href, this.properties.queryStringParameter, this.properties.scopeQueryStringParameter);
+            const unknownScope = urlScopeKey !== ALL_SEARCH_SCOPE && !this.properties.searchScopes.some(scope => scope.key === urlScopeKey);
+            const scopeKey = unknownScope ? ALL_SEARCH_SCOPE : urlScopeKey;
+            const query = buildScopedSearchQuery(text, scopeKey, this.properties.searchScopes);
+            const changed = text !== this._searchQueryText || scopeKey !== this._selectedSearchScope || query !== this._scopedQueryText;
+            this._searchQueryText = text;
+            this._selectedSearchScope = scopeKey;
+            this._scopedQueryText = query;
+            this._advancedSearchError = undefined;
+            const warning = unknownScope ? commonStrings.AdvancedSearch.InvalidScope : undefined;
+            if (warning && warning !== this._advancedSearchWarning) {
+                Log.warn(LogSource, new SearchScopeError('scope').message);
+            }
+            this._advancedSearchWarning = warning;
+            if (changed || forceSubmit) {
+                GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, query);
+                const submissionId = GlobalSettings.getValue<number>(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, 0) || 0;
+                GlobalSettings.setValue(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, submissionId + 1);
+                this.context.dynamicDataSourceManager.notifyPropertyChanged(ComponentType.SearchBox);
+                this.context.dynamicDataSourceManager.notifySourceChanged();
+            }
+        } catch (error) {
+            if (!(error instanceof SearchScopeError)) {
+                throw error;
+            }
+            const message = error.reason === 'configuration' ? commonStrings.AdvancedSearch.InvalidConfiguration : commonStrings.AdvancedSearch.InvalidScope;
+            if (message !== this._advancedSearchError) {
+                Log.warn(LogSource, error.message);
+            }
+            this._advancedSearchError = message;
+            this._advancedSearchWarning = undefined;
         }
     }
 

@@ -58,6 +58,7 @@ define([], function() {
             }
         },
         SearchBox: {
+            ClearButtonLabel: "Rensa sökning",
             DefaultPlaceholder: "Ange sökord...",
             SearchButtonLabel: "Sök"
         }

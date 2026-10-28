@@ -2,6 +2,8 @@ import { IDataFilterResult } from "@pnp/modern-search-extensibility";
 import { IExtensibilityConfiguration } from "../common/IExtensibilityConfiguration";
 
 export interface IDataResultSourceData {
+    selectedProperties?: string[];
+    connectedSearchBoxSourceId?: string;
 
     /**
      * The available fields extracted from the data source results 
