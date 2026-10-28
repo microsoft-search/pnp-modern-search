@@ -1,4 +1,4 @@
-jest.mock('../../common/BaseWebPart', () => ({ BaseWebPart: class {} }));
+jest.mock('../../common/BaseWebPart', () => ({ BaseWebPart: class { protected renderCompleted(): void {} } }));
 jest.mock('../../services/tokenService/TokenService', () => ({ BuiltinTokenNames: { inputQueryText: 'inputQueryText' } }));
 jest.mock('../../services/dynamicDataService/DynamicDataService', () => ({ DynamicDataService: {} }));
 jest.mock('../../providers/AvailableSuggestionProviders', () => ({ AvailableSuggestionProviders: { BuiltinSuggestionProviders: [] } }));
@@ -8,7 +8,10 @@ jest.mock('../../styles/Common.module.scss', () => ({}));
 jest.mock('SearchBoxWebPartStrings', () => ({}), { virtual: true });
 jest.mock('CommonStrings', () => ({
     AdvancedSearch: { InvalidConfiguration: 'Invalid settings', InvalidScope: 'Invalid scope' },
-    General: { Extensibility: { DefaultExtensibilityLibraryName: 'Library' } }
+    General: {
+        Extensibility: { DefaultExtensibilityLibraryName: 'Library' },
+        Resources: { PleaseReferToDocumentationMessage: 'Read the documentation' }
+    }
 }), { virtual: true });
 jest.mock('@microsoft/sp-component-base', () => ({ DynamicProperty: class {} }));
 jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn() } }));
@@ -17,13 +20,21 @@ jest.mock('@microsoft/sp-property-pane', () => ({
     PropertyPaneTextField: jest.fn()
 }));
 jest.mock('@pnp/modern-search-extensibility', () => ({}));
+jest.mock('react-dom', () => ({ ...jest.requireActual('react-dom'), render: jest.fn() }));
 
 import SearchBoxWebPart from './SearchBoxWebPart';
 import { ComponentType } from '../../common/ComponentType';
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { MessageBar, MessageBarType } from '@fluentui/react';
 
 class TestSearchBoxWebPart extends SearchBoxWebPart {
     public renderCompleted(): void {
         this['syncAdvancedSearchFromUrl']();
+    }
+
+    public renderUi(): void {
+        super.renderCompleted();
     }
 }
 
@@ -131,11 +142,92 @@ describe('Search Box scoped query publication', () => {
         render.mockRestore();
     });
 
-    it('reports unknown URL scopes without publishing a fallback query', () => {
+    it('warns about unknown URL scopes and publishes the raw query using All', () => {
         const part = create();
-        window.history.replaceState({}, '', '/?q=234&scope=unknown');
+        window.history.replaceState({}, '', '/?q=test*&scope=unknown');
+        part['syncAdvancedSearchFromUrl']();
+        expect(part['_advancedSearchError']).toBeUndefined();
+        expect(part['_advancedSearchWarning']).toBe('Invalid scope');
+        expect(part['_selectedSearchScope']).toBe('all');
+        expect(part['_searchQueryText']).toBe('test*');
+        expect(part.getPropertyValue(ComponentType.SearchBox)).toBe('test*');
+        expect(notify).toHaveBeenCalledWith(ComponentType.SearchBox);
+        expect(new URL(window.location.href).searchParams.get('scope')).toBe('unknown');
+    });
+
+    it('clears a previous scoped query when an unknown URL scope has no query', () => {
+        const part = create();
+        window.history.replaceState({}, '', '/?q=234&scope=caseId');
+        part['syncAdvancedSearchFromUrl']();
+        notify.mockClear();
+        window.history.replaceState({}, '', '/?scope=unknown');
+        part['syncAdvancedSearchFromUrl']();
+        expect(part['_advancedSearchWarning']).toBe('Invalid scope');
+        expect(part['_selectedSearchScope']).toBe('all');
+        expect(part['_searchQueryText']).toBe('');
+        expect(part.getPropertyValue(ComponentType.SearchBox)).toBe('');
+        expect(notify).toHaveBeenCalledWith(ComponentType.SearchBox);
+    });
+
+    it('renders the search box with its URL text before the unknown-scope warning', () => {
+        const part = create();
+        Object.defineProperty(part, 'domElement', { value: document.createElement('div') });
+        Object.defineProperty(part['context'], 'pageContext', {
+            value: { cultureInfo: { currentUICultureName: 'en-US' } }
+        });
+        const render = jest.mocked(ReactDom.render);
+        window.history.replaceState({}, '', '/?q=test*&scope=unknown');
+        try {
+            part.renderUi();
+            const root = render.mock.calls[0][0];
+            if (!React.isValidElement<{ children: React.ReactNode }>(root)) {
+                throw new Error('Expected the Search Box render root to be a React element');
+            }
+            expect(root.type).toBe(React.Fragment);
+            const [search, warning] = React.Children.toArray(root.props.children) as React.ReactElement[];
+            expect(search.type).toBe(React.Suspense);
+            expect(search.props.children.props.inputValue).toBe('test*');
+            expect(search.props.children.props.selectedScopeKey).toBe('all');
+            expect(warning.type).toBe(MessageBar);
+            expect(warning.props.messageBarType).toBe(MessageBarType.warning);
+            expect(warning.props.children[0]).toBe('Invalid scope');
+        } finally {
+            render.mockReset();
+        }
+    });
+
+    it('clears the unknown-scope warning after submitting the default search', () => {
+        const part = create();
+        const render = jest.spyOn(part, 'renderCompleted').mockImplementation(() => undefined);
+        window.history.replaceState({}, '', '/?q=test*&scope=unknown');
+        part['syncAdvancedSearchFromUrl']();
+        part['_onSearch']('test*', part['_selectedSearchScope']);
+        expect(part['_advancedSearchWarning']).toBeUndefined();
+        expect(new URL(window.location.href).searchParams.get('scope')).toBe('all');
+        expect(part.getPropertyValue(ComponentType.SearchBox)).toBe('test*');
+        render.mockRestore();
+    });
+
+    it.each([
+        '/?q=test&q=other&scope=unknown',
+        '/?q=test&scope=caseId&scope=unknown',
+        '/?q=te*st&scope=caseId'
+    ])('continues to reject ambiguous parameters and unsupported scoped values: %s', url => {
+        const part = create();
+        window.history.replaceState({}, '', url);
         part['syncAdvancedSearchFromUrl']();
         expect(part['_advancedSearchError']).toBe('Invalid scope');
+        expect(part['_advancedSearchWarning']).toBeUndefined();
+        expect(notify).not.toHaveBeenCalled();
+    });
+
+    it('continues to reject invalid configuration rather than using a fallback', () => {
+        const part = create();
+        part['properties'].scopeQueryStringParameter = 'q';
+        window.history.replaceState({}, '', '/?q=test*&scope=unknown');
+        part['syncAdvancedSearchFromUrl']();
+        expect(part['_advancedSearchError']).toBe('Invalid settings');
+        expect(part['_advancedSearchWarning']).toBeUndefined();
         expect(notify).not.toHaveBeenCalled();
     });
 });

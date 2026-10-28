@@ -84,6 +84,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     private _selectedSearchScope: string = ALL_SEARCH_SCOPE;
     private _scopedQueryText: string = '';
     private _advancedSearchError: string;
+    private _advancedSearchWarning: string;
     private _scopeUrlRevision: number = 0;
     private readonly _onScopedUrlChanged = (): void => {
         if (this.properties.advancedSearch && !this._webPartDisposed) {
@@ -303,6 +304,16 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         });
 
         renderRootElement = React.createElement(React.Suspense, { fallback: null }, searchBoxElement);
+
+        if (this.properties.advancedSearch && this._advancedSearchWarning) {
+            renderRootElement = React.createElement(React.Fragment, null, renderRootElement,
+                React.createElement(MessageBar, {
+                    messageBarType: MessageBarType.warning,
+                }, this._advancedSearchWarning, React.createElement(Link, {
+                    target: '_blank',
+                    href: this.properties.documentationLink
+                }, commonStrings.General.Resources.PleaseReferToDocumentationMessage)));
+        }
 
         // Error message
         if (this.errorMessage || this._advancedSearchError) {
@@ -1348,13 +1359,20 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     private syncAdvancedSearchFromUrl(forceSubmit: boolean = false): void {
         try {
             validateSearchScopes(this.properties.searchScopes, this.properties.queryStringParameter, this.properties.scopeQueryStringParameter);
-            const { text, scopeKey } = readScopedSearchUrl(window.location.href, this.properties.queryStringParameter, this.properties.scopeQueryStringParameter);
+            const { text, scopeKey: urlScopeKey } = readScopedSearchUrl(window.location.href, this.properties.queryStringParameter, this.properties.scopeQueryStringParameter);
+            const unknownScope = urlScopeKey !== ALL_SEARCH_SCOPE && !this.properties.searchScopes.some(scope => scope.key === urlScopeKey);
+            const scopeKey = unknownScope ? ALL_SEARCH_SCOPE : urlScopeKey;
             const query = buildScopedSearchQuery(text, scopeKey, this.properties.searchScopes);
             const changed = text !== this._searchQueryText || scopeKey !== this._selectedSearchScope || query !== this._scopedQueryText;
             this._searchQueryText = text;
             this._selectedSearchScope = scopeKey;
             this._scopedQueryText = query;
             this._advancedSearchError = undefined;
+            const warning = unknownScope ? commonStrings.AdvancedSearch.InvalidScope : undefined;
+            if (warning && warning !== this._advancedSearchWarning) {
+                Log.warn(LogSource, new SearchScopeError('scope').message);
+            }
+            this._advancedSearchWarning = warning;
             if (changed || forceSubmit) {
                 GlobalSettings.setValue(BuiltinTokenNames.inputQueryText, query);
                 const submissionId = GlobalSettings.getValue<number>(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, 0) || 0;
@@ -1371,6 +1389,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 Log.warn(LogSource, error.message);
             }
             this._advancedSearchError = message;
+            this._advancedSearchWarning = undefined;
         }
     }
 

@@ -56,7 +56,7 @@ For example:
 ?q=23432432&scope=caseId
 ```
 
-Opening this URL restores both the raw input and the selected scope. A missing scope selects **All**. Submitting preserves unrelated parameters and the URL fragment; clearing removes only the text parameter. Back/Forward navigation restores the submitted search. Unknown scope keys, duplicate values for either parameter, or invalid configuration display an error rather than silently searching all properties.
+Opening this URL restores both the raw input and the selected scope. A missing scope selects **All**. An unknown scope key also selects **All** and searches with the raw text parameter, but displays a warning below the Search Box. The unknown scope remains in the URL until the next search submission. Submitting preserves unrelated parameters and the URL fragment; clearing removes only the text parameter. Back/Forward navigation restores the submitted search. Duplicate values for either parameter, unsupported property-search values, or invalid configuration still display an error without submitting a fallback query.
 
 In advanced mode these parameters replace the legacy input dynamic-data connection and URL-fragment behavior. **Send the query to a new page** sends raw text and the scope key using these same parameter names; configure the destination Search Box with matching parameter names and scope keys. The legacy query input transformation is not applied in advanced mode. Turning advanced mode off restores the existing Search Box configuration and behavior.
 
