@@ -1,6 +1,6 @@
 jest.mock('../SearchBoxContainer.module.scss', () => ({}), { virtual: true });
 jest.mock('SearchBoxWebPartStrings', () => ({}), { virtual: true });
-jest.mock('@fluentui/react', () => ({}));
+jest.mock('@fluentui/react', () => ({ getId: jest.fn(() => 'search-input') }));
 jest.mock('../../../../helpers/DomPurifyHelper', () => ({ DomPurifyHelper: {} }));
 
 import { ISuggestion, ISuggestionProvider, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';

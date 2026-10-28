@@ -1,5 +1,6 @@
 jest.mock('./SearchBoxContainer.module.scss', () => ({}));
-jest.mock('./SearchBoxAutoComplete/SearchBoxAutoComplete', () => ({ default: () => null }));
+jest.mock('./SearchBoxAutoComplete/SearchBoxAutoComplete', () => ({ __esModule: true, default: () => null }));
+jest.mock('../../../helpers/DomPurifyHelper', () => ({ DomPurifyHelper: {} }));
 jest.mock('../../../components/StyledWebPartTitle', () => ({ StyledWebPartTitle: () => null }));
 jest.mock('../../../services/tokenService/TokenService', () => ({ BuiltinTokenNames: { inputQueryText: 'inputQueryText' } }));
 jest.mock('SearchBoxWebPartStrings', () => ({ SearchBox: { DefaultPlaceholder: 'Search', SearchButtonLabel: 'Search', ClearButtonLabel: 'Clear search' } }), { virtual: true });
@@ -49,11 +50,13 @@ const createProps = (overrides: Partial<ISearchBoxContainerProps> = {}): ISearch
 describe('advanced Search Box', () => {
     let host: HTMLDivElement;
     let component: SearchBoxContainer;
-    const mount = (props: ISearchBoxContainerProps) => {
+    const render = (element: React.ReactElement) => {
         act(() => {
-            ReactDom.render(<SearchBoxContainer {...props} ref={value => { component = value; }} />, host);
+            ReactDom.render(element, host);
         });
     };
+    const mount = (props: ISearchBoxContainerProps) =>
+        render(<SearchBoxContainer {...props} ref={value => { component = value; }} />);
     beforeEach(() => {
         host = document.createElement('div');
         document.body.appendChild(host);
@@ -68,6 +71,21 @@ describe('advanced Search Box', () => {
         mount(createProps({ advancedSearch: false }));
         expect(host.querySelector('[role="combobox"]')).toBeNull();
         expect(host.querySelector('button[aria-haspopup="menu"]')).toBeNull();
+    });
+
+    it.each([false, true])('uses a 32px default input height with advanced mode=%s', advancedSearch => {
+        mount(createProps({ advancedSearch }));
+        const wrapper = host.querySelector<HTMLElement>('.ms-SearchBox').parentElement;
+        expect(wrapper.style.minHeight).toBe('32px');
+        expect(host.firstElementChild.getAttribute('style')).toContain('--search-focus:');
+    });
+
+    it('preserves an explicitly configured taller input height', () => {
+        mount(createProps({ searchBoxHeight: 44 }));
+        const input = host.querySelector<HTMLElement>('.ms-SearchBox');
+        expect(input.parentElement.style.minHeight).toBe('44px');
+        expect(input.parentElement.style.height).toBe('44px');
+        expect(getComputedStyle(input).height).toBe('42px');
     });
 
     it.each([false, true])('uses semantic section colors with inverted=%s', isInverted => {
@@ -92,8 +110,8 @@ describe('advanced Search Box', () => {
         expect(root.style.getPropertyValue('--suggestion-background')).toBe(theme.semanticColors.menuBackground);
         expect(root.style.getPropertyValue('--search-button-text')).toBe(theme.semanticColors.primaryButtonText);
         const scope = host.querySelector<HTMLElement>('button[aria-label="Scope: CaseId"]');
-        expect(getComputedStyle(scope).backgroundColor).toBe('rgb(0, 90, 158)');
-        expect(getComputedStyle(scope).color).toBe('rgb(255, 255, 255)');
+        expect(getComputedStyle(scope).backgroundColor).toBe(isInverted ? 'rgb(32, 32, 32)' : 'rgb(255, 255, 255)');
+        expect(host.querySelector('label').textContent).toBe('CaseId:');
     });
 
     it('retains explicit author color overrides over section defaults', () => {
@@ -145,7 +163,9 @@ describe('advanced Search Box', () => {
         const scopeButton = host.querySelector<HTMLElement>('button[aria-label="Scope: All"]');
         expect(scopeButton).not.toBeNull();
         const input = host.querySelector('input');
-        expect(scopeButton.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(input.compareDocumentPosition(scopeButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(scopeButton.textContent).not.toContain('All');
+        expect(scopeButton.querySelector('[data-icon-name="ChevronDown"]')).toBeNull();
         act(() => { Simulate.click(scopeButton); });
         const scopeItem = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
             .find(item => item.textContent.includes('CaseId'));
@@ -154,7 +174,8 @@ describe('advanced Search Box', () => {
         await act(async () => { await new Promise(resolve => setTimeout(resolve, 50)); });
         expect(props.onSearch).not.toHaveBeenCalled();
         expect(component.state.selectedScopeKey).toBe('caseId');
-        expect(host.querySelector('button[aria-label="Scope: CaseId"]').textContent).toContain('CaseId');
+        expect(host.querySelector('button[aria-label="Scope: CaseId"]').textContent).not.toContain('CaseId');
+        expect(host.querySelector('label').textContent).toBe('CaseId:');
         await act(async () => { await component._onSearch('23432432'); });
         expect(props.onSearch).toHaveBeenCalledWith('23432432', 'caseId');
     });
@@ -163,11 +184,63 @@ describe('advanced Search Box', () => {
         mount(createProps({ inputValue: '100% %22', selectedScopeKey: 'caseId' }));
         expect(component.state.searchInputValue).toBe('100% %22');
         expect(component.state.selectedScopeKey).toBe('caseId');
-        expect(host.querySelector('button[aria-label="Scope: CaseId"]').textContent).toContain('CaseId');
+        expect(host.querySelector('label').textContent).toBe('CaseId:');
+        expect(host.querySelector<HTMLInputElement>('input').value).toBe('100% %22');
         mount(createProps({ inputValue: 'Contoso', selectedScopeKey: 'all' }));
         expect(component.state.searchInputValue).toBe('Contoso');
         expect(component.state.selectedScopeKey).toBe('all');
-        expect(host.querySelector('button[aria-label="Scope: All"]').textContent).toContain('All');
+        expect(host.querySelector('button[aria-label="Scope: All"]')).not.toBeNull();
+        expect(host.querySelector('label')).toBeNull();
+    });
+
+    it('keeps the protected prefix outside editable text and submits only the typed value', async () => {
+        const props = createProps({ inputValue: 'test*', selectedScopeKey: 'caseId' });
+        mount(props);
+        const input = host.querySelector<HTMLInputElement>('input');
+        const prefix = host.querySelector('label');
+        expect(prefix.htmlFor).toBe(input.id);
+        expect(prefix.textContent).toBe('CaseId:');
+        expect(input.getAttribute('aria-label')).toBe('CaseId: Search');
+        act(() => {
+            input.value = 'updated*';
+            Simulate.change(input);
+        });
+        expect(input.value).toBe('updated*');
+        expect(prefix.textContent).toBe('CaseId:');
+        await act(async () => { Simulate.keyDown(input, { which: 13, keyCode: 13 }); });
+        expect(props.onSearch).toHaveBeenCalledWith('updated*', 'caseId');
+    });
+
+    it('removes the prefix when selecting All without changing the draft text or submitting', async () => {
+        const props = createProps({ inputValue: 'test*', selectedScopeKey: 'caseId' });
+        mount(props);
+        act(() => { Simulate.click(host.querySelector('button[aria-label="Scope: CaseId"]')); });
+        const all = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+            .find(item => item.textContent.includes('All'));
+        act(() => { Simulate.click(all); });
+        await act(async () => { await new Promise(resolve => setTimeout(resolve, 50)); });
+        expect(host.querySelector('label')).toBeNull();
+        expect(host.querySelector<HTMLInputElement>('input').value).toBe('test*');
+        expect(props.onSearch).not.toHaveBeenCalled();
+    });
+
+    it('renders the same protected prefix and trailing scope menu with suggestions enabled', async () => {
+        const ActualAutoComplete = jest.requireActual<typeof import('./SearchBoxAutoComplete/SearchBoxAutoComplete')>('./SearchBoxAutoComplete/SearchBoxAutoComplete').default;
+        mount(createProps({ inputValue: 'test*', selectedScopeKey: 'caseId' }));
+        const menu = <button aria-label="Scope: CaseId">Filter</button>;
+        const element = component['renderSearchBoxWithAutoComplete']('CaseId', menu);
+        const onSearch = jest.fn();
+        render(<ActualAutoComplete {...element.props} onSearch={onSearch} />);
+        const input = host.querySelector<HTMLInputElement>('input');
+        expect(input.value).toBe('test*');
+        expect(host.querySelector('label').textContent).toBe('CaseId:');
+        const scopeButton = host.querySelector('button[aria-label="Scope: CaseId"]');
+        expect(input.compareDocumentPosition(scopeButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        await act(async () => { Simulate.click(host.querySelector('button[aria-label="Search"]')); });
+        expect(onSearch).toHaveBeenCalledWith('test*');
+        render(<ActualAutoComplete {...element.props} scopeLabel={undefined} onSearch={onSearch} />);
+        expect(host.querySelector('label')).toBeNull();
+        expect(host.querySelector<HTMLInputElement>('input').value).toBe('test*');
     });
 
     it('uses the UI-language translation in the selector and popup without changing the scope key', async () => {
@@ -177,7 +250,8 @@ describe('advanced Search Box', () => {
         });
         mount(props);
         const button = host.querySelector<HTMLElement>('button[aria-label="Scope: Sagsnummer"]');
-        expect(button.textContent).toContain('Sagsnummer');
+        expect(host.querySelector('label').textContent).toBe('Sagsnummer:');
+        expect(button.textContent).not.toContain('Sagsnummer');
         act(() => { Simulate.click(button); });
         const item = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
             .find(element => element.textContent.includes('Sagsnummer'));
@@ -193,6 +267,7 @@ describe('advanced Search Box', () => {
         await act(async () => { await component._onSearch('', true); });
         expect(props.onSearch).toHaveBeenCalledWith('', 'caseId');
         expect(component.state.selectedScopeKey).toBe('caseId');
+        expect(host.querySelector('label').textContent).toBe('CaseId:');
     });
 
     it('restores submitted URL state even when only unsubmitted drafts have changed', () => {

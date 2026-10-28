@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, createTheme, ThemeProvider } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, createTheme, ThemeProvider, getId } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -15,6 +15,8 @@ import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, getSearchScopeLabel, SearchSc
 import { searchBoxIconProps } from './SearchBoxIcon';
 
 export default class SearchBoxContainer extends React.Component<ISearchBoxContainerProps, ISearchBoxContainerState> {
+
+    private readonly _searchInputId = getId('pnp-search-input-');
 
     public constructor(props: ISearchBoxContainerProps) {
 
@@ -41,7 +43,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 width: '100%',
                 height: '100%',
                 minWidth: '32px',
-                padding: '0 12px', // More padding on left and right
+                padding: displayMode === 'icon' ? '0 4px' : '0 12px',
                 color: 'var(--search-button-text)',
                 justifyContent: 'center',
                 display: 'flex',
@@ -124,7 +126,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         }
     }
 
-    private renderSearchBoxWithAutoComplete(): JSX.Element {
+    private renderSearchBoxWithAutoComplete(scopeLabel?: string, scopeMenu?: React.ReactElement): JSX.Element {
         return <SearchBoxAutoComplete
             inputValue={this.props.inputValue}
             onSearch={this._onSearch}
@@ -146,24 +148,28 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             searchButtonText={this.props.searchButtonText}
             inputIsDecoded={this.props.advancedSearch}
             searchStateVersion={this.props.searchStateVersion}
+            scopeLabel={scopeLabel}
+            scopeMenu={scopeMenu}
         />;
     }
 
-    private renderBasicSearchBox(): JSX.Element {
+    private renderBasicSearchBox(scopeLabel?: string, scopeMenu?: React.ReactElement): JSX.Element {
 
         let searchBoxRef = React.createRef<ISearchBox>();
 
         // Build dynamic styles
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
             borderColor: this.props.searchBoxBorderColor || undefined,
+            minHeight: this.props.searchBoxHeight || 32,
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
 
-        const dynamicSearchBoxTextStyle: React.CSSProperties = {
+        const dynamicSearchBoxTextStyle = {
             color: this.props.searchBoxTextColor || undefined,
-            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined, // Account for border
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : 'auto',
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
-            padding: '0 8px' // Add space before and after text
+            padding: '0 8px',
+            paddingInlineStart: scopeLabel ? 0 : 8
         };
 
         const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
@@ -178,17 +184,20 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         } as React.CSSProperties;
 
         return (
-            <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
+            <div className={`${styles.searchBoxWrapper} ${scopeLabel ? styles.scopedSearchBox : ''}`} style={dynamicSearchBoxWrapperStyle}>
+                {scopeLabel && <label htmlFor={this._searchInputId} className={styles.scopePrefix} title={`${scopeLabel}:`}>{scopeLabel}:</label>}
                 <SearchBox
+                    id={this._searchInputId}
                     iconProps={searchBoxIconProps}
                     componentRef={searchBoxRef}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
+                    ariaLabel={`${scopeLabel ? `${scopeLabel}: ` : ''}${this.props.placeholderText || webPartStrings.SearchBox.DefaultPlaceholder}`}
                     className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
                     clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                     value={this.state.searchInputValue}
                     autoComplete="off"
-                    style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
+                    styles={{ root: dynamicSearchBoxTextStyle }}
+                    style={{ ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
                         const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
@@ -211,6 +220,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                         {this.renderSearchButton()}
                     </div>
                 }
+                {scopeMenu}
             </div>
         );
     }
@@ -331,9 +341,6 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 {this.state.errorMessage}</MessageBar>;
         }
 
-        const renderSearchBox = this.props.enableQuerySuggestions ?
-            this.renderSearchBoxWithAutoComplete() :
-            this.renderBasicSearchBox();
         const scopeOptions = [
             { key: ALL_SEARCH_SCOPE, text: commonStrings.AdvancedSearch.All },
             ...(this.props.searchScopes || []).map(scope => ({ key: scope.key, text: getSearchScopeLabel(scope, this.props.uiLanguage) }))
@@ -346,8 +353,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             backgroundColor: 'transparent',
             '--search-border': this.props.searchBoxBorderColor || colors.inputBorder,
             '--search-border-hover': this.props.searchBoxBorderColor || colors.inputBorderHovered,
+            '--search-focus': this.props.searchBoxBorderColor || colors.inputFocusBorderAlt,
             '--search-background': colors.inputBackground,
             '--search-text': this.props.searchBoxTextColor || colors.inputText,
+            '--search-font-size': `${this.props.searchBoxFontSize || 14}px`,
             '--placeholder-color': this.props.placeholderTextColor || colors.inputPlaceholderText,
             '--search-icon-color': colors.inputIcon,
             '--search-button-background': this.props.searchButtonColor || colors.primaryButtonBackground,
@@ -358,60 +367,51 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             '--suggestion-text': colors.menuItemText,
             '--suggestion-secondary': colors.bodySubtext
         } as React.CSSProperties;
-        const hasPropertyScope = this.state.selectedScopeKey !== ALL_SEARCH_SCOPE;
+        const scopePrefix = this.props.advancedSearch && this.state.selectedScopeKey !== ALL_SEARCH_SCOPE
+            ? selectedScopeLabel : undefined;
+        const scopeMenu = this.props.advancedSearch ? <IconButton
+            className={styles.scopeButton}
+            iconProps={{ iconName: 'Filter' }}
+            onRenderIcon={() => <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M2 4h12M4 8h8M6 12h4" fill="none" stroke="currentColor" strokeLinecap="round" />
+            </svg>}
+            ariaLabel={scopeLabel}
+            title={scopeLabel}
+            onRenderMenuIcon={() => null}
+            menuProps={{
+                ariaLabel: commonStrings.AdvancedSearch.Scope,
+                items: scopeOptions.map(scope => ({
+                    ...scope,
+                    role: 'menuitemradio',
+                    canCheck: true,
+                    checked: scope.key === this.state.selectedScopeKey,
+                    onClick: () => this.setState({ selectedScopeKey: scope.key, errorMessage: null })
+                }))
+            }}
+            theme={scopeTheme}
+            styles={{
+                root: {
+                    width: 28,
+                    minWidth: 28,
+                    height: 'auto',
+                    alignSelf: 'stretch',
+                    border: 'none',
+                    borderRadius: 2,
+                    color: colors.inputIcon,
+                    backgroundColor: colors.inputBackground
+                },
+                rootHovered: { backgroundColor: colors.buttonBackgroundHovered, color: colors.inputIcon },
+                rootPressed: { backgroundColor: colors.buttonBackgroundPressed, color: colors.inputIcon }
+            }}
+        /> : undefined;
+        const renderSearchBox = this.props.enableQuerySuggestions
+            ? this.renderSearchBoxWithAutoComplete(scopePrefix, scopeMenu)
+            : this.renderBasicSearchBox(scopePrefix, scopeMenu);
         return (
             <ThemeProvider theme={scopeTheme} className={styles.searchBox} style={themeStyles}>
                 {renderErrorMessage}
                 {renderTitle}
-                {this.props.advancedSearch ? <div className={styles.advancedSearchRow}>
-                    <DefaultButton
-                        text={selectedScopeLabel}
-                        iconProps={{ iconName: 'Filter' }}
-                        ariaLabel={scopeLabel}
-                        title={scopeLabel}
-                        menuProps={{
-                            ariaLabel: commonStrings.AdvancedSearch.Scope,
-                            items: scopeOptions.map(scope => ({
-                                ...scope,
-                                role: 'menuitemradio',
-                                canCheck: true,
-                                checked: scope.key === this.state.selectedScopeKey,
-                                onClick: () => this.setState({ selectedScopeKey: scope.key, errorMessage: null })
-                            }))
-                        }}
-                        theme={scopeTheme}
-                        styles={{
-                            root: {
-                                minWidth: 0,
-                                maxWidth: '40%',
-                                borderRadius: '4px 0 0 4px',
-                                borderColor: this.props.searchBoxBorderColor || colors.inputBorder,
-                                height: 'auto',
-                                minHeight: this.props.searchBoxHeight || 32,
-                                alignSelf: 'stretch',
-                                flexShrink: 0,
-                                padding: '0 8px',
-                                backgroundColor: hasPropertyScope ? colors.primaryButtonBackground : colors.inputBackground,
-                                color: hasPropertyScope ? colors.primaryButtonText : colors.inputText,
-                                selectors: {
-                                    ':hover': {
-                                        backgroundColor: hasPropertyScope ? colors.primaryButtonBackgroundHovered : colors.inputBackground,
-                                        color: hasPropertyScope ? colors.primaryButtonTextHovered : colors.inputText
-                                    }
-                                }
-                            },
-                            flexContainer: { minWidth: 0, width: '100%' },
-                            label: {
-                                display: 'block',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                fontWeight: hasPropertyScope ? 600 : 400
-                            }
-                        }}
-                    />
-                    <div className={styles.advancedSearchInput}>{renderSearchBox}</div>
-                </div> : renderSearchBox}
+                {renderSearchBox}
             </ThemeProvider>
         );
     }

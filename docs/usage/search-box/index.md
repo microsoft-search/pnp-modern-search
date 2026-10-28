@@ -2,6 +2,8 @@
 
 The 'Search box' Web Part allows users to enter free text search queries connected to a 'Search Results' Web Part.
 
+The input uses compact SharePoint styling with small, 2-pixel corners, a theme-aware border and focus outline, and an inset search button. Its default height is 32 pixels; an explicitly configured height or color still takes precedence. The advanced scope icon stays inside the same input outline. Suggestions and search behavior are unchanged.
+
 !["pnp Search Box Web Part"](../../assets/webparts/search-box/search_box_wp_picker.png){: .center}
 
 !["pnp Search Box Web Part"](../../assets/webparts/search-box/search_box_wp_default.png){: .center}
@@ -21,7 +23,7 @@ The 'Search box' Web Part allows users to enter free text search queries connect
 
 ### Advanced Search box
 
-**Advanced Search box** is the last settings group on property-pane page 1 and is **Off** by default. When enabled, **Configure search scopes** appears immediately below the toggle, followed by the URL parameter settings. A button on the left of the Search Box shows the selected scope beside a filter icon and opens a scope selection popup. The selector is visually joined to the input, with the Search button at the far right. Property-specific scopes have a subtle theme-colored background. Long labels are truncated, with the full scope name available in the tooltip and accessible name. The selected scope is also checked in the popup. This indicator shows the scope for the next submission; changing it does not update the existing results until a search is submitted. The built-in **All** option keeps normal free-text/KQL search; additional options restrict the entered text to a configured SharePoint Search managed property.
+**Advanced Search box** is the last settings group on property-pane page 1 and is **Off** by default. When enabled, **Configure search scopes** appears immediately below the toggle, followed by the URL parameter settings. A filter icon at the right of the Search Box opens the scope selection popup. Selecting a property-specific scope displays its localized label followed immediately by a colon inside the input, for example **Case ID:test***. This prefix is protected: only the search text after it is editable. It is not included in query suggestions, submitted search text, or the URL text parameter. Selecting **All** removes the prefix without changing the entered text. Long labels are clipped, with the full scope name available in the tooltip and accessible name. The selected scope is also checked in the popup. The prefix shows the scope for the next submission; changing it does not update the existing results until a search is submitted. The built-in **All** option keeps normal free-text/KQL search; additional options restrict the entered text to a configured SharePoint Search managed property.
 
 Use **Configure search scopes** to add options:
 

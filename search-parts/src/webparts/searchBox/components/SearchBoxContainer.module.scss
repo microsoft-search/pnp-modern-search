@@ -2,33 +2,66 @@
 
   position: relative;
 
-  .advancedSearchRow {
-      display: flex;
-      align-items: flex-start;
-  }
-
-  .advancedSearchInput {
-      flex: 1 1 auto;
-      min-width: 0;
-
-      .searchBoxWrapper {
-          border-left: none;
-          border-radius: 0 4px 4px 0;
-      }
-
-      .searchTextField {
-          border-radius: 0 4px 4px 0;
-      }
-  }
-
   .searchBoxWrapper {
+      position: relative;
       display: flex;
       border: 1px solid var(--search-border);
       background: var(--search-background);
-      border-radius: 4px;
+      border-radius: 2px;
+      min-height: 32px;
+      box-sizing: border-box;
 
       &:hover {
         border-color: var(--search-border-hover);
+      }
+
+      .scopeButton {
+          flex: 0 0 28px;
+          margin: 1px;
+      }
+
+      .scopePrefix {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+          max-width: 40%;
+          min-width: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          color: var(--search-text);
+          font-size: var(--search-font-size, 14px);
+          cursor: text;
+      }
+
+      &.scopedSearchBox {
+          padding-inline-start: 44px;
+
+          .searchTextField {
+              position: static;
+              width: auto;
+              padding-inline-start: 0;
+          }
+
+          :global(.ms-SearchBox-iconContainer),
+          :global(.ms-SearchBox-clearButton) {
+              position: absolute;
+              inset-inline-start: 8px;
+              top: 0;
+              bottom: 0;
+              width: 32px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+
+          .hasSearchText :global(.ms-SearchBox-iconContainer) {
+              display: none;
+          }
+      }
+
+      &:focus-within {
+          border-color: var(--search-focus);
+          box-shadow: inset 0 0 0 1px var(--search-focus);
       }
   }
 
@@ -37,10 +70,16 @@
       min-width: 0;
       flex: 1 1 auto;
       border: none;
-      border-radius: 4px;
-      min-height: 32px; 
+      border-radius: 2px;
+      min-height: 0;
+      align-self: stretch;
+      padding: 0 8px;
       height: auto;
       background: var(--search-background);
+
+      &::after {
+          border: none;
+      }
 
       // Support for dynamic placeholder color
       :global(.ms-SearchBox-field) {
@@ -90,7 +129,8 @@
   .searchButton {
       flex: 0 0 auto;
       background: var(--search-button-background);
-      border-radius: 0 3px 3px 0;
+      border-radius: 2px;
+      margin: 1px;
       
       &:hover {
         background: var(--search-button-hover);
@@ -99,7 +139,7 @@
       // Target all button types within search button container
       :global(.ms-Button) {
         background: var(--search-button-background);
-        border-radius: 0 3px 3px 0;
+        border-radius: 2px;
         
         &:hover {
           background: var(--search-button-hover);
