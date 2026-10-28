@@ -116,6 +116,26 @@
       }
   }
 
+  .hasSearchText {
+      :global(.ms-SearchBox-iconContainer) {
+          display: none;
+      }
+
+      :global(.ms-SearchBox-clearButton) {
+          order: -1;
+      }
+  }
+
+  .searchButton {
+      flex: 0 0 auto;
+      border-radius: 2px;
+      margin: 1px;
+
+      :global(.ms-Button) {
+          border-radius: 2px;
+      }
+  }
+
   .errorMessage {
       margin-bottom: 10px;
   }

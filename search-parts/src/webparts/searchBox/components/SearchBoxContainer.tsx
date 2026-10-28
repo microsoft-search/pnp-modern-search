@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, concatStyleSets } from '@fluentui/react';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, concatStyleSets, createTheme, ThemeProvider, getId } from '@fluentui/react';
 import { getSearchButtonColorStyles } from './SearchButtonStyles';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
@@ -36,7 +36,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     private renderSearchButton(): JSX.Element {
         const displayMode = this.props.searchButtonDisplayMode || 'icon';
         const buttonText = this.props.searchButtonText || 'Search';
-        const iconName = this.props.searchIconName || 'Forward';
+        const iconProps = this.props.searchIconName ? { iconName: this.props.searchIconName } : searchBoxIconProps;
         const colorStyles = getSearchButtonColorStyles(this.props.themeVariant, this.props.searchButtonColor, this.props.searchButtonTextColor);
 
         const commonStyles = {
@@ -44,7 +44,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 width: '100%',
                 height: '100%',
                 minWidth: '32px',
-                padding: '0 12px', // More padding on left and right
+                padding: displayMode === 'icon' ? '0 4px' : '0 12px',
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
