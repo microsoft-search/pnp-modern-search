@@ -45,7 +45,7 @@ const createComponent = (provider: ISuggestionProvider, inputValue: string) => {
         themeVariant: undefined
     });
 
-    jest.spyOn(component, 'setState').mockImplementation((update) => {
+    jest.spyOn(component, 'setState').mockImplementation((update, callback) => {
         const nextState = typeof update === 'function' ? update(component.state, component.props) : update;
         if (nextState) {
             Object.defineProperty(component, 'state', {
@@ -53,6 +53,7 @@ const createComponent = (provider: ISuggestionProvider, inputValue: string) => {
                 value: { ...component.state, ...nextState }
             });
         }
+        callback?.();
     });
 
     return component;
@@ -76,6 +77,59 @@ describe('SearchBoxAutoComplete suggestion requests', () => {
         });
         component.componentDidUpdate(previousProps);
     };
+
+    it('shows cached zero-term suggestions on focus after restoring empty input', () => {
+        const component = createComponent(createProvider({}), 'query');
+        const suggestions = [{ displayText: 'Cached suggestion' }];
+        component.setState({
+            hasRetrievedZeroTermSuggestions: true,
+            zeroTermQuerySuggestions: suggestions,
+            isSearchExecuted: true
+        });
+        restoreInput(component, '');
+        expect(component.state.isSearchExecuted).toBe(false);
+        expect(component.state.proposedQuerySuggestions).toEqual([]);
+        component['_handleOnFocus']();
+        expect(component.state.proposedQuerySuggestions).toEqual(suggestions);
+    });
+
+    it.each(['context', 'provider'])('refreshes zero-term suggestions after empty restoration with a simultaneous %s change', async change => {
+        const oldRequest = deferred<ISuggestion[]>();
+        const newRequest = deferred<ISuggestion[]>();
+        const provider = createProvider({
+            isZeroTermSuggestionsEnabled: true,
+            getZeroTermSuggestions: jest.fn().mockReturnValueOnce(oldRequest.promise).mockReturnValue(newRequest.promise)
+        });
+        const component = createComponent(provider, 'query');
+        const pending = component['_ensureZeroTermQuerySuggestions']();
+        const previousProps = component.props;
+        const newProvider = createProvider({
+            isZeroTermSuggestionsEnabled: true,
+            getZeroTermSuggestions: jest.fn().mockReturnValue(newRequest.promise)
+        });
+        Object.defineProperty(component, 'props', {
+            configurable: true,
+            value: {
+                ...previousProps,
+                inputValue: '',
+                searchStateVersion: 1,
+                suggestionProviders: change === 'provider' ? [newProvider] : [provider],
+                suggestionProviderContext: change === 'context' ? context('second') : context('first')
+            }
+        });
+        component.componentDidUpdate(previousProps);
+        expect(component.state.isSearchExecuted).toBe(false);
+        expect(component.state.isRetrievingZeroTermSuggestions).toBe(true);
+        oldRequest.resolve([{ displayText: 'Abandoned context' }]);
+        await pending;
+        expect(component.state.zeroTermQuerySuggestions).toEqual([]);
+        newRequest.resolve([{ displayText: 'Restored context' }]);
+        await new Promise<void>(resolve => setTimeout(resolve, 0));
+        expect(component.state.zeroTermQuerySuggestions).toEqual([{ displayText: 'Restored context' }]);
+        expect(component.state.proposedQuerySuggestions).toEqual([]);
+        component['_handleOnFocus']();
+        expect(component.state.proposedQuerySuggestions).toEqual([{ displayText: 'Restored context' }]);
+    });
 
     it.each(['resolves', 'rejects'])('invalidates pending draft suggestions when navigation restores the same submitted query and the request %s', async outcome => {
         const pending = deferred<ISuggestion[]>();

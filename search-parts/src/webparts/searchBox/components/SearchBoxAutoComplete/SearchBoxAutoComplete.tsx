@@ -520,10 +520,14 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 errorMessage: null,
                 isRetrievingSuggestions: false,
                 isRetrievingZeroTermSuggestions: false,
-                isSearchExecuted: true,
+                isSearchExecuted: !!this.props.inputValue,
                 hasRetrievedZeroTermSuggestions: !(suggestionProvidersChanged || suggestionContextChanged) && previousState.hasRetrievedZeroTermSuggestions,
                 zeroTermQuerySuggestions: suggestionProvidersChanged || suggestionContextChanged ? [] : previousState.zeroTermQuerySuggestions
-            }));
+            }), () => {
+                if (!this.state.searchInputValue) {
+                    this._ensureZeroTermQuerySuggestions();
+                }
+            });
             return;
         }
 
