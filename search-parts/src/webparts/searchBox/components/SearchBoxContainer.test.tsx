@@ -1,4 +1,4 @@
-jest.mock('./SearchBoxContainer.module.scss', () => ({}));
+jest.mock('./SearchBoxContainer.module.scss', () => ({ searchButton: 'searchButton' }));
 jest.mock('./SearchBoxAutoComplete/SearchBoxAutoComplete', () => ({ __esModule: true, default: () => null }));
 jest.mock('../../../helpers/DomPurifyHelper', () => ({ DomPurifyHelper: {} }));
 jest.mock('../../../components/StyledWebPartTitle', () => ({ StyledWebPartTitle: () => null }));
@@ -155,6 +155,26 @@ describe('advanced Search Box', () => {
         const button = host.querySelector('button[aria-label="Search"]');
         expect(button.querySelector('[data-icon-name="Forward"]')).not.toBeNull();
         expect(button.querySelector('svg')).toBeNull();
+    });
+
+    it.each([false, true])('preserves compact button geometry and custom colors with autocomplete=%s', autocomplete => {
+        mount(createProps({
+            inputValue: 'test',
+            searchButtonColor: '#123456',
+            searchButtonTextColor: '#abcdef'
+        }));
+        if (autocomplete) {
+            const ActualAutoComplete = jest.requireActual<typeof import('./SearchBoxAutoComplete/SearchBoxAutoComplete')>('./SearchBoxAutoComplete/SearchBoxAutoComplete').default;
+            const element = component['renderSearchBoxWithAutoComplete']();
+            render(<ActualAutoComplete {...element.props} />);
+        }
+        const button = host.querySelector<HTMLElement>('button[aria-label="Search"]');
+        const computed = getComputedStyle(button);
+        expect(button.parentElement.classList.contains('searchButton')).toBe(true);
+        expect(computed.paddingLeft).toBe('4px');
+        expect(computed.backgroundColor).toBe('rgb(18, 52, 86)');
+        expect(computed.color).toBe('rgb(171, 205, 239)');
+        expect(button.querySelector('svg')).not.toBeNull();
     });
 
     it('changes scope without searching, then submits raw text with that scope', async () => {
