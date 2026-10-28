@@ -1,4 +1,4 @@
-jest.mock('./SearchBoxContainer.module.scss', () => ({}));
+jest.mock('./SearchBoxContainer.module.scss', () => ({ searchButton: 'searchButton' }));
 jest.mock('./SearchBoxAutoComplete/SearchBoxAutoComplete', () => ({ __esModule: true, default: () => null }));
 jest.mock('../../../helpers/DomPurifyHelper', () => ({ DomPurifyHelper: {} }));
 jest.mock('../../../components/StyledWebPartTitle', () => ({ StyledWebPartTitle: () => null }));
@@ -170,6 +170,7 @@ describe('advanced Search Box', () => {
         }
         const button = host.querySelector<HTMLElement>('button[aria-label="Search"]');
         const computed = getComputedStyle(button);
+        expect(button.parentElement.classList.contains('searchButton')).toBe(true);
         expect(computed.paddingLeft).toBe('4px');
         expect(computed.backgroundColor).toBe('rgb(18, 52, 86)');
         expect(computed.color).toBe('rgb(171, 205, 239)');

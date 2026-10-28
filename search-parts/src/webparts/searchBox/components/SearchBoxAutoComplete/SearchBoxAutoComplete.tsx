@@ -636,7 +636,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             }}
                         />
                         {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
-                            <div>
+                            <div className={styles.searchButton}>
                                 {this.renderSearchButton()}
                             </div>
                         }

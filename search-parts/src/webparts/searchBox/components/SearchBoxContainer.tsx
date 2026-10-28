@@ -213,7 +213,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     }}
                 />
                 {(this.state.searchInputValue || this.props.showSearchButtonWhenEmpty) &&
-                    <div>
+                    <div className={styles.searchButton}>
                         {this.renderSearchButton()}
                     </div>
                 }
