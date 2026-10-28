@@ -312,4 +312,24 @@ describe('advanced Search Box', () => {
         expect(props.onSearch).not.toHaveBeenCalled();
         expect(props.tokenService.resolveTokens).toHaveBeenCalledTimes(1);
     });
+
+    it('keeps the submitted scope when it changes during destination URL resolution', async () => {
+        const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+        let resolvePageUrl: (url: string) => void;
+        const pageUrl = new Promise<string>(resolve => { resolvePageUrl = resolve; });
+        const props = createProps({ searchInNewPage: true, selectedScopeKey: 'caseId' });
+        jest.spyOn(props.tokenService, 'resolveTokens').mockReturnValue(pageUrl);
+        mount(props);
+        let submission: Promise<void>;
+        act(() => { submission = component._onSearch('123'); });
+        act(() => { component.setState({ selectedScopeKey: 'all' }); });
+        await act(async () => {
+            resolvePageUrl(props.pageUrl);
+            await submission;
+        });
+        const url = new URL(String(open.mock.calls[0][0]));
+        expect(url.searchParams.get('q')).toBe('123');
+        expect(url.searchParams.get('scope')).toBe('caseId');
+        expect(component.state.selectedScopeKey).toBe('all');
+    });
 });

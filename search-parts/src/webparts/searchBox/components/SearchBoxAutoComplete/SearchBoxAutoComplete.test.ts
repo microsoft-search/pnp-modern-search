@@ -5,6 +5,7 @@ jest.mock('../../../../helpers/DomPurifyHelper', () => ({ DomPurifyHelper: {} })
 
 import { ISuggestion, ISuggestionProvider, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 import SearchBoxAutoComplete from './SearchBoxAutoComplete';
+import { debounce } from '@microsoft/sp-lodash-subset';
 
 const context = (key: string): ISuggestionProviderContext => ({
     verticals: { selectedVertical: { key, name: key, value: key } }
@@ -67,6 +68,75 @@ const switchVertical = (component: SearchBoxAutoComplete) => {
 };
 
 describe('SearchBoxAutoComplete suggestion requests', () => {
+    const restoreInput = (component: SearchBoxAutoComplete, inputValue: string) => {
+        const previousProps = component.props;
+        Object.defineProperty(component, 'props', {
+            configurable: true,
+            value: { ...previousProps, inputValue, searchStateVersion: (previousProps.searchStateVersion || 0) + 1 }
+        });
+        component.componentDidUpdate(previousProps);
+    };
+
+    it.each(['resolves', 'rejects'])('invalidates pending draft suggestions when navigation restores the same submitted query and the request %s', async outcome => {
+        const pending = deferred<ISuggestion[]>();
+        const provider = createProvider({ getSuggestions: jest.fn().mockReturnValue(pending.promise) });
+        const component = createComponent(provider, 'query');
+        component.setState({
+            proposedQuerySuggestions: [{ displayText: 'Draft suggestion' }],
+            termToSuggestFrom: 'draft',
+            errorMessage: 'Draft error'
+        });
+        const request = component['_updateQuerySuggestions']('query');
+        restoreInput(component, 'query');
+        expect(component.state.searchInputValue).toBe('query');
+        expect(component.state.proposedQuerySuggestions).toEqual([]);
+        expect(component.state.termToSuggestFrom).toBeNull();
+        expect(component.state.errorMessage).toBeNull();
+        expect(component.state.isRetrievingSuggestions).toBe(false);
+        expect(component.state.isSearchExecuted).toBe(true);
+
+        if (outcome === 'resolves') {
+            pending.resolve([{ displayText: 'Abandoned draft' }]);
+        } else {
+            pending.reject(new Error('Abandoned request failed'));
+        }
+        await request;
+        expect(component.state.proposedQuerySuggestions).toEqual([]);
+        expect(component.state.errorMessage).toBeNull();
+    });
+
+    it('cancels a debounced draft request when restoring a different query', () => {
+        jest.useFakeTimers();
+        try {
+            const component = createComponent(createProvider({}), 'query');
+            const update = jest.fn();
+            component['_onChangeDebounced'] = debounce(update, 200);
+            component['_onChangeDebounced']('draft');
+            restoreInput(component, 'restored');
+            jest.runAllTimers();
+            expect(update).not.toHaveBeenCalled();
+            expect(component.state.searchInputValue).toBe('restored');
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('invalidates zero-term requests when restoring navigation input', async () => {
+        const pending = deferred<ISuggestion[]>();
+        const provider = createProvider({
+            isZeroTermSuggestionsEnabled: true,
+            getZeroTermSuggestions: jest.fn().mockReturnValue(pending.promise)
+        });
+        const component = createComponent(provider, '');
+        const request = component['_ensureZeroTermQuerySuggestions'](false, true);
+        restoreInput(component, 'restored');
+        pending.resolve([{ displayText: 'Old zero-term suggestion' }]);
+        await request;
+        expect(component.state.isRetrievingZeroTermSuggestions).toBe(false);
+        expect(component.state.proposedQuerySuggestions).toEqual([]);
+        expect(component.state.zeroTermQuerySuggestions).toEqual([]);
+    });
+
     it.each(['resolves', 'rejects'])('keeps the new typed request loading when the previous vertical %s', async outcome => {
         const first = deferred<ISuggestion[]>();
         const second = deferred<ISuggestion[]>();

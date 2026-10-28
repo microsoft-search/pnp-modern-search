@@ -60,6 +60,11 @@ describe('advanced search scopes', () => {
         expect(buildScopedSearchQuery(text, 'caseId', scopes)).toBe('zfm_CaseNumber:"203004*"');
     });
 
+    it.each(['{QueryString.extra}', '{User.Name}', '{TenantUrl}', '{inputQueryText}', '{{QueryString.extra}}', 'a{b', 'a}b'])('rejects braces to prevent downstream token expansion: %s', text => {
+        expect(() => buildScopedSearchQuery(text, 'caseId', scopes)).toThrow(SearchScopeError);
+        expect(buildScopedSearchQuery(text, ALL_SEARCH_SCOPE, scopes)).toBe(text);
+    });
+
     it('supports a trailing wildcard on the final word of a property phrase', () => {
         expect(buildScopedSearchQuery('Contoso Son*', 'customer', scopes)).toBe('RefinableString10:"Contoso Son*"');
     });

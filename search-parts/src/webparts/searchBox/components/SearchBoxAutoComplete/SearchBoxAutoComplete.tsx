@@ -509,6 +509,24 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             || !isEqual(prevProps.suggestionProviders, this.props.suggestionProviders);
         const suggestionContextChanged = !isEqual(prevProps.suggestionProviderContext, this.props.suggestionProviderContext);
 
+        if (!isEqual(prevProps.inputValue, this.props.inputValue) || prevProps.searchStateVersion !== this.props.searchStateVersion) {
+            this._onChangeDebounced?.cancel();
+            ++this._suggestionsRequestId;
+            ++this._zeroTermRequestId;
+            this.setState(previousState => ({
+                searchInputValue: this.props.inputValue,
+                proposedQuerySuggestions: [],
+                termToSuggestFrom: null,
+                errorMessage: null,
+                isRetrievingSuggestions: false,
+                isRetrievingZeroTermSuggestions: false,
+                isSearchExecuted: true,
+                hasRetrievedZeroTermSuggestions: !(suggestionProvidersChanged || suggestionContextChanged) && previousState.hasRetrievedZeroTermSuggestions,
+                zeroTermQuerySuggestions: suggestionProvidersChanged || suggestionContextChanged ? [] : previousState.zeroTermQuerySuggestions
+            }));
+            return;
+        }
+
         if (suggestionProvidersChanged || suggestionContextChanged) {
             ++this._zeroTermRequestId;
             const trimmedInputValue = this.state.searchInputValue ? this.state.searchInputValue.trim() : "";
@@ -528,12 +546,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             }
         }
 
-        if (!isEqual(prevProps.inputValue, this.props.inputValue) || prevProps.searchStateVersion !== this.props.searchStateVersion) {
-            // Reset the inout value
-            this.setState({
-                searchInputValue: this.props.inputValue
-            });
-        }
     }
 
     public render(): React.ReactElement<ISearchBoxAutoCompleteProps> {

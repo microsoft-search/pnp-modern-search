@@ -233,9 +233,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
         // Don't send empty value
         if (queryText || isReset) {
+            const selectedScopeKey = this.state.selectedScopeKey;
             if (this.props.advancedSearch) {
                 try {
-                    buildScopedSearchQuery(queryText, this.state.selectedScopeKey, this.props.searchScopes);
+                    buildScopedSearchQuery(queryText, selectedScopeKey, this.props.searchScopes);
                 } catch (error) {
                     if (!(error instanceof SearchScopeError)) {
                         throw error;
@@ -256,7 +257,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     this.props.tokenService.setTokenValue(BuiltinTokenNames.inputQueryText, queryText);
                     const pageUrl = await this.props.tokenService.resolveTokens(this.props.pageUrl);
                     const url = writeScopedSearchUrl(pageUrl, this.props.queryStringParameter, this.props.scopeQueryStringParameter,
-                        queryText, this.state.selectedScopeKey);
+                        queryText, selectedScopeKey);
                     window.open(url, this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self');
                     return;
                 }
@@ -285,7 +286,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             } else {
 
                 // Notify the dynamic data controller
-                this.props.onSearch(queryText, this.props.advancedSearch ? this.state.selectedScopeKey : undefined);
+                this.props.onSearch(queryText, this.props.advancedSearch ? selectedScopeKey : undefined);
             }
         }
     }

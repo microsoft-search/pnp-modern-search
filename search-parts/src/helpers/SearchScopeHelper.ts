@@ -64,7 +64,7 @@ export function buildScopedSearchQuery(text: string, scopeKey: string, scopes: I
     // Keep property input inside its quoted value; only a single trailing prefix wildcard is allowed.
     const value = text.trim();
     const wildcardIndex = value.indexOf('*');
-    if (/["\\]/.test(value) || (wildcardIndex !== -1
+    if (/["\\{}]/.test(value) || (wildcardIndex !== -1
         && (wildcardIndex !== value.length - 1 || !value.slice(0, -1).trim()))) {
         throw new SearchScopeError('scope');
     }
