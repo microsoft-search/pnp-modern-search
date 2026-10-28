@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Translations",
+            Language: "Language",
+            Toggle: "Advanced Search box",
+            All: "All",
+            Scope: "Search scope",
+            Scopes: "Configure search scopes",
+            Key: "Scope key (URL value)",
+            Label: "Display label",
+            Property: "Queryable managed property",
+            QueryParameter: "Search text URL parameter",
+            ScopeParameter: "Search scope URL parameter",
+            InvalidConfiguration: "Invalid advanced search settings. Use unique scope keys (not 'all'), non-empty labels, valid managed property names, and distinct URL parameter names.",
+            InvalidScope: "Unknown search scope or unsupported property search value. Check the scope URL value. Property searches allow one trailing * after text, but no other wildcards, double quotes, or backslashes."
+        },
         Tokens: {
             SelectTokenLabel: "Select a token...",
             Context: {

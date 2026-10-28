@@ -59,6 +59,7 @@ define([], function() {
             },
         },
         SearchBox: {
+            ClearButtonLabel: "Vymazat hledání",
             DefaultPlaceholder: "Zadejte hledaný výraz...",
             SearchButtonLabel: "Hledat"
         }

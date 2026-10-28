@@ -64,6 +64,7 @@ declare interface ISearchBoxWebPartStrings {
         },
     },
     SearchBox: {
+        ClearButtonLabel: string;
         DefaultPlaceholder: string;
         SearchButtonLabel: string;
     }

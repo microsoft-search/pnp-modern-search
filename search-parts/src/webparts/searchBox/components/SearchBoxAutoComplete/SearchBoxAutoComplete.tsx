@@ -8,12 +8,14 @@ import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
 import { DomPurifyHelper } from '../../../../helpers/DomPurifyHelper';
+import { searchBoxIconProps } from '../SearchBoxIcon';
 
 const SUGGESTION_CHAR_COUNT_TRIGGER = 2;
 const SUGGESTION_UPDATE_DEBOUNCE_DELAY = 200;
 
 export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAutoCompleteProps, ISearchBoxAutoCompleteState> {
 
+    private readonly _searchInputId = getId('pnp-search-input-');
     private _onChangeDebounced = null;
     private _suggestionsRequestId = 0;
     private _zeroTermRequestId = 0;
@@ -38,7 +40,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             hasRetrievedZeroTermSuggestions: false,
             isRetrievingZeroTermSuggestions: false,
             isRetrievingSuggestions: false,
-            searchInputValue: (props.inputValue) ? decodeURIComponent(props.inputValue) : '',
+            searchInputValue: props.inputIsDecoded ? (props.inputValue || '') : ((props.inputValue) ? decodeURIComponent(props.inputValue) : ''),
             termToSuggestFrom: null,
             errorMessage: null,
             isSearchExecuted: false
@@ -380,7 +382,8 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             return (
                 <IconButton
                     onClick={this._handleOnSearch}
-                    iconProps={{ iconName }}
+                    iconProps={iconProps}
+                    onRenderIcon={() => <Icon {...iconProps} style={{ fontSize: iconFontSize, color: 'inherit', display: 'inline-flex' }} />}
                     ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
                     styles={concatStyleSets(colorStyles, {
                         ...commonStyles,
@@ -427,7 +430,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                         fontWeight: '400'
                     }}>{buttonText}</span>
                     <Icon
-                        iconName={iconName}
+                        {...iconProps}
                         style={{
                             fontSize: iconFontSize
                         }}
@@ -502,6 +505,28 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             || !isEqual(prevProps.suggestionProviders, this.props.suggestionProviders);
         const suggestionContextChanged = !isEqual(prevProps.suggestionProviderContext, this.props.suggestionProviderContext);
 
+        if (!isEqual(prevProps.inputValue, this.props.inputValue) || prevProps.searchStateVersion !== this.props.searchStateVersion) {
+            this._onChangeDebounced?.cancel();
+            ++this._suggestionsRequestId;
+            ++this._zeroTermRequestId;
+            this.setState(previousState => ({
+                searchInputValue: this.props.inputValue,
+                proposedQuerySuggestions: [],
+                termToSuggestFrom: null,
+                errorMessage: null,
+                isRetrievingSuggestions: false,
+                isRetrievingZeroTermSuggestions: false,
+                isSearchExecuted: !!this.props.inputValue,
+                hasRetrievedZeroTermSuggestions: !(suggestionProvidersChanged || suggestionContextChanged) && previousState.hasRetrievedZeroTermSuggestions,
+                zeroTermQuerySuggestions: suggestionProvidersChanged || suggestionContextChanged ? [] : previousState.zeroTermQuerySuggestions
+            }), () => {
+                if (!this.state.searchInputValue) {
+                    this._ensureZeroTermQuerySuggestions();
+                }
+            });
+            return;
+        }
+
         if (suggestionProvidersChanged || suggestionContextChanged) {
             ++this._zeroTermRequestId;
             const trimmedInputValue = this.state.searchInputValue ? this.state.searchInputValue.trim() : "";
@@ -521,12 +546,6 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             }
         }
 
-        if (!isEqual(prevProps.inputValue, this.props.inputValue)) {
-            // Reset the inout value
-            this.setState({
-                searchInputValue: this.props.inputValue
-            });
-        }
     }
 
     public render(): React.ReactElement<ISearchBoxAutoCompleteProps> {
@@ -549,15 +568,17 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
 
         // Build dynamic styles
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
-            borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            borderColor: this.props.searchBoxBorderColor || undefined,
+            minHeight: this.props.searchBoxHeight || 32,
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
 
-        const dynamicSearchBoxTextStyle: React.CSSProperties = {
+        const dynamicSearchBoxTextStyle = {
             color: this.props.searchBoxTextColor || undefined,
-            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined, // Account for border
+            height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : 'auto',
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
-            padding: '0 8px' // Add space before and after text
+            padding: '0 8px',
+            paddingInlineStart: this.props.scopeLabel ? 0 : 8
         };
 
         const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
@@ -578,15 +599,20 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                     isCircularNavigation={true}
                     defaultActiveElement={`.ms-SearchBox.${styles.searchTextField}`}
                 >
-                    <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
+                    <div className={`${styles.searchBoxWrapper} ${this.props.scopeLabel ? styles.scopedSearchBox : ''}`} style={dynamicSearchBoxWrapperStyle}>
+                        {this.props.scopeLabel && <label htmlFor={this._searchInputId} className={styles.scopePrefix} title={`${this.props.scopeLabel}:`}>{this.props.scopeLabel}:</label>}
                         <SearchBox
+                            id={this._searchInputId}
+                            iconProps={searchBoxIconProps}
                             componentRef={searchBoxRef}
                             placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                            ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                            className={styles.searchTextField}
+                            ariaLabel={`${this.props.scopeLabel ? `${this.props.scopeLabel}: ` : ''}${this.props.placeholderText || webPartStrings.SearchBox.DefaultPlaceholder}`}
+                            className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
+                            clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                             value={this.state.searchInputValue}
                             autoComplete="off"
-                            style={{ ...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
+                            styles={{ root: dynamicSearchBoxTextStyle }}
+                            style={{ ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                             //data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
                             onChange={(event) => {
                                 ++this._suggestionsRequestId;
@@ -614,6 +640,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                                 {this.renderSearchButton()}
                             </div>
                         }
+                        {this.props.scopeMenu}
                     </div>
                     {!this.state.isSearchExecuted && (!!this.state.searchInputValue || this.state.proposedQuerySuggestions.length > 0)
                         ? showLoadingIndicator

@@ -3,43 +3,110 @@
   position: relative;
 
   .searchBoxWrapper {
+      position: relative;
       display: flex;
-      border: 1px solid #c2c2c2;
+      border: 1px solid var(--search-border);
+      background: var(--search-background);
+      border-radius: 2px;
+      min-height: 32px;
+      box-sizing: border-box;
 
       &:hover {
-        border-color: #272727;
+        border-color: var(--search-border-hover);
+      }
+
+      .scopeButton {
+          flex: 0 0 28px;
+          margin: 1px;
+      }
+
+      .scopePrefix {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+          max-width: 40%;
+          min-width: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          color: var(--search-text);
+          font-size: var(--search-font-size, 14px);
+          cursor: text;
+      }
+
+      &.scopedSearchBox {
+          padding-inline-start: 44px;
+
+          .searchTextField {
+              position: static;
+              width: auto;
+              padding-inline-start: 0;
+          }
+
+          :global(.ms-SearchBox-iconContainer),
+          :global(.ms-SearchBox-clearButton) {
+              position: absolute;
+              inset-inline-start: 8px;
+              top: 0;
+              bottom: 0;
+              width: 32px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+
+          .hasSearchText :global(.ms-SearchBox-iconContainer) {
+              display: none;
+          }
+      }
+
+      &:focus-within {
+          border-color: var(--search-focus);
+          box-shadow: inset 0 0 0 1px var(--search-focus);
       }
   }
 
   .searchTextField {
       width: 100%;
+      min-width: 0;
       flex: 1 1 auto;
       border: none;
-      min-height: 32px; 
+      border-radius: 2px;
+      min-height: 0;
+      align-self: stretch;
+      padding: 0 8px;
       height: auto;
+      background: var(--search-background);
+
+      &::after {
+          border: none;
+      }
 
       // Support for dynamic placeholder color
       :global(.ms-SearchBox-field) {
+        color: var(--search-text);
         &::placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &::-webkit-input-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &::-moz-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &:-ms-input-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
         &:-moz-placeholder {
-          color: var(--placeholder-color, #605e5c);
+          color: var(--placeholder-color);
         }
       }
 
       // Dynamic icon sizing for search and clear icons
       :global(.ms-SearchBox-icon) {
         font-size: var(--search-icon-size, 16px);
+        display: inline-flex;
+        align-items: center;
+        color: var(--search-icon-color);
       }
       
       :global(.ms-SearchBox-clearButton) {
@@ -73,7 +140,7 @@
       padding: 6px;
       font-size: 14px;
       font-weight: 400;
-      color: #777;
+      color: var(--suggestion-secondary);
   }
 
   .suggestionItem {
@@ -85,10 +152,10 @@
       text-decoration: none;
       min-height: 28px;
       cursor: pointer;
-      color: #333;
+      color: var(--suggestion-text);
 
       &:hover {
-          background-color: #f4f4f4;
+          background-color: var(--suggestion-hover);
       }
 
       .suggestionIcon {
@@ -119,7 +186,7 @@
 
       .suggestionDescription {
           font-size: 0.9em;
-          color: #777;
+          color: var(--suggestion-secondary);
       }
 
       .suggestionAction {
@@ -135,10 +202,10 @@
       width: 100%;
       box-sizing: border-box;
       z-index: 1;
-      background-color: #ffffff;
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
-      border-right: 1px solid #ccc;
+      background-color: var(--suggestion-background);
+      border-bottom: 1px solid var(--search-border);
+      border-left: 1px solid var(--search-border);
+      border-right: 1px solid var(--search-border);
   }
 }
 

@@ -60,6 +60,7 @@ define([], function() {
             
         },
         SearchBox: {
+            ClearButtonLabel: "Tyhjennä haku",
             DefaultPlaceholder: "Syötä hakusanat...",
             SearchButtonLabel: "Suorita haku"
         }

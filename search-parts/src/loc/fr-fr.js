@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Traductions",
+            Language: "Langue",
+            Toggle: "Zone de recherche avancée",
+            All: "Tout",
+            Scope: "Étendue de recherche",
+            Scopes: "Configurer les étendues de recherche",
+            Key: "Clé de l’étendue (valeur URL)",
+            Label: "Libellé affiché",
+            Property: "Propriété gérée interrogeable",
+            QueryParameter: "Paramètre URL du texte de recherche",
+            ScopeParameter: "Paramètre URL de l’étendue de recherche",
+            InvalidConfiguration: "Paramètres de recherche avancée non valides. Utilisez des clés d’étendue uniques (autres que 'all'), des libellés renseignés, des noms de propriétés gérées valides et des noms de paramètres URL distincts.",
+            InvalidScope: "Étendue inconnue ou valeur de propriété non prise en charge. Vérifiez la valeur de l’étendue dans l’URL. Les recherches par propriété autorisent un seul * après le texte, mais aucun autre caractère générique, guillemet double ou barre oblique inverse."
+        },
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
             Context: {

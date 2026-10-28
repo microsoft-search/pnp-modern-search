@@ -66,6 +66,7 @@ define([], function () {
 
         },
         SearchBox: {
+            ClearButtonLabel: "Cancella ricerca",
             DefaultPlaceholder: "Inserisci i tuoi termini di ricerca...",
             SearchButtonLabel: "Cerca"
         }

@@ -59,6 +59,7 @@ define([], function() {
             }
         },
         SearchBox: {
+            ClearButtonLabel: "Ryd søgning",
             DefaultPlaceholder: "Indsæt søgeord...",
             SearchButtonLabel: "Søg"
         }

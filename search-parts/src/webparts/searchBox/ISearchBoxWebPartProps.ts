@@ -3,8 +3,12 @@ import { QueryPathBehavior, PageOpenBehavior } from "../../helpers/UrlHelper";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { ISuggestionProviderConfiguration } from "../../providers/ISuggestionProviderConfiguration";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
+import { ISearchScope } from "../../helpers/SearchScopeHelper";
 
 export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
+    advancedSearch?: boolean;
+    searchScopes?: ISearchScope[];
+    scopeQueryStringParameter?: string;
 
     /**
      * Flag indicating in the search query text should be sent to an other page

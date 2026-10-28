@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Traduzioni",
+            Language: "Lingua",
+            Toggle: "Casella di ricerca avanzata",
+            All: "Tutto",
+            Scope: "Ambito di ricerca",
+            Scopes: "Configura gli ambiti di ricerca",
+            Key: "Chiave dell’ambito (valore URL)",
+            Label: "Etichetta visualizzata",
+            Property: "Proprietà gestita interrogabile",
+            QueryParameter: "Parametro URL del testo di ricerca",
+            ScopeParameter: "Parametro URL dell’ambito di ricerca",
+            InvalidConfiguration: "Impostazioni di ricerca avanzata non valide. Usa chiavi di ambito univoche (diverse da 'all'), etichette non vuote, nomi di proprietà gestite validi e nomi di parametri URL distinti.",
+            InvalidScope: "Ambito sconosciuto o valore di proprietà non supportato. Controlla il valore dell’ambito nell’URL. Le ricerche per proprietà consentono un solo * alla fine del testo, ma nessun altro carattere jolly, virgolette doppie o barre rovesciate."
+        },
         Tokens: {
             SelectTokenLabel: "Seleziona un token...",
             Context: {
