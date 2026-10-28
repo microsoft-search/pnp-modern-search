@@ -25,6 +25,7 @@ define([], function() {
                 HeightLabel: "Altura (px)",
                 FontSizeLabel: "Tamaño de fuente (px)",
                 ButtonColorLabel: "Color del botón de búsqueda",
+                ButtonTextColorLabel: "Color del texto del botón de búsqueda",
                 PlaceholderTextColorLabel: "Color del texto del marcador de posición",
                 BackgroundColorLabel: "Color de fondo",
                 TextColorLabel: "Color del texto",

@@ -24,6 +24,7 @@ define([], function() {
                 BorderRadiusLabel: "Poloměr ohraničení (px)",
                 HeightLabel: "Výška (px)",
                 ButtonColorLabel: "Barva tlačítka vyhledávání",
+                ButtonTextColorLabel: "Barva textu tlačítka vyhledávání",
                 ButtonHoverColorLabel: "Barva najetí tlačítka vyhledávání",
                 PlaceholderTextColorLabel: "Barva zástupného textu",
                 BackgroundColorLabel: "Barva pozadí",

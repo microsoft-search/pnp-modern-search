@@ -85,6 +85,7 @@ Both the standard input and the suggestion-enabled input use rounded corners and
 | **Text color** | The color of the text entered in the search box. | _Theme text color_
 | **Placeholder text color** | The color of the placeholder text when the search box is empty. WCAG AA compliant default ensures 4.5:1 contrast ratio. | _#605e5c (WCAG AA compliant)_
 | **Search button color** | The background color of the search button. | _Theme primary color_
+| **Search button text color** | The color of the text and icon on the search button. | _White_
 | **Show search button when input is empty** | Display the search button even when the search input field is empty. | False
 | **Search button display** | Choose how the search button appears: Icon only, Text only, or Both (text with icon). | _Icon only_
 | **Search icon name** | The Fluent UI icon name to display on the search button (e.g., Search, Forward, ChevronRight). See [Fluent UI Icons](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons) for available icons. | _Search_

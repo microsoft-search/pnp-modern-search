@@ -116,44 +116,6 @@
       }
   }
 
-  .hasSearchText {
-      :global(.ms-SearchBox-iconContainer) {
-          display: none;
-      }
-
-      :global(.ms-SearchBox-clearButton) {
-          order: -1;
-      }
-  }
-
-  .searchButton {
-      flex: 0 0 auto;
-      background: var(--search-button-background);
-      border-radius: 2px;
-      margin: 1px;
-      
-      &:hover {
-        background: var(--search-button-hover);
-      }
-
-      // Target all button types within search button container
-      :global(.ms-Button) {
-        background: var(--search-button-background);
-        border-radius: 2px;
-        
-        &:hover {
-          background: var(--search-button-hover);
-        }
-      }
-
-      & i {
-        color: var(--search-button-text);
-        &:hover {
-          color: var(--search-button-text);
-        }
-      }
-  }
-
   .errorMessage {
       margin-bottom: 10px;
   }

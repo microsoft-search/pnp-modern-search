@@ -45,6 +45,11 @@ export interface ISearchBoxAutoCompleteProps {
   searchButtonColor?: string;
 
   /**
+   * Search button text and icon color
+   */
+  searchButtonTextColor?: string;
+
+  /**
    * Placeholder text color
    */
   placeholderTextColor?: string;

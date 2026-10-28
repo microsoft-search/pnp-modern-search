@@ -120,6 +120,11 @@ export interface ISearchBoxContainerProps {
     searchButtonColor?: string;
 
     /**
+     * Search button text and icon color
+     */
+    searchButtonTextColor?: string;
+
+    /**
      * Placeholder text color
      */
     placeholderTextColor?: string;
