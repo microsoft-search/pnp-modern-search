@@ -103,11 +103,13 @@ When the **Hierarchical Refiner** template is selected, a **Hierarchical Setting
 - Works with localized taxonomy refiner values when **Enable localization** is enabled in the connected SharePoint Search data source.
 - The limit warning info icon tooltip is localized using the current UI language for all supported Search Filters languages.
 - Deep links generated from hierarchical selections are supported.
+- Leaf selections preserve the original encoded SharePoint refinement token. Older deep links containing decoded, label-bearing `L0` values are restored as label-independent exact-term `GP0` tokens.
 
 #### Selection behavior
 
 - Selecting a parent node applies a taxonomy parent token so the selection includes child terms.
 - Selecting a leaf node applies that specific term only.
+- If the search response does not contain a matching leaf refiner bucket, the fallback exact-term token preserves the term GUID's hyphens.
 - When a hierarchical value is already selected, the component automatically expands the selected branch so users can see the current context.
 
 ### Filter styling
