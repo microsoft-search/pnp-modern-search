@@ -199,20 +199,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
-            // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
-            const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
-            );
-
-            const { PropertyPaneWebPartInformation } = await import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
-            );
-
-            this._propertyFieldCollectionData = PropertyFieldCollectionData;
-            this._customCollectionFieldType = CustomCollectionFieldType;
-            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
+            await this.loadPropertyPaneResources();
         }
 
         let culture = LocalizationHelper.getTranslatedCultureFromUrl();
@@ -234,6 +221,26 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                     text: `${language.DisplayName} (${language.Lcid})`
                 };
             });
+        }
+    }
+
+    public async loadPropertyPaneResources(): Promise<void> {
+
+        if (!this._propertyPaneWebPartInformation) {
+            // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
+            const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+            );
+
+            const { PropertyPaneWebPartInformation } = await import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation'
+            );
+
+            this._propertyFieldCollectionData = PropertyFieldCollectionData;
+            this._customCollectionFieldType = CustomCollectionFieldType;
+            this._propertyPaneWebPartInformation = PropertyPaneWebPartInformation;
         }
     }
 

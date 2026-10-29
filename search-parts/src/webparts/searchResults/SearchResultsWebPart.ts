@@ -121,6 +121,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _customCollectionFieldType: any = null;
     private _textDialogComponent: any = null;
     private _propertyPanePropertyEditor = null;
+    private _propertyPaneResourcesRequested = false;
 
     private _connectionsPropertyPaneBuilderClass: typeof ConnectionsPropertyPaneBuilderType = null;
 
@@ -315,6 +316,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 return this.renderCompleted();
             }
 
+            // Loaded here rather than in onInit(): single-part app pages switch to edit mode without initializing the Web Part again
+            if (this.displayMode === DisplayMode.Edit && !this._placeholderComponent) {
+                const { Placeholder } = await import(
+                    /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                    '@pnp/spfx-controls-react/lib/Placeholder'
+                );
+                this._placeholderComponent = Placeholder;
+            }
+
             // Ensure extensions are loaded before rendering.
             // Use a promise guard to prevent concurrent loadExtensions calls if render() is
             // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
@@ -352,13 +362,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
                 if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                    this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    const dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    await this.loadComponentPropertyPaneResources(dataSource);
+                    this.dataSource = dataSource;
                     this.lastDataSourceKey = this.properties.dataSourceKey;
                 }
 
                 // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
                 if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                    this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    const layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    await this.loadComponentPropertyPaneResources(layout);
+                    this.layout = layout;
                     this.lastLayoutKey = this.properties.selectedLayoutKey;
                 }
 
@@ -740,14 +754,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Initializes this component as a discoverable dynamic data source
         if (this.properties.allowWebPartConnections) {
             this.context.dynamicDataSourceManager.initializeSource(this);
-        }
-
-        if (this.displayMode === DisplayMode.Edit) {
-            const { Placeholder } = await import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@pnp/spfx-controls-react/lib/Placeholder'
-            );
-            this._placeholderComponent = Placeholder;
         }
 
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
@@ -1322,7 +1328,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async loadPropertyPaneResources(): Promise<void> {
 
+        this._propertyPaneResourcesRequested = true;
         await this.loadCommonPropertyPaneResources();
+        await this.loadComponentPropertyPaneResources(this.dataSource);
+        await this.loadComponentPropertyPaneResources(this.layout);
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
@@ -1416,6 +1425,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._propertyFieldMessage = PropertyFieldMessage;
 
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
+    }
+
+    /**
+     * Built-in data sources and layouts only load their property pane controls when initialized in edit mode.
+     * Single-part app pages switch to edit mode without reinitializing the Web Part, so load them on demand.
+     */
+    private async loadComponentPropertyPaneResources(component: IDataSource | ILayout): Promise<void> {
+        if (this._propertyPaneResourcesRequested) {
+            await (component as { loadPropertyPaneResources?: () => Promise<void> })?.loadPropertyPaneResources?.();
+        }
     }
 
     /**
