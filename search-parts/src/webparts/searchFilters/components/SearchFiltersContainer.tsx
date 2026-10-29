@@ -2082,7 +2082,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
 
                         if (selectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical) {
-                            newValue.value = this.decodeHierarchicalLeafRefinementValue(newValue.value);
+                            newValue.value = this.normalizeHierarchicalLeafRefinementValue(newValue.value);
                         }
                     }
 
@@ -2138,18 +2138,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}${tokenMatch[3] || ''}`);
     }
 
-    private decodeHierarchicalLeafRefinementValue(rawValue: string): string {
-        const encodedTokenPattern = /"ǂǂ[0-9a-fA-F]+"/g;
-        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
-        const isSingleEncodedToken = /^"ǂǂ[0-9a-fA-F]+"$/.test(rawValue);
-
-        if (decodedValue?.startsWith('L0|#') && isSingleEncodedToken) {
-            return decodedValue;
+    private normalizeHierarchicalLeafRefinementValue(rawValue: string): string {
+        const leafTokenPattern = /L0\|#0?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\|/i;
+        const singleTokenMatch = leafTokenPattern.exec(rawValue);
+        if (singleTokenMatch?.index === 0) {
+            // Older deep links contain decoded L0 values. Use the label-independent exact term token.
+            return this.encodeTaxonomyRefinementToken(`GP0|#${singleTokenMatch[1]}`);
         }
 
-        return rawValue.replace(encodedTokenPattern, encodedToken => {
-            const decodedToken = TaxonomyHelper.decodeHexString(encodedToken);
-            return decodedToken?.startsWith('L0|#') ? `"${decodedToken}"` : encodedToken;
+        return rawValue.replace(/"L0\|#0?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\|[^"]*"/gi, (_token, guid: string) => {
+            return this.encodeTaxonomyRefinementToken(`GP0|#${guid}`);
         });
     }
 
@@ -2415,7 +2413,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         return {
                             ...value,
                             value: filterConfiguration?.selectedTemplate === BuiltinFilterTemplates.Hierarchical
-                                ? this.decodeHierarchicalLeafRefinementValue(normalizedValue)
+                                ? this.normalizeHierarchicalLeafRefinementValue(normalizedValue)
                                 : normalizedValue
                         };
                     });
