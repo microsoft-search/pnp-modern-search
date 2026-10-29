@@ -2146,7 +2146,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             return this.encodeTaxonomyRefinementToken(`GP0|#${singleTokenMatch[1]}`);
         }
 
-        return rawValue.replace(/"L0\|#0?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\|[^"]*"/gi, (_token, guid: string) => {
+        return rawValue.replace(/"L0\|#0?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\|(?:[^"\\]|\\.)*"/gi, (_token, guid: string) => {
             return this.encodeTaxonomyRefinementToken(`GP0|#${guid}`);
         });
     }

@@ -99,9 +99,26 @@ describe('hierarchical leaf refinement tokens (issue #5032)', () => {
     });
 
     it.each([
-        encodeToken(`L0|#0${guid}|Verksamhetsnyhet - HR`),
-        `L0|#0${guid}|Verksamhetsnyhet HR`
-    ])('restores a deep link with exact-token semantics: %s', value => {
+        `"L0|#0${guid}|Child \\"HR\\""`,
+        `"L0|#0${guid}|Child \\\\ \\"HR\\""`
+    ])('repairs escaped quoted labels through publication and FQL: %s', value => {
+        for (const [input, expected] of [
+            [value, exactTermToken],
+            [`or(${exactTermToken},${value})`, `or(${exactTermToken},${exactTermToken})`]
+        ]) {
+            const filters = publishSelection(input);
+            expect(filters[0].values[0].value).toBe(expected);
+            expect(DataFilterHelper.buildFqlRefinementString(filters, undefined))
+                .toEqual([`RefinableString121:${expected}`]);
+        }
+    });
+
+    it.each([
+        [encodeToken(`L0|#0${guid}|Verksamhetsnyhet - HR`), encodeToken(`L0|#0${guid}|Verksamhetsnyhet - HR`)],
+        [`L0|#0${guid}|Verksamhetsnyhet HR`, exactTermToken],
+        [`"L0|#0${guid}|Child \\"HR\\""`, exactTermToken],
+        [`or(${exactTermToken},"L0|#0${guid}|Child \\\\ \\"HR\\"")`, `or(${exactTermToken},${exactTermToken})`]
+    ])('restores a deep link with exact-token semantics: %s', (value, expected) => {
         const container = createContainer();
         const configuration = { filterName: 'RefinableString121', selectedTemplate: 'Hierarchical', isMulti: false };
         Object.defineProperty(container, 'props', {
@@ -120,7 +137,6 @@ describe('hierarchical leaf refinement tokens (issue #5032)', () => {
             ]))
         });
         container['getFiltersDeepLink']();
-        const expected = value.startsWith('L0') ? exactTermToken : value;
         expect(container.state.submittedFilters[0].values[0].value).toBe(expected);
         expect(container.props.onUpdateFilters).toHaveBeenCalledWith(container.state.submittedFilters);
         expect(DataFilterHelper.buildFqlRefinementString(container.state.submittedFilters, undefined))
