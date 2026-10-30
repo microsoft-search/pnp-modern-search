@@ -1,8 +1,17 @@
 import { Constants } from "../common/Constants";
 
+const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
 export class DomPurifyHelper {
     private static _instance: any = null;
     private static _config: any = null;
+
+    /**
+     * Original values of data-* attributes on web components, keyed by element then attribute name.
+     * Populated by allowCustomAttributesHook and consumed by restoreWebComponentDataAttributesHook
+     * within the same sanitize() call.
+     */
+    private static readonly _webComponentDataAttributes: WeakMap<Element, Map<string, string>> = new WeakMap();
 
     /**
      * Gets the singleton DOMPurify instance with shared configuration
@@ -74,6 +83,10 @@ export class DomPurifyHelper {
         );
         DomPurifyHelper._instance.addHook(
             "afterSanitizeAttributes",
+            DomPurifyHelper.restoreWebComponentDataAttributesHook
+        );
+        DomPurifyHelper._instance.addHook(
+            "afterSanitizeAttributes",
             DomPurifyHelper.sanitizeStyleAttributeHook
         );
         DomPurifyHelper._instance.addHook(
@@ -134,8 +147,10 @@ export class DomPurifyHelper {
      * Blocks event handlers (on*) and dangerous URI-carrying attributes.
      * All other attributes are force-kept to support custom components like
      * <my-component data-foo="bar"> and Handlebars data attributes.
+     * @param node the HTML node owning the attribute
+     * @param data the DOMPurify hook event
      */
-    public static allowCustomAttributesHook(attr, data) {
+    public static allowCustomAttributesHook(node, data) {
         if (data?.attrName) {
             const attrLower = data.attrName.toLowerCase();
 
@@ -145,9 +160,64 @@ export class DomPurifyHelper {
             // Don't force-keep dangerous URI attributes — let DOMPurify validate them
             if (DomPurifyHelper.DANGEROUS_ATTRS.has(attrLower)) return;
 
+            if (DomPurifyHelper.isWebComponentDataAttribute(node, attrLower)) {
+                // DOMPurify's SAFE_FOR_XML check runs on hookEvent.attrValue *before* forceKeepAttr
+                // is honored and removes any attribute whose value contains "</style", "</script",
+                // "-->", "]>", etc. Web component data-* attributes carry JSON-serialized template
+                // context/configuration (e.g. column templates with <style> tags) that legitimately
+                // contain such sequences and are consumed by the components as data, never as markup.
+                // Hand DOMPurify an empty value for its checks; the DOM attribute keeps its original
+                // value (forceKeepAttr skips the write-back) and is restored defensively afterwards.
+                DomPurifyHelper.rememberWebComponentDataAttribute(node, attrLower);
+                data.attrValue = "";
+            }
+
             data.allowedAttributes[data.attrName] = true;
             data.forceKeepAttr = true;
         }
+    }
+
+    /**
+     * Whether the attribute is a data-* attribute on a custom element (tag name containing a dash)
+     * in the HTML namespace. Elements in foreign content (SVG/MathML) are excluded so that
+     * DOMPurify's mXSS protections remain fully effective there.
+     */
+    private static isWebComponentDataAttribute(node: any, attrLower: string): boolean {
+        return attrLower.startsWith("data-")
+            && typeof node?.localName === "string"
+            && node.localName.includes("-")
+            && node.namespaceURI === HTML_NAMESPACE
+            && typeof node.getAttribute === "function";
+    }
+
+    private static rememberWebComponentDataAttribute(node: Element, attrLower: string): void {
+        const originalValue = node.getAttribute(attrLower);
+        if (originalValue === null) return;
+
+        let attributes = DomPurifyHelper._webComponentDataAttributes.get(node);
+        if (!attributes) {
+            attributes = new Map<string, string>();
+            DomPurifyHelper._webComponentDataAttributes.set(node, attributes);
+        }
+        attributes.set(attrLower, originalValue);
+    }
+
+    /**
+     * Restores data-* attribute values on web components that were neutralized for DOMPurify's
+     * attribute value checks in allowCustomAttributesHook.
+     * @param node the HTML node
+     */
+    public static restoreWebComponentDataAttributesHook(node: Element) {
+        const attributes = DomPurifyHelper._webComponentDataAttributes.get(node);
+        if (!attributes) return;
+
+        DomPurifyHelper._webComponentDataAttributes.delete(node);
+
+        attributes.forEach((originalValue, attrName) => {
+            if (node.getAttribute(attrName) !== originalValue) {
+                node.setAttribute(attrName, originalValue);
+            }
+        });
     }
 
     /**
