@@ -3,6 +3,9 @@
     "description": "Base library for creating PnP Modern Search extensions",
     "version": "2.2.0",
     "private": false,
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    },
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
