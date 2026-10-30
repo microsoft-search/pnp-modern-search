@@ -1,14 +1,23 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Spinner, SpinnerSize, Text, getTheme } from '@fluentui/react';
+import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Spinner, SpinnerSize, Text, ThemeProvider, getTheme } from '@fluentui/react';
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
 import { MSGraphClientFactory, SPHttpClient } from '@microsoft/sp-http';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PageContext } from '@microsoft/sp-page-context';
-import { IPeoplePickerContext, PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
+import type { IPeoplePickerContext, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
+
+// Loaded on demand so the picker and its search-service dependencies are not part of the eager bundle
+const LazyPeoplePicker = React.lazy(() =>
+    import(
+        /* webpackChunkName: "pnp-modern-search-people-picker" */ '@pnp/spfx-controls-react/lib/PeoplePicker'
+    ).then((module) => ({
+        default: module.PeoplePicker,
+    }))
+);
 
 export interface IFilterPeopleTemplateProps {
 
@@ -446,18 +455,23 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
     private renderStaticPeoplePicker(): JSX.Element {
         const defaultSelectedUsers = this.getDefaultSelectedUsers();
 
-        return <PeoplePicker
-            key={defaultSelectedUsers.join('|')}
-            context={this.props.peoplePickerContext}
-            disabled={this.props.disabled}
-            personSelectionLimit={this.isMultiSelectionMode() ? Number.MAX_SAFE_INTEGER : 1}
-            principalTypes={[PrincipalType.User]}
-            defaultSelectedUsers={defaultSelectedUsers}
-            onChange={this.onPeoplePickerChange}
-            placeholder={webPartStrings.General.StaticPeoplePicker.SearchUsersPlaceholder}
-            searchTextLimit={2}
-            suggestionsLimit={10}
-        />;
+        // Stable key: the picker keeps its internal state across selection updates (no remount/focus loss)
+        return <ThemeProvider theme={(this.props.themeVariant as ITheme) || getTheme()}>
+            <React.Suspense fallback={<Spinner size={SpinnerSize.xSmall} />}>
+                <LazyPeoplePicker
+                    key="static-people-picker"
+                    context={this.props.peoplePickerContext}
+                    disabled={this.props.disabled}
+                    personSelectionLimit={this.isMultiSelectionMode() ? Number.MAX_SAFE_INTEGER : 1}
+                    principalTypes={[1] as unknown as PrincipalType[]} // PrincipalType.User
+                    defaultSelectedUsers={defaultSelectedUsers}
+                    onChange={this.onPeoplePickerChange}
+                    placeholder={webPartStrings.General.StaticPeoplePicker.SearchUsersPlaceholder}
+                    searchTextLimit={2}
+                    suggestionsLimit={10}
+                />
+            </React.Suspense>
+        </ThemeProvider>;
     }
 
     public render() {

@@ -1188,7 +1188,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             return React.createElement("div", { key: `${field.id}-${itemId}` },
                                 React.createElement(Checkbox, {
                                     defaultChecked: item.selectedTemplate === BuiltinFilterTemplates.ComboBox ? false : item.expandByDefault,
-                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.ComboBox || item.selectedTemplate === BuiltinFilterTemplates.StaticPeople,
+                                    disabled: item.selectedTemplate === BuiltinFilterTemplates.ComboBox,
                                     onChange: (ev, checked: boolean) => {
                                         onUpdate(field.id, checked);
                                     }
