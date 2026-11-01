@@ -13,6 +13,8 @@ declare interface ISearchFiltersWebPartStrings {
             SearchUsersPlaceholder: string;
             LoadingTenantUsersLabel: string;
             NoUsersFoundMessage: string;
+            UnverifiedDomainsWarning: string;
+            DisallowedDomainsWarning: string;
         };
     },
     PropertyPane: {
@@ -39,6 +41,16 @@ declare interface ISearchFiltersWebPartStrings {
             PeopleTemplateQUserMappingWarning: string;
             FilterDisplayName: string;
             FilterTemplate: string;
+            AllowedEmailDomains: string;
+            AllowedEmailDomainsPlaceholder: string;
+            AllowedEmailDomainsInvalid: string;
+            AllowedEmailDomainsButton: string;
+            AllowedEmailDomainsDialogDescription: string;
+            AllowedEmailDomainsNewDomain: string;
+            AllowedEmailDomainsAdd: string;
+            AllowedEmailDomainsRemove: string;
+            AllowedEmailDomainsEmpty: string;
+            AllowedEmailDomainsInvalidEntry: string;
             FilterExpandByDefault: string;
             ExpandAllNodesByDefault: string;
             HideNodesNotInDataSet: string;

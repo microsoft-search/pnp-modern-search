@@ -34,13 +34,31 @@ The filter settings are as follow:
 | **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
 | **# of values** | The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).
 | **Show warning when limit is reached** | Off by default. When enabled, an info icon appears after the filter title if the connected API returns a number of refiner or aggregation values equal to or greater than the configured **# of values** limit. Hover the icon to see the warning details. |
-| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png)  </p></br></li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
+| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png) (a refiner for people values)</p></li><li>**People Picker** (searchable picker for tenant users)</li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
+| **Allowed email domains** | Optional restriction for the **People Picker** template. Select the **Domains (n)** button to open a dialog where you add or remove email domains; leave the list empty to allow all suggestions. |
 | **Expand by default** | If applicable for the selected template, display values as expanded.
 | **Show count** | If applicable for the selected template, display counts for values.
 | **Mutli values** | If applicable for the selected template, allow selection of multiple values.
 | **Operator between values** | If multi values is selected, the operator to use between values (OR/AND).
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
+
+### Restricting the People Picker by email domain
+
+For a filter using the **People Picker** template, select the **Domains (n)** button in the **Allowed email domains** column. The dialog lists the allowed domains; enter a domain such as `contoso.com` (or several, separated by semicolons or commas) and select **Add**, or use the remove button next to a domain. Select **Save** to apply the changes, including any valid domains still in the input, or **Cancel** to discard them. The button is disabled for other templates. The domains are stored as a semicolon-separated string, so existing configurations continue to work. This option applies to that filter only; it does not affect the separate **People Template** refiner. Leave the list empty to retain the unrestricted picker.
+
+Matching ignores case and requires an exact domain. For example, `contoso.com` permits `person@contoso.com` but not `person@subsidiary.contoso.com`; add the subdomain explicitly if needed. Enter domains without `@`, wildcards, or URLs. The picker excludes suggestions without a usable email-like address, including encoded guest logins. The underlying picker may provide an email-like login when an email address is unavailable, so the domain is not proof of mailbox ownership. Invalid domain settings are reported and disable the picker until corrected; the dialog highlights invalid stored entries and blocks saving until they are removed.
+
+Previously saved selections may contain only a display name instead of an email address. When the domain cannot be verified, the selection is kept and a warning is shown; the selection can be removed with its remove button. Selections with a known disallowed domain are removed. A saved display name can be shared by multiple people, so an ambiguous submitted value may remain until the user clears or reapplies the filter.
+
+The allowlist filters the picker UI, **not access to content or a security boundary**. The People picker applies this restriction after its service has limited the number of returned suggestions, so fewer matches may appear even when other matching users exist.
+
+If you use a custom filters layout based on an older built-in template, add these attributes to its static `pnp-peoplefilter` element:
+
+```html
+data-allowed-email-domains="{{filter.allowedEmailDomains}}"
+data-domain-selection-removed="{{filter.domainSelectionRemoved}}"
+```
 
 ### Exact text refiner matching
 

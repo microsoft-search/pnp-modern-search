@@ -4,9 +4,14 @@ jest.mock('SearchFiltersWebPartStrings', () => ({
     PropertyPane: { LayoutPage: { ClearAllActionText: 'Clear all' } }
 }), { virtual: true });
 jest.mock('CommonStrings', () => ({}), { virtual: true });
-jest.mock('@pnp/modern-search-extensibility', () => ({}));
-jest.mock('@microsoft/sp-core-library', () => ({}));
-jest.mock('../../../helpers/DataFilterHelper', () => ({}));
+jest.mock('@pnp/modern-search-extensibility', () => ({
+    FilterComparisonOperator: { Eq: 'eq' },
+    FilterConditionOperator: { OR: 'or' }
+}));
+jest.mock('@microsoft/sp-core-library', () => ({ DisplayMode: { Edit: 2, Read: 1 } }));
+jest.mock('../../../helpers/DataFilterHelper', () => ({
+    DataFilterHelper: { getConfigurationForFilter: jest.fn() }
+}));
 jest.mock('../../../helpers/TaxonomyHelper', () => ({}));
 jest.mock('../../../helpers/UrlHelper', () => ({
     UrlHelper: {
@@ -15,7 +20,10 @@ jest.mock('../../../helpers/UrlHelper', () => ({
 }));
 jest.mock('../../../layouts/AvailableTemplates', () => ({
     BuiltinFilterTemplates: {
-        People: 'People'
+        People: 'People',
+        StaticPeople: 'StaticPeopleTemplate',
+        DateRange: 'DateRangeFilterTemplate',
+        Hierarchical: 'HierarchicalFilterTemplate'
     }
 }));
 jest.mock('@fluentui/react/lib/MessageBar', () => ({}));
@@ -23,11 +31,14 @@ jest.mock('../../../styles/Common.module.scss', () => ({ linkButton: 'linkButton
 jest.mock('@microsoft/sp-lodash-subset', () => ({
     cloneDeep: require('lodash/cloneDeep'),
     sortBy: require('lodash/sortBy'),
-    isEqual: require('lodash/isEqual')
+    isEqual: require('lodash/isEqual'),
+    flatten: require('lodash/flatten')
 }));
 
 import type { IDataFilter, IDataFilterConfiguration, IDataFilterInternal } from '@pnp/modern-search-extensibility';
+import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
+import type { IStaticPeopleFilterConfiguration, IStaticPeopleFilterEventInfo } from '../IStaticPeopleFilterConfiguration';
 import SearchFiltersContainer from './SearchFiltersContainer';
 
 describe('SearchFiltersContainer deep-link compatibility', () => {
@@ -164,6 +175,7 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
             Object.assign(container.state, nextState);
             callback?.();
         });
+
         return container;
     }
 
@@ -316,5 +328,190 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
         expect((container as any)._filterUpdateVersion).toBe(5);
         expect((container as any)._latestDeferredSubmittedFilters).toBeNull();
         expect((container as any)._deferredSubmittedUpdateTimer).toBeNull();
+    });
+});
+
+describe('SearchFiltersContainer static People domain restrictions', () => {
+    const configuration: IStaticPeopleFilterConfiguration = {
+        filterName: 'Owner',
+        displayValue: 'Owner',
+        selectedTemplate: 'StaticPeopleTemplate',
+        allowedEmailDomains: 'contoso.com',
+        isMulti: true,
+        showCount: false,
+        operator: 'or' as IDataFilterConfiguration['operator'],
+        sortBy: 'ByName' as IDataFilterConfiguration['sortBy'],
+        sortDirection: 'Ascending' as IDataFilterConfiguration['sortDirection'],
+        sortIdx: 0,
+        maxBuckets: 10,
+        rangeDefinition: 0
+    };
+
+    function createContainer(uiFilters: IDataFilterInternal[] = [], submittedFilters: IDataFilter[] = []): SearchFiltersContainer {
+        const container: SearchFiltersContainer = Object.create(SearchFiltersContainer.prototype);
+        container.state = { currentUiFilters: uiFilters, submittedFilters };
+        (container as any).props = {
+            filtersConfiguration: [configuration],
+            availableFilters: [],
+            webPartTitleProps: { displayMode: 1 },
+            onUpdateFilters: jest.fn()
+        };
+        (container as any).areFilterValuesEquivalent = (left: string, right: string) => left === right;
+        jest.spyOn(container, 'setState').mockImplementation((state, callback) => {
+            const nextState = typeof state === 'function' ? state(container.state, (container as any).props) : state;
+            if (nextState) {
+                Object.assign(container.state, nextState);
+            }
+            callback?.();
+        });
+        jest.spyOn(container as any, 'queueDeferredSubmittedFiltersUpdate').mockImplementation(() => undefined);
+        jest.spyOn(container as any, 'endResultsUpdate').mockImplementation(() => undefined);
+        jest.spyOn(container as any, 'resolveFilterDisplayName').mockImplementation((...args: unknown[]) => String(args[0] || args[1]));
+        return container;
+    }
+
+    function peopleUiFilter(values: Array<{ name: string; value: string; selected: boolean }>): IDataFilterInternal & { allowedEmailDomains: string; domainSelectionRemoved?: boolean } {
+        return {
+            filterName: 'Owner',
+            displayName: 'Owner',
+            selectedTemplate: 'StaticPeopleTemplate',
+            values: values.map(value => ({ ...value, selectedOnce: true })),
+            isMulti: true,
+            expandByDefault: false,
+            showCount: false,
+            sortIdx: 0,
+            allowedEmailDomains: 'contoso.com'
+        };
+    }
+
+    it('passes the setting to the template for displayed and newly created filters', () => {
+        const container = createContainer();
+        const available = { filterName: 'Owner', values: [] };
+        const display = container['buildFilterResultInternal'](
+            available,
+            configuration,
+            [],
+            [],
+            -1,
+            available,
+            { selectedOnce: false, hasSelectedValues: false, canApply: false, canClear: false }
+        );
+        const created = container['createNewUiFilter']({
+            filterName: 'Owner',
+            instanceId: 'test-instance',
+            filterValues: [{ name: 'Alice', value: 'alice@contoso.com', selected: true }]
+        }, configuration);
+
+        expect(display.allowedEmailDomains).toBe('contoso.com');
+        expect(created.allowedEmailDomains).toBe('contoso.com');
+    });
+
+    it('strips the allowlist and warning from submitted filters while preserving display-name queries', () => {
+        const filter = peopleUiFilter([{ name: 'Alice', value: 'alice@contoso.com', selected: true }]);
+        filter.domainSelectionRemoved = true;
+        const container = createContainer([filter]);
+        const submitted = container['getSelectedFiltersFromUIFilters']([filter]);
+
+        expect(submitted).toHaveLength(1);
+        expect(submitted[0].values[0]).toEqual({ name: 'Alice', value: 'Alice', operator: 'eq' });
+        expect(submitted[0]).not.toHaveProperty('allowedEmailDomains');
+        expect(submitted[0]).not.toHaveProperty('domainSelectionRemoved');
+    });
+
+    it('restores the configured allowlist on a deep-linked filter', () => {
+        const container = createContainer();
+        const filters: IDataFilter[] = [{ filterName: 'Owner', values: [{ name: 'Alex Smith', value: 'Alex Smith' }] }];
+        (DataFilterHelper.getConfigurationForFilter as jest.Mock).mockReturnValue(configuration);
+        jest.spyOn(container as any, 'getFiltersDeepLinkQueryString').mockReturnValue(encodeURIComponent(JSON.stringify(filters)));
+        jest.spyOn(container as any, 'sanitizeTaxonomyRefinementValue').mockImplementation((...args: unknown[]) => String(args[0]));
+        jest.spyOn(container as any, 'getFiltersToDisplay').mockResolvedValue(undefined);
+
+        container['getFiltersDeepLink']();
+
+        expect(container.state.currentUiFilters[0]).toMatchObject({
+            allowedEmailDomains: 'contoso.com',
+            values: [{ name: 'Alex Smith', value: 'Alex Smith', selected: true }]
+        });
+        expect(container.state.submittedFilters).toMatchObject(filters);
+        expect(container.state.submittedFilters[0]).not.toHaveProperty('allowedEmailDomains');
+    });
+
+    it('removes only disallowed submitted values without applying pending changes', () => {
+        const owner = peopleUiFilter([
+            { name: 'Alice', value: 'alice@contoso.com', selected: true },
+            { name: 'Bob', value: 'bob@fabrikam.com', selected: true },
+            { name: 'Charlie', value: 'charlie@contoso.com', selected: true }
+        ]);
+        const other = {
+            filterName: 'Category',
+            selectedTemplate: 'Checkbox',
+            values: [{ name: 'Pending', value: 'Pending', selected: true }],
+            isMulti: true,
+            sortIdx: 1
+        } as IDataFilterInternal;
+        const submitted = [
+            { filterName: 'Owner', values: [{ name: 'Alice', value: 'Alice' }, { name: 'Bob', value: 'Bob' }] },
+            { filterName: 'Category', values: [{ name: 'Applied', value: 'Applied' }] }
+        ];
+        const container = createContainer([owner, other], submitted);
+        const event: IStaticPeopleFilterEventInfo = {
+            filterName: 'Owner',
+            instanceId: 'test-instance',
+            reconcileAllowedEmailDomains: true,
+            filterValues: [{ name: 'Bob', value: 'bob@fabrikam.com', selected: false }]
+        };
+
+        container['processFilterValuesUpdated'](event, configuration);
+
+        expect(container.state.currentUiFilters[0].values.map(value => value.selected)).toEqual([true, true, false]);
+        expect(container.state.currentUiFilters[0].canApply).toBe(true);
+        expect(container.state.currentUiFilters[1].values[0].value).toBe('Pending');
+        expect(container.state.submittedFilters).toEqual([
+            { filterName: 'Owner', values: [{ name: 'Alice', value: 'Alice' }] },
+            { filterName: 'Category', values: [{ name: 'Applied', value: 'Applied' }] }
+        ]);
+        expect(container['queueDeferredSubmittedFiltersUpdate']).toHaveBeenCalledWith(container.state.submittedFilters, 'Owner');
+    });
+
+    it('preserves an ambiguous submitted display name shared with a retained person', () => {
+        const owner = peopleUiFilter([
+            { name: 'Alex Smith', value: 'alex@contoso.com', selected: true },
+            { name: 'Alex Smith', value: 'alex@fabrikam.com', selected: true }
+        ]);
+        const submitted = [{ filterName: 'Owner', values: [{ name: 'Alex Smith', value: 'Alex Smith' }] }];
+        const container = createContainer([owner], submitted);
+
+        container['reconcilePeopleDomainSelections']({
+            filterName: 'Owner',
+            instanceId: 'test-instance',
+            filterValues: [{ name: 'Alex Smith', value: 'alex@fabrikam.com', selected: false }]
+        }, configuration);
+
+        expect(container.state.submittedFilters).toEqual(submitted);
+        expect(container['queueDeferredSubmittedFiltersUpdate']).not.toHaveBeenCalled();
+        expect(container['endResultsUpdate']).toHaveBeenCalled();
+    });
+
+    it('ignores a stale reconciliation if the domain has since been allowed', () => {
+        const owner = peopleUiFilter([{ name: 'Bob', value: 'bob@fabrikam.com', selected: true }]);
+        const container = createContainer([owner]);
+        container['reconcilePeopleDomainSelections']({
+            filterName: 'Owner',
+            instanceId: 'test-instance',
+            filterValues: [{ name: 'Bob', value: 'bob@fabrikam.com', selected: false }]
+        }, { ...configuration, allowedEmailDomains: 'contoso.com; fabrikam.com' } as IStaticPeopleFilterConfiguration);
+
+        expect(container.state.currentUiFilters[0].values[0].selected).toBe(true);
+        expect(container['queueDeferredSubmittedFiltersUpdate']).not.toHaveBeenCalled();
+    });
+
+    it('clears the domain warning along with selections', () => {
+        const owner = peopleUiFilter([{ name: 'Alice', value: 'alice@contoso.com', selected: true }]);
+        owner.domainSelectionRemoved = true;
+        const container = createContainer([owner]);
+        const cleared = container['resetSelectedFilterValues']([owner]);
+
+        expect(cleared[0].values).toEqual([]);
+        expect(cleared[0]).toHaveProperty('domainSelectionRemoved', false);
     });
 });

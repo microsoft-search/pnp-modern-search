@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Usuń {0}",
                 SearchUsersPlaceholder: "Wyszukaj użytkowników",
                 LoadingTenantUsersLabel: "Ładowanie użytkowników dzierżawy...",
-                NoUsersFoundMessage: "Nie znaleziono użytkowników."
+                NoUsersFoundMessage: "Nie znaleziono użytkowników.",
+                UnverifiedDomainsWarning: "Nie można było sprawdzić niektórych wybranych osób względem dozwolonych domen, dlatego je zachowano.",
+                DisallowedDomainsWarning: "Wybrana osoba została usunięta, ponieważ jej domena poczty e-mail jest niedozwolona."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Ostrzeżenie szablonu osób: wartości nie wyglądają jak tożsamości użytkowników. Ta właściwość prawdopodobnie nie jest mapowana do przeszukiwanej właściwości Q_USER.",
                 FilterDisplayName: "Tytuł",
                 FilterTemplate: "Szablon",
+                AllowedEmailDomains: "Dozwolone domeny poczty e-mail",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Wprowadź poprawne domeny poczty e-mail oddzielone średnikami lub przecinkami.",
+                AllowedEmailDomainsButton: "Domeny ({0})",
+                AllowedEmailDomainsDialogDescription: "Można wybrać tylko osoby, których adres e-mail należy do jednej z tych domen. Pozostaw listę pustą, aby zezwolić wszystkim.",
+                AllowedEmailDomainsNewDomain: "Domena do dodania",
+                AllowedEmailDomainsAdd: "Dodaj",
+                AllowedEmailDomainsRemove: "Usuń {0}",
+                AllowedEmailDomainsEmpty: "Nie skonfigurowano domen. Można wybrać każdego.",
+                AllowedEmailDomainsInvalidEntry: "Wprowadź poprawną domenę, na przykład contoso.com.",
                 FilterExpandByDefault: "Domyślnie rozwinięte",
                 ExpandAllNodesByDefault: "Domyślnie rozwiń wszystkie węzły",
                 HideNodesNotInDataSet: "Ukryj węzły, których nie ma w bieżącym zestawie danych",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Pole rozwijalne",
                     DateIntervalTemplate: "Okres czasu",
                     PeopleTemplate: "Szablon osoby",
-                    StaticPeopleTemplate: "Osoby",
+                    StaticPeopleTemplate: "Selektor osób",
                     TaxonomyPickerTemplate: "Wybór terminu",
                     HierarchicalFilterTemplate: "Filtr hierarchiczny"
                 },

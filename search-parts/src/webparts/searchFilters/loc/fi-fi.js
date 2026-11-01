@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Poista {0}",
                 SearchUsersPlaceholder: "Hae käyttäjiä",
                 LoadingTenantUsersLabel: "Ladataan vuokraajan käyttäjiä...",
-                NoUsersFoundMessage: "Käyttäjiä ei löytynyt."
+                NoUsersFoundMessage: "Käyttäjiä ei löytynyt.",
+                UnverifiedDomainsWarning: "Joidenkin valittujen henkilöiden toimialuetta ei voitu tarkistaa sallittujen toimialueiden perusteella, joten valinnat säilytettiin.",
+                DisallowedDomainsWarning: "Valittu henkilö poistettiin, koska hänen sähköpostinsa toimialue ei ole sallittu."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Henkilömallin varoitus: arvot eivät näytä käyttäjäidentiteeteiltä. Tätä ominaisuutta ei todennäköisesti ole yhdistetty Q_USER-indeksoituun ominaisuuteen.",
                 FilterDisplayName: "Näyttönimi",
                 FilterTemplate: "Templaatti",
+                AllowedEmailDomains: "Sallitut sähköpostitoimialueet",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Anna kelvolliset sähköpostitoimialueet puolipisteellä tai pilkulla erotettuina.",
+                AllowedEmailDomainsButton: "Toimialueet ({0})",
+                AllowedEmailDomainsDialogDescription: "Vain henkilöt, joiden sähköpostiosoite kuuluu johonkin näistä toimialueista, voidaan valita. Jätä luettelo tyhjäksi salliaksesi kaikki.",
+                AllowedEmailDomainsNewDomain: "Lisättävä toimialue",
+                AllowedEmailDomainsAdd: "Lisää",
+                AllowedEmailDomainsRemove: "Poista {0}",
+                AllowedEmailDomainsEmpty: "Toimialueita ei ole määritetty. Kaikki voidaan valita.",
+                AllowedEmailDomainsInvalidEntry: "Anna kelvollinen toimialue, esimerkiksi contoso.com.",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
                 ExpandAllNodesByDefault: "Laajenna kaikki solmut oletusarvoisesti",
                 HideNodesNotInDataSet: "Piilota solmut, jotka eivät ole nykyisessä tietojoukossa",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Yhdistelmävalinta",
                     DateIntervalTemplate: "Ajankohtarajaus (esim. viime kuussa)",
                     PeopleTemplate: "Henkilö malli",
-                    StaticPeopleTemplate: "Henkilöt",
+                    StaticPeopleTemplate: "Henkilövalitsin",
                     TaxonomyPickerTemplate: "Taksonomiavalinta",
                     HierarchicalFilterTemplate: "Hierarkkinen suodatin"
                 },

@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Ta bort {0}",
                 SearchUsersPlaceholder: "Sök användare",
                 LoadingTenantUsersLabel: "Läser in klientanvändare...",
-                NoUsersFoundMessage: "Inga användare hittades."
+                NoUsersFoundMessage: "Inga användare hittades.",
+                UnverifiedDomainsWarning: "Vissa valda personer kunde inte kontrolleras mot de tillåtna domänerna och behölls därför.",
+                DisallowedDomainsWarning: "En vald person togs bort eftersom personens e-postdomän inte är tillåten."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Varning för personmall: värdena ser inte ut som användaridentiteter. Den här egenskapen är troligen inte mappad till en Q_USER-genomsökt egenskap.",
                 FilterDisplayName: "Visningsnamn",
                 FilterTemplate: "Filtermall",
+                AllowedEmailDomains: "Tillåtna e-postdomäner",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Ange giltiga e-postdomäner avgränsade med semikolon eller kommatecken.",
+                AllowedEmailDomainsButton: "Domäner ({0})",
+                AllowedEmailDomainsDialogDescription: "Endast personer vars e-postadress tillhör någon av dessa domäner kan väljas. Lämna listan tom för att tillåta alla.",
+                AllowedEmailDomainsNewDomain: "Domän att lägga till",
+                AllowedEmailDomainsAdd: "Lägg till",
+                AllowedEmailDomainsRemove: "Ta bort {0}",
+                AllowedEmailDomainsEmpty: "Inga domäner har konfigurerats. Alla kan väljas.",
+                AllowedEmailDomainsInvalidEntry: "Ange en giltig domän, till exempel contoso.com.",
                 FilterExpandByDefault: "Expandera som standard",
                 ExpandAllNodesByDefault: "Expandera alla noder som standard",
                 HideNodesNotInDataSet: "Dölj noder som inte finns i den aktuella datamängden",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinationsruta",
                     DateIntervalTemplate: "Datumintervall (fasta intervall)",
                     PeopleTemplate: "Person mall",
-                    StaticPeopleTemplate: "Personer",
+                    StaticPeopleTemplate: "Personväljare",
                     TaxonomyPickerTemplate: "Taxonomiväljare",
                     HierarchicalFilterTemplate: "Hierarkiskt filter"
                 },

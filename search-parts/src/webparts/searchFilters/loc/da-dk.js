@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Fjern {0}",
                 SearchUsersPlaceholder: "Søg efter brugere",
                 LoadingTenantUsersLabel: "Indlæser brugere...",
-                NoUsersFoundMessage: "Ingen brugere fundet."
+                NoUsersFoundMessage: "Ingen brugere fundet.",
+                UnverifiedDomainsWarning: "Nogle valgte personer kunne ikke kontrolleres mod de tilladte domæner og blev bevaret.",
+                DisallowedDomainsWarning: "En valgt person blev fjernet, fordi personens e-maildomæne ikke er tilladt."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 EditModeRefinerLimitReachedWarningMessage: "I redigeringstilstand er filtrene begrænset til maksimalt 100 elementer.",
                 PeopleTemplateQUserMappingWarning: "Advarsel for personskabelon: værdierne ligner ikke brugeridentiteter. Egenskaben er sandsynligvis ikke knyttet til en Q_USER-crawlet egenskab.",
                 FilterTemplate: "Skabelon",
+                AllowedEmailDomains: "Tilladte e-maildomæner",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Angiv gyldige e-maildomæner adskilt af semikolon eller komma.",
+                AllowedEmailDomainsButton: "Domæner ({0})",
+                AllowedEmailDomainsDialogDescription: "Kun personer, hvis e-mailadresse tilhører et af disse domæner, kan vælges. Lad listen være tom for at tillade alle.",
+                AllowedEmailDomainsNewDomain: "Domæne der skal tilføjes",
+                AllowedEmailDomainsAdd: "Tilføj",
+                AllowedEmailDomainsRemove: "Fjern {0}",
+                AllowedEmailDomainsEmpty: "Ingen domæner er konfigureret. Alle kan vælges.",
+                AllowedEmailDomainsInvalidEntry: "Angiv et gyldigt domæne, f.eks. contoso.com.",
                 FilterExpandByDefault: "Udvid som standard",
                 ExpandAllNodesByDefault: "Udvid alle noder som standard",
                 HideNodesNotInDataSet: "Skjul noder, der ikke findes i det aktuelle datasæt",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Combo-boks",
                     DateIntervalTemplate: "Datointerval",
                     PeopleTemplate: "Personskabelon",
-                    StaticPeopleTemplate: "Personer",
+                    StaticPeopleTemplate: "Personvælger",
                     TaxonomyPickerTemplate: "Taksonomivælger",
                     HierarchicalFilterTemplate: "Hierarkisk filter"
                 },

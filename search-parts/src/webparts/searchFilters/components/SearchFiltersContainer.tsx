@@ -29,6 +29,8 @@ import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import commonStyles from '../../../styles/Common.module.scss';
+import { PeoplePickerDomainHelper } from '../../../helpers/PeoplePickerDomainHelper';
+import type { IStaticPeopleFilterConfiguration, IStaticPeopleFilterEventInfo } from '../IStaticPeopleFilterConfiguration';
 
 const DEEPLINK_QUERYSTRING_PARAM_BASE = 'f';
 
@@ -50,6 +52,8 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
+    allowedEmailDomains?: string;
+    domainSelectionRemoved?: boolean;
     showWarningMarker?: boolean;
     showLimitExceededWarning?: boolean;
     limitExceededWarningText?: string;
@@ -1311,9 +1315,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             ? currentUiFilters[selectedFilterIdx].selectedOnce
             : values.some(value => value.selectedOnce);
         const hasSelectedValues = values.some(value => value.selected);
+        const isStaticPeople = selectedFilterIdx !== -1
+            && currentUiFilters[selectedFilterIdx].selectedTemplate === BuiltinFilterTemplates.StaticPeople;
         const currentSelectedValuesInUiForFilter = values
             .filter(value => value.selected)
-            .map(value => `${value.value ?? ''}`);
+            .map(value => `${isStaticPeople ? value.name ?? value.value ?? '' : value.value ?? ''}`);
         const alreadySubmittedValuesForFilter = flatten(
             this.state.submittedFilters
                 .filter(submittedFilter => submittedFilter.filterName === availableFilter.filterName)
@@ -1373,6 +1379,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             warningMarkerTooltipText,
             selectedOnce: selectionState.selectedOnce,
             selectedTemplate: filterConfiguration.selectedTemplate,
+            allowedEmailDomains: filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople
+                ? (filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains
+                : undefined,
+            domainSelectionRemoved: selectedFilterIdx !== -1
+                && !!(currentUiFilters[selectedFilterIdx] as IFilterInternalWithWarning).domainSelectionRemoved,
             hasSelectedValues: selectionState.hasSelectedValues,
             values,
             operator: filterOperator,
@@ -1531,7 +1542,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         };
     }
 
-    private createNewUiFilter(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration): IDataFilterInternal & { termSetId?: string } {
+    private createNewUiFilter(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration): IFilterInternalWithWarning & { termSetId?: string } {
         const filterValuesInternal: IDataFilterValueInternal[] = filterInfo.filterValues.map(filterValue => {
             return {
                 selected: filterValue.selected,
@@ -1552,6 +1563,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             values: filterValuesInternal,
             operator: filterInfo.operator ? filterInfo.operator : filterConfiguration.operator,
             selectedTemplate: filterConfiguration.selectedTemplate,
+            allowedEmailDomains: filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople
+                ? (filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains
+                : undefined,
             sortIdx: filterConfiguration.sortIdx,
             termSetId: (filterConfiguration as IHierarchicalFilterConfiguration).termSetId
         };
@@ -1587,7 +1601,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return updatedUiFilters;
     }
 
-    private updatePendingMultiFilterState(currentUiFilters: IDataFilterInternal[], filterName: string): void {
+    private updatePendingMultiFilterState(currentUiFilters: IDataFilterInternal[], filterName: string, submittedFilters: IDataFilter[] = this.state.submittedFilters): void {
         const updatedFilterIdx = currentUiFilters.findIndex(filter => filter.filterName === filterName);
         if (updatedFilterIdx === -1) {
             return;
@@ -1606,10 +1620,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         const currentSelectedValuesInUiForFilter = updatedFilter.values
             .filter(value => value.selected)
-            .map(value => `${value.value}`)
+            .map(value => `${updatedFilter.selectedTemplate === BuiltinFilterTemplates.StaticPeople ? value.name ?? value.value : value.value}`)
             .sort((left, right) => left.localeCompare(right));
         const alreadySubmittedValuesForFilter = flatten(
-            this.state.submittedFilters
+            submittedFilters
                 .filter(submittedFilter => submittedFilter.filterName === updatedFilter.filterName)
                 .map(submittedFilter => submittedFilter.values)
         )
@@ -1634,6 +1648,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 updatedFilter.values = [];
                 updatedFilter.selectedOnce = true;
                 updatedFilter.hasSelectedValues = false;
+                (updatedFilter as IFilterInternalWithWarning).domainSelectionRemoved = false;
             } else {
                 updatedFilter.values = updatedFilter.values.filter(selectedValue => selectedValue.selected);
             }
@@ -1970,6 +1985,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private processFilterValuesUpdated(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration, debugContext?: IUpdateDebugContext): void {
+        if ((filterInfo as IStaticPeopleFilterEventInfo).reconcileAllowedEmailDomains
+            && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+            this.reconcilePeopleDomainSelections(filterInfo, filterConfiguration);
+            return;
+        }
+
         let currentUiFilters: IDataFilterInternal[] = [];
         const filterIdx = this.state.currentUiFilters.map(filter => filter.filterName).indexOf(filterInfo.filterName);
 
@@ -1977,6 +1998,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             currentUiFilters = update(this.state.currentUiFilters, { $push: [this.createNewUiFilter(filterInfo, filterConfiguration)] });
         } else {
             currentUiFilters = this.mergeFilterValuesIntoUiFilters(this.state.currentUiFilters, filterIdx, filterInfo, filterConfiguration);
+            (currentUiFilters[filterIdx] as IFilterInternalWithWarning).domainSelectionRemoved = false;
         }
 
         if (debugContext) {
@@ -1993,6 +2015,69 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         this.commitSubmittedFilterUpdate(currentUiFilters, filterInfo, filterConfiguration, debugContext);
+    }
+
+    private reconcilePeopleDomainSelections(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration): void {
+        const allowlist = PeoplePickerDomainHelper.parse((filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains);
+        const removedValues = filterInfo.filterValues
+            .filter(value => !value.selected && PeoplePickerDomainHelper.getStatus({ secondaryText: value.value }, allowlist) === 'disallowed')
+            .map(value => value.value);
+        let submittedFiltersChanged = false;
+        let uiFiltersChanged = false;
+        let nextSubmittedFilters: IDataFilter[] = this.state.submittedFilters;
+
+        this._skipNextUiRefreshFromLocalSelection = true;
+        this.setState(previousState => {
+            const currentUiFilters = cloneDeep(previousState.currentUiFilters);
+            const filter = currentUiFilters.find(item => item.filterName === filterInfo.filterName) as IFilterInternalWithWarning | undefined;
+            if (!filter) {
+                return null;
+            }
+
+            const removed = filter.values.filter(value => value.selected && removedValues.includes(value.value));
+            if (removed.length === 0) {
+                return null;
+            }
+
+            removed.forEach(value => { value.selected = false; });
+            filter.domainSelectionRemoved = true;
+            uiFiltersChanged = true;
+
+            const keysFor = (values: Array<{ name?: string; value?: string }>): Set<string> => new Set(
+                values.flatMap(value => [value.name, value.value])
+                    .filter(value => !!value)
+                    .map(value => value.trim().toLowerCase())
+            );
+            const removedKeys = keysFor(removed);
+            const retainedKeys = keysFor(filter.values.filter(value => value.selected));
+            nextSubmittedFilters = previousState.submittedFilters.map(submittedFilter => {
+                if (submittedFilter.filterName !== filterInfo.filterName) {
+                    return submittedFilter;
+                }
+                return {
+                    ...submittedFilter,
+                    values: submittedFilter.values.filter(value => {
+                        const keys = keysFor([value]);
+                        const matchesRemoved = Array.from(keys).some(key => removedKeys.has(key));
+                        const matchesRetained = Array.from(keys).some(key => retainedKeys.has(key));
+                        return !matchesRemoved || matchesRetained;
+                    })
+                };
+            }).filter(filterItem => filterItem.values.length > 0);
+
+            submittedFiltersChanged = !isEqual(previousState.submittedFilters, nextSubmittedFilters);
+            this.updatePendingMultiFilterState(currentUiFilters, filterInfo.filterName, nextSubmittedFilters);
+            return { currentUiFilters: sortBy(currentUiFilters, 'sortIdx'), submittedFilters: nextSubmittedFilters };
+        }, () => {
+            if (!uiFiltersChanged) {
+                this._skipNextUiRefreshFromLocalSelection = false;
+            }
+            if (submittedFiltersChanged) {
+                this.queueDeferredSubmittedFiltersUpdate(nextSubmittedFilters, filterInfo.filterName);
+            } else {
+                this.endResultsUpdate();
+            }
+        });
     }
 
     public componentWillUnmount(): void {
@@ -2044,7 +2129,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         const selectedFilters: IDataFilter[] = currentUiFilters.map(selectedFilter => {
 
-            const newSelectedFilter = cloneDeep(selectedFilter);
+            const newSelectedFilter = cloneDeep(selectedFilter) as IFilterInternalWithWarning;
 
             // Update the operator to 'or' when single value mode is selected and multiple values are submitted
             if (selectedFilter.values.some(v => v.selected) && !selectedFilter.isMulti && selectedFilter.selectedTemplate !== BuiltinFilterTemplates.DateRange) {
@@ -2101,6 +2186,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 delete newSelectedFilter.canClear;
                 delete newSelectedFilter.sortIdx;
                 delete newSelectedFilter.selectedTemplate;
+                delete newSelectedFilter.allowedEmailDomains;
+                delete newSelectedFilter.domainSelectionRemoved;
                 // Strip hierarchical term tree — it's re-fetched on load and must not bloat the URL
                 delete (newSelectedFilter as any).hierarchicalTerms;
                 delete (newSelectedFilter as any).termSetId;
@@ -2434,6 +2521,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         filterName: filter.filterName,
                         isMulti: this.isMultiValueFilter(filterConfiguration),
                         selectedTemplate: filterConfiguration.selectedTemplate,
+                        allowedEmailDomains: filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople
+                            ? (filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains
+                            : undefined,
                         showCount: filterConfiguration.showCount,
                         showWarningMarker: false,
                         showLimitExceededWarning: false,
@@ -2655,6 +2745,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const updatedfilters = currentUiFilters.map(selectedFilter => {
             const updatedFilter = cloneDeep(selectedFilter);
             updatedFilter.values = [];
+            (updatedFilter as IFilterInternalWithWarning).domainSelectionRemoved = false;
             return updatedFilter;
         });
 
