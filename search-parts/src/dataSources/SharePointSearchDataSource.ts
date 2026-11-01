@@ -36,7 +36,7 @@ import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
 import { DataFilterHelper } from '../helpers/DataFilterHelper';
 import { ISortFieldConfiguration, } from '../models/search/ISortFieldConfiguration';
 import { EnumHelper } from '../helpers/EnumHelper';
-import { BuiltinDataSourceProviderKeys } from './AvailableDataSources';
+import { BuiltinDataSourceProviderKeys, DEFAULT_SHAREPOINT_SEARCH_MAX_BUCKETS } from './AvailableDataSources';
 import { StringHelper } from '../helpers/StringHelper';
 import { AutoCalculatedDataSourceFields, SortableFields } from '../common/Constants';
 import { ObjectHelper } from '../helpers/ObjectHelper';
@@ -329,12 +329,11 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
     }
 
     private logRefinerCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
-        const defaultRefinerSize = 100;
         const configuredFilters = dataContext.filters?.filtersConfiguration || [];
 
         filters.forEach((filter) => {
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
-            const configuredLimit = this.getEffectiveRefinerLimit(filterConfiguration?.maxBuckets ?? defaultRefinerSize);
+            const configuredLimit = this.getEffectiveRefinerLimit(filterConfiguration?.maxBuckets ?? DEFAULT_SHAREPOINT_SEARCH_MAX_BUCKETS);
             const returnedCount = filter.values?.length ?? 0;
             const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; isEditModeCapApplied?: boolean; };
 

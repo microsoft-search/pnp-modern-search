@@ -20,7 +20,7 @@ import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonRea
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
 import commonStyles from '../styles/Common.module.scss';
 import * as React from "react";
-import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
+import { BuiltinDataSourceProviderKeys, DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS } from "./AvailableDataSources";
 import { AutoCalculatedDataSourceFields, SortableFields } from "../common/Constants";
 import LocalizationHelper from "../helpers/LocalizationHelper";
 import { ObjectHelper } from "../helpers/ObjectHelper";
@@ -291,12 +291,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private logAggregationCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
-        const defaultAggregationSize = 10;
         const configuredFilters = dataContext.filters?.filtersConfiguration || [];
 
         filters.forEach((filter) => {
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
-            const configuredLimit = this.getEffectiveAggregationLimit(filterConfiguration?.maxBuckets ?? defaultAggregationSize);
+            const configuredLimit = this.getEffectiveAggregationLimit(filterConfiguration?.maxBuckets ?? DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS);
             const returnedCount = filter.values?.length ?? 0;
             const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; isEditModeCapApplied?: boolean; };
 
@@ -317,7 +316,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         });
     }
 
-    private getEffectiveAggregationLimit(configuredLimit: number = 10): number {
+    private getEffectiveAggregationLimit(configuredLimit: number = DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS): number {
         return this.editMode ? Math.min(configuredLimit, EDIT_MODE_AGGREGATION_LIMIT) : configuredLimit;
     }
 
@@ -1571,7 +1570,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     minimumCount: 1,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
-                size: this.getEffectiveAggregationLimit(filterConfig?.maxBuckets ?? 10)
+                size: this.getEffectiveAggregationLimit(filterConfig?.maxBuckets ?? DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS)
             };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {

@@ -18,7 +18,7 @@ import {
     IPropertyPanePage
 } from "@microsoft/sp-property-pane";
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
-import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
+import { AvailableDataSources, BuiltinDataSourceProviderKeys, getDataSourceDefaultMaxBuckets } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
 const SearchResultsContainer = React.lazy(() => import(
     /* webpackChunkName: 'pnp-modern-search-results-container' */
@@ -469,6 +469,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
                 this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
+                this._currentDataResultsSourceData.defaultMaxBuckets = getDataSourceDefaultMaxBuckets(this.properties.dataSourceKey);
                 this._currentDataResultsSourceData.connectedFilterSourceReference = this.properties.filtersDataSourceReference;
                 this._currentDataResultsSourceData.selectedProperties = this.getSelectedProperties();
                 this._currentDataResultsSourceData.connectedSearchBoxSourceId = this.properties.queryText?.reference?.split(':')[0];
