@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Remove {0}",
                 SearchUsersPlaceholder: "Search users",
                 LoadingTenantUsersLabel: "Loading tenant users...",
-                NoUsersFoundMessage: "No users found."
+                NoUsersFoundMessage: "No users found.",
+                UnverifiedDomainsWarning: "Some selected people could not be verified against the allowed domains and were kept.",
+                DisallowedDomainsWarning: "A selected person was removed because their email domain is not allowed."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "People template warning: values do not look like user identities. This property may not be mapped to a Q_USER crawled property.",
                 FilterDisplayName: "Display name",
                 FilterTemplate: "Template",
+                AllowedEmailDomains: "Allowed email domains",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Enter valid email domains separated by semicolons or commas.",
+                AllowedEmailDomainsButton: "Domains ({0})",
+                AllowedEmailDomainsDialogDescription: "Only people whose email address belongs to one of these domains can be selected. Leave the list empty to allow everyone.",
+                AllowedEmailDomainsNewDomain: "Domain to add",
+                AllowedEmailDomainsAdd: "Add",
+                AllowedEmailDomainsRemove: "Remove {0}",
+                AllowedEmailDomainsEmpty: "No domains configured. Everyone can be selected.",
+                AllowedEmailDomainsInvalidEntry: "Enter a valid domain, for example contoso.com.",
                 FilterExpandByDefault: "Expand by default",
                 ExpandAllNodesByDefault: "Expand all nodes by default",
                 HideNodesNotInDataSet: "Hide nodes not in the current data set",
@@ -63,7 +75,7 @@ define([], function () {
                     ComboBoxTemplate: "Combo box",
                     DateIntervalTemplate: "Date interval",
                     PeopleTemplate: "People Template",
-                    StaticPeopleTemplate: "People",
+                    StaticPeopleTemplate: "People Picker",
                     TaxonomyPickerTemplate: "Taxonomy picker",
                     HierarchicalFilterTemplate: "Hierarchical filter"
                 },

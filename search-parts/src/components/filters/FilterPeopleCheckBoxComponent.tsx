@@ -1,14 +1,18 @@
 import * as React from 'react';
-import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
+import { BaseWebComponent, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
 import { Checkbox, ChoiceGroup, ICheckboxProps, IChoiceGroupOption, ITheme, Spinner, SpinnerSize, Text, ThemeProvider, getTheme } from '@fluentui/react';
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
+import { IconButton } from '@fluentui/react/lib/Button';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { MSGraphClientFactory, SPHttpClient } from '@microsoft/sp-http';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PageContext } from '@microsoft/sp-page-context';
-import type { IPeoplePickerContext, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
+import type { IPeoplePickerContext, PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
+import { IAllowedEmailDomains, PeoplePickerDomainHelper } from '../../helpers/PeoplePickerDomainHelper';
+import type { IStaticPeopleFilterEventInfo } from '../../webparts/searchFilters/IStaticPeopleFilterConfiguration';
 
 // Loaded on demand so the picker and its search-service dependencies are not part of the eager bundle
 const LazyPeoplePicker = React.lazy(() =>
@@ -77,6 +81,13 @@ export interface IFilterPeopleTemplateProps {
     selectedValues?: string | Array<{ name?: string; value?: string; selected?: boolean }>;
 
     /**
+     * Optional email-domain restrictions for static people suggestions
+     */
+    allowedEmailDomains?: string;
+
+    domainSelectionRemoved?: boolean | string;
+
+    /**
      * SPFx context used by the tenant-wide PeoplePicker
      */
     peoplePickerContext?: IPeoplePickerContext;
@@ -84,18 +95,22 @@ export interface IFilterPeopleTemplateProps {
     /**
      * Handler when a filter value is selected
      */
-    onChecked: (filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[]) => void;
+    onChecked: (filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[], reconcileAllowedEmailDomains?: boolean) => void;
 }
 
 export interface IFilterPeopleTemplateState {
     isSelectionInProgress: boolean;
     pickerSelectedPeople: IPersonaProps[];
+    domainSelectionRemoved: boolean;
 }
 
 export class FilterPeopleTemplateComponent extends React.Component<IFilterPeopleTemplateProps, IFilterPeopleTemplateState> {
     private static readonly SELECTION_FEEDBACK_DURATION_MS = 2500;
     private static readonly GLOBAL_BUSY_CURSOR_STYLE_ID = 'pnp-modern-search-busy-cursor-style';
     private selectionFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
+    private reconciliationTimer: ReturnType<typeof setTimeout> | null = null;
+    private initialSelectionToReconcile: IPersonaProps[] | null = null;
+    private readonly peoplePickerRef = React.createRef<PeoplePicker>();
 
     private _setImmediateProgressCursor(): void {
         if (!globalThis.document) {
@@ -133,14 +148,24 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             selectedPeople = this.parseSelectedPeopleFromProps();
         }
 
+        const { retained, removed } = this.partitionSelectedPeople(selectedPeople);
+        if (removed.length > 0) {
+            this.initialSelectionToReconcile = selectedPeople;
+        }
+
         this.state = {
             isSelectionInProgress: false,
-            pickerSelectedPeople: selectedPeople
+            pickerSelectedPeople: retained,
+            domainSelectionRemoved: removed.length > 0
         };
     }
 
     public componentDidMount(): void {
         this.restoreSelectionFeedback();
+        if (this.initialSelectionToReconcile) {
+            this.scheduleSelectionReconciliation(this.state.pickerSelectedPeople, this.initialSelectionToReconcile);
+            this.initialSelectionToReconcile = null;
+        }
     }
 
     public componentDidUpdate(prevProps: IFilterPeopleTemplateProps): void {
@@ -148,13 +173,33 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             return;
         }
 
-        if (prevProps.selectedValues === this.props.selectedValues) {
+        if (prevProps.selectedValues === this.props.selectedValues
+            && prevProps.allowedEmailDomains === this.props.allowedEmailDomains
+            && prevProps.staticPicker === this.props.staticPicker) {
             return;
         }
 
+        if (this.reconciliationTimer !== null) {
+            clearTimeout(this.reconciliationTimer);
+            this.reconciliationTimer = null;
+        }
+
         const nextSelectedPeople = this.parseSelectedPeopleFromProps();
-        this.setState({
-            pickerSelectedPeople: nextSelectedPeople
+        const { retained, removed } = this.partitionSelectedPeople(nextSelectedPeople);
+        const selectedValues = this.props.selectedValues;
+        const allowedEmailDomains = this.props.allowedEmailDomains;
+        this.setState(previousState => ({
+            pickerSelectedPeople: retained,
+            domainSelectionRemoved: removed.length > 0
+                || (prevProps.selectedValues === selectedValues
+                    && prevProps.allowedEmailDomains === allowedEmailDomains
+                    && previousState.domainSelectionRemoved)
+        }), () => {
+            if (removed.length > 0
+                && this.props.selectedValues === selectedValues
+                && this.props.allowedEmailDomains === allowedEmailDomains) {
+                this.scheduleSelectionReconciliation(retained, nextSelectedPeople);
+            }
         });
     }
 
@@ -163,6 +208,35 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             clearTimeout(this.selectionFeedbackTimer);
             this.selectionFeedbackTimer = null;
         }
+        if (this.reconciliationTimer !== null) {
+            clearTimeout(this.reconciliationTimer);
+            this.reconciliationTimer = null;
+        }
+    }
+
+    private partitionSelectedPeople(people: IPersonaProps[]): { retained: IPersonaProps[]; removed: IPersonaProps[] } {
+        const allowlist = PeoplePickerDomainHelper.parse(this.props.allowedEmailDomains);
+        const retained: IPersonaProps[] = [];
+        const removed: IPersonaProps[] = [];
+        people.forEach(person => {
+            if (PeoplePickerDomainHelper.getStatus(person, allowlist) === 'disallowed') {
+                removed.push(person);
+            } else {
+                retained.push(person);
+            }
+        });
+        return { retained, removed };
+    }
+
+    private scheduleSelectionReconciliation(retained: IPersonaProps[], previouslySelected: IPersonaProps[]): void {
+        if (this.reconciliationTimer !== null) {
+            clearTimeout(this.reconciliationTimer);
+        }
+        // The container's filter event listener may not yet be attached during the initial render.
+        this.reconciliationTimer = setTimeout(() => {
+            this.reconciliationTimer = null;
+            this.emitPickerSelection(retained, previouslySelected, true);
+        }, 0);
     }
 
     private readonly getSelectionFeedbackStorageKey = (): string => {
@@ -347,8 +421,11 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
         }
     }
 
-    private readonly emitPickerSelection = (selectedPeople: IPersonaProps[]): void => {
-        const previouslySelected = this.state.pickerSelectedPeople || [];
+    private readonly emitPickerSelection = (
+        selectedPeople: IPersonaProps[],
+        previouslySelected: IPersonaProps[] = this.state.pickerSelectedPeople || [],
+        reconcileAllowedEmailDomains: boolean = false
+    ): void => {
         const selectedFilterValues: IDataFilterValueInfo[] = selectedPeople.map(person => {
             const fallbackIdentity = this.getStaticPersonIdentityValue(person);
             const displayName = `${person?.text || fallbackIdentity}`.trim();
@@ -371,7 +448,7 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             }
         });
 
-        this.props.onChecked(this.props.filterName, selectedFilterValues);
+        this.props.onChecked(this.props.filterName, selectedFilterValues, reconcileAllowedEmailDomains);
     }
 
     private _extractReadableLabel(value: string): string {
@@ -446,26 +523,114 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
             return;
         }
 
+        const allowlist = PeoplePickerDomainHelper.parse(this.props.allowedEmailDomains);
+        if (allowlist.configured) {
+            if (!allowlist.valid) {
+                return;
+            }
+
+            const allowed = selectedPeople.filter(person => PeoplePickerDomainHelper.getStatus(person, allowlist) === 'allowed');
+            const rejected = selectedPeople.length !== allowed.length;
+            const isMulti = this.isMultiSelectionMode();
+            let selectionChange: { previous: IPersonaProps[]; next: IPersonaProps[] } | undefined;
+            this.peoplePickerRef.current?.clearSelectedPersons();
+            this.setState(previousState => {
+                const previous = previousState.pickerSelectedPeople;
+                const next = [...previous];
+                const candidates = isMulti ? allowed : next.length === 0 ? allowed.slice(0, 1) : [];
+                candidates.forEach(person => {
+                    const email = `${person.secondaryText ?? ''}`.trim().toLowerCase();
+                    if (!next.some(selected => `${selected.secondaryText ?? ''}`.trim().toLowerCase() === email)) {
+                        next.push(person);
+                    }
+                });
+                selectionChange = next.length !== previous.length ? { previous, next } : undefined;
+                return { pickerSelectedPeople: next, domainSelectionRemoved: rejected };
+            }, () => {
+                if (selectionChange) {
+                    this._setImmediateProgressCursor();
+                    this.beginSelectionFeedback();
+                    this.emitPickerSelection(selectionChange.next, selectionChange.previous);
+                }
+            });
+            return;
+        }
+
         this._setImmediateProgressCursor();
         this.beginSelectionFeedback();
         this.emitPickerSelection(selectedPeople);
         this.setState({ pickerSelectedPeople: selectedPeople });
     }
 
-    private renderStaticPeoplePicker(): JSX.Element {
-        const defaultSelectedUsers = this.getDefaultSelectedUsers();
+    private readonly filterPeoplePickerSuggestions = (people: IPersonaProps[]): IPersonaProps[] => {
+        const allowlist = PeoplePickerDomainHelper.parse(this.props.allowedEmailDomains);
+        return PeoplePickerDomainHelper.filterSuggestions(people, allowlist).filter(person => {
+            const email = `${person.secondaryText ?? ''}`.trim().toLowerCase();
+            return !this.state.pickerSelectedPeople.some(selected => `${selected.secondaryText ?? ''}`.trim().toLowerCase() === email);
+        });
+    }
 
-        // Stable key: the picker keeps its internal state across selection updates (no remount/focus loss)
+    private renderRestrictedSelections(allowlist: IAllowedEmailDomains): JSX.Element {
+        const people = this.state.pickerSelectedPeople;
+        return <>
+            {!allowlist.valid && <MessageBar messageBarType={MessageBarType.error}>
+                {webPartStrings.PropertyPane.DataFilterCollection.AllowedEmailDomainsInvalid}
+            </MessageBar>}
+            {people.some(person => PeoplePickerDomainHelper.getStatus(person, allowlist) === 'unverified')
+                && <MessageBar messageBarType={MessageBarType.warning}>
+                    {webPartStrings.General.StaticPeoplePicker.UnverifiedDomainsWarning}
+                </MessageBar>}
+            {(this.state.domainSelectionRemoved || `${this.props.domainSelectionRemoved ?? ''}`.toLowerCase() === 'true')
+                && <MessageBar messageBarType={MessageBarType.warning}>
+                    {webPartStrings.General.StaticPeoplePicker.DisallowedDomainsWarning}
+                </MessageBar>}
+            {people.length > 0 && <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                {people.map((person, index) => {
+                    const name = `${person.text || this.getStaticPersonIdentityValue(person)}`.trim();
+                    const removeLabel = webPartStrings.General.StaticPeoplePicker.RemoveSelectedUserTitle.replace('{0}', name);
+                    return <li key={`${this.getStaticPersonIdentityValue(person)}-${index}`} style={{ display: 'flex', alignItems: 'center' }}>
+                        <Text>{name}</Text>
+                        <IconButton
+                            iconProps={{ iconName: 'Cancel' }}
+                            title={removeLabel}
+                            ariaLabel={removeLabel}
+                            disabled={this.props.disabled}
+                            onClick={() => {
+                                const nextSelectedPeople = people.filter((_, selectedIndex) => selectedIndex !== index);
+                                this._setImmediateProgressCursor();
+                                this.beginSelectionFeedback();
+                                this.emitPickerSelection(nextSelectedPeople);
+                                this.setState({ pickerSelectedPeople: nextSelectedPeople, domainSelectionRemoved: false });
+                            }}
+                        />
+                    </li>;
+                })}
+            </ul>}
+        </>;
+    }
+
+    private renderStaticPeoplePicker(): JSX.Element {
+        const allowlist = PeoplePickerDomainHelper.parse(this.props.allowedEmailDomains);
+        const defaultSelectedUsers = allowlist.configured ? [] : this.getDefaultSelectedUsers();
+        const pickerKey = allowlist.configured
+            ? allowlist.valid ? `allowed:${allowlist.domains.join(';')}` : 'invalid'
+            : 'unrestricted';
+
+        // Remount only when domain restrictions change to clear the picker's cached suggestions.
         return <ThemeProvider theme={(this.props.themeVariant as ITheme) || getTheme()}>
+            {allowlist.configured && this.renderRestrictedSelections(allowlist)}
             <React.Suspense fallback={<Spinner size={SpinnerSize.xSmall} />}>
                 <LazyPeoplePicker
-                    key="static-people-picker"
+                    key={pickerKey}
+                    ref={this.peoplePickerRef}
                     context={this.props.peoplePickerContext}
-                    disabled={this.props.disabled}
+                    disabled={this.props.disabled || (allowlist.configured && (!allowlist.valid
+                        || (!this.isMultiSelectionMode() && this.state.pickerSelectedPeople.length > 0)))}
                     personSelectionLimit={this.isMultiSelectionMode() ? Number.MAX_SAFE_INTEGER : 1}
                     principalTypes={[1] as unknown as PrincipalType[]} // PrincipalType.User
                     defaultSelectedUsers={defaultSelectedUsers}
                     onChange={this.onPeoplePickerChange}
+                    resultFilter={allowlist.configured ? this.filterPeoplePickerSuggestions : undefined}
                     placeholder={webPartStrings.General.StaticPeoplePicker.SearchUsersPlaceholder}
                     searchTextLimit={2}
                     suggestionsLimit={10}
@@ -589,6 +754,8 @@ export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
             'data-is-multi',
             'data-static-picker',
             'data-selected-values',
+            'data-allowed-email-domains',
+            'data-domain-selection-removed',
             'data-theme-variant',
             'data-name',
             'data-value',
@@ -624,15 +791,18 @@ export class FilterPeopleCheckBoxWebComponent extends BaseWebComponent {
             spHttpClient: this._serviceScope.consume(SPHttpClient.serviceKey)
         };
 
-        const checkBox = <FilterPeopleTemplateComponent {...props} onChecked={(filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[]) => {
+        const checkBox = <FilterPeopleTemplateComponent {...props} onChecked={(filterName: string, filterValue: IDataFilterValueInfo | IDataFilterValueInfo[], reconcileAllowedEmailDomains?: boolean) => {
             const selectedFilterValues = Array.isArray(filterValue) ? filterValue : [filterValue];
 
             // Bubble event through the DOM
-            const detail: IDataFilterInfo = {
+            const detail: IStaticPeopleFilterEventInfo = {
                 filterName: filterName,
                 filterValues: selectedFilterValues,
                 instanceId: props.instanceId
             };
+            if (reconcileAllowedEmailDomains) {
+                detail.reconcileAllowedEmailDomains = true;
+            }
             this.dispatchEvent(new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
                 detail,
                 bubbles: true,

@@ -19,6 +19,7 @@ import { IPropertyPanePage } from '@microsoft/sp-property-pane';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import * as commonStrings from 'CommonStrings';
 const SearchFilters = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-filters-container' */ './components/SearchFiltersContainer'));
+const AllowedEmailDomainsEditor = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-allowed-domains-editor' */ './components/AllowedEmailDomainsEditor'));
 import { ISearchFiltersContainerProps } from './components/ISearchFiltersContainerProps';
 import ISearchFiltersWebPartProps from './ISearchFiltersWebPartProps';
 import IDynamicDataService from '../../services/dynamicDataService/IDynamicDataService';
@@ -58,6 +59,8 @@ import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 import { Constants } from '../../common/Constants';
 import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityConfigurationHelper';
 import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
+import { PeoplePickerDomainHelper } from '../../helpers/PeoplePickerDomainHelper';
+import { IStaticPeopleFilterConfiguration } from './IStaticPeopleFilterConfiguration';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -1177,6 +1180,24 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 };
                             })
                         ]
+                    },
+                    {
+                        id: 'allowedEmailDomains',
+                        title: webPartStrings.PropertyPane.DataFilterCollection.AllowedEmailDomains,
+                        type: this._customCollectionFieldType.custom,
+                        onGetErrorMessage: (value: unknown, index: number, item: IStaticPeopleFilterConfiguration) =>
+                            item.selectedTemplate === BuiltinFilterTemplates.StaticPeople && !PeoplePickerDomainHelper.parse(value).valid
+                                ? webPartStrings.PropertyPane.DataFilterCollection.AllowedEmailDomainsInvalid
+                                : '',
+                        onCustomRender: (field, value, onUpdate, item: IStaticPeopleFilterConfiguration, itemId) => {
+                            return React.createElement(React.Suspense, { key: `${field.id}-${itemId}`, fallback: null },
+                                React.createElement(AllowedEmailDomainsEditor, {
+                                    value,
+                                    disabled: item.selectedTemplate !== BuiltinFilterTemplates.StaticPeople,
+                                    onSave: (domains: string) => onUpdate(field.id, domains)
+                                })
+                            );
+                        }
                     },
 
                     {

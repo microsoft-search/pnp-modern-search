@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Rimuovi {0}",
                 SearchUsersPlaceholder: "Cerca utenti",
                 LoadingTenantUsersLabel: "Caricamento utenti del tenant...",
-                NoUsersFoundMessage: "Nessun utente trovato."
+                NoUsersFoundMessage: "Nessun utente trovato.",
+                UnverifiedDomainsWarning: "Non è stato possibile verificare alcune persone selezionate rispetto ai domini consentiti; le selezioni sono state mantenute.",
+                DisallowedDomainsWarning: "Una persona selezionata è stata rimossa perché il suo dominio di posta elettronica non è consentito."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Avviso modello Persone: i valori non sembrano identità utente. Probabilmente questa proprietà non è mappata a una proprietà di ricerca per indicizzazione Q_USER.",
                 FilterDisplayName: "Nome visualizzato",
                 FilterTemplate: "Modello",
+                AllowedEmailDomains: "Domini di posta elettronica consentiti",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Immetti domini di posta elettronica validi separati da punti e virgola o virgole.",
+                AllowedEmailDomainsButton: "Domini ({0})",
+                AllowedEmailDomainsDialogDescription: "È possibile selezionare solo le persone il cui indirizzo di posta elettronica appartiene a uno di questi domini. Lascia l'elenco vuoto per consentire tutti.",
+                AllowedEmailDomainsNewDomain: "Dominio da aggiungere",
+                AllowedEmailDomainsAdd: "Aggiungi",
+                AllowedEmailDomainsRemove: "Rimuovi {0}",
+                AllowedEmailDomainsEmpty: "Nessun dominio configurato. È possibile selezionare chiunque.",
+                AllowedEmailDomainsInvalidEntry: "Immetti un dominio valido, ad esempio contoso.com.",
                 FilterExpandByDefault: "Espandi per impostazione predefinita",
                 ExpandAllNodesByDefault: "Espandi tutti i nodi per impostazione predefinita",
                 HideNodesNotInDataSet: "Nascondi i nodi non presenti nel set di dati corrente",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Casella combinata",
                     DateIntervalTemplate: "Intervallo di tempo",
                     PeopleTemplate: "Modello di persona",
-                    StaticPeopleTemplate: "Persone",
+                    StaticPeopleTemplate: "Selettore di persone",
                     TaxonomyPickerTemplate: "Selettore di tassonomia",
                     HierarchicalFilterTemplate: "Filtro gerarchico"
                 },
