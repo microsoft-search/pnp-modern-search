@@ -61,7 +61,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinasjonsboks",
                     DateIntervalTemplate: "Datointervall (faste intervaller)",
                     PeopleTemplate: "Person mal",
-                    StaticPeopleTemplate: "Statisk personmal",
+                    StaticPeopleTemplate: "Personer",
                     TaxonomyPickerTemplate: "Taksonomivelger",
                     HierarchicalFilterTemplate: "Hierarkisk filter"
                 },
