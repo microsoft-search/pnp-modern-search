@@ -50,7 +50,6 @@ import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { ITaxonomyService } from '../../services/taxonomyService/ITaxonomyService';
 import { TaxonomyService } from '../../services/taxonomyService/TaxonomyService';
 import { Dropdown, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
-import { TextField } from '@fluentui/react/lib/TextField';
 import { Toggle, IToggleProps } from '@fluentui/react/lib/Toggle';
 import { IExtensibilityConfiguration } from '../../models/common/IExtensibilityConfiguration';
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
@@ -61,6 +60,8 @@ import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityCon
 import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
 import { PeoplePickerDomainHelper } from '../../helpers/PeoplePickerDomainHelper';
 import { IStaticPeopleFilterConfiguration } from './IStaticPeopleFilterConfiguration';
+import { getCommonDefaultMaxBuckets } from '../../dataSources/AvailableDataSources';
+import MaxBucketsEditor from './components/MaxBucketsEditor';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -1018,6 +1019,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private getFilterSettings(): IPropertyPaneField<any>[] {
 
         let availableFieldOptionsFromResults: IComboBoxOption[] = [];
+        const defaultMaxBuckets = getCommonDefaultMaxBuckets(this._dataSourceDynamicProperties.map(property => {
+            const data: IDataResultSourceData | undefined = DynamicPropertyHelper.tryGetValueSafe(property);
+            return data?.defaultMaxBuckets;
+        }));
 
         let filterNameCollectionField: any[] = [{
             id: 'filterName',
@@ -1102,22 +1107,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         title: webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBuckets,
                         type: this._customCollectionFieldType.custom,
                         required: false,
-                        onCustomRender: (field, value, onUpdate, item, itemId, onCustomFieldValidation) => {
-                            const numValue = value ? parseInt(value.toString(), 10) : undefined;
-                            const errorMessage = numValue && numValue > 1000
-                                ? webPartStrings.PropertyPane.DataFilterCollection.FilterMaxBucketsWarning
-                                : '';
-
-                            return React.createElement(TextField, {
+                        onCustomRender: (field, value, onUpdate, item, itemId) => {
+                            return React.createElement(MaxBucketsEditor, {
                                 key: `${field.id}-${itemId}`,
-                                type: 'number',
-                                value: value ? value.toString() : '',
+                                value: value,
+                                defaultMaxBuckets: defaultMaxBuckets,
                                 disabled: item.selectedTemplate === BuiltinFilterTemplates.StaticPeople || !this.supportsFilterOption(item.selectedTemplate, 'maxBuckets'),
-                                errorMessage: errorMessage,
-                                onChange: (ev, newValue) => {
-                                    const parsedValue = newValue && newValue.trim() !== '' ? parseInt(newValue, 10) : undefined;
-                                    onUpdate(field.id, parsedValue);
-                                }
+                                onUpdate: newValue => onUpdate(field.id, newValue)
                             });
                         }
                     },

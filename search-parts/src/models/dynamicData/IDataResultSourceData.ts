@@ -16,6 +16,11 @@ export interface IDataResultSourceData {
     availablefilters: IDataFilterResult[];
 
     /**
+     * The source's default number of filter values when no limit is configured, if known.
+     */
+    defaultMaxBuckets?: number;
+
+    /**
      * Indicates whether the results source is retrieving data.
      */
     isLoading?: boolean;

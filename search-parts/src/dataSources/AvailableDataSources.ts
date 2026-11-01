@@ -6,6 +6,27 @@ export enum BuiltinDataSourceProviderKeys {
     MicrosoftSearch = 'MicrosoftSearch'
 }
 
+export const DEFAULT_SHAREPOINT_SEARCH_MAX_BUCKETS = 100;
+export const DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS = 10;
+
+export function getDataSourceDefaultMaxBuckets(dataSourceKey?: string): number | undefined {
+    switch (dataSourceKey) {
+        case BuiltinDataSourceProviderKeys.SharePointSearch:
+            return DEFAULT_SHAREPOINT_SEARCH_MAX_BUCKETS;
+        case BuiltinDataSourceProviderKeys.MicrosoftSearch:
+            return DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS;
+        default:
+            return undefined;
+    }
+}
+
+export function getCommonDefaultMaxBuckets(defaults: ReadonlyArray<number | undefined>): number | undefined {
+    const first = defaults[0];
+    return typeof first === 'number' && Number.isInteger(first) && first > 0 && defaults.every(value => value === first)
+        ? first
+        : undefined;
+}
+
 export class AvailableDataSources {
 
     /**
