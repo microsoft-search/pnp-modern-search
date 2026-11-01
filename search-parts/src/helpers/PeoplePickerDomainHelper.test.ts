@@ -22,6 +22,12 @@ describe('PeoplePickerDomainHelper', () => {
 
     it.each([
         123,
+        '1',
+        '2130706433',
+        '127.1',
+        '127.0.0.1',
+        '0x7f000001',
+        '0177.0.0.1',
         '@contoso.com',
         '*.contoso.com',
         'https://contoso.com',
@@ -33,6 +39,19 @@ describe('PeoplePickerDomainHelper', () => {
         const allowlist = PeoplePickerDomainHelper.parse(value);
         expect(allowlist).toEqual({ configured: true, valid: false, domains: [] });
         expect(PeoplePickerDomainHelper.filterSuggestions([{ secondaryText: 'person@contoso.com' }], allowlist)).toEqual([]);
+    });
+
+    it('accepts domain names containing numeric labels', () => {
+        expect(PeoplePickerDomainHelper.parse('123.com; a1b2.example')).toEqual({
+            configured: true,
+            valid: true,
+            domains: ['123.com', 'a1b2.example']
+        });
+    });
+
+    it('treats an IP-address identity as unverified', () => {
+        const allowlist = PeoplePickerDomainHelper.parse('contoso.com');
+        expect(PeoplePickerDomainHelper.getStatus({ secondaryText: 'person@127.1' }, allowlist)).toBe('unverified');
     });
 
     it('matches email domains exactly and without regard to case', () => {

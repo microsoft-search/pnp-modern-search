@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DefaultButton, PrimaryButton, IconButton, Dialog, DialogFooter, TextField, Stack, Text } from '@fluentui/react';
+import { DefaultButton, PrimaryButton, IconButton, Dialog, DialogFooter, TextField, Stack, Text, getId, useTheme } from '@fluentui/react';
 import * as commonStrings from 'CommonStrings';
 import * as webPartStrings from 'SearchFiltersWebPartStrings';
 import { PeoplePickerDomainHelper } from '../../../helpers/PeoplePickerDomainHelper';
@@ -21,6 +21,8 @@ export default function AllowedEmailDomainsEditor(props: IAllowedEmailDomainsEdi
     const [domains, setDomains] = React.useState<string[]>([]);
     const [newDomain, setNewDomain] = React.useState('');
     const [error, setError] = React.useState('');
+    const [errorIdPrefix] = React.useState(() => getId('allowed-email-domain-error'));
+    const theme = useTheme();
     const savedCount = splitEntries(props.value).length;
     const hasInvalid = domains.some(domain => !isValidEntry(domain));
 
@@ -64,15 +66,21 @@ export default function AllowedEmailDomainsEditor(props: IAllowedEmailDomainsEdi
             modalProps={{ isBlocking: true }}>
             <Stack tokens={{ childrenGap: 8 }}>
                 {domains.length === 0 && <Text block>{strings.AllowedEmailDomainsEmpty}</Text>}
-                {domains.map(domain => {
+                {domains.map((domain, index) => {
                     const valid = isValidEntry(domain);
-                    return <Stack key={domain} horizontal verticalAlign="center" horizontalAlign="space-between">
-                        <Text styles={{ root: { overflowWrap: 'anywhere', color: valid ? undefined : '#a4262c' } }}
-                            title={valid ? undefined : strings.AllowedEmailDomainsInvalidEntry}>{domain}</Text>
-                        <IconButton iconProps={{ iconName: 'Delete' }}
-                            ariaLabel={strings.AllowedEmailDomainsRemove.replace('{0}', domain)}
-                            title={strings.AllowedEmailDomainsRemove.replace('{0}', domain)}
-                            onClick={() => setDomains(domains.filter(item => item !== domain))} />
+                    const errorId = `${errorIdPrefix}-${index}`;
+                    return <Stack key={domain} tokens={{ childrenGap: 2 }}>
+                        <Stack horizontal verticalAlign="center" horizontalAlign="space-between">
+                            <Text styles={{ root: { overflowWrap: 'anywhere', color: valid ? undefined : theme.semanticColors.errorText } }}>{domain}</Text>
+                            <IconButton iconProps={{ iconName: 'Delete' }}
+                                ariaLabel={strings.AllowedEmailDomainsRemove.replace('{0}', domain)}
+                                aria-describedby={valid ? undefined : errorId}
+                                title={strings.AllowedEmailDomainsRemove.replace('{0}', domain)}
+                                onClick={() => setDomains(domains.filter(item => item !== domain))} />
+                        </Stack>
+                        {!valid && <Text id={errorId} role="alert" styles={{ root: { color: theme.semanticColors.errorText } }}>
+                            {strings.AllowedEmailDomainsInvalidEntry}
+                        </Text>}
                     </Stack>;
                 })}
                 <Stack horizontal verticalAlign="end" tokens={{ childrenGap: 8 }}>

@@ -157,6 +157,42 @@ describe('static People picker domain restrictions', () => {
         expect(mockPickerProps.resultFilter([allowed, other])).toEqual([]);
     });
 
+    it('retains multiple allowed selections made in the same React batch', async () => {
+        await render(props({ allowedEmailDomains: 'contoso.com' }));
+        const alice = { text: 'Alice', secondaryText: 'alice@contoso.com' };
+        const bob = { text: 'Bob', secondaryText: 'bob@contoso.com' };
+
+        act(() => {
+            mockPickerProps.onChange([alice]);
+            mockPickerProps.onChange([bob]);
+        });
+
+        expect(onChecked).toHaveBeenLastCalledWith('Owner', [
+            { name: 'Alice', value: 'alice@contoso.com', selected: true },
+            { name: 'Bob', value: 'bob@contoso.com', selected: true }
+        ], false);
+        expect(host.querySelector('[aria-label="Remove Alice"]')).not.toBeNull();
+        expect(host.querySelector('[aria-label="Remove Bob"]')).not.toBeNull();
+    });
+
+    it('keeps only the first allowed selection in single-select mode when updates are batched', async () => {
+        await render(props({ allowedEmailDomains: 'contoso.com', isMulti: false }));
+        const alice = { text: 'Alice', secondaryText: 'alice@contoso.com' };
+        const bob = { text: 'Bob', secondaryText: 'bob@contoso.com' };
+
+        act(() => {
+            mockPickerProps.onChange([alice]);
+            mockPickerProps.onChange([bob]);
+        });
+
+        expect(onChecked).toHaveBeenCalledTimes(1);
+        expect(onChecked).toHaveBeenCalledWith('Owner', [
+            { name: 'Alice', value: 'alice@contoso.com', selected: true }
+        ], false);
+        expect(host.querySelector('[aria-label="Remove Alice"]')).not.toBeNull();
+        expect(host.querySelector('[aria-label="Remove Bob"]')).toBeNull();
+    });
+
     it('keeps restored display names without looking up an arbitrary matching user', async () => {
         await render(props({
             allowedEmailDomains: 'contoso.com',

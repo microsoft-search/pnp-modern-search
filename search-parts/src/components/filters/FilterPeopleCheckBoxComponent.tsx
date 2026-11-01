@@ -531,24 +531,27 @@ export class FilterPeopleTemplateComponent extends React.Component<IFilterPeople
 
             const allowed = selectedPeople.filter(person => PeoplePickerDomainHelper.getStatus(person, allowlist) === 'allowed');
             const rejected = selectedPeople.length !== allowed.length;
-            const nextSelectedPeople = [...this.state.pickerSelectedPeople];
-            const candidates = this.isMultiSelectionMode() ? allowed : nextSelectedPeople.length === 0 ? allowed.slice(0, 1) : [];
-            candidates.forEach(person => {
-                const email = `${person.secondaryText ?? ''}`.trim().toLowerCase();
-                if (!nextSelectedPeople.some(selected => `${selected.secondaryText ?? ''}`.trim().toLowerCase() === email)) {
-                    nextSelectedPeople.push(person);
-                }
-            });
-
+            const isMulti = this.isMultiSelectionMode();
+            let selectionChange: { previous: IPersonaProps[]; next: IPersonaProps[] } | undefined;
             this.peoplePickerRef.current?.clearSelectedPersons();
-            if (nextSelectedPeople.length !== this.state.pickerSelectedPeople.length) {
-                this._setImmediateProgressCursor();
-                this.beginSelectionFeedback();
-                this.emitPickerSelection(nextSelectedPeople);
-            }
-            this.setState({
-                pickerSelectedPeople: nextSelectedPeople,
-                domainSelectionRemoved: rejected
+            this.setState(previousState => {
+                const previous = previousState.pickerSelectedPeople;
+                const next = [...previous];
+                const candidates = isMulti ? allowed : next.length === 0 ? allowed.slice(0, 1) : [];
+                candidates.forEach(person => {
+                    const email = `${person.secondaryText ?? ''}`.trim().toLowerCase();
+                    if (!next.some(selected => `${selected.secondaryText ?? ''}`.trim().toLowerCase() === email)) {
+                        next.push(person);
+                    }
+                });
+                selectionChange = next.length !== previous.length ? { previous, next } : undefined;
+                return { pickerSelectedPeople: next, domainSelectionRemoved: rejected };
+            }, () => {
+                if (selectionChange) {
+                    this._setImmediateProgressCursor();
+                    this.beginSelectionFeedback();
+                    this.emitPickerSelection(selectionChange.next, selectionChange.previous);
+                }
             });
             return;
         }

@@ -98,10 +98,31 @@ describe('AllowedEmailDomainsEditor', () => {
         mount(<AllowedEmailDomainsEditor value="contoso.com; *.bad" onSave={onSave} />);
         await openEditor('Domains (2)');
         expect(button('Save').disabled).toBe(true);
+
+        const errorId = removeButton('*.bad').getAttribute('aria-describedby');
+        expect(errorId).toBeTruthy();
+        const error = document.getElementById(errorId);
+        expect(error?.getAttribute('role')).toBe('alert');
+        expect(error?.textContent).toBe('Enter a valid domain.');
+        expect(error?.parentElement?.textContent).toContain('*.bad');
+
         act(() => { Simulate.click(removeButton('*.bad')); });
+        expect(document.getElementById(errorId)).toBeNull();
         expect(button('Save').disabled).toBe(false);
         act(() => { Simulate.click(button('Save')); });
         expect(onSave).toHaveBeenCalledWith('contoso.com');
+    });
+
+    it('rejects an IP address left in the input when saving', async () => {
+        const onSave = jest.fn();
+        mount(<AllowedEmailDomainsEditor value="" onSave={onSave} />);
+        await openEditor('Domains (0)');
+
+        typeDomain('127.1');
+        act(() => { Simulate.click(button('Save')); });
+
+        expect(onSave).not.toHaveBeenCalled();
+        expect(input().getAttribute('aria-invalid')).toBe('true');
     });
 
     it('saves valid domains still in the input without requiring Add', async () => {

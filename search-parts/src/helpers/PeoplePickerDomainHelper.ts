@@ -17,6 +17,9 @@ export class PeoplePickerDomainHelper {
 
         try {
             const hostname = new URL(`https://${domain}`).hostname;
+            if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(hostname)) {
+                return undefined;
+            }
             const labels = hostname.split('.');
             const validLabel = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
             return hostname.length <= 253 && labels.length > 1 && labels.every(label => validLabel.test(label))
@@ -49,7 +52,7 @@ export class PeoplePickerDomainHelper {
             return { configured: true, valid: false, domains: [] };
         }
 
-        return { configured: true, valid: true, domains: Array.from(new Set(domains)).sort() };
+        return { configured: true, valid: true, domains: Array.from(new Set(domains)).sort((left, right) => left.localeCompare(right, 'en')) };
     }
 
     public static getEmailDomain(value: unknown): string | undefined {
