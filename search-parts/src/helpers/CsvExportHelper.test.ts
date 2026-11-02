@@ -77,6 +77,7 @@ describe('formatCsvField', () => {
 describe('CsvExportController CSV values', () => {
     const originalCreateObjectURL = URL.createObjectURL;
     const originalRevokeObjectURL = URL.revokeObjectURL;
+    const quote = (value: string): string => `"${value.replace(/"/g, '""')}"`;
 
     afterEach(async () => {
         await new Promise<void>(resolve => window.setTimeout(resolve, 0));
@@ -181,8 +182,6 @@ describe('CsvExportController CSV values', () => {
             { managedProperty: 'Empty', csvHeader: 'Empty' },
             { managedProperty: 'Plain', csvHeader: 'Plain' }
         ]);
-        const quote = (value: string): string => `"${value.replace(/"/g, '""')}"`;
-
         expect(csv).toBe([
             '"Title";"Requested Owner";"Requested Owner [Text Only]";"Reviewers";"Reviewers [Text Only]";"Tags";"Tags [Text Only]";"Empty";"Plain"',
             ['"First"', '', '', quote(multi), '"Alice Smith; Bob Jones"', quote(taxonomy), '"Region"', '', quote(plain)].join(';'),
@@ -201,6 +200,52 @@ describe('CsvExportController CSV values', () => {
             `"${value}";""`
         );
     });
+
+    it('extracts people and taxonomy values independently within the same column', async () => {
+        const person = 'alice@example.test | Alice Smith | 693A3023 i:0#.f|membership|alice@example.test';
+        const emptyPerson = 'empty@example.test |  | 693A3023 i:0#.f|membership|empty@example.test';
+        const taxonomy = 'L0|#0fa7f285a-ccb0-473a-83af-6680660b14f6|Region';
+        const anotherTerm = 'L0|#044444444444444444444444444444444|Europe';
+        const terms = [taxonomy, anotherTerm];
+        const mixedArray = [person, taxonomy];
+        const csv = await exportCsv([
+            { Value: person },
+            { Value: taxonomy },
+            { Value: emptyPerson },
+            { Value: 'Not recognized' },
+            { Value: terms },
+            { Value: mixedArray },
+            { Value: null }
+        ], [{ managedProperty: 'Value', csvHeader: 'Value' }]);
+
+        expect(csv).toBe([
+            '"Value";"Value [Text Only]"',
+            `${quote(person)};"Alice Smith"`,
+            `${quote(taxonomy)};"Region"`,
+            `${quote(emptyPerson)};""`,
+            '"Not recognized";',
+            `${quote(JSON.stringify(terms))};"Region; Europe"`,
+            `${quote(JSON.stringify(mixedArray))};`,
+            ';'
+        ].join('\r\n'));
+    });
+
+    it.each(['Cost $$', 'Cost $&', 'Cost $`', "Cost $'"])(
+        'preserves dollar sequences in the configured header %s',
+        async header => {
+            const value = 'alice@example.test | Alice Smith | 693A3023 i:0#.f|membership|alice@example.test';
+            const textHeader = `${header} [Text Only]`;
+            const csv = await exportCsv([{ Owner: value, Other: 'Existing' }], [
+                { managedProperty: 'Owner', csvHeader: header },
+                { managedProperty: 'Other', csvHeader: textHeader }
+            ]);
+
+            expect(csv).toBe(
+                `${quote(header)};${quote(`${textHeader} (2)`)};${quote(textHeader)}\r\n` +
+                `${quote(value)};"Alice Smith";"Existing"`
+            );
+        }
+    );
 
     it('avoids collisions with configured column headers', async () => {
         const value = 'alice@example.test | Alice Smith | 693A3023 i:0#.f|membership|alice@example.test';
@@ -256,8 +301,6 @@ describe('CsvExportController CSV values', () => {
             { Tags: malformed },
             { Tags: null }
         ], [{ managedProperty: 'Tags', csvHeader: 'Tags' }]);
-        const quote = (value: string): string => `"${value.replace(/"/g, '""')}"`;
-
         expect(csv).toBe([
             '"Tags";"Tags [Text Only]"',
             `${quote(single)};"AB3234C"`,
@@ -268,6 +311,45 @@ describe('CsvExportController CSV values', () => {
             `${quote(malformed)};`,
             ';'
         ].join('\r\n'));
+    });
+
+    it.each([
+        [
+            'a repeated label beginning with # and # token separators',
+            'GP0|#fa7f285a-ccb0-473a-83af-6680660b14f6;#L0|#0fa7f285a-ccb0-473a-83af-6680660b14f6|#Finance;' +
+                '#GTSet|#368d9910-ab0b-4aa9-b5ac-ddd67410bec9;#FINANCE',
+            '#Finance'
+        ],
+        [
+            'a semicolon-containing repeated label',
+            'GP0|#fa7f285a-ccb0-473a-83af-6680660b14f6;L0|#0fa7f285a-ccb0-473a-83af-6680660b14f6|North; South;' +
+                'GTSet|#368d9910-ab0b-4aa9-b5ac-ddd67410bec9;North; South',
+            'North; South'
+        ],
+        [
+            'a repeated label with a # after a semicolon',
+            'L0|#0fa7f285a-ccb0-473a-83af-6680660b14f6|North; #South;' +
+                'GTSet|#368d9910-ab0b-4aa9-b5ac-ddd67410bec9;North; #South',
+            'North; #South'
+        ],
+        [
+            'overlapping labels and repeated plain values',
+            'L0|#0fa7f285a-ccb0-473a-83af-6680660b14f6|A; B;' +
+                'GP0|#11111111-1111-1111-1111-111111111111;L0|#011111111-1111-1111-1111-111111111111|A;' +
+                'GP0|#22222222-2222-2222-2222-222222222222;L0|#022222222-2222-2222-2222-222222222222|B; C;' +
+                'GTSet|#368d9910-ab0b-4aa9-b5ac-ddd67410bec9;A; B; C',
+            'A; B; A; B; C'
+        ],
+        [
+            'a repeated plain label before taxonomy tokens',
+            '#Finance;GP0|#fa7f285a-ccb0-473a-83af-6680660b14f6;' +
+                'L0|#0fa7f285a-ccb0-473a-83af-6680660b14f6|#Finance;GTSet|#368d9910-ab0b-4aa9-b5ac-ddd67410bec9',
+            '#Finance'
+        ]
+    ])('extracts %s', async (_description, value, label) => {
+        const csv = await exportCsv([{ Value: value }], [{ managedProperty: 'Value', csvHeader: 'Value' }]);
+
+        expect(csv).toBe(`"Value";"Value [Text Only]"\r\n${quote(value)};${quote(label)}`);
     });
 
     it('does not add label columns for values that are not managed metadata', async () => {

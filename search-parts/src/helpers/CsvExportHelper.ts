@@ -70,13 +70,8 @@ export class CsvExportController {
                     csvHeader: column.csvHeader,
                     getValue: (item: Record<string, unknown>): unknown => normalizeExportDateValue(item[column.managedProperty])
                 }];
-                const getTextOnlyValue = items.some(item => getPeopleDisplayNames(item[column.managedProperty]) !== undefined)
-                    ? getPeopleDisplayNames
-                    : items.some(item => getTaxonomyLabels(item[column.managedProperty]) !== undefined)
-                        ? getTaxonomyLabels
-                        : undefined;
-                if (getTextOnlyValue) {
-                    const baseHeader = strings.Controls.ExportTextOnlyColumn.replace('{0}', column.csvHeader);
+                if (items.some(item => getTextOnlyValue(item[column.managedProperty]) !== undefined)) {
+                    const baseHeader = strings.Controls.ExportTextOnlyColumn.replace('{0}', () => column.csvHeader);
                     let textHeader = baseHeader;
                     let suffix = 2;
                     while (usedHeaders.has(textHeader)) {
@@ -171,37 +166,19 @@ function normalizeExportDateValue(value: unknown): unknown {
         : value;
 }
 
-function getPeopleDisplayNames(value: unknown): string | undefined {
-    const values: unknown[] = Array.isArray(value) ? value : [value];
-    const names: string[] = [];
-    let hasPeopleValue = false;
-
-    for (const entry of values) {
-        if (entry === null || entry === undefined || (typeof entry === 'string' && !entry.trim())) {
-            continue;
-        }
-        if (typeof entry !== 'string') {
-            return undefined;
-        }
-        const entryNames = parseSharePointPeopleNames(entry);
-        if (!entryNames) {
-            return undefined;
-        }
-        hasPeopleValue = true;
-        entryNames.forEach(name => {
-            if (name) {
-                names.push(name);
-            }
-        });
-    }
-
-    return hasPeopleValue ? names.join('; ') : undefined;
+function getTextOnlyValue(value: unknown): string | undefined {
+    return getParsedValues(value, parseSharePointPeopleNames)
+        ?? getParsedValues(value, parseSharePointTaxonomyLabels, true);
 }
 
-function getTaxonomyLabels(value: unknown): string | undefined {
+function getParsedValues(
+    value: unknown,
+    parse: (entry: string) => string[] | undefined,
+    deduplicate: boolean = false
+): string | undefined {
     const values: unknown[] = Array.isArray(value) ? value : [value];
-    const labels: string[] = [];
-    let hasTaxonomyValue = false;
+    const parsedValues: string[] = [];
+    let hasRecognizedValue = false;
 
     for (const entry of values) {
         if (entry === null || entry === undefined || (typeof entry === 'string' && !entry.trim())) {
@@ -210,19 +187,19 @@ function getTaxonomyLabels(value: unknown): string | undefined {
         if (typeof entry !== 'string') {
             return undefined;
         }
-        const entryLabels = parseSharePointTaxonomyLabels(entry);
-        if (!entryLabels) {
+        const parts = parse(entry);
+        if (!parts) {
             return undefined;
         }
-        hasTaxonomyValue = true;
-        entryLabels.forEach(label => {
-            if (label && labels.indexOf(label) === -1) {
-                labels.push(label);
+        hasRecognizedValue = true;
+        parts.forEach(part => {
+            if (part && (!deduplicate || !parsedValues.includes(part))) {
+                parsedValues.push(part);
             }
         });
     }
 
-    return hasTaxonomyValue ? labels.join('; ') : undefined;
+    return hasRecognizedValue ? parsedValues.join('; ') : undefined;
 }
 
 const TAXONOMY_GUID = '0?[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}';
@@ -235,42 +212,69 @@ const TAXONOMY_TOKEN_PREFIX = /^[A-Z][A-Za-z0-9]*\|#/i;
 // Managed properties mapped to both the taxid and the plain crawled property also
 // contain the plain label text (e.g. "...;GPP|#<guid>;Label"); such repeats are ignored.
 function parseSharePointTaxonomyLabels(value: string): string[] | undefined {
-    const pieces = value.split(';').map(piece => piece.trim().replace(/^#\s*/, ''));
-    const knownLabels = new Set(pieces
-        .map(piece => TAXONOMY_LABEL_TOKEN.exec(piece))
-        .filter(match => match)
-        .map(match => match[1].trim().toLowerCase()));
-    if (knownLabels.size === 0) {
-        return undefined;
-    }
-
+    const pieces = value.split(';').map(piece => piece.trim().replace(/^#\s*(?=[A-Z][A-Za-z0-9]*\|#)/i, ''));
     const labels: string[] = [];
-    let previousWasLabel = false;
+    const plainGroups: string[][] = [];
+    let labelParts: string[] | undefined;
+    let plainParts: string[] = [];
+
     for (const piece of pieces) {
         if (!piece) {
             continue;
         }
         if (TAXONOMY_TOKEN_PREFIX.test(piece)) {
+            if (labelParts) {
+                labels.push(labelParts.join('; '));
+                labelParts = undefined;
+            }
+            if (plainParts.length) {
+                plainGroups.push(plainParts);
+                plainParts = [];
+            }
+
             const labelMatch = TAXONOMY_LABEL_TOKEN.exec(piece);
             if (labelMatch) {
-                labels.push(labelMatch[1].trim());
-                previousWasLabel = true;
-            } else if (TAXONOMY_ID_TOKEN.test(piece)) {
-                previousWasLabel = false;
-            } else {
+                labelParts = [labelMatch[1].trim()];
+            } else if (!TAXONOMY_ID_TOKEN.test(piece)) {
                 return undefined;
             }
-        } else if (knownLabels.has(piece.toLowerCase())) {
-            previousWasLabel = false;
-        } else if (previousWasLabel) {
-            // A label that itself contains ';'.
-            labels[labels.length - 1] = `${labels[labels.length - 1]}; ${piece}`;
+        } else if (labelParts) {
+            labelParts.push(piece);
         } else {
-            return undefined;
+            plainParts.push(piece);
         }
     }
 
-    return labels;
+    if (labelParts) {
+        labels.push(labelParts.join('; '));
+    }
+    if (plainParts.length) {
+        plainGroups.push(plainParts);
+    }
+    if (labels.length === 0) {
+        return undefined;
+    }
+
+    const knownLabels = labels.filter(label => label).map(label => label.toLowerCase().split(';').map(part => part.trim()));
+    return plainGroups.every(group => containsOnlyTaxonomyLabels(group, knownLabels)) ? labels : undefined;
+}
+
+function containsOnlyTaxonomyLabels(parts: string[], knownLabels: string[][]): boolean {
+    const normalized = parts.map(part => part.toLowerCase());
+    const reachable = new Set<number>([0]);
+
+    for (let index = 0; index < normalized.length; index++) {
+        if (!reachable.has(index)) {
+            continue;
+        }
+        for (const label of knownLabels) {
+            if (label.every((part, offset) => part === normalized[index + offset])) {
+                reachable.add(index + label.length);
+            }
+        }
+    }
+
+    return reachable.has(normalized.length);
 }
 
 function parseSharePointPeopleNames(value: string): string[] | undefined {
