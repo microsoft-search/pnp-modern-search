@@ -216,6 +216,7 @@ define([], function () {
             DownloadButtonText: "Download",
             DownloadCSVButtonText: "Geselecteerde downloaden als CSV",
             DownloadCurrentDataAsCSVButtonText: "Zoekresultaat exporteren",
+            ExportTextOnlyColumn: "{0} [Alleen tekst]",
             ExportSearchResultsError: "De export kon niet worden voltooid. Probeer het opnieuw. Als de zoekopdracht is gewijzigd, exporteer dan de bijgewerkte resultaten.",
             ExportSearchResultsDismissError: "Exportfout sluiten"
         },

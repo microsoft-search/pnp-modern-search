@@ -214,6 +214,7 @@ define([], function () {
             DownloadButtonText: "Lataa",
             DownloadCSVButtonText: "Lataa valitut CSV-muodossa",
             DownloadCurrentDataAsCSVButtonText: "Vie hakutulos",
+            ExportTextOnlyColumn: "{0} [Vain teksti]",
             ExportSearchResultsError: "Vientiä ei voitu suorittaa loppuun. Yritä uudelleen. Jos haku muuttui, vie päivitetyt tulokset.",
             ExportSearchResultsDismissError: "Sulje vientivirhe"
         },

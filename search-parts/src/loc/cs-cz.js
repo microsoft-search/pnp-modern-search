@@ -216,6 +216,7 @@ define([], function () {
             DownloadButtonText: "Stáhnout",
             DownloadCSVButtonText: "Stáhnout vybrané jako CSV",
             DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání",
+            ExportTextOnlyColumn: "{0} [Pouze text]",
             ExportSearchResultsError: "Export se nepodařilo dokončit. Zkuste to znovu. Pokud se hledání změnilo, exportujte aktualizované výsledky.",
             ExportSearchResultsDismissError: "Zavřít chybu exportu"
         },

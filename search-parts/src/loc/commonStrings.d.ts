@@ -215,6 +215,7 @@ declare interface ICommonStrings {
       DownloadButtonText: string;
       DownloadCSVButtonText: string;
       DownloadCurrentDataAsCSVButtonText: string;
+      ExportTextOnlyColumn: string;
       ExportSearchResultsError: string;
       ExportSearchResultsDismissError: string;
     },
