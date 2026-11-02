@@ -217,6 +217,7 @@ define([], function () {
             DownloadButtonText: "Ladda ner",
             DownloadCSVButtonText: "Ladda ned markerade som CSV",
             DownloadCurrentDataAsCSVButtonText: "Exportera sökresultat",
+            ExportTextOnlyColumn: "{0} [Endast text]",
             ExportSearchResultsError: "Exporten kunde inte slutföras. Försök igen. Om sökningen ändrades, exportera de uppdaterade resultaten.",
             ExportSearchResultsDismissError: "Stäng exportfel"
         },
