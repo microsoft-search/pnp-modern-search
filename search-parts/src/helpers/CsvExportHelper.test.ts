@@ -261,6 +261,53 @@ describe('CsvExportController CSV values', () => {
         );
     });
 
+    it.each([
+        ['=Owner', "'=Owner [Text Only]", "'=Owner"],
+        ['  +Owner', "'  +Owner [Text Only]", "'  +Owner"],
+        ['\t-Owner', "'\t-Owner [Text Only]", "'\t-Owner"],
+        ['@Owner', "'@Owner [Text Only]", "'@Owner"],
+        ["'=Owner", '=Owner [Text Only]', "'=Owner"]
+    ])('avoids formatted-header collisions for %s', async (header, existingHeader, formattedHeader) => {
+        const value = 'alice@example.test | Alice Smith | 693A3023 i:0#.f|membership|alice@example.test';
+        const csv = await exportCsv([{ Owner: value, Other: 'Existing' }], [
+            { managedProperty: 'Owner', csvHeader: header },
+            { managedProperty: 'Other', csvHeader: existingHeader }
+        ]);
+
+        expect(csv).toBe(
+            `${quote(formattedHeader)};${quote(`${formattedHeader} [Text Only] (2)`)};${quote(`${formattedHeader} [Text Only]`)}\r\n` +
+            `${quote(value)};"Alice Smith";"Existing"`
+        );
+    });
+
+    it('skips all suffixes that collide after header formatting', async () => {
+        const value = 'alice@example.test | Alice Smith | 693A3023 i:0#.f|membership|alice@example.test';
+        const csv = await exportCsv([{ Owner: value, Other: 'First', Another: 'Second' }], [
+            { managedProperty: 'Owner', csvHeader: '=Owner' },
+            { managedProperty: 'Other', csvHeader: "'=Owner [Text Only]" },
+            { managedProperty: 'Another', csvHeader: "'=Owner [Text Only] (2)" }
+        ]);
+
+        expect(csv).toBe(
+            `"'=Owner";"'=Owner [Text Only] (3)";"'=Owner [Text Only]";"'=Owner [Text Only] (2)"\r\n` +
+            `${quote(value)};"Alice Smith";"First";"Second"`
+        );
+    });
+
+    it('avoids collisions between generated headers after formatting', async () => {
+        const alice = 'alice@example.test | Alice Smith | 693A3023 i:0#.f|membership|alice@example.test';
+        const bob = 'bob@example.test | Bob Jones | 693A3023 i:0#.f|membership|bob@example.test';
+        const csv = await exportCsv([{ Owner: alice, Other: bob }], [
+            { managedProperty: 'Owner', csvHeader: '=Owner' },
+            { managedProperty: 'Other', csvHeader: "'=Owner" }
+        ]);
+
+        expect(csv).toBe(
+            `"'=Owner";"'=Owner [Text Only]";"'=Owner";"'=Owner [Text Only] (2)"\r\n` +
+            `${quote(alice)};"Alice Smith";${quote(bob)};"Bob Jones"`
+        );
+    });
+
     it('does not add people columns for values that do not contain a complete identity', async () => {
         const csv = await exportCsv([
             { Value: 'alice@example.test' },

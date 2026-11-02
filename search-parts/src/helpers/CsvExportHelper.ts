@@ -64,7 +64,7 @@ export class CsvExportController {
             if (this._isDisposed) {
                 return;
             }
-            const usedHeaders = new Set(columns.map(column => column.csvHeader));
+            const usedHeaders = new Set(columns.map(column => formatCsvField(column.csvHeader)));
             const exportColumns = columns.flatMap(column => {
                 const resolved = [{
                     csvHeader: column.csvHeader,
@@ -74,10 +74,10 @@ export class CsvExportController {
                     const baseHeader = strings.Controls.ExportTextOnlyColumn.replace('{0}', () => column.csvHeader);
                     let textHeader = baseHeader;
                     let suffix = 2;
-                    while (usedHeaders.has(textHeader)) {
+                    while (usedHeaders.has(formatCsvField(textHeader))) {
                         textHeader = `${baseHeader} (${suffix++})`;
                     }
-                    usedHeaders.add(textHeader);
+                    usedHeaders.add(formatCsvField(textHeader));
                     resolved.push({
                         csvHeader: textHeader,
                         getValue: (item: Record<string, unknown>): unknown => getTextOnlyValue(item[column.managedProperty])
