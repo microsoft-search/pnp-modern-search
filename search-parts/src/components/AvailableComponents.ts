@@ -30,6 +30,7 @@ import { DownloadSelectedItemsButtonWebComponent } from './DownloadSelectedItems
 import { ExportCurrentResultsButtonWebComponent } from './ExportCurrentResultsButtonComponent';
 import { DetailsSelectedItemButtonWebComponent } from './DetailsSelectedItemButtonComponent';
 import { FilterHierarchicalWebComponent } from './filters/FilterHierarchicalComponent';
+import { WarningMarkerWebComponent } from './WarningMarkerComponent';
 
 export class AvailableComponents {
 
@@ -160,6 +161,10 @@ export class AvailableComponents {
         {
             componentName: "pnp-filterhierarchical",
             componentClass: FilterHierarchicalWebComponent
+        },
+        {
+            componentName: "pnp-warningmarker",
+            componentClass: WarningMarkerWebComponent
         }
     ];
 }
