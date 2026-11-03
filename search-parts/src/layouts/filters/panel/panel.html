@@ -49,13 +49,8 @@
             padding: 5px;
         }
 
-        .panelOpenBar button {
+        .panelOpenBar__label {
             margin-left: 3px;
-            border: 0;
-            padding: 0;
-            background: transparent;
-            color: inherit;
-            font: inherit;
             cursor: pointer;
         }
 
@@ -91,7 +86,7 @@
 
             <template id="panel-open">
                 <div class="panelOpenBar">
-                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><button type="button" aria-label="{{@root.properties.layoutProperties.btnLabel}}">{{@root.properties.layoutProperties.btnLabel}}</button>
+                    <pnp-icon data-name="Filter" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-icon><span class="panelOpenBar__label">{{@root.properties.layoutProperties.btnLabel}}</span>
                 </div>
             </template>
 
