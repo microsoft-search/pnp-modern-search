@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { Icon, TooltipHost, DirectionalHint, getId } from '@fluentui/react';
+import { Icon, TooltipHost, DirectionalHint } from '@fluentui/react';
 
 const WARNING_COLOR = '#d83b01';
 
@@ -19,62 +19,41 @@ export interface IWarningMarkerProps {
  */
 export class WarningMarker extends React.Component<IWarningMarkerProps> {
 
-    private readonly descriptionId: string = getId('pnp-warning');
-
     public render() {
         const { tooltip } = this.props;
 
         return (
-            <>
-                <TooltipHost content={tooltip} directionalHint={DirectionalHint.bottomCenter}>
-                    <button
-                        type='button'
-                        title={tooltip}
-                        aria-label={tooltip}
-                        aria-describedby={this.descriptionId}
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 18,
-                            height: 18,
-                            padding: 0,
-                            border: `1px solid ${WARNING_COLOR}`,
-                            borderRadius: '50%',
-                            color: WARNING_COLOR,
-                            background: 'transparent',
-                            cursor: 'help'
-                        }}
-                        onClick={(e) => {
-                            // The marker can be rendered inside a clickable header (ex: collapsible filter).
-                            // Clicking it should only show the tooltip, not trigger the header action.
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }}
-                        onKeyDown={(e) => {
-                            e.stopPropagation();
-                        }}
-                    >
-                        <Icon iconName='Info' styles={{ root: { color: WARNING_COLOR, fontSize: 12 } }} />
-                    </button>
-                </TooltipHost>
-                <span
-                    id={this.descriptionId}
+            // The text is shown by the Fluent tooltip and exposed to assistive technologies through
+            // aria-label. No native `title` attribute: it would show a second browser tooltip on hover.
+            <TooltipHost content={tooltip} directionalHint={DirectionalHint.bottomCenter}>
+                <button
+                    type='button'
+                    aria-label={tooltip}
                     style={{
-                        border: 0,
-                        clip: 'rect(0 0 0 0)',
-                        height: 1,
-                        margin: -1,
-                        overflow: 'hidden',
+                        // The Fluent "Info" glyph is already circled: render the bare icon,
+                        // without any extra border, so it reads as a regular inline icon.
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         padding: 0,
-                        position: 'absolute',
-                        width: 1,
-                        whiteSpace: 'nowrap'
+                        border: 'none',
+                        color: WARNING_COLOR,
+                        background: 'transparent',
+                        cursor: 'help'
+                    }}
+                    onClick={(e) => {
+                        // The marker can be rendered inside a clickable header (ex: collapsible filter).
+                        // Clicking it should only show the tooltip, not trigger the header action.
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }}
+                    onKeyDown={(e) => {
+                        e.stopPropagation();
                     }}
                 >
-                    {tooltip}
-                </span>
-            </>
+                    <Icon iconName='Info' styles={{ root: { color: WARNING_COLOR, fontSize: 14, lineHeight: 1 } }} />
+                </button>
+            </TooltipHost>
         );
     }
 }
