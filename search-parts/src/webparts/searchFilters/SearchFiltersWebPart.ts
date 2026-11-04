@@ -466,6 +466,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     {
                         templateContent: this.templateContentToDisplay,
                         availableFilters: filterResults,
+                        isResultsLoading,
                         filtersConfiguration: resolvedFiltersConfiguration,
                         domElement: this.domElement,
                         instanceId: this.instanceId,

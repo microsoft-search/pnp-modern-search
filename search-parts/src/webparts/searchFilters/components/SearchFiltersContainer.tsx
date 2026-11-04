@@ -118,7 +118,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
-    private static readonly _MIN_BUSY_VISIBLE_MS = 2000;
+    private static readonly _MIN_BUSY_VISIBLE_MS = 200;
     private static readonly _STATIC_PEOPLE_BUSY_VISIBLE_MS = 3000;
     private static readonly _MAX_BUSY_DURATION_MS = 10000;
     private static readonly _BUSY_PRIME_TIMEOUT_MS = 1500;
@@ -1868,7 +1868,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const availableFiltersChanged = !isEqual(prevProps.availableFilters, this.props.availableFilters);
         const currentUiFiltersChanged = !isEqual(prevState.currentUiFilters, this.state.currentUiFilters) && prevState.currentUiFilters.length > 0;
 
-        if (availableFiltersChanged && this.state.isUpdatingResults) {
+        const resultsLoadingCompleted = prevProps.isResultsLoading && !this.props.isResultsLoading;
+        if (this.state.isUpdatingResults && (resultsLoadingCompleted
+            || (availableFiltersChanged && !this.props.isResultsLoading))) {
             this.endResultsUpdate();
         }
 

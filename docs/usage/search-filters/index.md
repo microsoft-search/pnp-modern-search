@@ -156,6 +156,8 @@ The title styling section allows you to customize the visual appearance of the w
 
 The **Show "Clear all" button** toggle is on page 2 of the property pane, below **Web part title styling**. When enabled, a right-aligned **Clear all** action appears beside the Search Filters web part title. It is disabled when no filters are applied or while results are updating. Selecting it clears all applied filters, updates connected results, and removes the filter deep-link query parameter. The feature is disabled by default.
 
+The busy cursor and **Clear all** action follow the loading state of the connected Search Results web parts, even when the returned refiner values do not change. With multiple connected results web parts, the filters remain busy until all have finished loading.
+
 ### Operator between filters
 
 !["Operator filters"](../../assets/webparts/search-filters/operator_filters.png){: .center}

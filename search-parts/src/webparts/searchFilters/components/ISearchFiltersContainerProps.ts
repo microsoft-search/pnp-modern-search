@@ -19,6 +19,11 @@ export interface ISearchFiltersContainerProps {
   availableFilters: IDataFilterResult[];
 
   /**
+   * Whether any connected results source is loading.
+   */
+  isResultsLoading?: boolean;
+
+  /**
    * The filters configuration
    */
   filtersConfiguration: IDataFilterConfiguration[];
