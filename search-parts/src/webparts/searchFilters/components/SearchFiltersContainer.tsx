@@ -118,7 +118,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
-    private static readonly _MIN_BUSY_VISIBLE_MS = 2000;
+    private static readonly _MIN_BUSY_VISIBLE_MS = 200;
     private static readonly _STATIC_PEOPLE_BUSY_VISIBLE_MS = 3000;
     private static readonly _MAX_BUSY_DURATION_MS = 10000;
     private static readonly _BUSY_PRIME_TIMEOUT_MS = 1500;
@@ -568,13 +568,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         this._busyStartedAt = performance.now();
         this.setBusyCursor(true);
 
-        this._busyWatchdogTimer = setTimeout(() => {
-            this._busyWatchdogTimer = null;
-
-            if (this.state.isUpdatingResults) {
-                this.endResultsUpdate();
-            }
-        }, SearchFiltersContainer._MAX_BUSY_DURATION_MS);
+        this.scheduleBusyWatchdog();
 
         if (this.isStaticPeopleFilter(sourceFilterName)) {
             this._busyCursorAutoHideTimer = setTimeout(() => {
@@ -690,6 +684,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 this.setBusyCursor(false);
             }
         }, SearchFiltersContainer._BUSY_PRIME_TIMEOUT_MS);
+    }
+
+    private scheduleBusyWatchdog(): void {
+        if (this._busyWatchdogTimer) {
+            clearTimeout(this._busyWatchdogTimer);
+        }
+        const remaining = SearchFiltersContainer._MAX_BUSY_DURATION_MS - (performance.now() - this._busyStartedAt);
+        this._busyWatchdogTimer = setTimeout(() => {
+            this._busyWatchdogTimer = null;
+            if (this.state.isUpdatingResults) {
+                this.endResultsUpdate();
+            }
+        }, Math.max(0, remaining));
     }
 
     private endResultsUpdate(): void {
@@ -1868,7 +1875,17 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const availableFiltersChanged = !isEqual(prevProps.availableFilters, this.props.availableFilters);
         const currentUiFiltersChanged = !isEqual(prevState.currentUiFilters, this.state.currentUiFilters) && prevState.currentUiFilters.length > 0;
 
-        if (availableFiltersChanged && this.state.isUpdatingResults) {
+        if (this.state.isUpdatingResults && this.props.isResultsLoading && this._busyHideTimer) {
+            clearTimeout(this._busyHideTimer);
+            this._busyHideTimer = null;
+            this.scheduleBusyWatchdog();
+        }
+
+        const resultsLoadingCompleted = !this.props.isResultsLoading
+            && (prevProps.isResultsLoading
+                || prevProps.resultsLoadingCompletionVersion !== this.props.resultsLoadingCompletionVersion);
+        if (this.state.isUpdatingResults && (resultsLoadingCompleted
+            || (availableFiltersChanged && !this.props.isResultsLoading))) {
             this.endResultsUpdate();
         }
 

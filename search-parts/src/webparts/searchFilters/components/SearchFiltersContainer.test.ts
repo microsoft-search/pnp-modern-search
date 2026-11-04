@@ -286,6 +286,169 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
         expect(container.state.submittedFilters).toEqual([submittedFilter]);
     });
 
+    describe('results loading lifecycle', () => {
+        beforeEach(() => {
+            jest.useFakeTimers();
+        });
+
+        afterEach(() => {
+            jest.clearAllTimers();
+            jest.useRealTimers();
+            document.getElementById('pnp-modern-search-busy-cursor-style')?.remove();
+            document.documentElement.style.removeProperty('cursor');
+            document.body.style.removeProperty('cursor');
+        });
+
+        function createBusyContainer(): SearchFiltersContainer {
+            const container = createContainer(createUiFilter(true), [submittedFilter]);
+            Object.defineProperty(container, 'props', {
+                configurable: true,
+                value: {
+                    properties: { showClearAllFilters: true },
+                    availableFilters: [],
+                    filtersConfiguration: [configuration],
+                    isResultsLoading: false
+                }
+            });
+            container['beginResultsUpdate']();
+            return container;
+        }
+
+        function updateLoading(container: SearchFiltersContainer, isResultsLoading: boolean): void {
+            const prevProps = container.props;
+            const prevState = { ...container.state };
+            Object.defineProperty(container, 'props', {
+                configurable: true,
+                value: { ...prevProps, isResultsLoading }
+            });
+            container.componentDidUpdate(prevProps, prevState);
+        }
+
+        it('ends the busy cursor and enables Clear all when loading finishes with unchanged refiners', () => {
+            const container = createBusyContainer();
+            const availableFilters = container.props.availableFilters;
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(true);
+
+            updateLoading(container, true);
+            jest.advanceTimersByTime(1500);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(0);
+
+            expect(container.props.availableFilters).toBe(availableFilters);
+            expect(container.state.isUpdatingResults).toBe(false);
+            expect(document.getElementById('pnp-modern-search-busy-cursor-style')).toBeNull();
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(false);
+        });
+
+        it('keeps the filters busy while any connected results source is still loading', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            jest.advanceTimersByTime(1500);
+            updateLoading(container, true);
+            jest.advanceTimersByTime(500);
+
+            expect(container.state.isUpdatingResults).toBe(true);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(true);
+
+            updateLoading(container, false);
+            jest.advanceTimersByTime(0);
+            expect(container.state.isUpdatingResults).toBe(false);
+        });
+
+        it('does not treat changed refiners as completion while results are still loading', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            const prevProps = container.props;
+            Object.defineProperty(container, 'props', {
+                value: {
+                    ...prevProps,
+                    availableFilters: [{ filterName: 'Category', values: [] }]
+                }
+            });
+            Object.defineProperty(container, 'getFiltersToDisplay', { value: jest.fn() });
+
+            container.componentDidUpdate(prevProps, { ...container.state });
+            jest.advanceTimersByTime(1500);
+
+            expect(container.state.isUpdatingResults).toBe(true);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(0);
+            expect(container.state.isUpdatingResults).toBe(false);
+        });
+
+        it('only keeps fast operations busy for 200 milliseconds to avoid flicker', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            updateLoading(container, false);
+
+            jest.advanceTimersByTime(199);
+            expect(container.state.isUpdatingResults).toBe(true);
+            jest.advanceTimersByTime(1);
+            expect(container.state.isUpdatingResults).toBe(false);
+        });
+
+        it('cancels a pending hide when loading resumes and retains the original watchdog deadline', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            jest.advanceTimersByTime(50);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(50);
+            updateLoading(container, true);
+            jest.advanceTimersByTime(100);
+
+            expect(container.state.isUpdatingResults).toBe(true);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(true);
+            expect(document.getElementById('pnp-modern-search-busy-cursor-style')).not.toBeNull();
+
+            jest.advanceTimersByTime(9799);
+            expect(container.state.isUpdatingResults).toBe(true);
+            jest.advanceTimersByTime(1);
+            jest.advanceTimersByTime(1);
+            expect(container.state.isUpdatingResults).toBe(false);
+        });
+
+        it('ends busy state on the resumed loading completion', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(100);
+            updateLoading(container, true);
+            jest.advanceTimersByTime(300);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(0);
+
+            expect(container.state.isUpdatingResults).toBe(false);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(false);
+        });
+
+        it('recognizes completion when an asynchronous render skips the loading prop transition', () => {
+            const container = createBusyContainer();
+            const prevProps = container.props;
+            jest.advanceTimersByTime(500);
+            Object.defineProperty(container, 'props', {
+                value: { ...prevProps, resultsLoadingCompletionVersion: 1 }
+            });
+
+            container.componentDidUpdate(prevProps, { ...container.state });
+            jest.advanceTimersByTime(0);
+
+            expect(container.state.isUpdatingResults).toBe(false);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(false);
+        });
+
+        it('leaves Clear all disabled after clearing the final applied filter', () => {
+            const container = createBusyContainer();
+            Object.assign(container.state, { submittedFilters: [] });
+            updateLoading(container, true);
+            jest.advanceTimersByTime(1500);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(0);
+
+            expect(container.state.isUpdatingResults).toBe(false);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(true);
+        });
+    });
+
     it('clears all applied refiners and invalidates a queued filter update', () => {
         const container = createContainer(createUiFilter(true), [submittedFilter]);
         const otherUiFilter = {
