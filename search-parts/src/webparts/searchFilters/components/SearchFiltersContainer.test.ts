@@ -387,6 +387,55 @@ describe('SearchFiltersContainer.getFiltersToDisplay', () => {
             expect(container.state.isUpdatingResults).toBe(false);
         });
 
+        it('cancels a pending hide when loading resumes and retains the original watchdog deadline', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            jest.advanceTimersByTime(50);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(50);
+            updateLoading(container, true);
+            jest.advanceTimersByTime(100);
+
+            expect(container.state.isUpdatingResults).toBe(true);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(true);
+            expect(document.getElementById('pnp-modern-search-busy-cursor-style')).not.toBeNull();
+
+            jest.advanceTimersByTime(9799);
+            expect(container.state.isUpdatingResults).toBe(true);
+            jest.advanceTimersByTime(1);
+            jest.advanceTimersByTime(1);
+            expect(container.state.isUpdatingResults).toBe(false);
+        });
+
+        it('ends busy state on the resumed loading completion', () => {
+            const container = createBusyContainer();
+            updateLoading(container, true);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(100);
+            updateLoading(container, true);
+            jest.advanceTimersByTime(300);
+            updateLoading(container, false);
+            jest.advanceTimersByTime(0);
+
+            expect(container.state.isUpdatingResults).toBe(false);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(false);
+        });
+
+        it('recognizes completion when an asynchronous render skips the loading prop transition', () => {
+            const container = createBusyContainer();
+            const prevProps = container.props;
+            jest.advanceTimersByTime(500);
+            Object.defineProperty(container, 'props', {
+                value: { ...prevProps, resultsLoadingCompletionVersion: 1 }
+            });
+
+            container.componentDidUpdate(prevProps, { ...container.state });
+            jest.advanceTimersByTime(0);
+
+            expect(container.state.isUpdatingResults).toBe(false);
+            expect(container['getClearAllFiltersAction']()?.props.disabled).toBe(false);
+        });
+
         it('leaves Clear all disabled after clearing the final applied filter', () => {
             const container = createBusyContainer();
             Object.assign(container.state, { submittedFilters: [] });

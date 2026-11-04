@@ -102,6 +102,17 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private _selectedFilters: IDataFilter[] = [];
     private _lastSelectedVerticalKey: string = undefined;
     private _verticalChangeVersion: number = 0;
+    private _isResultsLoading: boolean = false;
+    private _resultsLoadingCompletionVersion: number = 0;
+
+    private captureResultsLoadingState(): boolean {
+        const isLoading = this._dataSourceDynamicProperties.some(dynamicProperty => Boolean(DynamicPropertyHelper.tryGetValueSafe(dynamicProperty)?.isLoading));
+        if (this._isResultsLoading && !isLoading) {
+            this._resultsLoadingCompletionVersion++;
+        }
+        this._isResultsLoading = isLoading;
+        return isLoading;
+    }
 
     /**
      * Resolves the selected vertical from the directly connected Search Verticals Web Part or, when not connected,
@@ -349,6 +360,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             return;
         }
 
+        this.captureResultsLoadingState();
+
         // Check audience targeting - if user is not in audience, don't render
         const isInAudience = await this.isInAudience();
         this._isHiddenByAudience = !isInAudience;
@@ -455,7 +468,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
             // OR the data results don't contain this filter name. 
             // We create fake entries for those filters to be able to render them in the template
             // We do this by convenience to avoid refactoring the Handlebars templates
-            const isResultsLoading = this._dataSourceDynamicProperties.some(dynamicProperty => Boolean(DynamicPropertyHelper.tryGetValueSafe(dynamicProperty)?.isLoading));
+            const isResultsLoading = this.captureResultsLoadingState();
             filterResults = this._initStaticFilters(filterResults, resolvedFiltersConfiguration, isResultsLoading);
 
             renderRootElement = React.createElement(
@@ -467,6 +480,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         templateContent: this.templateContentToDisplay,
                         availableFilters: filterResults,
                         isResultsLoading,
+                        resultsLoadingCompletionVersion: this._resultsLoadingCompletionVersion,
                         filtersConfiguration: resolvedFiltersConfiguration,
                         domElement: this.domElement,
                         instanceId: this.instanceId,
