@@ -204,11 +204,25 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             borderColor: this.props.resultsBorderColor || undefined,
             borderWidth: this.props.resultsBorderThickness !== undefined ? `${this.props.resultsBorderThickness}px` : undefined
         };
+        
+        const safeTextColor = /^(#[0-9a-fA-F]{3,8}|rgba?\([\d\s,.]+\))$/.test(this.props.resultsTextColor || '')
+            ? this.props.resultsTextColor : '';
+
+        const textColorStyle = safeTextColor ? (
+            <style>{`
+                [data-instance-id="${this.props.instanceId}"],
+                [data-instance-id="${this.props.instanceId}"] pnp-persona,
+                [data-instance-id="${this.props.instanceId}"] pnp-persona * {
+                    color: ${safeTextColor} !important;
+                }
+            `}</style>
+        ) : null;
 
         return <main><div data-instance-id={this.props.instanceId}
             data-ui-test-id={TestConstants.SearchResultsWebPart}
             ref={(ref) => { this._resultsContainerRef = ref; }}
             style={containerStyles}>
+            {textColorStyle}
             <div tabIndex={-1} ref={(ref) => { this._searchWebPartRef = ref; }}></div>
             {renderOverlay}
             {renderInfoMessage}
