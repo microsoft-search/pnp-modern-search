@@ -1602,6 +1602,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     private _resetContentStylingToDefault(): void {
         // Reset all content styling properties to their default values
+        this.properties.resultsTextColor = undefined;
         this.properties.resultsBackgroundColor = undefined;
         this.properties.resultsBorderColor = undefined;
         this.properties.resultsBorderThickness = undefined;
