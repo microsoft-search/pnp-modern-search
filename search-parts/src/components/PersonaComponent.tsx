@@ -170,7 +170,14 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
             }, 100);
         }
     }
-
+    private getPersonaSizeProps(): { size: number; coinSize?: number } {
+        const key = parseInt(this.props.personaSize ?? '48');
+        if (key === 20) {
+            // Ultra large: 200px (Fluent only has presets up to 120px)
+            return { size: 18, coinSize: 200 };
+        }
+        return { size: key };
+    }
     public render(): React.ReactNode {
         // Resolve fields via fieldsConfiguration when provided to populate persona texts/image
         let processedProps: IPersonaComponentProps = this.props;
@@ -241,7 +248,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         if (this.props.nativeLpc) {
             if (this.props.showHoverOnPictureOnly) {
                 // Picture-only mode: split layout with hover on image only
-                const sizeNum = parseInt(this.props.personaSize ?? '48') || 48;
+                const sizeNum = parseInt(this.props.personaSize ?? '48') === 20 ? 200 : (parseInt(this.props.personaSize ?? '48') || 48);
                 const actualHeight = this.state.imageHeight || sizeNum;
                 const wrapperWidth = Math.round(actualHeight * 1.0);
 
@@ -332,7 +339,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
 
         return (
             <div ref={this.componentRef} style={{ display: 'inline-block' }}>
-                <Persona {...persona} size={parseInt(this.props.personaSize ?? '48')} />
+                <Persona {...persona} size={parseInt(this.getPersonaSizeProps ?? '48')} />
             </div>
         );
     }
