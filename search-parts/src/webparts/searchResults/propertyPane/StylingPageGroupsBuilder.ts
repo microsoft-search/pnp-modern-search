@@ -367,6 +367,18 @@ export class StylingPageGroupsBuilder {
                     buttonType: PropertyPaneButtonType.Command,
                     icon: 'Refresh',
                     onClick: this.resetContentStylingToDefault
+                }),
+                PropertyFieldColorPicker('resultsTextColor', {
+                    label: this.webPartStrings.Styling.ResultsTextColorLabel,
+                    selectedColor: this.properties.resultsTextColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'resultsTextColorFieldId'
                 })
             ]
         };
