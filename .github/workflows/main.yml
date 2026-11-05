@@ -1,0 +1,40 @@
+name: Build SPFx Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Abhängigkeiten installieren
+        run: npm install
+
+      - name: Build aufräumen
+        run: npx gulp clean
+
+      - name: Bundle erstellen (Production)
+        run: npx gulp bundle --ship
+
+      - name: Paket schnüren (Production)
+        run: npx gulp package-solution --ship
+
+      - name: .sppkg als Artefakt hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mitarbeiterverzeichnis-sppkg
+          path: '**/*.sppkg'
+          if-no-files-found: error
