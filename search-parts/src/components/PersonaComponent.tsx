@@ -281,11 +281,11 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
                 return (
                     <div ref={this.componentRef} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <div ref={this.imageWrapperRef} className="live-persona-card-wrapper" style={{ width: wrapperWidth, maxWidth: wrapperWidth, minWidth: wrapperWidth, cursor: 'pointer' }}>
-                            <LivePersona upn={upnResolved} template={<Persona {...coinOnly} size={parseInt(this.props.personaSize ?? '48')} />} serviceScope={this.props.serviceScope as any} />
+                            <LivePersona upn={upnResolved} template={<Persona {...coinOnly} {...this.getPersonaSizeProps()} />} serviceScope={this.props.serviceScope as any} />
                         </div>
                         <div className="text-only-persona" style={{ display: 'inline-block' }}>
                             <style dangerouslySetInnerHTML={{ __html: `.text-only-persona .ms-Persona-coin, .text-only-persona .ms-Persona-imageArea, .text-only-persona .ms-Persona-initials, .text-only-persona [class*="coin-"], .text-only-persona [class*="imageArea-"], .text-only-persona [class*="initials-"], .text-only-persona [data-automationid="PersonaCoin"] { display: none !important; width: 0 !important; min-width: 0 !important; height: 0 !important; min-height: 0 !important; overflow: hidden !important; visibility: hidden !important; }` }} />
-                            <Persona {...textOnly} size={parseInt(this.props.personaSize ?? '48')} />
+                            <Persona {...textOnly} {...this.getPersonaSizeProps()} />
                         </div>
                     </div>
                 );
@@ -294,7 +294,7 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
             // Native LPC without picture-only: full persona with hover on entire component
             return (
                 <div ref={this.componentRef}>
-                    <LivePersona upn={upnResolved} template={<Persona {...persona} size={parseInt(this.props.personaSize ?? '48')} />} serviceScope={this.props.serviceScope as any} />
+                    <LivePersona upn={upnResolved} template={<Persona {...persona} {...this.getPersonaSizeProps()} />} serviceScope={this.props.serviceScope as any} />
                 </div>
             );
         }
@@ -332,14 +332,14 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
                                 ` display: none !important; width: 0 !important; min-width: 0 !important; height: 0 !important; min-height: 0 !important; overflow: hidden !important; visibility: hidden !important; }`
                         }}
                     />
-                    <Persona {...textOnly} size={parseInt(this.props.personaSize ?? '48')} />
+                    <Persona {...persona} {...this.getPersonaSizeProps()} />
                 </div>
             );
         }
 
         return (
             <div ref={this.componentRef} style={{ display: 'inline-block' }}>
-                <Persona {...persona} size={parseInt(this.getPersonaSizeProps ?? '48')} />
+                <Persona {...persona} {...this.getPersonaSizeProps()} />
             </div>
         );
     }
