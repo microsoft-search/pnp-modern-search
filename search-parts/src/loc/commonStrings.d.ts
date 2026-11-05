@@ -314,6 +314,7 @@ declare interface ICommonStrings {
         PersonaSizeRegular: string;
         PersonaSizeLarge: string;
         PersonaSizeExtraLarge: string;
+	  	PersonaSizeUltraLarge: string;
         ShowInitialsToggleLabel: string;
         SupportHTMLColumnLabel: string;
         ResetFieldsBtnLabel: string;
