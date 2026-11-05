@@ -549,6 +549,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 },
                 titleAction: this.getTitleMoreLink(),
                 resultsBackgroundColor: this.properties.resultsBackgroundColor,
+                resultsTextColor: this.properties.resultsTextColor,
                 resultsBorderColor: this.properties.resultsBorderColor,
                 resultsBorderThickness: this.properties.resultsBorderThickness,
                 titleFont: this.properties.titleFont,
