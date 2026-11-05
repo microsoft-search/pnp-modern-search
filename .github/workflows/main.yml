@@ -17,8 +17,6 @@ jobs:
 
       - name: Node.js einrichten
         uses: actions/setup-node@v4
-        with:
-          node-version: '18'
 
       - name: Abhängigkeiten installieren
         run: npm install
