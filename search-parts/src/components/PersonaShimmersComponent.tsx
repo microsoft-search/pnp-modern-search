@@ -43,6 +43,9 @@ export class PersonaCardShimmersComponent extends React.Component<IPersonaCardSh
             case 15:
                 personaSize = 100;
                 break;
+            case 20:
+                personaSize = 200;
+                break;
             default:
                 personaSize = 48;
                 break;
