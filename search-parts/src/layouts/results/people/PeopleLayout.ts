@@ -268,6 +268,10 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                     {
                         key: 15,
                         text: strings.Layouts.People.PersonaSizeExtraLarge
+                    },
+                    {
+                        key: 20,
+                        text: strings.Layouts.People.PersonaSizeUltraLarge
                     }
                 ]
             })
