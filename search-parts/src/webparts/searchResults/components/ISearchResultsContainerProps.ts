@@ -105,6 +105,10 @@ export interface ISearchResultsContainerProps {
    */
   resultsBackgroundColor?: string;
 
+    /**
+   * Results panel Text Farbe
+   */
+  resultsTextColor?: string;
   /**
    * Results panel border color
    */
