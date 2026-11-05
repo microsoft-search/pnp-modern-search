@@ -143,6 +143,7 @@ declare interface ISearchResultsWebPartStrings {
     Styling: {
         StylingOptionsGroupName: string;
         ResultsBackgroundColorLabel: string;
+        ResultsTextColorLabel: string;
         ResultsBorderColorLabel: string;
         ResultsBorderThicknessLabel: string;
         ResetToDefaultLabel: string;
