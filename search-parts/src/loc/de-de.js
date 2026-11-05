@@ -314,6 +314,7 @@ define([], function () {
                 PersonaSizeRegular: "Regulär",
                 PersonaSizeLarge: "Groß",
                 PersonaSizeExtraLarge: "Extra groß",
+                PersonaSizeUltraLarge: "Ultra groß",
                 ShowInitialsToggleLabel: "Initialen anzeigen, wenn kein Bild vorhanden",
                 SupportHTMLColumnLabel: "HTML erlauben",
                 ResetFieldsBtnLabel: "Felder auf Standardwerte zurücksetzen",
