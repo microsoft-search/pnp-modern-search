@@ -199,6 +199,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
         const containerStyles: React.CSSProperties = {
             backgroundColor: this.props.resultsBackgroundColor || undefined,
+            color: this.props.resultsTextColor || undefined,   // NEU
             borderStyle: this.props.resultsBorderColor || this.props.resultsBorderThickness ? 'solid' : undefined,
             borderColor: this.props.resultsBorderColor || undefined,
             borderWidth: this.props.resultsBorderThickness !== undefined ? `${this.props.resultsBorderThickness}px` : undefined
