@@ -144,6 +144,7 @@ define([], function () {
         Styling: {
             StylingOptionsGroupName: "Stiloptionen",
             ResultsBackgroundColorLabel: "Ergebnisse-Hintergrundfarbe",
+            ResultsTextColorLabel: "Schriftfarbe der Ergebnisse",
             ResultsBorderColorLabel: "Ergebnisse-Rahmenfarbe",
             ResultsBorderThicknessLabel: "Ergebnisse-Rahmenstärke",
             ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
