@@ -761,7 +761,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         return data;
     }
     private initProperties(): void {
-        this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : "{searchTerms}";
+        this.properties.queryTemplate = this.properties.queryTemplate ? this.properties.queryTemplate : `{searchTerms}
+        (Agri* AND JobTitle:*)
+        AND NOT PreferredName:BalmerEtienne*
+        AND NOT PreferredName: "AS Gast"
+        AND NOT PreferredName: "ASTemporary"
+        AND NOT PreferredName: "Fischer Silvan"
+        AND ("SPS-HideFromAddressLists":0 OR PreferredName:"Deubelbeiss Edgar")`;
+        
         this.properties.enableQueryRules = this.properties.enableQueryRules !== undefined ? this.properties.enableQueryRules : false;
         this.properties.enableLocalization = this.properties.enableLocalization !== undefined ? this.properties.enableLocalization : false;
         this.properties.refinementFilters = this.properties.refinementFilters ? this.properties.refinementFilters : '';
