@@ -95,7 +95,17 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
 
         if (this.properties.showHoverOnPictureOnly === undefined) {
             // default value is false
-            this.properties.showHoverOnPictureOnly = true;
+            this.properties.showHoverOnPictureOnly = false;
+        }
+        
+        if (this.properties.showPersonaCardNative === undefined) {
+            // default value is false (LPC off)
+            this.properties.showPersonaCardNative = false;
+        }
+
+        if (this.properties.showPersonaCard === undefined && !this.properties.showPersonaCardNative) {
+            // default value is true: person card on hover (Graph Toolkit, not LPC)
+            this.properties.showPersonaCard = true;
         }
 
         if (this.properties.showDepartment === undefined) {
