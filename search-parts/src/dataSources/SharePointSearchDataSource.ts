@@ -787,6 +787,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'UserName',
                 'JobTitle',
                 'WorkPhone',
+                'Department',
+                'RefinableString01',                 // RefinableString01 = Bürostandort (Office location), shown in the persona at size "Ultra large"
                 'SPSiteURL',
                 'SPWebUrl',
                 'SiteTitle',
