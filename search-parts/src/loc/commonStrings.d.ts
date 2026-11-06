@@ -325,6 +325,11 @@ declare interface ICommonStrings {
         ShowPersonaPresenceInfo: string;
         ShowPersonaPresenceInfoCalloutMsg: string;
         ShowHoverOnPictureOnly: string;
+	    ShowDepartment: string;
+        ShowOfficeLocation: string;
+        UltraInfoCalloutMsg: string;
+        DepartmentLabel: string;
+        OfficeLocationLabel: string;
         ShowHoverOnPictureOnlyCalloutMsg: string;
         Fields: {
           ImageUrl: string;
@@ -333,6 +338,8 @@ declare interface ICommonStrings {
           TertiaryText: string;
           OptionalText: string;
           UPN: string;
+		  Department: string;
+          OfficeLocation: string;
         }
       };
       Vertical: {
