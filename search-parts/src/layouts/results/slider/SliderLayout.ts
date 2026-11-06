@@ -1,7 +1,8 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider } from "@microsoft/sp-property-pane";
+import { IPropertyPaneField, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'CommonStrings';
 import { ISliderOptions } from "../../../components/SliderComponent";
+import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
 export interface ISliderLayoutProperties {
 
@@ -24,6 +25,8 @@ export interface ISliderLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+    enableCsvExport: boolean;
+    exportColumns: string;
 
     /**
     * If the details action should be visible
@@ -33,7 +36,12 @@ export interface ISliderLayoutProperties {
 
 export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
 
+    private _exportColumnsDraft: string | undefined;
+
     public async onInit(): Promise<void> {
+
+        this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
+        this.properties.exportColumns = this.properties.exportColumns ?? '';
 
         // Setup default values
         this.properties.sliderOptions = this.properties.sliderOptions ? this.properties.sliderOptions : {
@@ -116,8 +124,37 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
             PropertyPaneToggle('layoutProperties.enableDownload', {
               label: strings.Layouts.DetailsList.EnableDownload,
               checked: this.properties.enableDownload
-            })
+                        }),
+                        PropertyPaneToggle('layoutProperties.enableCsvExport', {
+                            label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
+                            checked: this.properties.enableCsvExport
+                        })
       ]);
+
+        if (this.properties.enableCsvExport) {
+            groupFields.push(
+                PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
+                    label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
+                    description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
+                    multiline: true,
+                    rows: 8,
+                    validateOnFocusOut: true,
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
+                })
+            );
+        }
 
         return groupFields;
     }

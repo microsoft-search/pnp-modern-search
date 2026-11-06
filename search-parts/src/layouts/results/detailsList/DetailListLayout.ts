@@ -9,6 +9,7 @@ import { AsyncCombo } from "../../../controls/PropertyPaneAsyncCombo/components/
 import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 import sharedStyles from '../../../styles/Common.module.scss';
+import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
 /**
  * Details List Builtin Layout
@@ -75,6 +76,8 @@ export interface IDetailsListLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+    enableCsvExport: boolean;
+    exportColumns: string;
 
     /**
     * If the details action should be available for selected items
@@ -89,6 +92,8 @@ export interface IDetailsListLayoutProperties {
 
 export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> {
 
+    private _exportColumnsDraft: string | undefined;
+
     /**
      * Dynamically loaded components for property pane
      */
@@ -98,12 +103,15 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
 
     public async onInit(): Promise<void> {
 
+        this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
+        this.properties.exportColumns = this.properties.exportColumns ?? '';
+
         // Setup default values
         this.properties.detailsListColumns = this.properties.detailsListColumns ? this.properties.detailsListColumns :
             [
                 {
                     name: 'Title',
-                    value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank">\n\t{{slot item @root.slots.Title}}\n</a>',
+                    value: '<a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" style="color:{{@root.theme.semanticColors.link}}">\n\t{{slot item @root.slots.Title}}\n</a>',
                     useHandlebarsExpr: true,
                     minWidth: '80',
                     maxWidth: '300',
@@ -145,6 +153,13 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
         this.properties.enableDetails = this.properties.enableDetails ?? legacyEnableDetails ?? false;
 
         if (this.editMode) {
+            await this.loadPropertyPaneResources();
+        }
+    }
+
+    public async loadPropertyPaneResources(): Promise<void> {
+
+        if (!this._propertyPaneWebPartInformation) {
             const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
                 /* webpackChunkName: 'pnp-modern-search-results-detailslist-layout' */
                 '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -419,7 +434,37 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
             PropertyPaneToggle('layoutProperties.useAlternatingBackgroundColor', {
                 label: strings.Layouts.DetailsList.UseAlternatingBackgroundColor || 'Use Alternating Background color',
                 checked: this.properties.useAlternatingBackgroundColor
-            }));
+            })
+        );
+
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableCsvExport', {
+                label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
+                checked: this.properties.enableCsvExport
+            }),
+            ...(this.properties.enableCsvExport ? [
+                PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
+                    label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
+                    description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
+                    multiline: true,
+                    rows: 8,
+                    validateOnFocusOut: true,
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
+                })
+            ] : [])
+        );
 
         return propertyPaneFields;
     }

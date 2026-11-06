@@ -136,13 +136,13 @@ export class LayoutHelper {
                 case BuiltinLayoutsKeys.ListAdaptiveCards: {
 
                     /* tslint:disable:no-shadowed-variable */
-                    const { SimpleListLayout } = await import(
+                    const { AdaptiveCardsSimpleListLayout } = await import(
                         /* webpackChunkName: 'pnp-modern-search-results-simple-list-layout' */
                         '../layouts/results/simpleList/SimpleListLayout'
                     );
                     /* tslint:enable:no-shadowed-variable */
 
-                    serviceKey = ServiceKey.create<ILayout>('PnPModernSearchSimpleListLayout', SimpleListLayout);
+                    serviceKey = ServiceKey.create<ILayout>('PnPModernSearchAdaptiveCardsSimpleListLayout', AdaptiveCardsSimpleListLayout);
                     break;
                 }
 

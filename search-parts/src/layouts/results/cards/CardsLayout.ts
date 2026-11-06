@@ -1,11 +1,12 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane';
+import { IPropertyPaneField, PropertyPaneToggle, PropertyPaneSlider, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneTextField } from '@microsoft/sp-property-pane';
 import { IComponentFieldsConfiguration } from '../../../models/common/IComponentFieldsConfiguration';
 import * as strings from 'CommonStrings';
 import { Icon, IIconProps, IComboBoxOption } from '@fluentui/react';
 import * as React from "react";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
 import commonStyles from '../../../styles/Common.module.scss';
+import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
 export interface ICardsLayoutProperties {
 
@@ -43,6 +44,8 @@ export interface ICardsLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+    enableCsvExport: boolean;
+    exportColumns: string;
 
     /**
     * If the details action should be visible
@@ -51,6 +54,8 @@ export interface ICardsLayoutProperties {
 }
 
 export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
+
+    private _exportColumnsDraft: string | undefined;
 
     /**
      * Dynamically loaded components for property pane
@@ -62,11 +67,14 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
     public async onInit(): Promise<void> {
 
+        this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
+        this.properties.exportColumns = this.properties.exportColumns ?? '';
+
         // Setup default values
         this.properties.documentCardFields = this.properties.documentCardFields ? this.properties.documentCardFields :
             [
                 { name: strings.Layouts.Cards.Fields.Title, field: 'title', value: '{{slot item @root.slots.Title}}', useHandlebarsExpr: true, supportHtml: false },
-                { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.palette.themePrimary}};font-weight:600;font-family:'{{@root.theme.fonts.small.fontFamily}}'" href="{{slot item @root.slots.SPWebURL}}">{{slot item @root.slots.SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
+                { name: strings.Layouts.Cards.Fields.Location, field: 'location', value: `<a style="color:{{@root.theme.semanticColors.link}};font-weight:600;font-family:{{@root.theme.fonts.small.fontFamily}}" href="{{slot item @root.slots.SPWebURL}}">{{slot item @root.slots.SiteTitle}}</a>`, useHandlebarsExpr: true, supportHtml: true },
                 {
                     name: strings.Layouts.Cards.Fields.Tags, field: 'tags', value: `<style>\n\t.tags {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\twhite-space: normal;\n\t\tcursor: auto; \n\t}\n\t.tags i { \n\t\tmargin-right: 5px; \n\t}\n\t.tags div {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap; \n\t\tjustify-content: flex-end; \n\t}\n\t.tags div span {\n\t\ttext-decoration: underline; \n\t\tmargin-right: auto; \n\t}\n\t .simpletags \n\t\{\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 5px;\n\t\tmargin-right: 5px;\n\t\tbackground-color: {{@root.theme.palette.neutralLight}};\n\t\tcolor: {{@root.theme.palette.neutralDark}};\n\t\tborder-radius: 5px;\n\t\tfont-size: 12px;\n\t\}\n</style>\n\n{{#if (slot item @root.slots.Tags)}}
 	<div class="tags">
@@ -145,7 +153,7 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
         const availableOptions: IComboBoxOption[] = availableFields.map((fieldName) => { return { key: fieldName, text: fieldName } as IComboBoxOption; });
 
-        return [
+        const propertyPaneFields: IPropertyPaneField<any>[] = [
 
             // Careful, the property names should match the React components props. These will be injected in the Handlebars template context and passed as web component attributes
             this._propertyFieldCollectionData('layoutProperties.documentCardFields', {
@@ -247,6 +255,40 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
             })
 
         ];
+
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableCsvExport', {
+                label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
+                checked: this.properties.enableCsvExport
+            })
+        );
+
+        if (this.properties.enableCsvExport) {
+            propertyPaneFields.push(
+                PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
+                    label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
+                    description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
+                    multiline: true,
+                    rows: 8,
+                    validateOnFocusOut: true,
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
+                })
+            );
+        }
+
+        return propertyPaneFields;
     }
 
     public onPropertyUpdate(propertyPath: string, oldValue: any, newValue: any) {

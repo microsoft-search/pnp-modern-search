@@ -3,8 +3,12 @@ import { QueryPathBehavior, PageOpenBehavior } from "../../helpers/UrlHelper";
 import { DynamicProperty } from "@microsoft/sp-component-base";
 import { ISuggestionProviderConfiguration } from "../../providers/ISuggestionProviderConfiguration";
 import { IExtensibilityConfiguration } from "../../models/common/IExtensibilityConfiguration";
+import { ISearchScope } from "../../helpers/SearchScopeHelper";
 
 export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
+    advancedSearch?: boolean;
+    searchScopes?: ISearchScope[];
+    scopeQueryStringParameter?: string;
 
     /**
      * Flag indicating in the search query text should be sent to an other page
@@ -50,6 +54,16 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
      * The query keywords in the search box
      */
     queryText: DynamicProperty<string>;
+
+    /**
+     * Determines whether the Web Part uses context from a Search Verticals Web Part.
+     */
+    useVerticals: boolean;
+
+    /**
+     * Dynamic data connection reference for the Search Verticals Web Part.
+     */
+    verticalsDataSourceReference: string;
 
     /**
      * The transformation to apply on the queryText before sending to a different page
@@ -102,6 +116,11 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
      * Search button background color
      */
     searchButtonColor?: string;
+
+    /**
+     * Search button text and icon color
+     */
+    searchButtonTextColor?: string;
 
     /**
      * Placeholder text color

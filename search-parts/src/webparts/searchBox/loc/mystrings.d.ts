@@ -24,6 +24,7 @@ declare interface ISearchBoxWebPartStrings {
             HeightLabel: string;
             FontSizeLabel: string;
             ButtonColorLabel: string;
+            ButtonTextColorLabel: string;
             PlaceholderTextColorLabel: string;
             BackgroundColorLabel: string;
             TextColorLabel: string;
@@ -63,6 +64,7 @@ declare interface ISearchBoxWebPartStrings {
         },
     },
     SearchBox: {
+        ClearButtonLabel: string;
         DefaultPlaceholder: string;
         SearchButtonLabel: string;
     }

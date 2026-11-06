@@ -32,15 +32,39 @@ The filter settings are as follow:
 |------------|-----------------|
 | **Display Name** | A friendly name for the filter |
 | **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
-| **# of values** | The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).
+| **# of values** | The maximum number of values to retrieve for a filter, up to 1000. When left unset, SharePoint Search defaults to 100 and Microsoft Search to 10. The field shows the default as a hint when all connected results sources have the same known default; it does not save that hint as a configured limit. Enter a number to override the default. |
 | **Show warning when limit is reached** | Off by default. When enabled, an info icon appears after the filter title if the connected API returns a number of refiner or aggregation values equal to or greater than the configured **# of values** limit. Hover the icon to see the warning details. |
-| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png)  </p></br></li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
+| **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png) (a refiner for people values)</p></li><li>**People Picker** (searchable picker for tenant users)</li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
+| **Allowed email domains** | Optional restriction for the **People Picker** template. Select the **Domains (n)** button to open a dialog where you add or remove email domains; leave the list empty to allow all suggestions. |
 | **Expand by default** | If applicable for the selected template, display values as expanded.
 | **Show count** | If applicable for the selected template, display counts for values.
 | **Mutli values** | If applicable for the selected template, allow selection of multiple values.
 | **Operator between values** | If multi values is selected, the operator to use between values (OR/AND).
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
+
+### Restricting the People Picker by email domain
+
+For a filter using the **People Picker** template, select the **Domains (n)** button in the **Allowed email domains** column. The dialog lists the allowed domains; enter a domain such as `contoso.com` (or several, separated by semicolons or commas) and select **Add**, or use the remove button next to a domain. Select **Save** to apply the changes, including any valid domains still in the input, or **Cancel** to discard them. The button is disabled for other templates. The domains are stored as a semicolon-separated string, so existing configurations continue to work. This option applies to that filter only; it does not affect the separate **People Template** refiner. Leave the list empty to retain the unrestricted picker.
+
+Matching ignores case and requires an exact domain. For example, `contoso.com` permits `person@contoso.com` but not `person@subsidiary.contoso.com`; add the subdomain explicitly if needed. Enter domains without `@`, wildcards, URLs, or IP addresses. The picker excludes suggestions without a usable email-like address, including encoded guest logins. The underlying picker may provide an email-like login when an email address is unavailable, so the domain is not proof of mailbox ownership. Invalid domain settings are reported and disable the picker until corrected; the dialog highlights invalid stored entries and blocks saving until they are removed.
+
+Previously saved selections may contain only a display name instead of an email address. When the domain cannot be verified, the selection is kept and a warning is shown; the selection can be removed with its remove button. Selections with a known disallowed domain are removed. A saved display name can be shared by multiple people, so an ambiguous submitted value may remain until the user clears or reapplies the filter.
+
+The allowlist filters the picker UI, **not access to content or a security boundary**. The People picker applies this restriction after its service has limited the number of returned suggestions, so fewer matches may appear even when other matching users exist.
+
+If you use a custom filters layout based on an older built-in template, add these attributes to its static `pnp-peoplefilter` element:
+
+```html
+data-allowed-email-domains="{{filter.allowedEmailDomains}}"
+data-domain-selection-removed="{{filter.domainSelectionRemoved}}"
+```
+
+### Exact text refiner matching
+
+For SharePoint Search, selected text refiner values retain the original refinement tokens returned by SharePoint, including tokens containing accented characters. These tokens are sent in `RefinementFilters` using FQL syntax rather than converted into plain-text search expressions. This keeps selecting a value such as `Contoso` from also matching a different refiner value such as `Not Contoso`.
+
+Multiple selected values continue to use the configured **Operator between values** (OR/AND). Date ranges, Yes/No filters, and hierarchical taxonomy selections retain their existing handling. Custom filters that supply literal text instead of SharePoint refinement tokens are not automatically converted into exact-match tokens.
 
 ### Refiner value limit warning
 
@@ -97,11 +121,13 @@ When the **Hierarchical Refiner** template is selected, a **Hierarchical Setting
 - Works with localized taxonomy refiner values when **Enable localization** is enabled in the connected SharePoint Search data source.
 - The limit warning info icon tooltip is localized using the current UI language for all supported Search Filters languages.
 - Deep links generated from hierarchical selections are supported.
+- Leaf selections preserve the original encoded SharePoint refinement token. Older deep links containing decoded, label-bearing `L0` values are restored as label-independent exact-term `GP0` tokens.
 
 #### Selection behavior
 
 - Selecting a parent node applies a taxonomy parent token so the selection includes child terms.
 - Selecting a leaf node applies that specific term only.
+- If the search response does not contain a matching leaf refiner bucket, the fallback exact-term token preserves the term GUID's hyphens.
 - When a hierarchical value is already selected, the component automatically expands the selected branch so users can see the current context.
 
 ### Filter styling
@@ -125,6 +151,12 @@ The title styling section allows you to customize the visual appearance of the w
 | **Title font size** | Controls the font size (in pixels) for the web part title. | _16px_
 | **Title font color** | The color of the web part title text. | _Theme primary color_
 | **Reset title styling to default** | Reset all title styling options to their default values. | N/A
+
+### Clear all filters
+
+The **Show "Clear all" button** toggle is on page 2 of the property pane, below **Web part title styling**. When enabled, a right-aligned **Clear all** action appears beside the Search Filters web part title. It is disabled when no filters are applied or while results are updating. Selecting it clears all applied filters, updates connected results, and removes the filter deep-link query parameter. The feature is disabled by default.
+
+The busy cursor and **Clear all** action follow the loading state of the connected Search Results web parts, even when the returned refiner values do not change. With multiple connected results web parts, the filters remain busy until all have finished loading.
 
 ### Operator between filters
 

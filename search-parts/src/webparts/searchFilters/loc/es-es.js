@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Quitar {0}",
                 SearchUsersPlaceholder: "Buscar usuarios",
                 LoadingTenantUsersLabel: "Cargando usuarios del inquilino...",
-                NoUsersFoundMessage: "No se encontraron usuarios."
+                NoUsersFoundMessage: "No se encontraron usuarios.",
+                UnverifiedDomainsWarning: "No se pudieron verificar algunas personas seleccionadas con respecto a los dominios permitidos y se conservaron.",
+                DisallowedDomainsWarning: "Se quitó una persona seleccionada porque su dominio de correo electrónico no está permitido."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Advertencia de plantilla de personas: los valores no parecen identidades de usuario. Es probable que esta propiedad no esté asignada a una propiedad rastreada Q_USER.",
                 FilterDisplayName: "Nombre para mostrar",
                 FilterTemplate: "Plantilla",
+                AllowedEmailDomains: "Dominios de correo electrónico permitidos",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Introduzca dominios de correo electrónico válidos separados por punto y coma o comas.",
+                AllowedEmailDomainsButton: "Dominios ({0})",
+                AllowedEmailDomainsDialogDescription: "Solo se pueden seleccionar personas cuya dirección de correo electrónico pertenezca a uno de estos dominios. Deje la lista vacía para permitir a todos.",
+                AllowedEmailDomainsNewDomain: "Dominio que se va a agregar",
+                AllowedEmailDomainsAdd: "Agregar",
+                AllowedEmailDomainsRemove: "Quitar {0}",
+                AllowedEmailDomainsEmpty: "No hay dominios configurados. Se puede seleccionar a cualquier persona.",
+                AllowedEmailDomainsInvalidEntry: "Introduzca un dominio válido, por ejemplo contoso.com.",
                 FilterExpandByDefault: "Expandir por defecto",
                 ExpandAllNodesByDefault: "Expandir todos los nodos por defecto",
                 HideNodesNotInDataSet: "Ocultar nodos que no estén en el conjunto de datos actual",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Caja combo",
                     DateIntervalTemplate: "Intervalo de fechas",
                     PeopleTemplate: "Plantilla de persona",
-                    StaticPeopleTemplate: "Plantilla de persona estática",
+                    StaticPeopleTemplate: "Selector de personas",
                     TaxonomyPickerTemplate: "Selector de taxonomía",
                     HierarchicalFilterTemplate: "Filtro jerárquico"
                 },
@@ -73,6 +85,9 @@ define([], function () {
                 SortDescending: "Descendente"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Borrar todos los filtros",
+                ShowClearAllFiltersToggleLabel: "Mostrar el botón \"Borrar todo\"",
+                ClearAllActionText: "Borrar todo",
                 AvailableLayoutsGroupName: "Diseños disponibles",
                 LayoutTemplateOptionsGroupName: "Opciones de diseño",
                 TemplateUrlFieldLabel: "Utilizar una URL de plantilla externa",

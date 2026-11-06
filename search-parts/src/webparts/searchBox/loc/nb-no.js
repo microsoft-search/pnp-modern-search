@@ -24,6 +24,7 @@ define([], function() {
                 BorderRadiusLabel: "Kantradius (px)",
                 HeightLabel: "Høyde (px)",
                 ButtonColorLabel: "Søkeknappens farge",
+                ButtonTextColorLabel: "Søkeknappens tekstfarge",
                 ButtonHoverColorLabel: "Søkeknappens hover-farge",
                 PlaceholderTextColorLabel: "Plassholdertekstens farge",
                 BackgroundColorLabel: "Bakgrunnsfarge",
@@ -58,6 +59,7 @@ define([], function() {
             },
         },
         SearchBox: {
+            ClearButtonLabel: "Tøm søk",
             DefaultPlaceholder: "Angi søkeord…",
             SearchButtonLabel: "Søk"
         }

@@ -1,14 +1,21 @@
 import { PageOpenBehavior, QueryPathBehavior } from "../../../helpers/UrlHelper";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
-import { ISuggestionProvider, ITokenService } from "@pnp/modern-search-extensibility";
+import { ISuggestionProvider, ISuggestionProviderContext, ITokenService } from "@pnp/modern-search-extensibility";
 import { IWebPartTitleProps } from "@pnp/spfx-controls-react/lib/WebPartTitle";
+import { ISearchScope } from "../../../helpers/SearchScopeHelper";
 
 export interface ISearchBoxContainerProps {
+    advancedSearch?: boolean;
+    searchScopes?: ISearchScope[];
+    uiLanguage?: string;
+    selectedScopeKey?: string;
+    scopeQueryStringParameter?: string;
+    searchStateVersion?: number;
 
     /**
      * Callback handler when the search query text is submitted
      */
-    onSearch: (searchQueryText: string) => void;
+    onSearch: (searchQueryText: string, scopeKey?: string) => void;
 
     /**
      * Flag indicating in the search query text should be sent to an other page
@@ -54,6 +61,11 @@ export interface ISearchBoxContainerProps {
      * List of available suggestions providers
      */
     suggestionProviders: ISuggestionProvider[];
+
+    /**
+     * Context passed to suggestion providers for each request.
+     */
+    suggestionProviderContext?: ISuggestionProviderContext;
 
     /**
      * The search box input value
@@ -106,6 +118,11 @@ export interface ISearchBoxContainerProps {
      * Search button background color
      */
     searchButtonColor?: string;
+
+    /**
+     * Search button text and icon color
+     */
+    searchButtonTextColor?: string;
 
     /**
      * Placeholder text color

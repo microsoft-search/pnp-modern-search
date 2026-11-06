@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "{0} entfernen",
                 SearchUsersPlaceholder: "Benutzer suchen",
                 LoadingTenantUsersLabel: "Mandantenbenutzer werden geladen...",
-                NoUsersFoundMessage: "Keine Benutzer gefunden."
+                NoUsersFoundMessage: "Keine Benutzer gefunden.",
+                UnverifiedDomainsWarning: "Einige ausgewählte Personen konnten nicht anhand der zulässigen Domänen überprüft werden und wurden beibehalten.",
+                DisallowedDomainsWarning: "Eine ausgewählte Person wurde entfernt, weil ihre E-Mail-Domäne nicht zulässig ist."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Warnung für Personenvorlage: Die Werte sehen nicht wie Benutzeridentitäten aus. Diese Eigenschaft ist wahrscheinlich nicht einer Q_USER-Crawleigenschaft zugeordnet.",
                 FilterDisplayName: "Anzeige name",
                 FilterTemplate: "Vorlage",
+                AllowedEmailDomains: "Zulässige E-Mail-Domänen",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Geben Sie gültige E-Mail-Domänen ein, getrennt durch Semikolons oder Kommas.",
+                AllowedEmailDomainsButton: "Domänen ({0})",
+                AllowedEmailDomainsDialogDescription: "Nur Personen, deren E-Mail-Adresse zu einer dieser Domänen gehört, können ausgewählt werden. Lassen Sie die Liste leer, um alle zuzulassen.",
+                AllowedEmailDomainsNewDomain: "Hinzuzufügende Domäne",
+                AllowedEmailDomainsAdd: "Hinzufügen",
+                AllowedEmailDomainsRemove: "{0} entfernen",
+                AllowedEmailDomainsEmpty: "Keine Domänen konfiguriert. Alle Personen können ausgewählt werden.",
+                AllowedEmailDomainsInvalidEntry: "Geben Sie eine gültige Domäne ein, z. B. contoso.com.",
                 FilterExpandByDefault: "Standardmäßig erweitert",
                 ExpandAllNodesByDefault: "Alle Knoten standardmäßig erweitern",
                 HideNodesNotInDataSet: "Knoten ausblenden, die nicht im aktuellen Datensatz enthalten sind",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Combobox",
                     DateIntervalTemplate: "Datums Interval",
                     PeopleTemplate: "Personenvorlage",
-                    StaticPeopleTemplate: "Statische Personenvorlage",
+                    StaticPeopleTemplate: "Personenauswahl",
                     TaxonomyPickerTemplate: "Taxonomy Picker",
                     HierarchicalFilterTemplate: "Hierarchischer Filter"
                 },
@@ -73,6 +85,9 @@ define([], function () {
                 SortDescending: "Absteigend"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Alle Filter löschen",
+                ShowClearAllFiltersToggleLabel: "Schaltfläche \"Alle löschen\" anzeigen",
+                ClearAllActionText: "Alle löschen",
                 AvailableLayoutsGroupName: "Verfügbare Layouts",
                 LayoutTemplateOptionsGroupName: "Layout Optionen",
                 TemplateUrlFieldLabel: "Benutze ein externe Vorlagen URL.",

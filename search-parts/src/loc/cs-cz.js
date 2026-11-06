@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Překlady",
+            Language: "Jazyk",
+            Toggle: "Rozšířené vyhledávací pole",
+            All: "Vše",
+            Scope: "Rozsah hledání",
+            Scopes: "Konfigurovat rozsahy hledání",
+            Key: "Klíč rozsahu (hodnota URL)",
+            Label: "Zobrazovaný název",
+            Property: "Dotazovatelná spravovaná vlastnost",
+            QueryParameter: "Parametr URL pro hledaný text",
+            ScopeParameter: "Parametr URL pro rozsah hledání",
+            InvalidConfiguration: "Neplatná nastavení rozšířeného hledání. Použijte jedinečné klíče rozsahu (ne 'all'), neprázdné názvy, platné názvy spravovaných vlastností a odlišné názvy parametrů URL.",
+            InvalidScope: "Neznámý rozsah hledání nebo nepodporovaná hodnota vlastnosti. Zkontrolujte hodnotu rozsahu v URL. Hledání podle vlastnosti povoluje jednu * na konci textu, ale žádné jiné zástupné znaky, dvojité uvozovky ani zpětná lomítka."
+        },
         Tokens: {
             SelectTokenLabel: "Vyberte token...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Řadit podle...",
             SortByDefaultOptionText: "Výchozí",
             DownloadButtonText: "Stáhnout",
-            DownloadCSVButtonText: "Stáhnout jako CSV"
+            DownloadCSVButtonText: "Stáhnout vybrané jako CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání",
+            ExportTextOnlyColumn: "{0} [Pouze text]",
+            ExportSearchResultsError: "Export se nepodařilo dokončit. Zkuste to znovu. Pokud se hledání změnilo, exportujte aktualizované výsledky.",
+            ExportSearchResultsDismissError: "Zavřít chybu exportu"
         },
         Layouts: {
             Debug: {
@@ -245,6 +264,13 @@ define([], function () {
                 EnableStickyHeader: "Povolit pevnou hlavičku",
                 StickyHeaderListViewHeight: "Výška zobrazení seznamu (v px)",
                 EnableDownload: "Povolit stažení",
+                EnableCurrentDataCsvExport: "Povolit stažení aktuálních dat jako CSV",
+                ExportColumnsJsonLabel: "Sloupce exportu (JSON)",
+                ExportColumnsMissingPropertiesError: "Tyto vlastnosti exportu nejsou mezi vybranými vlastnostmi zdroje dat: {0}. Přidejte je mezi vybrané vlastnosti nebo je odeberte z mapování exportu.",
+                ExportColumnsJsonDescription: "Zadejte objekt JSON mapující názvy spravovaných vlastností na záhlaví sloupců CSV. Příklad: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Zadejte platný objekt JSON s alespoň jedním mapováním spravované vlastnosti na záhlaví sloupce.",
+                ValidateJsonButtonLabel: "Ověřit JSON",
+                ExportColumnsJsonValid: "JSON je platný a všechny mapované vlastnosti jsou vybrané.",
                 EnableDetails: "Povolit podrobnosti",
                 DetailsButtonLabel: "Podrobnosti",
                 DetailsPanelHeader: "Podrobnosti",
@@ -297,6 +323,7 @@ define([], function () {
                 SlideWidth: "Šířka karuselu (v px)",
                 PreviousPageLabel: "Předchozí stránka",
                 NextPageLabel: "Další stránka",
+                NextLabel: "Další",
                 GoToPageLabel: "Přejít na stránku {0}"
             },
             People: {

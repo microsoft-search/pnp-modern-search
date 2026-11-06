@@ -225,10 +225,8 @@ export class SharePointSearchService implements ISharePointSearchService {
         searchQuery.Querytext = '*';
         searchQuery.Refiners = 'ManagedProperties(filter=50000/0/*,deephits=50000,sort=name/ascending)';
         searchQuery.RowLimit = 1;
-        searchQuery.SortList = [{
-            Property: "[DocId]",
-            Direction: SortDirection.Ascending
-        }];
+        // No SortList here: sorting by [DocId] makes some tenants reject this query with HTTP 400 (#4994).
+        // The refiner spec above already sorts the managed properties by name.
 
         try {
 

@@ -25,6 +25,7 @@ define([], function() {
                 HeightLabel: "Hoogte (px)",
                 FontSizeLabel: "Lettergrootte (px)",
                 ButtonColorLabel: "Zoekknop kleur",
+                ButtonTextColorLabel: "Zoekknop tekstkleur",
                 PlaceholderTextColorLabel: "Placeholder tekst kleur",
                 BackgroundColorLabel: "Achtergrondkleur",
                 TextColorLabel: "Tekstkleur",
@@ -64,6 +65,7 @@ define([], function() {
             },  
         },
         SearchBox: {
+            ClearButtonLabel: "Zoekopdracht wissen",
             DefaultPlaceholder: "Geef hier je zoektermen op...",
             SearchButtonLabel: "Zoeken"
         }

@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "{0} verwijderen",
                 SearchUsersPlaceholder: "Zoek gebruikers",
                 LoadingTenantUsersLabel: "Tenantgebruikers laden...",
-                NoUsersFoundMessage: "Geen gebruikers gevonden."
+                NoUsersFoundMessage: "Geen gebruikers gevonden.",
+                UnverifiedDomainsWarning: "Sommige geselecteerde personen konden niet worden gecontroleerd op de toegestane domeinen en zijn behouden.",
+                DisallowedDomainsWarning: "Een geselecteerde persoon is verwijderd omdat het e-maildomein niet is toegestaan."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Waarschuwing voor personen-sjabloon: waarden lijken geen gebruikersidentiteiten te zijn. Deze eigenschap is waarschijnlijk niet toegewezen aan een Q_USER-crawled property.",
                 FilterDisplayName: "Weergavenaam",
                 FilterTemplate: "Sjabloon",
+                AllowedEmailDomains: "Toegestane e-maildomeinen",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Voer geldige e-maildomeinen in, gescheiden door puntkomma's of komma's.",
+                AllowedEmailDomainsButton: "Domeinen ({0})",
+                AllowedEmailDomainsDialogDescription: "Alleen personen van wie het e-mailadres bij een van deze domeinen hoort, kunnen worden geselecteerd. Laat de lijst leeg om iedereen toe te staan.",
+                AllowedEmailDomainsNewDomain: "Toe te voegen domein",
+                AllowedEmailDomainsAdd: "Toevoegen",
+                AllowedEmailDomainsRemove: "{0} verwijderen",
+                AllowedEmailDomainsEmpty: "Geen domeinen geconfigureerd. Iedereen kan worden geselecteerd.",
+                AllowedEmailDomainsInvalidEntry: "Voer een geldig domein in, bijvoorbeeld contoso.com.",
                 FilterExpandByDefault: "Standaard uitklappen",
                 ExpandAllNodesByDefault: "Alle knooppunten standaard uitklappen",
                 HideNodesNotInDataSet: "Knooppunten verbergen die niet in de huidige gegevensset voorkomen",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Keuzelijst",
                     DateIntervalTemplate: "Datum interval",
                     PeopleTemplate: "Persoon sjabloon",
-                    StaticPeopleTemplate: "Statisch persoonssjabloon",
+                    StaticPeopleTemplate: "Personenkiezer",
                     TaxonomyPickerTemplate: "Taxonomie picker",
                     HierarchicalFilterTemplate: "Hiërarchisch filter"
                 },
@@ -73,6 +85,9 @@ define([], function () {
                 SortDescending: "Aflopend"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Alle filters wissen",
+                ShowClearAllFiltersToggleLabel: "Knop \"Alles wissen\" weergeven",
+                ClearAllActionText: "Alles wissen",
                 AvailableLayoutsGroupName: "Beschikbare indelingen",
                 LayoutTemplateOptionsGroupName: "Indelingsopties",
                 TemplateUrlFieldLabel: "Gebruik een externe sjabloon URL",

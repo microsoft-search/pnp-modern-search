@@ -8,12 +8,27 @@
             display: inline-block;
             text-align: center;
 
-            .inverted a {
-                color: "[theme: black, default: #000000]";
+            // --link and --listItemBackgroundHovered are set from the SPFx section theme variant
+            .inverted a,
+            .inverted button,
+            .standard a,
+            .standard button {
+                color: var(--link, "[theme: themePrimary, default: #005a9e]");
             }
 
-            .standard a {
-                color: "[theme: themePrimary, default: #005a9e]";
+            .pagerIcon {
+                padding: 4px;
+                margin: -4px;
+                border-radius: 2px;
+            }
+
+            // Keep the hover background from covering the "Next" label
+            .pagerIconAfterText {
+                margin-left: 4px;
+            }
+
+            li:hover .pagerIcon {
+                background-color: var(--listItemBackgroundHovered, "[theme: neutralLighter, default: #f3f2f1]");
             }
 
             ul {
@@ -26,6 +41,25 @@
                 li {
                     display: inline;
 
+                    button {
+                        float: left;
+                        margin: 0;
+                        padding: 5px 5px;
+                        border: 0;
+                        background: none;
+                        cursor: pointer;
+                        font: inherit;
+
+                        i {
+                            font-size: 10px;
+                        }
+                    }
+
+                    span {
+                        float: left;
+                        padding: 5px 5px;
+                    }
+
                     a {
                         float: left;
                         padding: 5px 5px;
@@ -37,14 +71,10 @@
                         }
                     }
 
-                    .active {
-                        font-weight: bold;
-                        color: "[theme: themePrimary, default: #005a9e]";
-                    }
-
+                    .active,
                     .active__inverted {
                         font-weight: bold;
-                        color: "[theme: black, default: #000000]";
+                        color: var(--link, "[theme: themePrimary, default: #005a9e]");
                     }
 
                     a:visited {

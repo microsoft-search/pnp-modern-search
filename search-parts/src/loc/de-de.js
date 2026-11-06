@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Übersetzungen",
+            Language: "Sprache",
+            Toggle: "Erweitertes Suchfeld",
+            All: "Alle",
+            Scope: "Suchbereich",
+            Scopes: "Suchbereiche konfigurieren",
+            Key: "Bereichsschlüssel (URL-Wert)",
+            Label: "Anzeigename",
+            Property: "Abfragbare verwaltete Eigenschaft",
+            QueryParameter: "URL-Parameter für Suchtext",
+            ScopeParameter: "URL-Parameter für Suchbereich",
+            InvalidConfiguration: "Ungültige Einstellungen für die erweiterte Suche. Verwenden Sie eindeutige Bereichsschlüssel (nicht 'all'), ausgefüllte Anzeigenamen, gültige verwaltete Eigenschaftsnamen und unterschiedliche URL-Parameternamen.",
+            InvalidScope: "Unbekannter Suchbereich oder nicht unterstützter Eigenschaftswert. Prüfen Sie den URL-Bereichswert. Eigenschaftssuchen erlauben ein abschließendes * nach Text, aber keine anderen Platzhalter, doppelten Anführungszeichen oder umgekehrten Schrägstriche."
+        },
         Tokens: {
             SelectTokenLabel: "Wähle ein Token...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Standardsortierung",
             SortByDefaultOptionText: "Standard",
             DownloadButtonText: "Herunterladen",
-            DownloadCSVButtonText: "Als CSV herunterladen"
+            DownloadCSVButtonText: "Ausgewählte als CSV herunterladen",
+            DownloadCurrentDataAsCSVButtonText: "Suchergebnis exportieren",
+            ExportTextOnlyColumn: "{0} [Nur Text]",
+            ExportSearchResultsError: "Der Export konnte nicht abgeschlossen werden. Versuchen Sie es erneut. Falls sich die Suche geändert hat, exportieren Sie die aktualisierten Ergebnisse.",
+            ExportSearchResultsDismissError: "Exportfehler schließen"
         },
         Layouts: {
             Debug: {
@@ -247,6 +266,13 @@ define([], function () {
                 EnableStickyHeader: "Fixierte Kopfzeile aktivieren",
                 StickyHeaderListViewHeight: "Höhe der Listenansicht (px)",
                 EnableDownload: "Download aktivieren",
+                EnableCurrentDataCsvExport: "Download der aktuellen Daten als CSV aktivieren",
+                ExportColumnsJsonLabel: "Exportspalten (JSON)",
+                ExportColumnsMissingPropertiesError: "Diese Exporteigenschaften fehlen in den ausgewählten Eigenschaften der Datenquelle: {0}. Fügen Sie sie hinzu oder entfernen Sie sie aus der Exportzuordnung.",
+                ExportColumnsJsonDescription: "Geben Sie ein JSON-Objekt ein, das verwaltete Eigenschaftsnamen den CSV-Spaltenüberschriften zuordnet. Beispiel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Geben Sie ein gültiges JSON-Objekt mit mindestens einer Zuordnung von verwalteter Eigenschaft zu Spaltenüberschrift ein.",
+                ValidateJsonButtonLabel: "JSON überprüfen",
+                ExportColumnsJsonValid: "Das JSON ist gültig und alle zugeordneten Eigenschaften sind ausgewählt.",
                 EnableDetails: "Details aktivieren",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
@@ -299,6 +325,7 @@ define([], function () {
                 SlideWidth: "Slide Breite (in px)",
                 PreviousPageLabel: "Vorherige Seite",
                 NextPageLabel: "Nächste Seite",
+                NextLabel: "Weiter",
                 GoToPageLabel: "Gehe zu Seite {0}"
             },
             People: {

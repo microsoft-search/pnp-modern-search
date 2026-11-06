@@ -4,6 +4,11 @@ export interface IPagingSettings {
      * Indicates whether or not the paging should be displayed
      */
     showPaging: boolean;
+
+    /**
+     * Use previous/next navigation instead of a range of page numbers.
+     */
+    hidePageNumbers?: boolean;
     
     /**
      * The number of items to display per page

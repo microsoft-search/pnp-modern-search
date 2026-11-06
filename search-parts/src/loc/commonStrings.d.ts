@@ -1,4 +1,19 @@
 declare interface ICommonStrings {
+    AdvancedSearch: {
+      Translations: string;
+      Language: string;
+      Toggle: string;
+      All: string;
+      Scope: string;
+      Scopes: string;
+      Key: string;
+      Label: string;
+      Property: string;
+      QueryParameter: string;
+      ScopeParameter: string;
+      InvalidConfiguration: string;
+      InvalidScope: string;
+    };
     Tokens: {
       SelectTokenLabel: string;
       Context: {
@@ -199,6 +214,10 @@ declare interface ICommonStrings {
       SortByDefaultOptionText: string;
       DownloadButtonText: string;
       DownloadCSVButtonText: string;
+      DownloadCurrentDataAsCSVButtonText: string;
+      ExportTextOnlyColumn: string;
+      ExportSearchResultsError: string;
+      ExportSearchResultsDismissError: string;
     },
     Layouts: {
       Debug: {
@@ -246,6 +265,13 @@ declare interface ICommonStrings {
         EnableStickyHeader: string;
         StickyHeaderListViewHeight: string;
         EnableDownload: string;
+        EnableCurrentDataCsvExport: string;
+        ExportColumnsJsonLabel: string;
+        ExportColumnsJsonDescription: string;
+        ExportColumnsJsonValidationError: string;
+        ExportColumnsMissingPropertiesError: string;
+        ValidateJsonButtonLabel: string;
+        ExportColumnsJsonValid: string;
         EnableDetails: string;
         DetailsButtonLabel: string;
         DetailsPanelHeader: string;
@@ -299,6 +325,7 @@ declare interface ICommonStrings {
         SlideHeight: string;
         PreviousPageLabel: string;
         NextPageLabel: string;
+        NextLabel: string;
         GoToPageLabel: string;
       };
       People: {

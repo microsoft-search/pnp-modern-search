@@ -12,7 +12,7 @@
             font-size: 12px;
         }        
         .example-themePrimary a {
-            color: {{@root.theme.palette.themePrimary}};
+            color: {{@root.theme.semanticColors.link}};
         }
         
         {{#unless @root.properties.layoutProperties.showItemThumbnail}}
@@ -55,6 +55,14 @@
                 >
                 </pnp-download-selected-items-button>
               {{/and}}
+                            {{#if properties.layoutProperties.enableCsvExport}}
+                                <pnp-export-current-results-button
+                                    data-items="{{JSONstringify data.items}}"
+                                      data-export-columns="{{properties.layoutProperties.exportColumns}}"
+                                    data-theme-variant="{{JSONstringify @root.theme}}"
+                                >
+                                </pnp-export-current-results-button>
+                            {{/if}}
 
               <div class="template--sort">
                   <pnp-sortfield 
@@ -175,12 +183,13 @@
             {{/each}}
         </ul>
 
-        {{#if @root.properties.paging.showPaging}} {{#gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage}}
+        {{#if @root.properties.paging.showPaging}} {{#if (or @root.properties.paging.hidePageNumbers (gt @root.data.totalItemsCount @root.properties.paging.itemsCountPerPage))}}
         <pnp-pagination data-total-items="{{@root.data.totalItemsCount}}" data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}" data-hide-disabled="{{@root.properties.paging.hideDisabled}}" data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
+            data-hide-page-numbers="{{@root.properties.paging.hidePageNumbers}}" data-current-items-count="{{@root.data.items.length}}"
             data-range="{{@root.properties.paging.pagingRange}}" data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}" data-current-page-number="{{@root.paging.currentPageNumber}}"
             data-theme-variant="{{JSONstringify @root.theme}}">
         </pnp-pagination>
-        {{/gt}} {{/if}}
+        {{/if}} {{/if}}
 
     </div>
 </content>

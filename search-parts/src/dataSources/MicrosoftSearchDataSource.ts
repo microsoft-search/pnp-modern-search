@@ -20,11 +20,12 @@ import { PropertyPaneNonReactiveTextField } from "../controls/PropertyPaneNonRea
 import { IMicrosoftSearchDataSourceData } from "../models/search/IMicrosoftSearchDataSourceData";
 import commonStyles from '../styles/Common.module.scss';
 import * as React from "react";
-import { BuiltinDataSourceProviderKeys } from "./AvailableDataSources";
+import { BuiltinDataSourceProviderKeys, DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS } from "./AvailableDataSources";
 import { AutoCalculatedDataSourceFields, SortableFields } from "../common/Constants";
 import LocalizationHelper from "../helpers/LocalizationHelper";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import { BuiltinFilterTemplates } from "../layouts/AvailableTemplates";
+import { flattenMissingResourceRootProperties } from "./MicrosoftSearchDataSourceHelper";
 
 const EDIT_MODE_AGGREGATION_LIMIT = 100;
 
@@ -231,6 +232,15 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         this.dayjs = await this.dateHelper.moment();
 
         if (this.editMode) {
+            await this.loadPropertyPaneResources();
+        }
+
+        this.initProperties();
+    }
+
+    public async loadPropertyPaneResources(): Promise<void> {
+
+        if (!this._propertyPaneWebPartInformation) {
             // Use the same chunk name as the main Web Part to avoid recreating/loading a new one
             const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
                 /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -246,8 +256,6 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             this._propertyFieldCollectionData = PropertyFieldCollectionData;
             this._customCollectionFieldType = CustomCollectionFieldType;
         }
-
-        this.initProperties();
     }
 
     public getItemCount(): number {
@@ -283,12 +291,11 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
     }
 
     private logAggregationCounts(dataContext: IDataContext, filters: IDataFilterResult[]): void {
-        const defaultAggregationSize = 10;
         const configuredFilters = dataContext.filters?.filtersConfiguration || [];
 
         filters.forEach((filter) => {
             const filterConfiguration = configuredFilters.find((config) => config.filterName === filter.filterName);
-            const configuredLimit = this.getEffectiveAggregationLimit(filterConfiguration?.maxBuckets ?? defaultAggregationSize);
+            const configuredLimit = this.getEffectiveAggregationLimit(filterConfiguration?.maxBuckets ?? DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS);
             const returnedCount = filter.values?.length ?? 0;
             const filterWithLimitInfo = filter as IDataFilterResult & { isMaxBucketsExceeded?: boolean; configuredMaxBuckets?: number; returnedValueCount?: number; isEditModeCapApplied?: boolean; };
 
@@ -309,7 +316,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         });
     }
 
-    private getEffectiveAggregationLimit(configuredLimit: number = 10): number {
+    private getEffectiveAggregationLimit(configuredLimit: number = DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS): number {
         return this.editMode ? Math.min(configuredLimit, EDIT_MODE_AGGREGATION_LIMIT) : configuredLimit;
     }
 
@@ -771,13 +778,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
         const searchQuery = {
             Querytext: '*',
             Refiners: 'ManagedProperties(filter=50000/0/*,deephits=50000,sort=name/ascending)',
-            RowLimit: 1,
-            SortList: [
-                {
-                    Property: '[DocId]',
-                    Direction: 0
-                }
-            ]
+            RowLimit: 1
+            // No SortList here: sorting by [DocId] makes some tenants reject this query with HTTP 400 (#4994).
+            // The refiner spec above already sorts the managed properties by name.
         };
 
         const response = await this._spHttpClient.post(searchEndpointUrl, SPHttpClient.configurations.v1, {
@@ -1567,7 +1570,7 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
                     minimumCount: 1,
                     sortBy: filterConfig.sortBy === FilterSortType.ByCount ? SearchAggregationSortBy.Count : SearchAggregationSortBy.KeyAsString
                 },
-                size: this.getEffectiveAggregationLimit(filterConfig?.maxBuckets ?? 10)
+                size: this.getEffectiveAggregationLimit(filterConfig?.maxBuckets ?? DEFAULT_MICROSOFT_SEARCH_MAX_BUCKETS)
             };
 
             if (filterConfig.selectedTemplate === "DateIntervalFilterTemplate") {
@@ -1992,6 +1995,9 @@ export class MicrosoftSearchDataSource extends BaseDataSource<IMicrosoftSearchDa
             Object.keys(hit.resource[propertiesFieldName]).forEach(field => {
                 this.copyFieldWithAliases(hit, field, hit.resource[propertiesFieldName][field]);
             });
+            if (propertiesFieldName === 'fields') {
+                flattenMissingResourceRootProperties(hit, this.copyFieldWithAliases.bind(this));
+            }
         } else {
             // For entity types without properties or fields (bookmark, acronym, person, etc.), 
             // flatten root properties from resource directly

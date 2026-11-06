@@ -18,7 +18,7 @@ import {
     IPropertyPanePage
 } from "@microsoft/sp-property-pane";
 import ISearchResultsWebPartProps, { QueryTextSource } from './ISearchResultsWebPartProps';
-import { AvailableDataSources, BuiltinDataSourceProviderKeys } from '../../dataSources/AvailableDataSources';
+import { AvailableDataSources, BuiltinDataSourceProviderKeys, getDataSourceDefaultMaxBuckets } from '../../dataSources/AvailableDataSources';
 import { ServiceKey } from "@microsoft/sp-core-library";
 const SearchResultsContainer = React.lazy(() => import(
     /* webpackChunkName: 'pnp-modern-search-results-container' */
@@ -121,6 +121,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _customCollectionFieldType: any = null;
     private _textDialogComponent: any = null;
     private _propertyPanePropertyEditor = null;
+    private _propertyPaneResourcesRequested = false;
 
     private _connectionsPropertyPaneBuilderClass: typeof ConnectionsPropertyPaneBuilderType = null;
 
@@ -259,6 +260,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * The current DataContext - is updated in render method
      */
     private _currentDataContext: IDataContext;
+    private _queryTokenVersion: number = 0;
 
     /**
      * Tracks whether other Web Parts on the page could potentially consume data from this Search
@@ -314,6 +316,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 return this.renderCompleted();
             }
 
+            // Loaded here rather than in onInit(): single-part app pages switch to edit mode without initializing the Web Part again
+            if (this.displayMode === DisplayMode.Edit && !this._placeholderComponent) {
+                const { Placeholder } = await import(
+                    /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                    '@pnp/spfx-controls-react/lib/Placeholder'
+                );
+                this._placeholderComponent = Placeholder;
+            }
+
             // Ensure extensions are loaded before rendering.
             // Use a promise guard to prevent concurrent loadExtensions calls if render() is
             // re-entered while loading is still in progress (e.g. via dynamic data callbacks).
@@ -351,13 +362,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Get and initialize the data source instance if different (i.e avoid to create a new instance every time)
                 if (this.lastDataSourceKey !== this.properties.dataSourceKey) {
-                    this.dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    const dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+                    await this.loadComponentPropertyPaneResources(dataSource);
+                    this.dataSource = dataSource;
                     this.lastDataSourceKey = this.properties.dataSourceKey;
                 }
 
                 // Get and initialize layout instance if different (i.e avoid to create a new instance every time)
                 if (this.lastLayoutKey !== this.properties.selectedLayoutKey) {
-                    this.layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    const layout = await LayoutHelper.getLayoutInstance(this.webPartInstanceServiceScope, this.context, this.properties, this.properties.selectedLayoutKey, this.availableLayoutDefinitions, this.displayMode);
+                    await this.loadComponentPropertyPaneResources(layout);
+                    this.layout = layout;
                     this.lastLayoutKey = this.properties.selectedLayoutKey;
                 }
 
@@ -454,10 +469,17 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 // Pass the Handlebars context to consumers, so they can register custom helpers for their own services 
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
                 this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
+                this._currentDataResultsSourceData.defaultMaxBuckets = getDataSourceDefaultMaxBuckets(this.properties.dataSourceKey);
                 this._currentDataResultsSourceData.connectedFilterSourceReference = this.properties.filtersDataSourceReference;
+                this._currentDataResultsSourceData.selectedProperties = this.getSelectedProperties();
+                this._currentDataResultsSourceData.connectedSearchBoxSourceId = this.properties.queryText?.reference?.split(':')[0];
                 this._currentDataResultsSourceData.extensibilityLibraryConfiguration = (this.properties.extensibilityLibraryConfiguration || [])
                     .filter(configuration => configuration.enabled)
                     .map(configuration => ({ ...configuration }));
+
+                const connectedVerticalData = this._verticalsConnectionSourceData ? DynamicPropertyHelper.tryGetValueSafe(this._verticalsConnectionSourceData) : undefined;
+                this._currentDataResultsSourceData.selectedVerticalKey = connectedVerticalData?.selectedVertical?.key;
+                this._currentDataResultsSourceData.clearFiltersOnVerticalChange = connectedVerticalData?.clearFiltersOnVerticalChange;
 
                 return this._currentDataResultsSourceData;
 
@@ -537,6 +559,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 teamsContext: this.context.sdks.microsoftTeams ? this.context.sdks.microsoftTeams.context : null,
                 renderType: this.properties.layoutRenderType,
                 dataContext: this._currentDataContext,
+                getQueryTokenVersion: () => this._queryTokenVersion,
                 lastSubmittedQueryId: GlobalSettings.getValue<number>(Constants.SEARCH_BOX_SUBMISSION_ID_KEY, 0),
                 themeVariant: this._themeVariant,
                 serviceScope: this.webPartInstanceServiceScope,
@@ -732,14 +755,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Initializes this component as a discoverable dynamic data source
         if (this.properties.allowWebPartConnections) {
             this.context.dynamicDataSourceManager.initializeSource(this);
-        }
-
-        if (this.displayMode === DisplayMode.Edit) {
-            const { Placeholder } = await import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@pnp/spfx-controls-react/lib/Placeholder'
-            );
-            this._placeholderComponent = Placeholder;
         }
 
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
@@ -1147,10 +1162,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // tryGetValue() will resolve to '' if no Web Part is connected or if the connection is removed
         // The value can be also 'undefined' if the data source is not already loaded on the page.
         let inputQueryFromDataSource = "";
+        // Search Box sources publish query text, not URL-encoded values.
+        const isSearchBoxQuery = this.properties.queryText?.reference?.split(':')[1] === ComponentType.SearchBox;
         if (this.properties.queryText && this.properties.useInputQueryText) {
             try {
                 inputQueryFromDataSource = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
-                if (inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
+                if (!isSearchBoxQuery && inputQueryFromDataSource !== undefined && typeof (inputQueryFromDataSource) === 'string') {
                     inputQueryFromDataSource = decodeURIComponent(inputQueryFromDataSource);
                 }
 
@@ -1169,7 +1186,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
 
         } else if (typeof (inputQueryFromDataSource) === 'string') {
-            inputQueryText = decodeURIComponent(inputQueryFromDataSource);
+            inputQueryText = isSearchBoxQuery ? inputQueryFromDataSource : decodeURIComponent(inputQueryFromDataSource);
         }
 
         //Check if any custom query modifier is active and modify the inputQueryText
@@ -1312,7 +1329,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     public async loadPropertyPaneResources(): Promise<void> {
 
+        this._propertyPaneResourcesRequested = true;
         await this.loadCommonPropertyPaneResources();
+        await this.loadComponentPropertyPaneResources(this.dataSource);
+        await this.loadComponentPropertyPaneResources(this.layout);
 
         const { PropertyFieldCodeEditor, PropertyFieldCodeEditorLanguages } = await import(
             /* webpackChunkName: 'pnp-modern-search-code-editor', webpackMode: 'lazy' */
@@ -1406,6 +1426,16 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this._propertyFieldMessage = PropertyFieldMessage;
 
         this.propertyPaneConnectionsGroup = await this.getConnectionOptionsGroup();
+    }
+
+    /**
+     * Built-in data sources and layouts only load their property pane controls when initialized in edit mode.
+     * Single-part app pages switch to edit mode without reinitializing the Web Part, so load them on demand.
+     */
+    private async loadComponentPropertyPaneResources(component: IDataSource | ILayout): Promise<void> {
+        if (this._propertyPaneResourcesRequested) {
+            await (component as { loadPropertyPaneResources?: () => Promise<void> })?.loadPropertyPaneResources?.();
+        }
     }
 
     /**
@@ -1541,6 +1571,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 itemsCountPerPage: 10,
                 pagingRange: 5,
                 showPaging: true,
+                hidePageNumbers: true,
                 hideDisabled: true,
                 hideFirstLastPages: false,
                 hideNavigation: false,
@@ -1552,6 +1583,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Backfill `enableQueryString` for web parts saved before this setting existed so
         // the property pane Toggle binds to a defined boolean instead of `undefined`.
         this.properties.paging.enableQueryString = this.properties.paging.enableQueryString ?? false;
+        this.properties.paging.hidePageNumbers = this.properties.paging.hidePageNumbers ?? true;
 
         // Default adaptive cards host config
         if (!this.properties.adaptiveCardsHostConfig) {
@@ -1686,6 +1718,10 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         disabled: !this.properties.paging.showPaging,
                         key: 'paging.itemsCountPerPage'
                     }),
+                    PropertyPaneToggle('paging.hidePageNumbers', {
+                        label: webPartStrings.PropertyPane.DataSourcePage.HidePageNumbersFieldName,
+                        disabled: !this.properties.paging.showPaging
+                    }),
                     PropertyPaneSlider('paging.pagingRange', {
                         label: webPartStrings.PropertyPane.DataSourcePage.PagingRangeFieldName,
                         max: 50,
@@ -1693,20 +1729,20 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                         step: 1,
                         showValue: true,
                         value: this.properties.paging.pagingRange,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneHorizontalRule(),
                     PropertyPaneToggle('paging.hideNavigation', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideNavigationFieldName,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneToggle('paging.hideFirstLastPages', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideFirstLastPagesFieldName,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneToggle('paging.hideDisabled', {
                         label: webPartStrings.PropertyPane.DataSourcePage.HideDisabledFieldName,
-                        disabled: !this.properties.paging.showPaging
+                        disabled: !this.properties.paging.showPaging || this.properties.paging.hidePageNumbers
                     }),
                     PropertyPaneToggle('paging.enableQueryString', {
                         label: webPartStrings.PropertyPane.DataSourcePage.EnableQueryStringFieldName,
@@ -2166,6 +2202,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Set token values from Web Part property bag
      */
     private async setTokens() {
+        this._queryTokenVersion++;
         const tokenSetter = new TokenSetter(
             this.tokenService,
             this._filtersConnectionSourceData,
@@ -2639,6 +2676,11 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return React.createElement('button', {
             type: 'button',
             className: commonStyles.linkButton,
+            // Section-aware colors come from the SPFx theme variant, consumed by the SCSS via CSS variables
+            style: {
+                '--link': this._themeVariant?.semanticColors?.link,
+                '--linkHovered': this._themeVariant?.semanticColors?.linkHovered
+            } as React.CSSProperties,
             onClick: () => {
                 this.navigateToTitleLink(linkUrl, this.properties.titleLinkOpenInNewTab);
             },

@@ -3,6 +3,9 @@
     "description": "Base library for creating PnP Modern Search extensions",
     "version": "2.2.0",
     "private": false,
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    },
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
@@ -19,15 +22,12 @@
     },
     "dependencies": {
         "@webcomponents/custom-elements": "^1.6.0",
-        "handlebars": "4.7.9",
+        "handlebars": "4.7.10",
         "tslib": "2.3.1"
     },
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0"
-    },
-    "resolutions": {
-        "@types/react": "17.0.45"
     },
     "directories": {
         "lib": "lib"
@@ -50,5 +50,6 @@
     ],
     "engines": {
         "node": ">=22.14.0 < 23.0.0"
-    }
+    },
+    "packageManager": "pnpm@11.9.0"
 }

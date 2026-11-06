@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Traductions",
+            Language: "Langue",
+            Toggle: "Zone de recherche avancée",
+            All: "Tout",
+            Scope: "Étendue de recherche",
+            Scopes: "Configurer les étendues de recherche",
+            Key: "Clé de l’étendue (valeur URL)",
+            Label: "Libellé affiché",
+            Property: "Propriété gérée interrogeable",
+            QueryParameter: "Paramètre URL du texte de recherche",
+            ScopeParameter: "Paramètre URL de l’étendue de recherche",
+            InvalidConfiguration: "Paramètres de recherche avancée non valides. Utilisez des clés d’étendue uniques (autres que 'all'), des libellés renseignés, des noms de propriétés gérées valides et des noms de paramètres URL distincts.",
+            InvalidScope: "Étendue inconnue ou valeur de propriété non prise en charge. Vérifiez la valeur de l’étendue dans l’URL. Les recherches par propriété autorisent un seul * après le texte, mais aucun autre caractère générique, guillemet double ou barre oblique inverse."
+        },
         Tokens: {
             SelectTokenLabel: "Sélectionnez un jeton...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Trier par...",
             SortByDefaultOptionText: "Défaut",
             DownloadButtonText: "Télécharger",
-            DownloadCSVButtonText: "Télécharger en CSV"
+            DownloadCSVButtonText: "Télécharger la sélection au format CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exporter le résultat de recherche",
+            ExportTextOnlyColumn: "{0} [Texte uniquement]",
+            ExportSearchResultsError: "L'exportation n'a pas pu être terminée. Réessayez. Si la recherche a changé, exportez les résultats actualisés.",
+            ExportSearchResultsDismissError: "Fermer l'erreur d'exportation"
         },
         Layouts: {
             Debug: {
@@ -247,6 +266,13 @@ define([], function () {
                 EnableStickyHeader: "Activer l’en-tête collant",
                 StickyHeaderListViewHeight: "Hauteur de la liste de détails (en pixels)",
                 EnableDownload: "Activer le téléchargement",
+                EnableCurrentDataCsvExport: "Activer le téléchargement des données actuelles au format CSV",
+                ExportColumnsJsonLabel: "Colonnes à exporter (JSON)",
+                ExportColumnsMissingPropertiesError: "Ces propriétés d'exportation ne figurent pas parmi les propriétés sélectionnées de la source de données : {0}. Ajoutez-les ou retirez-les du mappage d'exportation.",
+                ExportColumnsJsonDescription: "Saisissez un objet JSON associant les noms des propriétés gérées aux en-têtes des colonnes CSV. Exemple : {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Saisissez un objet JSON valide contenant au moins une association entre une propriété gérée et un en-tête de colonne.",
+                ValidateJsonButtonLabel: "Valider JSON",
+                ExportColumnsJsonValid: "Le JSON est valide et toutes les propriétés associées sont sélectionnées.",
                 EnableDetails: "Activer les détails",
                 DetailsButtonLabel: "Détails",
                 DetailsPanelHeader: "Détails",
@@ -299,6 +325,7 @@ define([], function () {
                 SlideWidth: "Largeur de la diapositive (en pixels)",
                 PreviousPageLabel: "Page précédente",
                 NextPageLabel: "Page suivante",
+                NextLabel: "Suivant",
                 GoToPageLabel: "Aller à la page {0}"
             },
             People: {

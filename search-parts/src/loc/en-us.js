@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Translations",
+            Language: "Language",
+            Toggle: "Advanced Search box",
+            All: "All",
+            Scope: "Search scope",
+            Scopes: "Configure search scopes",
+            Key: "Scope key (URL value)",
+            Label: "Display label",
+            Property: "Queryable managed property",
+            QueryParameter: "Search text URL parameter",
+            ScopeParameter: "Search scope URL parameter",
+            InvalidConfiguration: "Invalid advanced search settings. Use unique scope keys (not 'all'), non-empty labels, valid managed property names, and distinct URL parameter names.",
+            InvalidScope: "Unknown search scope or unsupported property search value. Check the scope URL value. Property searches allow one trailing * after text, but no other wildcards, double quotes, or backslashes."
+        },
         Tokens: {
             SelectTokenLabel: "Select a token...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Sort by...",
             SortByDefaultOptionText: "Default",
             DownloadButtonText: "Download",
-            DownloadCSVButtonText: "Download as CSV"
+            DownloadCSVButtonText: "Download selected as CSV",
+            DownloadCurrentDataAsCSVButtonText: "Export Search result",
+            ExportTextOnlyColumn: "{0} [Text Only]",
+            ExportSearchResultsError: "The export could not be completed. Try again. If the search changed, export the updated results.",
+            ExportSearchResultsDismissError: "Dismiss export error"
         },
         Layouts: {
             Debug: {
@@ -247,6 +266,13 @@ define([], function () {
                 EnableStickyHeader: "Enable sticky header",
                 StickyHeaderListViewHeight: "List view height (in px)",
                 EnableDownload: "Enable download",
+                EnableCurrentDataCsvExport: "Enable download of current data as CSV",
+                ExportColumnsJsonLabel: "Export columns (JSON)",
+                ExportColumnsMissingPropertiesError: "These export properties are not in the data source's selected properties: {0}. Add them to the selected properties or remove them from the export mapping.",
+                ExportColumnsJsonDescription: "Enter a JSON object mapping managed property names to CSV column headers. Example: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Enter a valid JSON object with at least one managed-property-to-column-header mapping.",
+                ValidateJsonButtonLabel: "Validate JSON",
+                ExportColumnsJsonValid: "The JSON is valid and all mapped properties are selected.",
                 EnableDetails: "Enable details",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
@@ -300,6 +326,7 @@ define([], function () {
                 SlideWidth: "Slide width (in px)",
                 PreviousPageLabel: "Previous page",
                 NextPageLabel: "Next page",
+                NextLabel: "Next",
                 GoToPageLabel: "Go to page {0}"
             },
             People: {

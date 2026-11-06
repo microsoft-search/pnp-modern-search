@@ -458,11 +458,12 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     private handleLeafTermSelection(term: any, resolvedTermLabel: string, checked: boolean): void {
         const currentFilterValues = this.props.filter?.values || [];
-        const termGuidForMatching = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
+        const termGuid = TaxonomyHelper.extractGuidFromTermId(term.id);
+        const termGuidForMatching = TaxonomyHelper.normalizeGuid(termGuid);
         const normalizedTermLabel = this.normalizeLabel(resolvedTermLabel);
         const matchingRefiner = this.findMatchingRefiner(currentFilterValues, termGuidForMatching, normalizedTermLabel);
         const fallbackValue = termGuidForMatching
-            ? this.encodeRefinementToken(`GP0|#${termGuidForMatching}`)
+            ? this.encodeRefinementToken(`GP0|#${termGuid}`)
             : term.id;
         const filterValue = matchingRefiner
             ? this.createSelectedFilterValue(

@@ -25,6 +25,7 @@ define([], function() {
                 HeightLabel: "Altura (px)",
                 FontSizeLabel: "Tamanho da fonte (px)",
                 ButtonColorLabel: "Cor do botão de pesquisa",
+                ButtonTextColorLabel: "Cor do texto do botão de pesquisa",
                 PlaceholderTextColorLabel: "Cor do texto placeholder",
                 BackgroundColorLabel: "Cor de fundo",
                 TextColorLabel: "Cor do texto",
@@ -65,6 +66,7 @@ define([], function() {
             
         },
         SearchBox: {
+            ClearButtonLabel: "Limpar pesquisa",
             DefaultPlaceholder: "Informe seus termos de busca...",
             SearchButtonLabel: "Procurar"
         }

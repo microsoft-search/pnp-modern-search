@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Traducciones",
+            Language: "Idioma",
+            Toggle: "Cuadro de búsqueda avanzada",
+            All: "Todo",
+            Scope: "Ámbito de búsqueda",
+            Scopes: "Configurar ámbitos de búsqueda",
+            Key: "Clave del ámbito (valor URL)",
+            Label: "Etiqueta visible",
+            Property: "Propiedad administrada consultable",
+            QueryParameter: "Parámetro URL del texto de búsqueda",
+            ScopeParameter: "Parámetro URL del ámbito de búsqueda",
+            InvalidConfiguration: "Configuración de búsqueda avanzada no válida. Use claves de ámbito únicas (distintas de 'all'), etiquetas no vacías, nombres de propiedades administradas válidos y nombres de parámetros URL distintos.",
+            InvalidScope: "Ámbito desconocido o valor de propiedad no admitido. Compruebe el valor del ámbito en la URL. Las búsquedas por propiedad permiten un único * al final del texto, pero no otros comodines, comillas dobles ni barras inversas."
+        },
         Tokens: {
             SelectTokenLabel: "Seleccione un token...",
             Context: {
@@ -200,7 +215,11 @@ define([], function () {
             SortByPlaceholderText: "Ordenar por...",
             SortByDefaultOptionText: "Defecto",
             DownloadButtonText: "Descargar",
-            DownloadCSVButtonText: "Descargar como CSV"
+            DownloadCSVButtonText: "Descargar selección como CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exportar resultado de búsqueda",
+            ExportTextOnlyColumn: "{0} [Solo texto]",
+            ExportSearchResultsError: "No se pudo completar la exportación. Inténtelo de nuevo. Si cambió la búsqueda, exporte los resultados actualizados.",
+            ExportSearchResultsDismissError: "Cerrar error de exportación"
         },
         Layouts: {
             Debug: {
@@ -248,6 +267,13 @@ define([], function () {
                 EnableStickyHeader: "Activar el encabezado fijo",
                 StickyHeaderListViewHeight: "Altura de la vista de lista con encabezado fijo (en píxeles)",
                 EnableDownload: "Activar la descarga de archivos",
+                EnableCurrentDataCsvExport: "Habilitar la descarga de los datos actuales como CSV",
+                ExportColumnsJsonLabel: "Columnas de exportación (JSON)",
+                ExportColumnsMissingPropertiesError: "Estas propiedades de exportación no están entre las propiedades seleccionadas del origen de datos: {0}. Agréguelas o elimínelas de la asignación de exportación.",
+                ExportColumnsJsonDescription: "Escriba un objeto JSON que asigne nombres de propiedades administradas a los encabezados de columna CSV. Ejemplo: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Escriba un objeto JSON válido con al menos una asignación de propiedad administrada a encabezado de columna.",
+                ValidateJsonButtonLabel: "Validar JSON",
+                ExportColumnsJsonValid: "El JSON es válido y todas las propiedades asignadas están seleccionadas.",
                 EnableDetails: "Habilitar detalles",
                 DetailsButtonLabel: "Detalles",
                 DetailsPanelHeader: "Detalles",
@@ -300,6 +326,7 @@ define([], function () {
                 SlideWidth: "Ancho de la diapositiva (en px)",
                 PreviousPageLabel: "Página anterior",
                 NextPageLabel: "Página siguiente",
+                NextLabel: "Siguiente",
                 GoToPageLabel: "Ir a la página {0}"
             },
             People: {
