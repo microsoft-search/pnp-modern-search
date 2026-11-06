@@ -1476,7 +1476,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      */
     private initializeProperties() {
         this.properties.showTitle = this.properties.showTitle ?? true;
-        this.properties.selectedLayoutKey = this.properties.selectedLayoutKey ? this.properties.selectedLayoutKey : BuiltinLayoutsKeys.Cards;
+        this.properties.dataSourceKey = this.properties.dataSourceKey ? this.properties.dataSourceKey : BuiltinDataSourceProviderKeys.SharePointSearch;
+        this.properties.selectedLayoutKey = this.properties.selectedLayoutKey ? this.properties.selectedLayoutKey : BuiltinLayoutsKeys.People;
         this.properties.resultTypes = this.properties.resultTypes ? this.properties.resultTypes : [];
         this.properties.dataSourceProperties = this.properties.dataSourceProperties ? this.properties.dataSourceProperties : {};
 
@@ -1491,6 +1492,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Common options 
         this.properties.showSelectedFilters = this.properties.showSelectedFilters !== undefined ? this.properties.showSelectedFilters : false;
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
+        this.properties.resultsBackgroundColor = this.properties.resultsBackgroundColor !== undefined ? this.properties.resultsBackgroundColor : '#1F1F1F';
+        this.properties.resultsTextColor = this.properties.resultsTextColor !== undefined ? this.properties.resultsTextColor : '#FFFFFF';
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
         this.properties.titleLinkText = this.properties.titleLinkText ? this.properties.titleLinkText : '';
@@ -1603,7 +1606,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     private _resetContentStylingToDefault(): void {
         // Reset all content styling properties to their default values
         this.properties.resultsTextColor = undefined;
-        this.properties.resultsBackgroundColor = undefined;
+        this.properties.resultsBackgroundColor = '#1F1F1F';
+        this.properties.resultsTextColor = '#FFFFFF';
         this.properties.resultsBorderColor = undefined;
         this.properties.resultsBorderThickness = undefined;
 
