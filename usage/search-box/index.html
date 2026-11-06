@@ -1167,6 +1167,56 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#advanced-search-box" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Search box
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Search box">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scope-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#url-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-box-styling" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1657,6 +1707,56 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#advanced-search-box" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Search box
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Search box">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scope-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#url-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-box-styling" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1738,6 +1838,7 @@
 
 <h1 id="search-box-web-part">Search box Web Part<a class="headerlink" href="#search-box-web-part" title="Permanent link">&para;</a></h1>
 <p>The 'Search box' Web Part allows users to enter free text search queries connected to a 'Search Results' Web Part.</p>
+<p>The input uses compact SharePoint styling with small, 2-pixel corners, a theme-aware border and focus outline, and an inset search button. Its default height is 32 pixels; an explicitly configured height or color still takes precedence. The advanced scope icon stays inside the same input outline. Suggestions and search behavior are unchanged.</p>
 <p><img alt="&quot;pnp Search Box Web Part&quot;" class="center" src="../../assets/webparts/search-box/search_box_wp_picker.png" /></p>
 <p><img alt="&quot;pnp Search Box Web Part&quot;" class="center" src="../../assets/webparts/search-box/search_box_wp_default.png" /></p>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
@@ -1774,9 +1875,63 @@
 </tr>
 </tbody>
 </table>
+<h3 id="advanced-search-box">Advanced Search box<a class="headerlink" href="#advanced-search-box" title="Permanent link">&para;</a></h3>
+<p><strong>Advanced Search box</strong> enables users to choose between normal free-text/KQL search (<strong>All</strong>) and scopes that search a specific SharePoint Search managed property. It is <strong>Off</strong> by default.</p>
+<p>Selecting a scope adds its localized label followed by a colon to the search text, for example <strong>Case ID:test</strong>*. The label is a protected prefix: it identifies the selected scope but is not part of the editable text, query suggestions, submitted search text or URL text parameter. Selecting <strong>All</strong> removes the prefix without changing the entered text.</p>
+<h4 id="scope-configuration">Scope configuration<a class="headerlink" href="#scope-configuration" title="Permanent link">&para;</a></h4>
+<p>Use <strong>Configure search scopes</strong> to define the available property-specific searches:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scope key (URL value)</strong></td>
+<td><code>caseId</code></td>
+<td>Stable, unique identifier. Use letters, digits, underscores or hyphens, starting with a letter or underscore. <code>all</code> is reserved. Keys in URLs are case-sensitive; configured keys must also be unique ignoring case.</td>
+</tr>
+<tr>
+<td><strong>Display label</strong></td>
+<td><code>CaseId</code></td>
+<td>Text shown to users in the scope selection popup.</td>
+</tr>
+<tr>
+<td><strong>Queryable managed property</strong></td>
+<td><code>zfm_CaseNumber</code></td>
+<td>The SharePoint managed property to search. Use its internal name, beginning with a letter or underscore and containing only letters, digits or underscores. The property must be queryable in the search schema.</td>
+</tr>
+<tr>
+<td><strong>Translations</strong></td>
+<td><code>da-DK</code>: <code>Sagsnummer</code></td>
+<td>Optional display labels for individual UI languages. Clearing a translated label removes that translation.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Queryable managed property</strong> offers the combined <strong>Selected Properties</strong> from all Search Results web parts connected to this Search Box. Custom entries are not accepted. To make another property available, add it to a connected Results web part's Selected Properties and reopen the Search Box settings. Existing scope values are preserved if a property is later removed from Selected Properties. Inclusion in Selected Properties does not confirm queryability; verify that the property is queryable in the search schema.</p>
+<p>Translated labels use SharePoint's current UI language, matched case-insensitively against language codes such as <code>da-DK</code> or <code>en-US</code>. If no translation matches, the <strong>Display label</strong> is used. Translations affect only the displayed scope name, not scope keys, URL values or managed property names. Existing scopes require no migration.</p>
+<p>For example, configure <code>caseId</code> / <code>CaseId</code> / <code>zfm_CaseNumber</code> and <code>customer</code> / <code>Customer</code> / <code>RefinableString10</code>. Selecting <strong>CaseId</strong> and submitting <code>23432432</code> publishes <code>zfm_CaseNumber:"23432432"</code> to the connected Search Results web part. Connect Results to this Search Box as its input query text and use <code>{inputQueryText}</code> in the SharePoint Search query template.</p>
+<h4 id="search-behavior">Search behavior<a class="headerlink" href="#search-behavior" title="Permanent link">&para;</a></h4>
+<p>Property searches use SharePoint's word/phrase matching, subject to managed-property tokenization. A single trailing <code>*</code> enables prefix matching, for example <code>203004*</code> produces <code>zfm_CaseNumber:"203004*"</code>. A phrase can have a wildcard on its final word, such as <code>Contoso Son*</code>. Leading, embedded, repeated and standalone wildcards are rejected, as are double quotes, backslashes and curly braces. Token expressions such as <code>{QueryString.extra}</code> are not supported in property-scoped values, preventing later token expansion from changing the query restriction. These are not arbitrary substring searches and do not guarantee exact identifier matching. Wildcard support also depends on the managed property's data type; numeric properties do not support text prefix matching. <strong>All</strong> retains normal query syntax. This mode targets SharePoint Search; it does not translate property names or queries for other data sources.</p>
+<p>Selecting a scope in the popup alone does not run a search. Press Enter, select a suggestion, or use the Search button to submit the text with the selected scope. Clearing the input removes the query restriction but retains the selected scope.</p>
+<h4 id="url-state">URL state<a class="headerlink" href="#url-state" title="Permanent link">&para;</a></h4>
+<p>Advanced mode reads and writes two configurable query-string parameters:</p>
+<ul>
+<li><strong>Search text URL parameter</strong>: <code>q</code> by default.</li>
+<li><strong>Search scope URL parameter</strong>: <code>scope</code> by default.</li>
+</ul>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>?q=23432432&amp;scope=caseId
+</code></pre></div>
+<p>Opening this URL restores both the raw input and the selected scope. A missing scope selects <strong>All</strong>. An unknown scope key also selects <strong>All</strong> and searches with the raw text parameter, but displays a warning below the Search Box. The unknown scope remains in the URL until the next search submission. Submitting preserves unrelated parameters and the URL fragment; clearing removes only the text parameter. Back/Forward navigation restores the submitted search. Duplicate values for either parameter, unsupported property-search values, or invalid configuration still display an error without submitting a fallback query.</p>
+<p>In advanced mode these parameters replace the legacy input dynamic-data connection and URL-fragment behavior. <strong>Send the query to a new page</strong> sends raw text and the scope key using these same parameter names; configure the destination Search Box with matching parameter names and scope keys. The legacy query input transformation is not applied in advanced mode. Turning advanced mode off restores the existing Search Box configuration and behavior.</p>
 <h3 id="search-box-styling">Search box styling<a class="headerlink" href="#search-box-styling" title="Permanent link">&para;</a></h3>
 <p><img alt="&quot;Search Box styling settings&quot;" class="center" src="../../assets/webparts/search-box/search_box_styling.png" /></p>
 <p>The search box styling section allows you to customize the visual appearance of the search box to match your branding and design requirements.</p>
+<p>Both the standard input and the suggestion-enabled input use rounded corners and a thin, theme-colored magnifying glass to match the modern SharePoint search appearance. When text is present, a back-arrow-style clear button appears on the left and the Search button appears on the right. The arrow retains the existing clear/reset behavior. The Search button uses the thin magnifying glass by default; an explicitly configured button icon still takes precedence.</p>
 <table>
 <thead>
 <tr>
@@ -1825,6 +1980,11 @@
 <td><strong>Search button color</strong></td>
 <td>The background color of the search button.</td>
 <td><em>Theme primary color</em></td>
+</tr>
+<tr>
+<td><strong>Search button text color</strong></td>
+<td>The color of the text and icon on the search button.</td>
+<td><em>White</em></td>
 </tr>
 <tr>
 <td><strong>Show search button when input is empty</strong></td>
@@ -1919,6 +2079,7 @@
 <h3 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">&para;</a></h3>
 <p><img alt="&quot;Search Box connections&quot;" class="center" src="../../assets/webparts/search-box/dynamic_data_source.png" /></p>
 <p>Optionally, you can set a default query text coming from an other dynamic data source on the page. For instance, connect the search box to a page environment variable like a query string parameter. The value retrieved from a connected data source will be displayed automatically at page load in the text box if present and broadcasted to any other Web Parts connected to the search box Web Part (ex: a 'Search Results' Web Part) resulting to a cascading effect.</p>
+<p>You can also connect the Search Box to a Search Verticals Web Part. The current vertical (<code>key</code>, <code>name</code>, and <code>value</code>) is passed to custom suggestion providers through the optional <code>ISuggestionProviderContext</code> argument. Switching verticals refreshes visible query suggestions and invalidates cached zero term suggestions without changing the submitted search query. See <a href="../../extensibility/custom_suggestions_provider/#use-the-selected-vertical">Custom suggestions providers</a> for an implementation example.</p>
 <h3 id="audience-targeting">Audience Targeting<a class="headerlink" href="#audience-targeting" title="Permanent link">&para;</a></h3>
 <p>You can control the visibility of the search box based on user group membership. See <a href="../search-results/common/audience-targeting/">Audience Targeting</a> for details.</p>
 

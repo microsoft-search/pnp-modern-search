@@ -1686,7 +1686,7 @@ The HideFromAddressLists field is actually set in MSExchange and is used to hide
 This query selects every User Profile where that has a value anywhere in the Termset "Department" in the Global Termstore. Please ensure that the GUID of the root item of the Department Termset in your tenant matches the GUID shown above.</p>
 <p>The same approach can be used for the remaining peroperties that are based on a TermSet.<br><br></p>
 <p>*Exclude User Profiles that does have a phonenumber<br></p>
-<p><i>(MobilPhone:0<em> OR MobilPhone:1</em> OR MobilPhone:2<em> OR MobilPhone:3</em> OR MobilPhone:4<em> OR MobilPhone:5</em> OR MobilPhone:6<em> OR MobilPhone:7</em> OR MobilPhone:8<em> OR MobilPhone:9</em>)</i> <br></p>
+<p><i>(MobilPhone:0* OR MobilPhone:1* OR MobilPhone:2* OR MobilPhone:3* OR MobilPhone:4* OR MobilPhone:5* OR MobilPhone:6* OR MobilPhone:7* OR MobilPhone:8* OR MobilPhone:9*)</i> <br></p>
 <p>Unfortunately it is difficult to filter on a text property. The query above works but it is not pretty.</p>
 <h3 id="layout-configuration">Layout configuration<a class="headerlink" href="#layout-configuration" title="Permanent link">&para;</a></h3>
 <p>It is a predefined people layout available for the people search. Use People as Search Results layout.</p>

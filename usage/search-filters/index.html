@@ -980,6 +980,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#restricting-the-people-picker-by-email-domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restricting the People Picker by email domain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exact-text-refiner-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exact text refiner matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#refiner-value-limit-warning" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1067,6 +1089,17 @@
     <span class="md-ellipsis">
       
         Web part title styling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-all-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clear all filters
       
     </span>
   </a>
@@ -1773,6 +1806,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#restricting-the-people-picker-by-email-domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restricting the People Picker by email domain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exact-text-refiner-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exact text refiner matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#refiner-value-limit-warning" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1860,6 +1915,17 @@
     <span class="md-ellipsis">
       
         Web part title styling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-all-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clear all filters
       
     </span>
   </a>
@@ -1979,7 +2045,7 @@
 </tr>
 <tr>
 <td><strong># of values</strong></td>
-<td>The maximum number of values to be retrieved for a given filter. This value is useful if you use SharePoint refiners with a lot of refiner values. By default SharePoint will only retreve the first 100 values. To get all refiner values, you must specify an higher number manually (maximum value is 1000).</td>
+<td>The maximum number of values to retrieve for a filter, up to 1000. When left unset, SharePoint Search defaults to 100 and Microsoft Search to 10. The field shows the default as a hint when all connected results sources have the same known default; it does not save that hint as a configured limit. Enter a number to override the default.</td>
 </tr>
 <tr>
 <td><strong>Show warning when limit is reached</strong></td>
@@ -1987,7 +2053,11 @@
 </tr>
 <tr>
 <td><strong>Template</strong></td>
-<td>The template to use to display filter values. The builtin templates are: </br><ul><li><strong>Check box</strong> <p align="center"><img alt="&quot;Check box&quot;" src="../../assets/webparts/search-filters/checkbox_template.png" /></p></li><li><strong>Date range</strong> <p align="center"><img alt="&quot;Date range&quot;" src="../../assets/webparts/search-filters/daterange_template.png" /></p></li><li><strong>Date interval</strong> <p align="center"><img alt="&quot;Date interval&quot;" src="../../assets/webparts/search-filters/dateinterval_template.png" /></p></li><li><strong>Combo</strong> <p align="center"><img alt="&quot;Combo&quot;" src="../../assets/webparts/search-filters/combo_template.png" /></p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li><strong>People Template</strong> <p align="center"><img alt="&quot;People Template&quot;" src="../../assets/webparts/search-filters/people_template.png" />  </p></br></li><li><strong>Hierarchical Refiner</strong> (taxonomy tree for parent/child terms)</li></ul></td>
+<td>The template to use to display filter values. The builtin templates are: </br><ul><li><strong>Check box</strong> <p align="center"><img alt="&quot;Check box&quot;" src="../../assets/webparts/search-filters/checkbox_template.png" /></p></li><li><strong>Date range</strong> <p align="center"><img alt="&quot;Date range&quot;" src="../../assets/webparts/search-filters/daterange_template.png" /></p></li><li><strong>Date interval</strong> <p align="center"><img alt="&quot;Date interval&quot;" src="../../assets/webparts/search-filters/dateinterval_template.png" /></p></li><li><strong>Combo</strong> <p align="center"><img alt="&quot;Combo&quot;" src="../../assets/webparts/search-filters/combo_template.png" /></p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li><strong>People Template</strong> <p align="center"><img alt="&quot;People Template&quot;" src="../../assets/webparts/search-filters/people_template.png" /> (a refiner for people values)</p></li><li><strong>People Picker</strong> (searchable picker for tenant users)</li><li><strong>Hierarchical Refiner</strong> (taxonomy tree for parent/child terms)</li></ul></td>
+</tr>
+<tr>
+<td><strong>Allowed email domains</strong></td>
+<td>Optional restriction for the <strong>People Picker</strong> template. Select the <strong>Domains (n)</strong> button to open a dialog where you add or remove email domains; leave the list empty to allow all suggestions.</td>
 </tr>
 <tr>
 <td><strong>Expand by default</strong></td>
@@ -2015,12 +2085,24 @@
 </tr>
 </tbody>
 </table>
+<h3 id="restricting-the-people-picker-by-email-domain">Restricting the People Picker by email domain<a class="headerlink" href="#restricting-the-people-picker-by-email-domain" title="Permanent link">&para;</a></h3>
+<p>For a filter using the <strong>People Picker</strong> template, select the <strong>Domains (n)</strong> button in the <strong>Allowed email domains</strong> column. The dialog lists the allowed domains; enter a domain such as <code>contoso.com</code> (or several, separated by semicolons or commas) and select <strong>Add</strong>, or use the remove button next to a domain. Select <strong>Save</strong> to apply the changes, including any valid domains still in the input, or <strong>Cancel</strong> to discard them. The button is disabled for other templates. The domains are stored as a semicolon-separated string, so existing configurations continue to work. This option applies to that filter only; it does not affect the separate <strong>People Template</strong> refiner. Leave the list empty to retain the unrestricted picker.</p>
+<p>Matching ignores case and requires an exact domain. For example, <code>contoso.com</code> permits <code>person@contoso.com</code> but not <code>person@subsidiary.contoso.com</code>; add the subdomain explicitly if needed. Enter domains without <code>@</code>, wildcards, URLs, or IP addresses. The picker excludes suggestions without a usable email-like address, including encoded guest logins. The underlying picker may provide an email-like login when an email address is unavailable, so the domain is not proof of mailbox ownership. Invalid domain settings are reported and disable the picker until corrected; the dialog highlights invalid stored entries and blocks saving until they are removed.</p>
+<p>Previously saved selections may contain only a display name instead of an email address. When the domain cannot be verified, the selection is kept and a warning is shown; the selection can be removed with its remove button. Selections with a known disallowed domain are removed. A saved display name can be shared by multiple people, so an ambiguous submitted value may remain until the user clears or reapplies the filter.</p>
+<p>The allowlist filters the picker UI, <strong>not access to content or a security boundary</strong>. The People picker applies this restriction after its service has limited the number of returned suggestions, so fewer matches may appear even when other matching users exist.</p>
+<p>If you use a custom filters layout based on an older built-in template, add these attributes to its static <code>pnp-peoplefilter</code> element:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>data-allowed-email-domains="{{filter.allowedEmailDomains}}"
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>data-domain-selection-removed="{{filter.domainSelectionRemoved}}"
+</code></pre></div>
+<h3 id="exact-text-refiner-matching">Exact text refiner matching<a class="headerlink" href="#exact-text-refiner-matching" title="Permanent link">&para;</a></h3>
+<p>For SharePoint Search, selected text refiner values retain the original refinement tokens returned by SharePoint, including tokens containing accented characters. These tokens are sent in <code>RefinementFilters</code> using FQL syntax rather than converted into plain-text search expressions. This keeps selecting a value such as <code>Contoso</code> from also matching a different refiner value such as <code>Not Contoso</code>.</p>
+<p>Multiple selected values continue to use the configured <strong>Operator between values</strong> (OR/AND). Date ranges, Yes/No filters, and hierarchical taxonomy selections retain their existing handling. Custom filters that supply literal text instead of SharePoint refinement tokens are not automatically converted into exact-match tokens.</p>
 <h3 id="refiner-value-limit-warning">Refiner value limit warning<a class="headerlink" href="#refiner-value-limit-warning" title="Permanent link">&para;</a></h3>
 <p>Use <strong>Show warning when limit is reached</strong> together with <strong># of values</strong> when a filter can return many refiner or aggregation values.</p>
 <p>When the warning is enabled, an info icon is shown next to the filter title if the connected API reports that the configured <strong># of values</strong> limit was reached. This means the visible filter list may be truncated and not all matching values are currently shown.</p>
 <p>For troubleshooting, PnP Modern Search also writes a browser console message for each refiner or aggregation showing how many values were returned by the API and what limit was configured. When the returned count matches or exceeds the configured limit, the message is emitted as a warning and notes that additional values may have been truncated by the API.</p>
 <p>Example console warning:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[PnP Modern Search][SharePoint Search] Refiner 'RefinableString00' returned 500 item(s), matching or exceeding the configured limit of 500. Additional values may have been truncated by the API.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>[PnP Modern Search][SharePoint Search] Refiner 'RefinableString00' returned 500 item(s), matching or exceeding the configured limit of 500. Additional values may have been truncated by the API.
 </code></pre></div>
 <p>This is useful when:</p>
 <ul>
@@ -2100,11 +2182,13 @@
 <li>Works with localized taxonomy refiner values when <strong>Enable localization</strong> is enabled in the connected SharePoint Search data source.</li>
 <li>The limit warning info icon tooltip is localized using the current UI language for all supported Search Filters languages.</li>
 <li>Deep links generated from hierarchical selections are supported.</li>
+<li>Leaf selections preserve the original encoded SharePoint refinement token. Older deep links containing decoded, label-bearing <code>L0</code> values are restored as label-independent exact-term <code>GP0</code> tokens.</li>
 </ul>
 <h4 id="selection-behavior">Selection behavior<a class="headerlink" href="#selection-behavior" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Selecting a parent node applies a taxonomy parent token so the selection includes child terms.</li>
 <li>Selecting a leaf node applies that specific term only.</li>
+<li>If the search response does not contain a matching leaf refiner bucket, the fallback exact-term token preserves the term GUID's hyphens.</li>
 <li>When a hierarchical value is already selected, the component automatically expands the selected branch so users can see the current context.</li>
 </ul>
 <h3 id="filter-styling">Filter styling<a class="headerlink" href="#filter-styling" title="Permanent link">&para;</a></h3>
@@ -2173,6 +2257,9 @@
 </tr>
 </tbody>
 </table>
+<h3 id="clear-all-filters">Clear all filters<a class="headerlink" href="#clear-all-filters" title="Permanent link">&para;</a></h3>
+<p>The <strong>Show "Clear all" button</strong> toggle is on page 2 of the property pane, below <strong>Web part title styling</strong>. When enabled, a right-aligned <strong>Clear all</strong> action appears beside the Search Filters web part title. It is disabled when no filters are applied or while results are updating. Selecting it clears all applied filters, updates connected results, and removes the filter deep-link query parameter. The feature is disabled by default.</p>
+<p>The busy cursor and <strong>Clear all</strong> action follow the loading state of the connected Search Results web parts, even when the returned refiner values do not change. With multiple connected results web parts, the filters remain busy until all have finished loading.</p>
 <h3 id="operator-between-filters">Operator between filters<a class="headerlink" href="#operator-between-filters" title="Permanent link">&para;</a></h3>
 <p><img alt="&quot;Operator filters&quot;" class="center" src="../../assets/webparts/search-filters/operator_filters.png" /></p>
 <p>You can select the operator to use between filters (OR or AND).</p>

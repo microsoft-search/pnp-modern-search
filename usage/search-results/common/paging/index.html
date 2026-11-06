@@ -1520,23 +1520,28 @@
 <td><code>10</code></td>
 </tr>
 <tr>
+<td><strong>Hide page numbers</strong></td>
+<td>Use previous/next navigation only. On the first page, show <strong>Next &gt;</strong>; on subsequent pages, show <strong>&lt; current page &gt;</strong>. Turn off to show a range of page numbers.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
 <td><strong>Number of pages to display in range</strong></td>
-<td>Determines the number of pages to display in range.</td>
+<td>Determines the number of pages to display in range when page numbers are enabled.</td>
 <td><code>5</code></td>
 </tr>
 <tr>
 <td><strong>Hide navigation buttons (prev page, next page)</strong></td>
-<td>Self explicit.</td>
+<td>Applies when page numbers are enabled.</td>
 <td><code>false</code></td>
 </tr>
 <tr>
 <td><strong>Hide first/last navigation buttons</strong></td>
-<td>Self explicit.</td>
+<td>Applies when page numbers are enabled.</td>
 <td><code>false</code></td>
 </tr>
 <tr>
 <td><strong>Hide navigation buttons (prev, next, first, last) if they are disabled.</strong></td>
-<td>Self explicit.</td>
+<td>Applies when page numbers are enabled.</td>
 <td><code>true</code></td>
 </tr>
 <tr>
@@ -1546,6 +1551,8 @@
 </tr>
 </tbody>
 </table>
+<p>Search services may return an estimated result count that changes with the page size or current page. Previous/next navigation does not use this count: <strong>Next</strong> is available while the current page is full (or a next-page link is supplied). A full final page can therefore lead to an empty page, where <strong>Previous</strong> remains available. Short or empty pages do not show <strong>Next</strong>. The <strong>result count</strong> shown by templates still uses the service's estimated total, so it can differ from the real number of matches.</p>
+<p>For custom templates, previous/next navigation is used only when the template passes <code>data-hide-page-numbers="true"</code>; templates that don't pass the attribute keep the numbered pager. Pass <code>data-hide-page-numbers="{{@root.properties.paging.hidePageNumbers}}"</code> and <code>data-current-items-count="{{@root.data.items.length}}"</code> to <code>&lt;pnp-pagination&gt;</code>, and do not hide the control based on <code>totalItemsCount</code> in previous/next mode. Without the current item count or page links, <strong>Next</strong> remains available because the component cannot determine whether the last page has been reached.</p>
 
 
 

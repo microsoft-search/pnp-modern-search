@@ -941,6 +941,67 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#export-search-results-to-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export search results to CSV
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export search results to CSV">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exported-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exported file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compared-with-selected-item-downloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compared with selected-item downloads
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-common-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other common settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#result-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1841,6 +1902,67 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#export-search-results-to-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export search results to CSV
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export search results to CSV">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exported-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exported file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compared-with-selected-item-downloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compared with selected-item downloads
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-common-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other common settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#result-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2053,7 +2175,7 @@
 </table>
 <h3 id="simple-list">Simple list<a class="headerlink" href="#simple-list" title="Permanent link">&para;</a></h3>
 <p>The 'simple list' layout display items as a simple list with larger rows, like a search engine results display.</p>
-<p><img alt="&quot;Simple list layout&quot;" center="center" src="../../../assets/webparts/search-results/layouts/simple_list_layout.png" /> </p>
+<p><img alt="&quot;Simple list layout&quot;" center src="../../../assets/webparts/search-results/layouts/simple_list_layout.png" /> </p>
 <table>
 <thead>
 <tr>
@@ -2195,6 +2317,45 @@ More information <a href="https://docs.microsoft.com/en-us/graph/toolkit/compone
 </blockquote>
 <p>Updating the layout HTML template is a good option for minor UI updates (Ex: add a link, update colors, etc.). For more control over the UI, you may want to use the extensibility library feature.</p>
 <h2 id="common-settings">Common settings<a class="headerlink" href="#common-settings" title="Permanent link">&para;</a></h2>
+<h3 id="export-search-results-to-csv">Export search results to CSV<a class="headerlink" href="#export-search-results-to-csv" title="Permanent link">&para;</a></h3>
+<p>The built-in Handlebars <strong>Cards</strong>, <strong>Details List</strong>, <strong>Simple list</strong>, and <strong>Slider</strong> layouts support the <strong>Export Search result</strong> action. Adaptive Cards layouts do not expose the export action or its settings. Export uses the current query, applied filters, selected vertical, and sorting from the Results web part's data source. It retrieves additional pages independently of the displayed page size, so it is not restricted to the visible page or selected items.</p>
+<h4 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Edit the Search Results web part and open its <strong>Layouts</strong> property-pane page.</li>
+<li>Enable <strong>Enable download of current data as CSV</strong> in the selected layout's settings. This toggle is off by default. It appears after <strong>Enable download</strong>, or after <strong>Use Alternating Background Color</strong> in Details List.</li>
+<li>In the <strong>Export columns (JSON)</strong> textbox that appears below the toggle, enter a JSON object mapping data-source property names to CSV column headers.</li>
+<li>Ensure the mapped properties are returned by the data source. For SharePoint Search, include the managed properties in <strong>Selected properties</strong>; the export mapping does not add them to the search request automatically. Select <strong>Validate JSON</strong> below the textbox to check its current contents and confirm that every mapped property is selected, including edits that have not been accepted as a valid configuration. A dialog reports success or lists validation errors. This button is shown only when CSV export is enabled.</li>
+<li>Save the configuration. Users can then select <strong>Export Search result</strong> in the Results toolbar without selecting individual items or enabling <strong>Allow items selection</strong>.</li>
+</ol>
+<p><img alt="CSV export configuration showing the enabled export toggle and JSON column mapping" class="center" src="../../../assets/webparts/search-results/layouts/export-search-results-configuration.png" /></p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">"Title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Title"</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">"AuthorOWSUSER"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Created by"</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">"Created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Created date"</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"URL"</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</code></pre></div>
+<p>Keys are the property names returned in the result data, not display names or Handlebars expressions. Values are the CSV headers. The mapping is independent of Details List's <strong>Manage columns</strong> configuration. Use one JSON object, not an array of objects. It must contain at least one entry, with non-empty property names and non-empty string headers. Validation runs when the textbox loses focus and checks that every key appears in the data source's selected properties, using exact field names. If any are missing, an error lists them; add those fields to the selected properties or remove them from the export mapping. The mapping does not add missing fields automatically.</p>
+<p>The action is disabled when results are loading, when there are no loaded results, when no usable export mapping is configured, and while export is running.</p>
+<p>Successful exports do not display a status message. If export fails, a localized, dismissible error is announced to assistive technologies. Changing the search inputs, filters, vertical, sorting, or paging during export cancels it and discards collected rows to avoid mixing results from different queries. Retry the export for the updated search.</p>
+<p>Selecting or deselecting result items does not cancel a full-dataset export. The active export and its busy/error state are retained when selection updates replace the toolbar, preventing duplicate exports and allowing the original download to finish.</p>
+<h4 id="exported-file">Exported file<a class="headerlink" href="#exported-file" title="Permanent link">&para;</a></h4>
+<ul>
+<li>The file is named <code>SearchResults_&lt;timestamp&gt;.csv</code>.</li>
+<li>CSV fields are separated by semicolons. Headers and non-null values are quoted, with embedded double quotes escaped; commas, semicolons, and line breaks in values are preserved.</li>
+<li>String values and headers that could be interpreted as spreadsheet formulas are prefixed with an apostrophe, including formula markers following whitespace or control characters. Actual numeric values are preserved as numbers in the CSV text.</li>
+<li>The file uses UTF-8 with a byte order mark (BOM), helping Excel recognize accents and non-English characters.</li>
+<li>Export uses property values from the data source, including its preview enrichment. It does not evaluate layout column HTML or Handlebars expressions. Missing or null values produce empty cells; objects and arrays are serialized as JSON text.</li>
+<li>Valid UTC timestamp values with a zero-only fractional part are exported without that fraction and the <code>Z</code> suffix. For example, <code>2024-01-18T11:15:05.0000000Z</code> becomes <code>2024-01-18T11:15:05</code>. The time remains in UTC, but the timezone designator is omitted; no timezone conversion is performed. Because the exporter does not have field-type information, matching text values are formatted in the same way. Other date strings and column headers are unchanged.</li>
+<li>When a column contains a recognizable SharePoint <code>ows_q_USER_*</code> people identity, an adjacent column is added using the configured header plus <code>[Text Only]</code> (localized). If the additional header would collide with a configured or previously generated header after CSV formatting, including formula protection, a number is appended to distinguish it. Configured headers are not renamed. The original identity remains in the original column; the additional column contains the display names, separated by semicolons when there are multiple people. Empty or unrecognized values leave the additional cell empty, as do multi-value entries that cannot be completely recognized. Detection considers all exported rows, but no additional column is created when every value is empty or no identity is recognizable because the exporter does not receive field-type information.</li>
+<li>Similarly, when a column contains managed metadata values in the <code>taxid</code> crawled-property format (for example <code>GP0|#&lt;guid&gt;;L0|#0&lt;guid&gt;|Label;GTSet|#&lt;guid&gt;</code>), an adjacent <code>[Text Only]</code> column is added containing only the term labels. Duplicate labels are removed and multiple labels are separated by semicolons. Plain label text repeated after the taxid tokens (as produced when the managed property is also mapped to the field's plain crawled property) is ignored, including labels containing semicolons or beginning with <code>#</code>. Values with no term label, or that cannot be completely recognized, leave the additional cell empty. If a column contains both people and taxonomy values in different rows, each cell is interpreted independently.</li>
+</ul>
+<p>Export fetches results using the data source's reported result count, in batches of up to 500. Microsoft Search message and event searches use batches of 25 to comply with Graph paging limits. Search API limits, throttling, count estimates, and changes to indexed content can affect the exported dataset. Large exports take longer and are assembled in browser memory; the reported result count is not a guarantee of an exact row count.</p>
+<h4 id="compared-with-selected-item-downloads">Compared with selected-item downloads<a class="headerlink" href="#compared-with-selected-item-downloads" title="Permanent link">&para;</a></h4>
+<p><strong>Export Search result</strong> exports the current matching dataset across pages using <strong>Export columns (JSON)</strong>. It does not require item selection.</p>
+<p>The existing <strong>Enable download</strong> setting remains separate. With item selection enabled, <strong>Download selected as CSV</strong> exports only selected list items from the current page; documents and folders use the existing file/ZIP download behavior instead.</p>
+<h3 id="other-common-settings">Other common settings<a class="headerlink" href="#other-common-settings" title="Permanent link">&para;</a></h3>
 <p>For all layouts, some common settings are available:</p>
 <p><img alt="&quot;Common options&quot;" class="center" src="../../../assets/webparts/search-results/layouts/common_options.png" /></p>
 <table>
@@ -2263,12 +2424,12 @@ More information <a href="https://docs.microsoft.com/en-us/graph/toolkit/compone
 <li>Is not null</li>
 </ul>
 <p>In case you use a custom template, you can still benefit from this feature following this markup:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>{{#&gt; resultTypes}}
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  {{!-- The block below will be used as default item template if no result types matched --}}
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"template_result"</span><span class="p">&gt;</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>      <span class="cm">&lt;!-- Your default template markup --&gt;</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>{{/resultTypes}}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{{#&gt; resultTypes}}
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  {{!-- The block below will be used as default item template if no result types matched --}}
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"template_result"</span><span class="p">&gt;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>      <span class="cm">&lt;!-- Your default template markup --&gt;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>{{/resultTypes}}
 </code></pre></div>
 <p>Handlebars <a href="https://handlebarsjs.com/guide/partials.html">partials</a> are used behind the scenes and conditions are built dynamically using a recursive if/else structure.</p>
 
