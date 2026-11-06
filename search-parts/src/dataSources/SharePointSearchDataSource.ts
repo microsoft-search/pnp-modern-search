@@ -804,7 +804,7 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                 'SiteLogo',
                 'PictureThumbnailURL'
             ];
-        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalSharePointResults;
+        this.properties.resultSourceId = this.properties.resultSourceId !== undefined ? this.properties.resultSourceId : BuiltinSourceIds.LocalPeopleResults;
         this.properties.hitHighlightedProperties = this.properties.hitHighlightedProperties ? this.properties.hitHighlightedProperties : '';
         this.properties.trimDuplicates = this.properties.trimDuplicates !== undefined ? this.properties.trimDuplicates : false;
 
