@@ -362,10 +362,10 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         return (
             <>
                 {showDepartment && department && (
-                    <div style={{ fontWeight: 600, marginTop: 8 }}>{strings.Layouts.People.DepartmentLabel}: {department}</div>
+                    <div style={{ fontWeight: 600, fontSize: 18, marginTop: 8 }}>{strings.Layouts.People.DepartmentLabel}: {department}</div>
                 )}
                 {showOfficeLocation && officeLocation && (
-                    <div>{strings.Layouts.People.OfficeLocationLabel}: {officeLocation}</div>
+                    <div style={{ fontSize: 16 }}>{strings.Layouts.People.OfficeLocationLabel}: {officeLocation}</div>
                 )}
             </>
         );
