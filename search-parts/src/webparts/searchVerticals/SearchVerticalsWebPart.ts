@@ -310,6 +310,18 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
+        // Only site owners (permission "Manage web") may edit the settings
+        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
+            return {
+                pages: [
+                    {
+                        header: { description: 'Die Einstellungen können nur von Websitebesitzern geändert werden.' },
+                        groups: []
+                    }
+                ]
+            };
+        }
+        
         let propertyPanePages: IPropertyPanePage[] = [];
 
         propertyPanePages.push(
