@@ -21,6 +21,7 @@ import { IComponentFieldsConfiguration } from "../models/common/IComponentFields
 import { ServiceScope, ServiceKey, Log } from "@microsoft/sp-core-library";
 import { LivePersona } from "@pnp/spfx-controls-react/lib/LivePersona";
 import { MSGraphClientFactory } from "@microsoft/sp-http";
+import * as strings from "CommonStrings";
 
 const LogSource = "PersonaComponent";
 
@@ -235,8 +236,12 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
             },
             onRenderOptionalText: () => {
                 if (this.props.imageOnly) return null;
-                return <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this.props.templateService.sanitizeHtmlWithStylePreservation((this.props.templateService as any).applyDisambiguatedMgtPrefixIfNeeded(optionalText)) }} />;
+                return <>
+                    <div style={{ display: 'inline', whiteSpace: 'normal' }} dangerouslySetInnerHTML={{ __html: this.props.templateService.sanitizeHtmlWithStylePreservation((this.props.templateService as any).applyDisambiguatedMgtPrefixIfNeeded(optionalText)) }} />
+                    {this.renderUltraInfo(processedProps)}
+                </>;                
             }
+            
         };
 
         if (this.state.PresenceInfo) {
@@ -344,6 +349,27 @@ export class PersonaComponent extends React.Component<IPersonaComponentProps, IP
         );
     }
 
+    private renderUltraInfo(processedProps: any): React.ReactNode {
+        // Only for "Ultra large" (key 20)
+        if (parseInt(this.props.personaSize ?? '48') !== 20) return null;
+
+        const layoutProps = (this.props.context as any)?.properties?.layoutProperties;
+        const showDepartment = layoutProps?.showDepartment !== false;
+        const showOfficeLocation = layoutProps?.showOfficeLocation !== false;
+        const department: string = processedProps?.department;
+        const officeLocation: string = processedProps?.officeLocation;
+
+        return (
+            <>
+                {showDepartment && department && (
+                    <div style={{ fontWeight: 600, marginTop: 8 }}>{strings.Layouts.People.DepartmentLabel}: {department}</div>
+                )}
+                {showOfficeLocation && officeLocation && (
+                    <div>{strings.Layouts.People.OfficeLocationLabel}: {officeLocation}</div>
+                )}
+            </>
+        );
+    }
     /**
      * Performs a MS Graph-call to retrieve presence-information of an Entra ID-user
      * @param entraIdUserObjectId Entra ID ObjectId of the user
