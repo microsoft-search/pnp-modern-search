@@ -325,6 +325,11 @@ define([], function () {
                 ShowPersonaPresenceInfo: "Präsenz anzeigen",
                 ShowPersonaPresenceInfoCalloutMsg: "Diese Funktion benötigt die folgende API-Berechtigungen in Ihrem Mandanten, um zu funktionieren: ['Presence.Read.All']",
                 ShowHoverOnPictureOnly: "Hover nur auf Bild anzeigen",
+                ShowDepartment: "Abteilung anzeigen (nur Ultra groß)",
+                ShowOfficeLocation: "Bürostandort anzeigen (nur Ultra groß)",
+                UltraInfoCalloutMsg: "Gilt nur für die Größe 'Ultra groß'. Die Werte stammen aus den Feldern 'Abteilung' und 'Bürostandort' in der Feldkonfiguration.",
+                DepartmentLabel: "Abteilung",
+                OfficeLocationLabel: "Bürostandort",
                 ShowHoverOnPictureOnlyCalloutMsg: "Wenn aktiviert, öffnet sich die Personenkarte nur beim Hovern über das Persona-Bild (Coin).",
                 Fields: {
                     ImageUrl: "Bild URL",
@@ -332,7 +337,9 @@ define([], function () {
                     SecondaryText: "Sekundärer Text",
                     TertiaryText: "Tertiärer Text",
                     OptionalText: "Optionaler Text",
-                    UPN: "UPN"
+                    UPN: "UPN",
+                    Department: "Abteilung",
+                    OfficeLocation: "Bürostandort"
                 }
             },
             Vertical: {
