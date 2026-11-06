@@ -57,6 +57,7 @@ import { FilterControlHelper } from '../../helpers/FilterControlHelper';
 import { Constants } from '../../common/Constants';
 import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityConfigurationHelper';
 import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
+import { SPPermission } from '@microsoft/sp-page-context';
 
 const LogSource = "SearchFiltersWebPart";
 
