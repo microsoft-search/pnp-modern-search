@@ -39,6 +39,16 @@ export interface IPeopleLayoutProperties {
      * When true, the hover card (native LPC or Graph Toolkit card) should only trigger when hovering the persona image (coin) instead of the whole row.
      */
     showHoverOnPictureOnly: boolean;
+    
+    /**
+     * Ultra large only: show the department
+     */
+    showDepartment: boolean;
+
+    /**
+     * Ultra large only: show the office location
+     */
+    showOfficeLocation: boolean;
 }
 
 export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
@@ -61,6 +71,8 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 { name: strings.Layouts.People.Fields.PrimaryText, field: 'primaryText', value: "{{slot item @root.slots.UserDisplayName}}", useHandlebarsExpr: true, supportHtml: true },
                 { name: strings.Layouts.People.Fields.SecondaryText, field: 'secondaryText', value: "JobTitle", useHandlebarsExpr: false, supportHtml: true },
                 { name: strings.Layouts.People.Fields.TertiaryText, field: 'tertiaryText', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: true },
+                { name: strings.Layouts.People.Fields.Department, field: 'department', value: "Department", useHandlebarsExpr: false, supportHtml: false },
+                { name: strings.Layouts.People.Fields.OfficeLocation, field: 'officeLocation', value: "OfficeNumber", useHandlebarsExpr: false, supportHtml: false },
                 { name: strings.Layouts.People.Fields.OptionalText, field: 'optionalText', value: "WorkPhone", useHandlebarsExpr: false, supportHtml: true },
                 { name: strings.Layouts.People.Fields.UPN, field: 'upn', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false },
             ] as IComponentFieldsConfiguration[];
@@ -71,6 +83,12 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.UPN, field: 'upn', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false } as IComponentFieldsConfiguration);
         }
 
+        if (!this.properties.peopleFields.some(f => f.field === 'department')) {
+            this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.Department, field: 'department', value: "Department", useHandlebarsExpr: false, supportHtml: false } as IComponentFieldsConfiguration);
+        }
+        if (!this.properties.peopleFields.some(f => f.field === 'officeLocation')) {
+            this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.OfficeLocation, field: 'officeLocation', value: "OfficeNumber", useHandlebarsExpr: false, supportHtml: false } as IComponentFieldsConfiguration);
+        }
         if (!this.properties.personaSize) {
             this.properties.personaSize = 14;
         }
@@ -80,6 +98,12 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             this.properties.showHoverOnPictureOnly = false;
         }
 
+        if (this.properties.showDepartment === undefined) {
+            this.properties.showDepartment = true;
+        }
+        if (this.properties.showOfficeLocation === undefined) {
+            this.properties.showOfficeLocation = true;
+        }
         const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
             /* webpackChunkName: 'pnp-modern-search-results-people-layout' */
             '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
@@ -245,6 +269,31 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             })
         );
 
+        fields.push(
+            this._propertyFieldToogleWithCallout('layoutProperties.showDepartment', {
+                label: strings.Layouts.People.ShowDepartment,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showDepartment',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.UltraInfoCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showDepartment !== false,
+                disabled: Number(this.properties.personaSize) !== 20
+            })
+        );
+
+        fields.push(
+            this._propertyFieldToogleWithCallout('layoutProperties.showOfficeLocation', {
+                label: strings.Layouts.People.ShowOfficeLocation,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showOfficeLocation',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.UltraInfoCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showOfficeLocation !== false,
+                disabled: Number(this.properties.personaSize) !== 20
+            })
+        );
         fields.push(
             PropertyPaneChoiceGroup('layoutProperties.personaSize', {
                 label: strings.Layouts.People.PersonaSizeOptionsLabel,
