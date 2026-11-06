@@ -326,6 +326,11 @@ define([], function () {
                 ShowPersonaPresenceInfo: "Show presence",
                 ShowPersonaPresenceInfoCalloutMsg: "This feature needs the following API permissions in your tenant to work: ['Presence.Read.All']",
                 ShowHoverOnPictureOnly: "Show hover on picture only",
+                ShowDepartment: "Show department (Ultra large only)",
+                ShowOfficeLocation: "Show office location (Ultra large only)",
+                UltraInfoCalloutMsg: "Only applies to size 'Ultra large'. Values come from the fields 'Department' and 'Office location' in the field configuration.",
+                DepartmentLabel: "Department",
+                OfficeLocationLabel: "Office location",
                 ShowHoverOnPictureOnlyCalloutMsg: "When enabled, the person card opens only when hovering the persona image (coin).",
                 Fields: {
                     ImageUrl: "Image URL",
@@ -333,7 +338,9 @@ define([], function () {
                     SecondaryText: "Secondary text",
                     TertiaryText: "Tertiary text",
                     OptionalText: "Optional text",
-                    UPN: "UPN"
+                    UPN: "UPN",
+                    Department: "Department",
+                    OfficeLocation: "Office location"
                 }
             },
             Vertical: {
