@@ -72,7 +72,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
                 { name: strings.Layouts.People.Fields.SecondaryText, field: 'secondaryText', value: "JobTitle", useHandlebarsExpr: false, supportHtml: true },
                 { name: strings.Layouts.People.Fields.TertiaryText, field: 'tertiaryText', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: true },
                 { name: strings.Layouts.People.Fields.Department, field: 'department', value: "Department", useHandlebarsExpr: false, supportHtml: false },
-                { name: strings.Layouts.People.Fields.OfficeLocation, field: 'officeLocation', value: "OfficeNumber", useHandlebarsExpr: false, supportHtml: false },
+                { name: strings.Layouts.People.Fields.OfficeLocation, field: 'officeLocation', value: "RefinableString01", useHandlebarsExpr: false, supportHtml: false },
                 { name: strings.Layouts.People.Fields.OptionalText, field: 'optionalText', value: "WorkPhone", useHandlebarsExpr: false, supportHtml: true },
                 { name: strings.Layouts.People.Fields.UPN, field: 'upn', value: "{{getUserEmail (slot item @root.slots.UserEmail)}}", useHandlebarsExpr: true, supportHtml: false },
             ] as IComponentFieldsConfiguration[];
@@ -87,7 +87,7 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.Department, field: 'department', value: "Department", useHandlebarsExpr: false, supportHtml: false } as IComponentFieldsConfiguration);
         }
         if (!this.properties.peopleFields.some(f => f.field === 'officeLocation')) {
-            this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.OfficeLocation, field: 'officeLocation', value: "OfficeNumber", useHandlebarsExpr: false, supportHtml: false } as IComponentFieldsConfiguration);
+            this.properties.peopleFields.push({ name: strings.Layouts.People.Fields.OfficeLocation, field: 'officeLocation', value: "RefinableString01", useHandlebarsExpr: false, supportHtml: false } as IComponentFieldsConfiguration);
         }
         if (!this.properties.personaSize) {
             this.properties.personaSize = 14;
