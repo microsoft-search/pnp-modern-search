@@ -303,7 +303,17 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-
+        // Only site owners (permission "Manage web") may edit the settings
+        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
+            return {
+                pages: [
+                    {
+                        header: { description: 'Die Einstellungen können nur von Websitebesitzern geändert werden.' },
+                        groups: []
+                    }
+                ]
+            };
+        }
         let propertyPanePages: IPropertyPanePage[] = [];
         let providerOptionGroups: IPropertyPaneGroup[] = [];
         let extensibilityConfigurationGroups: IPropertyPaneGroup[] = [];
