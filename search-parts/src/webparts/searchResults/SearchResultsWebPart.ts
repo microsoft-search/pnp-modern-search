@@ -796,6 +796,18 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
+        // Only site owners (permission "Manage web") may edit the settings
+        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
+            return {
+                pages: [
+                    {
+                        header: { description: 'Die Einstellungen können nur von Websitebesitzern geändert werden.' },
+                        groups: []
+                    }
+                ]
+            };
+        }
+
         let propertyPanePages: IPropertyPanePage[] = [];
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
