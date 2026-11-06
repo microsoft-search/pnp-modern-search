@@ -45,6 +45,7 @@ import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
 import PnPTelemetry from '@pnp/telemetry-js';
 import commonStyles from '../../styles/Common.module.scss';
+import { SPPermission } from '@microsoft/sp-page-context';
 
 const LogSource = "SearchBoxWebPart";
 
