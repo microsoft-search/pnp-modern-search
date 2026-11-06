@@ -74,6 +74,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { Link } from '@fluentui/react/lib/Link';
 import { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
 import { IToggleProps, Toggle } from '@fluentui/react/lib/Toggle';
+import { SPPermission } from '@microsoft/sp-page-context';
 
 const LogSource = "SearchResultsWebPart";
 
