@@ -9,23 +9,21 @@ export interface IIconNamePickerProps {
     options: IComboBoxOption[];
     value: string;
     placeholder: string;
+    ariaLabel: string;
     onChange: (value: string) => void;
 }
 
-const IconNamePicker: React.FC<IIconNamePickerProps> = ({ options, value, placeholder, onChange }) => {
+const IconNamePicker: React.FC<IIconNamePickerProps> = ({ options, value, placeholder, ariaLabel, onChange }) => {
     const searchText = value.trim().toLowerCase();
-    const filteredOptions = options
+    const visibleOptions = options
         .filter(option => !searchText || option.text.toLowerCase().includes(searchText))
         .slice(0, MAX_VISIBLE_SUGGESTIONS);
-    const hasCurrentValue = value !== '' && !options.some(option => option.key === value);
-    const visibleOptions = hasCurrentValue
-        ? [{ key: value, text: value }, ...filteredOptions.slice(0, MAX_VISIBLE_SUGGESTIONS - 1)]
-        : filteredOptions;
 
     return (
         <ComboBox
             allowFreeform={true}
             autoComplete="on"
+            ariaLabel={ariaLabel}
             options={visibleOptions}
             selectedKey={value || null}
             text={value}

@@ -432,6 +432,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                             options: this._iconNameOptions,
                             value: typeof value === 'string' ? value : '',
                             placeholder: "ex: 'Document'",
+                            ariaLabel: field.title,
                             onChange: iconName => onUpdate(field.id, iconName)
                         })
                     },
