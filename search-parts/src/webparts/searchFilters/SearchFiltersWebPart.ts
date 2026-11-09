@@ -457,6 +457,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         },
                         filterBackgroundColor: this.properties.filterBackgroundColor,
                         filterBorderColor: this.properties.filterBorderColor,
+                        filterTextColor: this.properties.filterTextColor,
                         filterBorderThickness: this.properties.filterBorderThickness,
                         titleFont: this.properties.titleFont,
                         titleFontSize: this.properties.titleFontSize,
@@ -939,6 +940,18 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     alphaSliderHidden: false,
                     style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'filterBorderColorFieldId'
+                }),
+                    this._basePropertyFieldColorPicker('filterTextColor', {
+                    label: webPartStrings.Styling.FilterTextColorLabel,
+                    selectedColor: this.properties.filterTextColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: this._basePropertyFieldColorPickerStyle.Inline,
+                    key: 'filterTextColorFieldId'
                 }),
                 PropertyPaneSlider('filterBorderThickness', {
                     label: webPartStrings.Styling.FilterBorderThicknessLabel,
@@ -2178,9 +2191,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     private _resetContentStylingToDefault(): void {
         // Reset all content styling properties to their default values
-        this.properties.filterBackgroundColor = undefined;
+        this.properties.filterBackgroundColor = 1f1f1f;
         this.properties.filterBorderColor = undefined;
-        this.properties.filterTextColor = undefined;
+        this.properties.filterTextColor = ffffff;
         this.properties.filterBorderThickness = undefined;
 
         // Refresh the property pane to show the reset values
