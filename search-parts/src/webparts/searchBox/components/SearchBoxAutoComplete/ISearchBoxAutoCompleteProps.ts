@@ -47,6 +47,11 @@ export interface ISearchBoxAutoCompleteProps {
    * Search box text color
    */
   searchBoxTextColor?: string;
+  
+  /**
+   * Search box background color
+   */
+  searchBoxBackgroundColor?: string;
 
   /**
    * Show search button when no text is present
