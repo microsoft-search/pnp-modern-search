@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, ISearchBoxStyles, DefaultButton, Icon } from '@fluentui/react';
 import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
@@ -175,6 +176,24 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             '--clear-icon-size': iconFontSize
         } as React.CSSProperties;
 
+        // The Fluent SearchBox applies "style" to the input only, so the outer frame and the icon need their own styles
+        const searchBoxFluentStyles: Partial<ISearchBoxStyles> = {
+            root: {
+                backgroundColor: this.props.searchBoxBackgroundColor || undefined
+            },
+            iconContainer: {
+                color: this.props.searchBoxTextColor || undefined
+            },
+            icon: {
+                color: this.props.searchBoxTextColor || undefined
+            },
+            clearButton: {
+                selectors: {
+                    '.ms-Button-icon': { color: this.props.searchBoxTextColor || undefined }
+                }
+            }
+        };
+
         return (
             <div className={styles.searchBoxWrapper} style={dynamicSearchBoxWrapperStyle}>
                 <SearchBox
@@ -182,6 +201,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     className={styles.searchTextField}
+                    styles={searchBoxFluentStyles}
                     value={this.state.searchInputValue}
                     autoComplete="off"
                     style={{...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle}}
