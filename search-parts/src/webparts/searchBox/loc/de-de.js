@@ -28,6 +28,8 @@ define([], function () {
                 PlaceholderTextColorLabel: "Platzhaltertext Farbe",
                 BackgroundColorLabel: "Hintergrundfarbe",
                 TextColorLabel: "Textfarbe",
+                BackgroundColorLabel: "Hintergrundfarbe",
+                ShowTitleLabel: "Titel anzeigen",                
                 ShowSearchButtonWhenEmptyLabel: "Suchschaltfläche bei leerem Eingabefeld anzeigen",
                 ShowSearchButtonWhenEmptyDescription: "Die Suchschaltfläche anzeigen, wenn das Sucheingabefeld leer ist",
                 SearchButtonDisplayModeLabel: "Anzeige der Suchschaltfläche",
