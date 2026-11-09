@@ -790,8 +790,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.searchBoxHeight = undefined;
         this.properties.searchBoxFontSize = undefined;
         this.properties.searchButtonColor = undefined;
-        this.properties.placeholderTextColor = undefined;
-        this.properties.searchBoxTextColor = undefined;
+        this.properties.placeholderTextColor = '#FFFFFF';
+        this.properties.searchBoxTextColor = '#FFFFFF';
         this.properties.searchBoxBackgroundColor = '#1F1F1F';
         // Reset button properties to their default values
         this.properties.showSearchButtonWhenEmpty = undefined;
