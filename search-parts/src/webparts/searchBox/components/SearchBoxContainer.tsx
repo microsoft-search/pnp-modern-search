@@ -134,6 +134,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             searchButtonColor={this.props.searchButtonColor}
             placeholderTextColor={this.props.placeholderTextColor}
             searchBoxTextColor={this.props.searchBoxTextColor}
+            searchBoxBackgroundColor={this.props.searchBoxBackgroundColor}
             showSearchButtonWhenEmpty={this.props.showSearchButtonWhenEmpty}
             searchButtonDisplayMode={this.props.searchButtonDisplayMode}
             searchIconName={this.props.searchIconName}
@@ -148,11 +149,15 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         // Build dynamic styles
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
             borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            backgroundColor: this.props.searchBoxBackgroundColor || undefined,
+            borderRadius: 10,
+            overflow: 'hidden',
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
 
         const dynamicSearchBoxTextStyle: React.CSSProperties = {
             color: this.props.searchBoxTextColor || undefined,
+            backgroundColor: this.props.searchBoxBackgroundColor || undefined,
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined, // Account for border
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
             padding: '0 8px' // Add space before and after text
@@ -272,7 +277,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
     public render(): React.ReactElement<ISearchBoxContainerProps> {
 
-        const renderTitle = <StyledWebPartTitle
+        const renderTitle = this.props.showTitle === false ? null : <StyledWebPartTitle
             instanceId={this.props.instanceId}
             titleFont={this.props.titleFont}
             titleFontSize={this.props.titleFontSize}
