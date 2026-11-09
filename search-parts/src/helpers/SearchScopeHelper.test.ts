@@ -24,6 +24,24 @@ describe('advanced search scopes', () => {
             expect(() => validateSearchScopes([{ ...scopes[0], labels }], 'q', 'scope')).toThrow(SearchScopeError);
         }
     });
+
+    it.each([undefined, null, {}])('accepts unset translations (%j) and uses the default label', labels => {
+        const scope: ISearchScope = { key: 'Title', label: 'Titel', managedProperty: 'RefinableString00', labels };
+        const savedScopes: ISearchScope[] = JSON.parse(JSON.stringify([scope]));
+        expect(() => validateSearchScopes(savedScopes, 'q', 'scope')).not.toThrow();
+        expect(getSearchScopeLabel(savedScopes[0], 'da-DK')).toBe('Titel');
+        expect(buildScopedSearchQuery('test', 'Title', savedScopes)).toBe('RefinableString00:"test"');
+    });
+
+    it.each([
+        'false', '0', '""', '"translation"', '[]', '["Label"]',
+        '{"da-DK":null}', '{"da-DK":1}', '{"da-DK":{}}',
+        '{"da-DK":""}', '{"da-DK":" "}', '{"invalid_locale":"Label"}',
+        '{"da-DK":"A","DA-dk":"B"}'
+    ])('rejects malformed serialized translations: %s', json => {
+        const scope: ISearchScope = { ...scopes[0], labels: JSON.parse(json) };
+        expect(() => validateSearchScopes([scope], 'q', 'scope')).toThrow(SearchScopeError);
+    });
     it('accepts configured properties and distinct URL parameters', () => {
         expect(() => validateSearchScopes(scopes, 'q', 'scope')).not.toThrow();
         expect(() => validateSearchScopes([], 'text', 'field')).not.toThrow();

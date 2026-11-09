@@ -2,7 +2,7 @@ export interface ISearchScope {
     key: string;
     label: string;
     managedProperty: string;
-    labels?: { [language: string]: string };
+    labels?: { [language: string]: string } | null;
 }
 
 export function getSearchScopeLabel(scope: ISearchScope, uiLanguage: string): string {
@@ -33,8 +33,8 @@ export function validateSearchScopes(scopes: ISearchScope[], queryParameter: str
             throw new SearchScopeError('configuration');
         }
         keys.add(scope.key.toLowerCase());
-        if (scope.labels !== undefined) {
-            if (!scope.labels || typeof scope.labels !== 'object' || Array.isArray(scope.labels)) {
+        if (scope.labels !== undefined && scope.labels !== null) {
+            if (typeof scope.labels !== 'object' || Array.isArray(scope.labels)) {
                 throw new SearchScopeError('configuration');
             }
             const languages = new Set<string>();
