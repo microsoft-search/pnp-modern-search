@@ -74,6 +74,11 @@ export default interface ISearchFiltersWebPartProps extends IBaseWebPartProps {
    * Filter panel border color
    */
   filterBorderColor?: string;
+    
+  /**
+   * Filter panel text color
+   */
+  filterTextColor?: string;
 
   /**
    * Filter panel border thickness in pixels
