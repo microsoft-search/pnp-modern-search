@@ -505,11 +505,15 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         // Build dynamic styles
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
             borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
+            backgroundColor: this.props.searchBoxBackgroundColor || undefined,
+            borderRadius: 10,
+            overflow: 'hidden',
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
 
         const dynamicSearchBoxTextStyle: React.CSSProperties = {
             color: this.props.searchBoxTextColor || undefined,
+            backgroundColor: this.props.searchBoxBackgroundColor || undefined,
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : undefined, // Account for border
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
             padding: '0 8px' // Add space before and after text
