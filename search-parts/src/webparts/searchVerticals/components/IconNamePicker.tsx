@@ -14,7 +14,10 @@ export interface IIconNamePickerProps {
 }
 
 const IconNamePicker: React.FC<IIconNamePickerProps> = ({ options, value, placeholder, ariaLabel, onChange }) => {
-    const searchText = value.trim().toLowerCase();
+    const [query, setQuery] = React.useState(value);
+    React.useEffect(() => setQuery(value), [value]);
+
+    const searchText = query.trim().toLowerCase();
     const visibleOptions = options
         .filter(option => !searchText || option.text.toLowerCase().includes(searchText))
         .slice(0, MAX_VISIBLE_SUGGESTIONS);
@@ -31,9 +34,11 @@ const IconNamePicker: React.FC<IIconNamePickerProps> = ({ options, value, placeh
             dropdownWidth={SUGGESTION_MENU_WIDTH}
             dropdownMaxWidth={480}
             onChange={(_event, option, _index, inputValue) => {
-                onChange(option ? String(option.key) : inputValue || '');
+                const iconName = option ? String(option.key) : inputValue || '';
+                setQuery(iconName);
+                onChange(iconName);
             }}
-            onInputValueChange={inputValue => onChange(inputValue)}
+            onInputValueChange={setQuery}
             onRenderOption={option => (
                 <div style={{ alignItems: 'center', display: 'flex', gap: 8 }}>
                     <Icon
