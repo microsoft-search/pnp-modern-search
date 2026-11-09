@@ -113,6 +113,18 @@ describe('Search Box scoped query publication', () => {
         expect(notify).toHaveBeenCalledWith(ComponentType.SearchBox);
     });
 
+    it('loads saved scopes with null translations without a configuration error', () => {
+        const part = create();
+        part['properties'].searchScopes = JSON.parse(
+            '[{"key":"Title","label":"Titel","managedProperty":"RefinableString00","labels":null}]'
+        );
+        window.history.replaceState({}, '', '/?q=test&scope=Title');
+        part['syncAdvancedSearchFromUrl']();
+        expect(part['_advancedSearchError']).toBeUndefined();
+        expect(part['_selectedSearchScope']).toBe('Title');
+        expect(part.getPropertyValue(ComponentType.SearchBox)).toBe('RefinableString00:"test"');
+    });
+
     it('resynchronizes scope and query when handling browser history navigation', () => {
         const part = create();
         const render = jest.spyOn(part, 'renderCompleted');

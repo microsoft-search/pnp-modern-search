@@ -7,6 +7,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { act, Simulate } from 'react-dom/test-utils';
 import SearchScopeTranslations from './SearchScopeTranslations';
+import { getSearchScopeLabel, ISearchScope, validateSearchScopes } from '../../../helpers/SearchScopeHelper';
 
 describe('scope translations editor', () => {
     let host: HTMLDivElement;
@@ -64,6 +65,25 @@ describe('scope translations editor', () => {
         act(() => { changeLabel('Titel'); });
         act(() => { Simulate.click(button('Cancel')); });
         expect(onSave).not.toHaveBeenCalled();
+        await openEditor();
+        expect(document.querySelector<HTMLInputElement>('input[placeholder="Title"]').value).toBe('');
+    });
+
+    it('saves and reopens null translations as an empty map with the default label', async () => {
+        const onSave = jest.fn();
+        const scope: ISearchScope = { key: 'Title', label: 'Title', managedProperty: 'RefinableString00', labels: null };
+        const renderEditor = () => mount(<SearchScopeTranslations defaultLabel={scope.label} uiLanguage="da-DK"
+            labels={scope.labels} onSave={onSave} />);
+        renderEditor();
+        await openEditor();
+        expect(document.querySelector<HTMLInputElement>('input[placeholder="Title"]').value).toBe('');
+        act(() => { Simulate.click(button('Save')); });
+        expect(onSave).toHaveBeenLastCalledWith({});
+
+        scope.labels = JSON.parse(JSON.stringify(onSave.mock.calls[0][0]));
+        expect(() => validateSearchScopes([scope], 'q', 'scope')).not.toThrow();
+        expect(getSearchScopeLabel(scope, 'da-DK')).toBe('Title');
+        renderEditor();
         await openEditor();
         expect(document.querySelector<HTMLInputElement>('input[placeholder="Title"]').value).toBe('');
     });
