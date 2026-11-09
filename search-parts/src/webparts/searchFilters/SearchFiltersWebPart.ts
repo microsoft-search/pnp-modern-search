@@ -2191,9 +2191,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
     private _resetContentStylingToDefault(): void {
         // Reset all content styling properties to their default values
-        this.properties.filterBackgroundColor = 1f1f1f;
+        this.properties.filterBackgroundColor = '#1f1f1f';
         this.properties.filterBorderColor = undefined;
-        this.properties.filterTextColor = ffffff;
+        this.properties.filterTextColor = '#ffffff';
         this.properties.filterBorderThickness = undefined;
 
         // Refresh the property pane to show the reset values
