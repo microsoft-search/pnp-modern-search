@@ -35,6 +35,8 @@ import { LocalizationHelper } from "@microsoft/mgt-element/dist/es6/utils/Locali
 import { ITextFieldProps, TextField } from '@fluentui/react/lib/TextField';
 import { Dropdown, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import type { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import type { IIconNamePickerProps } from './components/IconNamePicker';
 
 const PeoplePicker = React.lazy(() =>
     import(/* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
@@ -52,6 +54,8 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
     private _propertyPanePropertyEditor = null;
     private _customCollectionFieldType: any = null;
     private _placeholderComponent: any = null;
+    private _iconNamePicker: React.ComponentType<IIconNamePickerProps> = null;
+    private _iconNameOptions: IComboBoxOption[] = [];
 
     /**
      * The current selected vertical
@@ -359,14 +363,38 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         await this.loadCommonPropertyPaneResources();
 
-        // tslint:disable-next-line:no-shadowed-variable
-        const { PropertyFieldCollectionData, CustomCollectionFieldType } = await import(
-            /* webpackChunkName: 'pnp-modern-search-property-pane' */
-            '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
-        );
+        const [
+            { PropertyFieldCollectionData, CustomCollectionFieldType },
+            { default: IconNamePicker },
+            { initializeIcons },
+            { default: iconNames }
+        ] = await Promise.all([
+            import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData'
+            ),
+            import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                './components/IconNamePicker'
+            ),
+            import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@fluentui/font-icons-mdl2'
+            ),
+            import(
+                /* webpackChunkName: 'pnp-modern-search-property-pane' */
+                '@fluentui/font-icons-mdl2/lib/data/AllIconNames.json'
+            )
+        ]);
 
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+        this._iconNamePicker = IconNamePicker;
+        this._iconNameOptions = iconNames
+            .filter(icon => typeof icon.name === 'string')
+            .map(icon => ({ key: icon.name, text: icon.name }))
+            .sort((a, b) => a.text.localeCompare(b.text));
+        initializeIcons();
 
         const { PropertyPanePropertyEditor } = await import(
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -399,9 +427,14 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
                     {
                         id: 'iconName',
                         title: webPartStrings.PropertyPane.Verticals.Fields.IconName,
-                        type: this._customCollectionFieldType.string,
-                        placeholder: "ex: 'Document'",
-                        required: false
+                        type: this._customCollectionFieldType.custom,
+                        onCustomRender: (field, value, onUpdate) => React.createElement(this._iconNamePicker, {
+                            options: this._iconNameOptions,
+                            value: typeof value === 'string' ? value : '',
+                            placeholder: "ex: 'Document'",
+                            ariaLabel: field.title,
+                            onChange: iconName => onUpdate(field.id, iconName)
+                        })
                     },
                     {
                         id: 'tabValue',
