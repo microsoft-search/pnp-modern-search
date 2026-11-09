@@ -1697,7 +1697,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         let renderWpContent: JSX.Element = null;
         let templateContent: string = null;
-        const renderTitle = <StyledWebPartTitle
+        const renderTitle = this.props.showTitle === false ? null : <StyledWebPartTitle
             instanceId={this.props.instanceId}
             titleFont={this.props.titleFont}
             titleFontSize={this.props.titleFontSize}
