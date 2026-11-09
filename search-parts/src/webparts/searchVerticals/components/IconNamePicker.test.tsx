@@ -83,6 +83,23 @@ describe('icon name picker', () => {
         expect(onChange).not.toHaveBeenCalled();
     });
 
+    it.each(['', 'Document'])('restores suggestions after Escape cancels a draft from "%s"', value => {
+        const onChange = jest.fn();
+        const input = mount(value, onChange);
+        openWithKeyboard(input);
+        typeText(input, 'CustomIcon');
+        expect(document.querySelectorAll('[role="option"]')).toHaveLength(0);
+
+        act(() => { Simulate.keyDown(input, { key: 'Escape', which: 27 }); });
+        expect(input.value).toBe(value);
+        openWithKeyboard(input);
+
+        const names = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+            .map(option => option.querySelector('div > span').textContent);
+        expect(names).toEqual(value ? ['Document', 'DocumentSearch'] : options.map(option => option.text));
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
     it('commits clearing the optional icon on blur', () => {
         const onChange = jest.fn();
         const input = mount('Document', onChange);
