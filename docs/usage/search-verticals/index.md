@@ -18,7 +18,7 @@ The options for a vertical are as follow:
 |------------|-----------------|
 | **Tab name** | The vertical name (i.e. tab) |
 | **Tab value** | The vertical value that will be sent to connected 'Search Results' Web Parts. You can use this value using the `{verticals.value}` token. See [tokens](../search-results/tokens.md) for more info. |
-| **Fluent UI Fabric icon name** | The optional Fluent UI icon to display for the tab. Refer to [Fluent UI Fabric documentation](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons) to see all available icons. |
+| **Fluent UI Fabric icon name** | The optional Fluent UI icon to display for the tab. Choose a suggested icon to preview it, or type an icon name directly, including a custom registered icon name. Clear the field to show no icon. Suggestions use the Fluent UI v8 MDL2 icons included with the solution. Refer to [Fluent UI documentation](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons) to browse icons. |
 | **Is hyperlink** | If checked, the tab will behave as an hyperlink meaning it won't trigger any selected event. |
 | **Link URL** | If the tab is an hyperlink, the link URL to use. Tokens `{<TokenName>}` are supported here. See [tokens](../search-results/tokens.md) for more info. |
 | **Open behavior** | If the tab is an hyperlink, the opening behavior (new tab or current tab). |
