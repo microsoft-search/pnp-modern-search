@@ -461,7 +461,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         filterBorderThickness: this.properties.filterBorderThickness,
                         titleFont: this.properties.titleFont,
                         titleFontSize: this.properties.titleFontSize,
-                        titleFontColor: this.properties.titleFontColor
+                        titleFontColor: this.properties.titleFontColor,
+                        showTitle: this.properties.showTitle
                     } as ISearchFiltersContainerProps
                 )
             );
@@ -971,7 +972,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         });
 
         // Add web part title styling group
-        groups.push(this.getTitleStylingPropertyPaneGroup());
+        const titleGroup = this.getTitleStylingPropertyPaneGroup();
+        titleGroup.groupFields = [
+            PropertyPaneToggle('showTitle', {
+                label: webPartStrings.Styling.ShowTitleLabel
+            }),
+            ...titleGroup.groupFields
+        ];
+        groups.push(titleGroup);
 
         // Add template options if any
         const layoutOptions = this.getLayoutTemplateOptions();
@@ -1858,7 +1866,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
      * Initializes required Web Part properties
      */
     private initializeProperties() {
-
+        
+        this.properties.showTitle = this.properties.showTitle ?? true;
         this.properties.selectedLayoutKey = this.properties.selectedLayoutKey ? this.properties.selectedLayoutKey : BuiltinLayoutsKeys.Vertical;
         this.properties.inlineTemplateContent = this.properties.inlineTemplateContent ? this.properties.inlineTemplateContent : '';
         this.properties.filterOperator = this.properties.filterOperator ? this.properties.filterOperator : FilterConditionOperator.OR;
