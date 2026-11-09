@@ -506,7 +506,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
             borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
             backgroundColor: this.props.searchBoxBackgroundColor || undefined,
-            borderRadius: 0,
+            borderRadius: this.props.searchBoxBorderRadius ?? 0,
             overflow: 'hidden',
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
