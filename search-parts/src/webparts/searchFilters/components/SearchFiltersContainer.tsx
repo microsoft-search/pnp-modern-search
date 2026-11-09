@@ -1731,12 +1731,25 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const containerStyles: React.CSSProperties = {
             position: 'relative',
             backgroundColor: this.props.filterBackgroundColor || undefined,
+            color: this.props.filterTextColor || undefined,
             borderStyle: this.props.filterBorderColor || this.props.filterBorderThickness ? 'solid' : undefined,
             borderColor: this.props.filterBorderColor || undefined,
             borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`
         };
+        // Fluent UI controls set their own text colors, so inheritance is not enough
+        const safeTextColor = /^(#[0-9a-fA-F]{3,8}|rgba?\([\d\s,.]+\))$/.test(this.props.filterTextColor || '')
+            ? this.props.filterTextColor : '';
 
+        const textColorStyle = safeTextColor ? (
+            <style>{`
+                [data-instance-id="${this.props.instanceId}"],
+                [data-instance-id="${this.props.instanceId}"] *:not(input):not(textarea):not(select) {
+                    color: ${safeTextColor} !important;
+                }
+            `}</style>
+        ) : null;
         return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
+            {textColorStyle}
             {renderTitle}
             {renderWpContent}
         </div>;
