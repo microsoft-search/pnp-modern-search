@@ -150,7 +150,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
             borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
             backgroundColor: this.props.searchBoxBackgroundColor || undefined,
-            borderRadius: 10,
+            borderRadius: 0,
             overflow: 'hidden',
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
