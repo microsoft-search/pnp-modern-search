@@ -249,6 +249,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             searchButtonColor: this.properties.searchButtonColor,
             placeholderTextColor: this.properties.placeholderTextColor,
             searchBoxTextColor: this.properties.searchBoxTextColor,
+            searchBoxBackgroundColor: this.properties.searchBoxBackgroundColor,
+            showTitle: this.properties.showTitle,
             showSearchButtonWhenEmpty: this.properties.showSearchButtonWhenEmpty,
             searchButtonDisplayMode: this.properties.searchButtonDisplayMode,
             searchIconName: this.properties.searchIconName,
@@ -659,6 +661,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     private _getSearchBoxStylingFields(): IPropertyPaneField<any>[] {
         let searchBoxStylingFields: IPropertyPaneField<any>[] = [
+            PropertyPaneToggle('showTitle', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.ShowTitleLabel
+            }),
             // Input Field Settings
             PropertyPaneSlider('searchBoxHeight', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.HeightLabel,
@@ -689,6 +694,18 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 alphaSliderHidden: false,
                 style: this._basePropertyFieldColorPickerStyle.Inline,
                 key: 'searchBoxBorderColorFieldId'
+            }),
+            this._basePropertyFieldColorPicker('searchBoxBackgroundColor', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BackgroundColorLabel,
+                selectedColor: this.properties.searchBoxBackgroundColor,
+                onPropertyChange: this.onPropertyPaneFieldChanged,
+                properties: this.properties,
+                disabled: false,
+                debounce: 500,
+                isHidden: false,
+                alphaSliderHidden: false,
+                style: this._basePropertyFieldColorPickerStyle.Inline,
+                key: 'searchBoxBackgroundColorFieldId'
             }),
             this._basePropertyFieldColorPicker('searchBoxTextColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.TextColorLabel,
@@ -775,7 +792,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.searchButtonColor = undefined;
         this.properties.placeholderTextColor = undefined;
         this.properties.searchBoxTextColor = undefined;
-
+        this.properties.searchBoxBackgroundColor = '#1F1F1F';
         // Reset button properties to their default values
         this.properties.showSearchButtonWhenEmpty = undefined;
         this.properties.searchButtonDisplayMode = undefined;
@@ -877,7 +894,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             enabled: false,
             id: Constants.DEFAULT_EXTENSIBILITY_LIBRARY_COMPONENT_ID
         }];
-
+        
+        this.properties.searchBoxBackgroundColor = this.properties.searchBoxBackgroundColor !== undefined ? this.properties.searchBoxBackgroundColor : '#1F1F1F';
+        this.properties.showTitle = this.properties.showTitle ?? true;
         // Styling properties are initialized as undefined and will use theme defaults unless explicitly set by user
     }
 
