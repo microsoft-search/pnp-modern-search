@@ -92,6 +92,7 @@ define([], function () {
         Styling: {
             StylingOptionsGroupName: "Stiloptionen",
             FilterBackgroundColorLabel: "Filter-Hintergrundfarbe",
+            FilterTextColorLabel: "Filter-Schriftfarbe",
             FilterBorderColorLabel: "Filter-Rahmenfarbe",
             FilterBorderThicknessLabel: "Filter-Rahmenstärke",
             ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
