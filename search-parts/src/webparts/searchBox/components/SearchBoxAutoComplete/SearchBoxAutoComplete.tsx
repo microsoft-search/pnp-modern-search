@@ -2,6 +2,7 @@ import * as React from 'react';
 import styles from '../SearchBoxContainer.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
+import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, ISearchBoxStyles, DefaultButton, Icon } from '@fluentui/react';
 import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType, ISearchBox, DefaultButton } from '@fluentui/react';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion } from '@pnp/modern-search-extensibility';
@@ -530,6 +531,24 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             '--clear-icon-size': iconFontSize
         } as React.CSSProperties;
 
+        // The Fluent SearchBox applies "style" to the input only, so the outer frame and the icon need their own styles
+        const searchBoxFluentStyles: Partial<ISearchBoxStyles> = {
+            root: {
+                backgroundColor: this.props.searchBoxBackgroundColor || undefined
+            },
+            iconContainer: {
+                color: this.props.searchBoxTextColor || undefined
+            },
+            icon: {
+                color: this.props.searchBoxTextColor || undefined
+            },
+            clearButton: {
+                selectors: {
+                    '.ms-Button-icon': { color: this.props.searchBoxTextColor || undefined }
+                }
+            }
+        };
+
         return (
             <div ref={this._containerElemRef}>
                 <FocusZone
@@ -543,6 +562,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                             ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                             className={styles.searchTextField}
+                            styles={searchBoxFluentStyles}
                             value={this.state.searchInputValue}
                             autoComplete="off"
                             style={{ ...dynamicSearchBoxTextStyle, ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
