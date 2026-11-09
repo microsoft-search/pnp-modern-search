@@ -135,6 +135,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             placeholderTextColor={this.props.placeholderTextColor}
             searchBoxTextColor={this.props.searchBoxTextColor}
             searchBoxBackgroundColor={this.props.searchBoxBackgroundColor}
+            searchBoxBorderRadius={this.props.searchBoxBorderRadius}
             showSearchButtonWhenEmpty={this.props.showSearchButtonWhenEmpty}
             searchButtonDisplayMode={this.props.searchButtonDisplayMode}
             searchIconName={this.props.searchIconName}
@@ -150,7 +151,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const dynamicSearchBoxWrapperStyle: React.CSSProperties = {
             borderColor: this.props.searchBoxBorderColor || '#c2c2c2',
             backgroundColor: this.props.searchBoxBackgroundColor || undefined,
-            borderRadius: 0,
+            borderRadius: this.props.searchBoxBorderRadius ?? 0,
             overflow: 'hidden',
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight}px` : undefined
         };
