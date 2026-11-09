@@ -95,6 +95,7 @@ define([], function () {
             FilterTextColorLabel: "Filter-Schriftfarbe",
             FilterBorderColorLabel: "Filter-Rahmenfarbe",
             FilterBorderThicknessLabel: "Filter-Rahmenstärke",
+            ShowTitleLabel: "Titel anzeigen",
             ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
             ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"
         }
