@@ -123,6 +123,10 @@ export interface ISearchBoxContainerProps {
     searchBoxBackgroundColor?: string;
 
     /**
+     * Search box border radius in px
+     */
+    searchBoxBorderRadius?: number;
+    /**
      * Show the web part title
      */
     showTitle?: boolean;
