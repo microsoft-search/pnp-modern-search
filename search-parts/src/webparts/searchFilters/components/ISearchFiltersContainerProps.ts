@@ -112,4 +112,9 @@ export interface ISearchFiltersContainerProps {
    * Title font color
    */
   titleFontColor?: string;
+  
+  /**
+   * Show the web part title
+   */
+  showTitle?: boolean;
 }
