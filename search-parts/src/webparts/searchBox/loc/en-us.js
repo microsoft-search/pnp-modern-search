@@ -28,6 +28,8 @@ define([], function() {
                 PlaceholderTextColorLabel: "Placeholder text color",
                 BackgroundColorLabel: "Background color",
                 TextColorLabel: "Text color",
+                BackgroundColorLabel: "Background color",
+                ShowTitleLabel: "Show title",                
                 ShowSearchButtonWhenEmptyLabel: "Show search button when input is empty",
                 ShowSearchButtonWhenEmptyDescription: "Display the search button when the search input field is empty",
                 SearchButtonDisplayModeLabel: "Search button display",
