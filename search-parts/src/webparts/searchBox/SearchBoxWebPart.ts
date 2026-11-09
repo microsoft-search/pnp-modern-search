@@ -250,6 +250,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             placeholderTextColor: this.properties.placeholderTextColor,
             searchBoxTextColor: this.properties.searchBoxTextColor,
             searchBoxBackgroundColor: this.properties.searchBoxBackgroundColor,
+            searchBoxBorderRadius: this.properties.searchBoxBorderRadius,
             showTitle: this.properties.showTitle,
             showSearchButtonWhenEmpty: this.properties.showSearchButtonWhenEmpty,
             searchButtonDisplayMode: this.properties.searchButtonDisplayMode,
@@ -683,6 +684,15 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }),
 
             // Colors
+            PropertyPaneSlider('searchBoxBorderRadius', {
+                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderRadiusLabel,
+                min: 0,
+                max: 30,
+                step: 1,
+                showValue: true,
+                value: this.properties.searchBoxBorderRadius ?? 0
+            }),
+            
             this._basePropertyFieldColorPicker('searchBoxBorderColor', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.BorderColorLabel,
                 selectedColor: this.properties.searchBoxBorderColor,
@@ -793,6 +803,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         this.properties.placeholderTextColor = '#FFFFFF';
         this.properties.searchBoxTextColor = '#FFFFFF';
         this.properties.searchBoxBackgroundColor = '#1F1F1F';
+        this.properties.searchBoxBorderRadius = 0;
         // Reset button properties to their default values
         this.properties.showSearchButtonWhenEmpty = undefined;
         this.properties.searchButtonDisplayMode = undefined;
@@ -896,6 +907,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         }];
         
         this.properties.searchBoxBackgroundColor = this.properties.searchBoxBackgroundColor !== undefined ? this.properties.searchBoxBackgroundColor : '#1F1F1F';
+        this.properties.searchBoxBorderRadius = this.properties.searchBoxBorderRadius !== undefined ? this.properties.searchBoxBorderRadius : 0;
         this.properties.showTitle = this.properties.showTitle ?? true;
         // Styling properties are initialized as undefined and will use theme defaults unless explicitly set by user
     }
