@@ -112,6 +112,16 @@ export interface ISearchBoxWebPartProps extends IBaseWebPartProps {
      * Search box text color
      */
     searchBoxTextColor?: string;
+    
+    /**
+     * Search box background color
+     */
+    searchBoxBackgroundColor?: string;
+
+    /**
+     * Show the web part title
+     */
+    showTitle?: boolean;
 
     /**
      * Show search button when no text is present
