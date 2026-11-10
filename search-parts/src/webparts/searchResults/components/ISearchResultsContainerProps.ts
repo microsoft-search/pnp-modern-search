@@ -118,6 +118,11 @@ export interface ISearchResultsContainerProps {
    * Results panel border thickness in pixels
    */
   resultsBorderThickness?: number;
+  
+  /**
+   * Results panel border radius in pixels
+   */
+  resultsBorderRadius?: number;
 
   /**
    * Title font family
