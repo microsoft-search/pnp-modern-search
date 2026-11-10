@@ -147,6 +147,7 @@ define([], function () {
             ResultsTextColorLabel: "Schriftfarbe der Ergebnisse",
             ResultsBorderColorLabel: "Ergebnisse-Rahmenfarbe",
             ResultsBorderThicknessLabel: "Ergebnisse-Rahmenstärke",
+            ResultsBorderRadiusLabel: "Ergebnisse-Kantenradius",
             ResetToDefaultLabel: "Styling auf Standard zurücksetzen",
             ResetToDefaultDescription: "Alle Styling-Optionen auf ihre Standardwerte zurücksetzen"
         }
