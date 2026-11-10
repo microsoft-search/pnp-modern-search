@@ -144,6 +144,7 @@ define([], function () {
         Styling: {
             StylingOptionsGroupName: "Styling Options",
             ResultsBackgroundColorLabel: "Results Background Color",
+            ResultsHoverColorLabel: "Hover Selection Color",
             ResultsTextColorLabel: "Results Text Color",
             ResultsBorderColorLabel: "Results Border Color",
             ResultsBorderThicknessLabel: "Results Border Thickness",
