@@ -147,6 +147,7 @@ define([], function () {
             ResultsTextColorLabel: "Results Text Color",
             ResultsBorderColorLabel: "Results Border Color",
             ResultsBorderThicknessLabel: "Results Border Thickness",
+            ResultsBorderRadiusLabel: "Results Border Radius",
             ResetToDefaultLabel: "Reset to Default",
             ResetToDefaultDescription: "Reset all content styling options to their default values"
         }
