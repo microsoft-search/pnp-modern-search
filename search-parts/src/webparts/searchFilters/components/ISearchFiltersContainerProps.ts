@@ -99,6 +99,11 @@ export interface ISearchFiltersContainerProps {
   filterBorderThickness?: number;
 
   /**
+   * Filter panel border radius in pixels
+   */
+  filterBorderRadius?: number;
+
+  /**
    * Title font family
    */
   titleFont?: string;
