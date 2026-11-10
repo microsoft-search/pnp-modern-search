@@ -27,9 +27,11 @@
              border-radius: 10px;
         }
 
+        {{#eq @root.properties.layoutProperties.showHoverSelection false}}{{else}}
         .template--peopleListItem:hover {
-            background: #9EA500;
+            background: {{#if @root.properties.resultsHoverColor}}{{@root.properties.resultsHoverColor}}{{else}}#9EA500{{/if}};
         }
+        {{/eq}}
 
     </style>
 
