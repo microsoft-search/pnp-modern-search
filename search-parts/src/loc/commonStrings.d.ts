@@ -322,6 +322,8 @@ declare interface ICommonStrings {
         ShowPersonaCardOnHoverNative: string;
         ShowPersonaCardOnHoverCalloutMsg: string;
         ShowPersonaCardOnHoverCalloutMsgNative: string;
+		ShowHoverSelection: string;
+        ShowHoverSelectionCalloutMsg: string;  
         ShowPersonaPresenceInfo: string;
         ShowPersonaPresenceInfoCalloutMsg: string;
         ShowHoverOnPictureOnly: string;
