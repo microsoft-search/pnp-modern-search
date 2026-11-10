@@ -214,7 +214,12 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
      * Results panel background color
      */
     resultsBackgroundColor?: string;
- 
+
+    /**
+     * Hover selection color of a result row
+     */
+    resultsHoverColor?: string;
+    
     /**
    * Results Text Color
    */
