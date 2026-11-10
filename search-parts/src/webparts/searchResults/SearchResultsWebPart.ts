@@ -1507,6 +1507,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.showSelectedFilters = this.properties.showSelectedFilters !== undefined ? this.properties.showSelectedFilters : false;
         this.properties.showResultsCount = this.properties.showResultsCount !== undefined ? this.properties.showResultsCount : true;
         this.properties.resultsBackgroundColor = this.properties.resultsBackgroundColor !== undefined ? this.properties.resultsBackgroundColor : '#1F1F1F';
+        this.properties.resultsHoverColor = this.properties.resultsHoverColor !== undefined ? this.properties.resultsHoverColor : '#9EA500';
         this.properties.resultsTextColor = this.properties.resultsTextColor !== undefined ? this.properties.resultsTextColor : '#FFFFFF';
         this.properties.showBlankIfNoResult = this.properties.showBlankIfNoResult !== undefined ? this.properties.showBlankIfNoResult : false;
         this.properties.useMicrosoftGraphToolkit = this.properties.useMicrosoftGraphToolkit !== undefined ? this.properties.useMicrosoftGraphToolkit : false;
@@ -1621,6 +1622,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Reset all content styling properties to their default values
         this.properties.resultsTextColor = undefined;
         this.properties.resultsBackgroundColor = '#1F1F1F';
+        this.properties.resultsHoverColor = '#9EA500';
         this.properties.resultsTextColor = '#FFFFFF';
         this.properties.resultsBorderColor = undefined;
         this.properties.resultsBorderThickness = undefined;
