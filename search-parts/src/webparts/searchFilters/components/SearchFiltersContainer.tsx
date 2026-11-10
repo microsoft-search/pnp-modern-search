@@ -1752,6 +1752,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 [data-instance-id="${this.props.instanceId}"] [class*="clearBtn"] * {
                     color: #000000 !important;
                 }
+                /* "Apply" button: dark text while it is disabled (nothing selected) */
+                [data-instance-id="${this.props.instanceId}"] [class*="applyBtn"].is-disabled,
+                [data-instance-id="${this.props.instanceId}"] [class*="applyBtn"].is-disabled *,
+                [data-instance-id="${this.props.instanceId}"] [class*="applyBtn"][disabled],
+                [data-instance-id="${this.props.instanceId}"] [class*="applyBtn"][disabled] * {
+                    color: #000000 !important;
+                }
             `}</style>
         ) : null;
         return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
