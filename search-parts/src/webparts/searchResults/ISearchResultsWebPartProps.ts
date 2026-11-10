@@ -229,5 +229,10 @@ export default interface ISearchResultsWebPartProps extends IBaseWebPartProps {
    * Results panel border thickness in pixels
    */
   resultsBorderThickness?: number;
+
+  /**
+   * Results panel border radius in pixels
+   */
+  resultsBorderRadius?: number;
 }
 
