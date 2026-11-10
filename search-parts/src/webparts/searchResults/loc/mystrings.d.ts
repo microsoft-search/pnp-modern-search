@@ -146,6 +146,7 @@ declare interface ISearchResultsWebPartStrings {
         ResultsTextColorLabel: string;
         ResultsBorderColorLabel: string;
         ResultsBorderThicknessLabel: string;
+        ResultsBorderRadiusLabel: string;
         ResetToDefaultLabel: string;
         ResetToDefaultDescription: string;
     }
