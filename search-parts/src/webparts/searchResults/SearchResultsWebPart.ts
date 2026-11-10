@@ -553,6 +553,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 resultsTextColor: this.properties.resultsTextColor,
                 resultsBorderColor: this.properties.resultsBorderColor,
                 resultsBorderThickness: this.properties.resultsBorderThickness,
+                resultsBorderRadius: this.properties.resultsBorderRadius,
                 titleFont: this.properties.titleFont,
                 titleFontSize: this.properties.titleFontSize,
                 titleFontColor: this.properties.titleFontColor
@@ -1623,6 +1624,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         this.properties.resultsTextColor = '#FFFFFF';
         this.properties.resultsBorderColor = undefined;
         this.properties.resultsBorderThickness = undefined;
+        this.properties.resultsBorderRadius = undefined;
 
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
