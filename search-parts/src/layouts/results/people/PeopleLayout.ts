@@ -39,6 +39,11 @@ export interface IPeopleLayoutProperties {
      * When true, the hover card (native LPC or Graph Toolkit card) should only trigger when hovering the persona image (coin) instead of the whole row.
      */
     showHoverOnPictureOnly: boolean;
+
+    /**
+     * When true, the person row is highlighted with the hover color when the mouse is over it.
+     */
+    showHoverSelection: boolean;
     
     /**
      * Ultra large only: show the department
@@ -108,6 +113,11 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             this.properties.showPersonaCard = true;
         }
 
+        if (this.properties.showHoverSelection === undefined) {
+            // default value is true: highlight the row on hover
+            this.properties.showHoverSelection = true;
+        }
+        
         if (this.properties.showDepartment === undefined) {
             this.properties.showDepartment = true;
         }
@@ -225,7 +235,17 @@ export class PeopleLayout extends BaseLayout<IPeopleLayoutProperties> {
             // If both somehow ended up true (legacy config), prefer native and disable non-native.
             this.properties.showPersonaCard = false;
         }
-
+        fields.push(
+            this._propertyFieldToogleWithCallout('layoutProperties.showHoverSelection', {
+                label: strings.Layouts.People.ShowHoverSelection,
+                calloutTrigger: this._propertyFieldCalloutTriggers.Hover,
+                key: 'layoutProperties.showHoverSelection',
+                calloutContent: React.createElement('p', { style: { maxWidth: 250, wordBreak: 'break-word' } }, strings.Layouts.People.ShowHoverSelectionCalloutMsg),
+                onText: strings.General.OnTextLabel,
+                offText: strings.General.OffTextLabel,
+                checked: this.properties.showHoverSelection !== false
+            })
+        );
         fields.push(
             this._propertyFieldToogleWithCallout('layoutProperties.showPersonaCardNative', {
                 label: strings.Layouts.People.ShowPersonaCardOnHoverNative,
