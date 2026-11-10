@@ -1747,6 +1747,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 [data-instance-id="${this.props.instanceId}"] *:not(input):not(textarea):not(select) {
                     color: ${safeTextColor} !important;
                 }
+                /* The light "Reset" button must keep dark text */
+                [data-instance-id="${this.props.instanceId}"] [class*="clearBtn"],
+                [data-instance-id="${this.props.instanceId}"] [class*="clearBtn"] * {
+                    color: #000000 !important;
+                }
             `}</style>
         ) : null;
         return <div ref={this.componentRef} data-instance-id={this.props.instanceId} style={containerStyles} onPointerDownCapture={this.primeBusyCursorFromInteraction}>
