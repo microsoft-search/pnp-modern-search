@@ -1734,7 +1734,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             color: this.props.filterTextColor || undefined,
             borderStyle: this.props.filterBorderColor || this.props.filterBorderThickness ? 'solid' : undefined,
             borderColor: this.props.filterBorderColor || undefined,
-            borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`
+            borderWidth: this.props.filterBorderThickness === undefined ? undefined : `${this.props.filterBorderThickness}px`,
+            borderRadius: this.props.filterBorderRadius === undefined ? undefined : `${this.props.filterBorderRadius}px`
         };
         // Fluent UI controls set their own text colors, so inheritance is not enough
         const safeTextColor = /^(#[0-9a-fA-F]{3,8}|rgba?\([\d\s,.]+\))$/.test(this.props.filterTextColor || '')
