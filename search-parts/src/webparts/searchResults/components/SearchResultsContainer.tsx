@@ -202,7 +202,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             color: this.props.resultsTextColor || undefined,   // NEU
             borderStyle: this.props.resultsBorderColor || this.props.resultsBorderThickness ? 'solid' : undefined,
             borderColor: this.props.resultsBorderColor || undefined,
-            borderWidth: this.props.resultsBorderThickness !== undefined ? `${this.props.resultsBorderThickness}px` : undefined
+            borderWidth: this.props.resultsBorderThickness !== undefined ? `${this.props.resultsBorderThickness}px` : undefined,
+            borderRadius: this.props.resultsBorderRadius !== undefined ? `${this.props.resultsBorderRadius}px` : undefined
         };
         
         const safeTextColor = /^(#[0-9a-fA-F]{3,8}|rgba?\([\d\s,.]+\))$/.test(this.props.resultsTextColor || '')
