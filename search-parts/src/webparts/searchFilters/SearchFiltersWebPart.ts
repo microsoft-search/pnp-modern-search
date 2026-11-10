@@ -459,6 +459,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         filterBorderColor: this.properties.filterBorderColor,
                         filterTextColor: this.properties.filterTextColor,
                         filterBorderThickness: this.properties.filterBorderThickness,
+                        filterBorderRadius: this.properties.filterBorderRadius,
                         titleFont: this.properties.titleFont,
                         titleFontSize: this.properties.titleFontSize,
                         titleFontColor: this.properties.titleFontColor,
@@ -953,6 +954,14 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     alphaSliderHidden: false,
                     style: this._basePropertyFieldColorPickerStyle.Inline,
                     key: 'filterTextColorFieldId'
+                }),
+                PropertyPaneSlider('filterBorderRadius', {
+                    label: webPartStrings.Styling.FilterBorderRadiusLabel,
+                    min: 0,
+                    max: 30,
+                    step: 1,
+                    showValue: true,
+                    value: this.properties.filterBorderRadius || 0
                 }),
                 PropertyPaneSlider('filterBorderThickness', {
                     label: webPartStrings.Styling.FilterBorderThicknessLabel,
@@ -2204,6 +2213,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         this.properties.filterBorderColor = undefined;
         this.properties.filterTextColor = '#ffffff';
         this.properties.filterBorderThickness = undefined;
+        this.properties.filterBorderRadius = undefined;
 
         // Refresh the property pane to show the reset values
         this.context.propertyPane.refresh();
