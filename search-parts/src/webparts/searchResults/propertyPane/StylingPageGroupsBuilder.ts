@@ -330,6 +330,18 @@ export class StylingPageGroupsBuilder {
             groupName: this.webPartStrings.Styling.StylingOptionsGroupName,
             isCollapsed: true,
             groupFields: [
+                PropertyFieldColorPicker('resultsHoverColor', {
+                    label: this.webPartStrings.Styling.ResultsHoverColorLabel,
+                    selectedColor: this.properties.resultsHoverColor,
+                    onPropertyChange: this.onPropertyPaneFieldChanged,
+                    properties: this.properties,
+                    disabled: false,
+                    debounce: 1000,
+                    isHidden: false,
+                    alphaSliderHidden: false,
+                    style: PropertyFieldColorPickerStyle.Inline,
+                    key: 'resultsHoverColorFieldId'
+                }),
                 PropertyFieldColorPicker('resultsBackgroundColor', {
                     label: this.webPartStrings.Styling.ResultsBackgroundColorLabel,
                     selectedColor: this.properties.resultsBackgroundColor,
