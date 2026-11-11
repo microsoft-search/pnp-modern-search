@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Käännökset",
+            Language: "Kieli",
+            Toggle: "Tarkennettu hakukenttä",
+            All: "Kaikki",
+            Scope: "Haun kohde",
+            Scopes: "Määritä haun kohteet",
+            Key: "Kohteen avain (URL-arvo)",
+            Label: "Näyttönimi",
+            Property: "Kyseltävä hallittu ominaisuus",
+            QueryParameter: "Hakutekstin URL-parametri",
+            ScopeParameter: "Haun kohteen URL-parametri",
+            InvalidConfiguration: "Virheelliset tarkennetun haun asetukset. Käytä yksilöllisiä kohdeavaimia (ei 'all'), täytettyjä nimiä, kelvollisia hallittujen ominaisuuksien nimiä ja eri URL-parametrien nimiä.",
+            InvalidScope: "Tuntematon haun kohde tai ominaisuusarvo, jota ei tueta. Tarkista kohteen URL-arvo. Ominaisuushaku sallii yhden *-merkin tekstin lopussa, mutta ei muita yleismerkkejä, lainausmerkkejä tai kenoviivoja."
+        },
         Tokens: {
             SelectTokenLabel: "Valitse token...",
             Context: {
@@ -197,7 +212,11 @@ define([], function () {
             SortByPlaceholderText: "Järjestä...",
             SortByDefaultOptionText: "Oletus",
             DownloadButtonText: "Lataa",
-            DownloadCSVButtonText: "Lataa CSV-muodossa"
+            DownloadCSVButtonText: "Lataa valitut CSV-muodossa",
+            DownloadCurrentDataAsCSVButtonText: "Vie hakutulos",
+            ExportTextOnlyColumn: "{0} [Vain teksti]",
+            ExportSearchResultsError: "Vientiä ei voitu suorittaa loppuun. Yritä uudelleen. Jos haku muuttui, vie päivitetyt tulokset.",
+            ExportSearchResultsDismissError: "Sulje vientivirhe"
         },
         Layouts: {
             Debug: {
@@ -245,6 +264,13 @@ define([], function () {
                 EnableStickyHeader: "Kiinnitä ylätunniste",
                 StickyHeaderListViewHeight: "Kiinnitetyn ylätunnisteen korkeus (px)",
                 EnableDownload: "Salli lataus",
+                EnableCurrentDataCsvExport: "Ota nykyisten tietojen lataus CSV-muodossa käyttöön",
+                ExportColumnsJsonLabel: "Vietävät sarakkeet (JSON)",
+                ExportColumnsMissingPropertiesError: "Nämä vientiominaisuudet puuttuvat tietolähteen valituista ominaisuuksista: {0}. Lisää ne valittuihin ominaisuuksiin tai poista ne vientimäärityksestä.",
+                ExportColumnsJsonDescription: "Määritä JSON-objekti, joka yhdistää hallittujen ominaisuuksien nimet CSV-sarakkeiden otsikoihin. Esimerkki: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Anna kelvollinen JSON-objekti, jossa on vähintään yksi hallitun ominaisuuden ja sarakeotsikon määritys.",
+                ValidateJsonButtonLabel: "Vahvista JSON",
+                ExportColumnsJsonValid: "JSON on kelvollinen ja kaikki määritetyt ominaisuudet on valittu.",
                 EnableDetails: "Ota tiedot käyttöön",
                 DetailsButtonLabel: "Tiedot",
                 DetailsPanelHeader: "Tiedot",
@@ -297,6 +323,7 @@ define([], function () {
                 SlideWidth: "Leveys (px)",
                 PreviousPageLabel: "Edellinen sivu",
                 NextPageLabel: "Seuraava sivu",
+                NextLabel: "Seuraava",
                 GoToPageLabel: "Siirry sivulle {0}"
             },
             People: {

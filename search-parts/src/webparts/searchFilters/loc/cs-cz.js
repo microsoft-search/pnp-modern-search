@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Odebrat {0}",
                 SearchUsersPlaceholder: "Hledat uživatele",
                 LoadingTenantUsersLabel: "Načítání uživatelů tenanta...",
-                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé."
+                NoUsersFoundMessage: "Nebyli nalezeni žádní uživatelé.",
+                UnverifiedDomainsWarning: "Některé vybrané osoby nebylo možné ověřit podle povolených domén a byly ponechány.",
+                DisallowedDomainsWarning: "Vybraná osoba byla odebrána, protože její e-mailová doména není povolena."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Upozornění šablony osob: hodnoty nevypadají jako identity uživatelů. Tato vlastnost pravděpodobně není mapována na procházenou vlastnost Q_USER.",
                 FilterDisplayName: "Zobrazovaný název",
                 FilterTemplate: "Šablona",
+                AllowedEmailDomains: "Povolené e-mailové domény",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Zadejte platné e-mailové domény oddělené středníky nebo čárkami.",
+                AllowedEmailDomainsButton: "Domény ({0})",
+                AllowedEmailDomainsDialogDescription: "Vybrat lze pouze osoby, jejichž e-mailová adresa patří do jedné z těchto domén. Ponechte seznam prázdný, chcete-li povolit všechny.",
+                AllowedEmailDomainsNewDomain: "Doména k přidání",
+                AllowedEmailDomainsAdd: "Přidat",
+                AllowedEmailDomainsRemove: "Odebrat {0}",
+                AllowedEmailDomainsEmpty: "Nejsou nakonfigurovány žádné domény. Vybrat lze kohokoli.",
+                AllowedEmailDomainsInvalidEntry: "Zadejte platnou doménu, například contoso.com.",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",
                 ExpandAllNodesByDefault: "Rozbalit všechny uzly ve výchozím nastavení",
                 HideNodesNotInDataSet: "Skrýt uzly, které nejsou v aktuální sadě dat",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Rozbalovací nabídka",
                     DateIntervalTemplate: "Časový interval",
                     PeopleTemplate: "Šablona pro osoby",
-                    StaticPeopleTemplate: "Statická šablona osoby",
+                    StaticPeopleTemplate: "Výběr osob",
                     TaxonomyPickerTemplate: "Výběr taxonomie",
                     HierarchicalFilterTemplate: "Hierarchický filtr"
                 },
@@ -73,6 +85,9 @@ define([], function () {
                 SortDescending: "Sestupně"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Vymazat všechny filtry",
+                ShowClearAllFiltersToggleLabel: "Zobrazit tlačítko \"Vymazat vše\"",
+                ClearAllActionText: "Vymazat vše",
                 AvailableLayoutsGroupName: "Dostupná rozvržení",
                 LayoutTemplateOptionsGroupName: "Možnosti rozvržení",
                 TemplateUrlFieldLabel: "Použít externí šablonu URL",

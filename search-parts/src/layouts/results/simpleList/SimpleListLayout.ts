@@ -1,6 +1,7 @@
 import { BaseLayout } from "@pnp/modern-search-extensibility";
-import { IPropertyPaneField, PropertyPaneToggle } from "@microsoft/sp-property-pane";
+import { IPropertyPaneField, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'CommonStrings';
+import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
 
 export interface ISimpleListLayoutProperties {
 
@@ -18,6 +19,8 @@ export interface ISimpleListLayoutProperties {
      * If the download button should be visible
      */
     enableDownload: boolean;
+    enableCsvExport: boolean;
+    exportColumns: string;
 
     /**
     * If the details action should be visible
@@ -27,7 +30,14 @@ export interface ISimpleListLayoutProperties {
 
 export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
 
+    private _exportColumnsDraft: string | undefined;
+
+    protected supportsCsvExport = true;
+
     public async onInit(): Promise<void> {
+
+        this.properties.enableCsvExport = this.properties.enableCsvExport ?? false;
+        this.properties.exportColumns = this.properties.exportColumns ?? '';
 
         this.properties.showFileIcon = this.properties.showFileIcon !== null && this.properties.showFileIcon !== undefined ?  this.properties.showFileIcon: true;
         this.properties.showItemThumbnail = this.properties.showItemThumbnail !== null && this.properties.showItemThumbnail !== undefined ?  this.properties.showItemThumbnail: true;
@@ -37,7 +47,7 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
 
     public getPropertyPaneFieldsConfiguration(availableFields: string[]): IPropertyPaneField<any>[] {
 
-        return [
+        const propertyPaneFields: IPropertyPaneField<any>[] = [
             PropertyPaneToggle('layoutProperties.showFileIcon', {
                 label: strings.Layouts.SimpleList.ShowFileIconLabel
             }),
@@ -53,5 +63,47 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
               checked: this.properties.enableDownload
             })
         ];
+
+        if (!this.supportsCsvExport) {
+            return propertyPaneFields;
+        }
+
+        propertyPaneFields.push(
+            PropertyPaneToggle('layoutProperties.enableCsvExport', {
+                label: strings.Layouts.DetailsList.EnableCurrentDataCsvExport,
+                checked: this.properties.enableCsvExport
+            })
+        );
+
+        if (this.properties.enableCsvExport) {
+            propertyPaneFields.push(
+                PropertyPaneTextField('layoutProperties.exportColumns', {
+                    value: this._exportColumnsDraft ?? this.properties.exportColumns,
+                    label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
+                    description: strings.Layouts.DetailsList.ExportColumnsJsonDescription,
+                    multiline: true,
+                    rows: 8,
+                    validateOnFocusOut: true,
+                    onGetErrorMessage: value => {
+                        this._exportColumnsDraft = value;
+                        return validateExportColumnsJson(value, availableFields);
+                    }
+                }),
+                PropertyPaneButton('layoutProperties.validateExportColumns', {
+                    buttonType: PropertyPaneButtonType.Normal,
+                    text: strings.Layouts.DetailsList.ValidateJsonButtonLabel,
+                    onClick: () => {
+                        const error = validateExportColumnsJson(this._exportColumnsDraft ?? this.properties.exportColumns ?? '', availableFields);
+                        window.alert(error || strings.Layouts.DetailsList.ExportColumnsJsonValid);
+                    }
+                })
+            );
+        }
+
+        return propertyPaneFields;
     }
+}
+
+export class AdaptiveCardsSimpleListLayout extends SimpleListLayout {
+    protected supportsCsvExport = false;
 }

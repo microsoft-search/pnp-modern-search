@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Traduções",
+            Language: "Idioma",
+            Toggle: "Caixa de pesquisa avançada",
+            All: "Tudo",
+            Scope: "Escopo da pesquisa",
+            Scopes: "Configurar escopos de pesquisa",
+            Key: "Chave do escopo (valor da URL)",
+            Label: "Rótulo de exibição",
+            Property: "Propriedade gerenciada consultável",
+            QueryParameter: "Parâmetro de URL do texto da pesquisa",
+            ScopeParameter: "Parâmetro de URL do escopo da pesquisa",
+            InvalidConfiguration: "Configurações de pesquisa avançada inválidas. Use chaves de escopo exclusivas (diferentes de 'all'), rótulos preenchidos, nomes de propriedades gerenciadas válidos e nomes de parâmetros de URL distintos.",
+            InvalidScope: "Escopo desconhecido ou valor de propriedade não compatível. Verifique o valor do escopo na URL. Pesquisas por propriedade permitem um único * no final do texto, mas nenhum outro curinga, aspas duplas ou barras invertidas."
+        },
         Tokens: {
             SelectTokenLabel: "Escolha uma marcação...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Ordenar por...",
             SortByDefaultOptionText: "Ordenação padrão",
             DownloadButtonText: "Baixar",
-            DownloadCSVButtonText: "Baixar como CSV"
+            DownloadCSVButtonText: "Baixar selecionados como CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exportar resultado da pesquisa",
+            ExportTextOnlyColumn: "{0} [Somente texto]",
+            ExportSearchResultsError: "Não foi possível concluir a exportação. Tente novamente. Se a pesquisa mudou, exporte os resultados atualizados.",
+            ExportSearchResultsDismissError: "Fechar erro de exportação"
         },
         Layouts: {
             Debug: {
@@ -247,6 +266,13 @@ define([], function () {
                 EnableStickyHeader: "Cabeçalho fixo",
                 StickyHeaderListViewHeight: "Altura da lista de visualização (px)",
                 EnableDownload: "Habilitar download",
+                EnableCurrentDataCsvExport: "Habilitar download dos dados atuais como CSV",
+                ExportColumnsJsonLabel: "Colunas de exportação (JSON)",
+                ExportColumnsMissingPropertiesError: "Estas propriedades de exportação não estão nas propriedades selecionadas da fonte de dados: {0}. Adicione-as ou remova-as do mapeamento de exportação.",
+                ExportColumnsJsonDescription: "Insira um objeto JSON que mapeie nomes de propriedades gerenciadas para cabeçalhos de coluna CSV. Exemplo: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Insira um objeto JSON válido com pelo menos um mapeamento de propriedade gerenciada para cabeçalho de coluna.",
+                ValidateJsonButtonLabel: "Validar JSON",
+                ExportColumnsJsonValid: "O JSON é válido e todas as propriedades mapeadas estão selecionadas.",
                 EnableDetails: "Habilitar detalhes",
                 DetailsButtonLabel: "Detalhes",
                 DetailsPanelHeader: "Detalhes",
@@ -299,6 +325,7 @@ define([], function () {
                 SlideWidth: "Largura do slide (em px)",
                 PreviousPageLabel: "Página anterior",
                 NextPageLabel: "Próxima página",
+                NextLabel: "Próxima",
                 GoToPageLabel: "Ir para a página {0}"
             },
             People: {

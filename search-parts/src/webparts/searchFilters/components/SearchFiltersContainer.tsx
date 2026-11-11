@@ -28,6 +28,9 @@ import { TaxonomyHelper } from '../../../helpers/TaxonomyHelper';
 import { UrlHelper } from '../../../helpers/UrlHelper';
 import { BuiltinFilterTemplates } from '../../../layouts/AvailableTemplates';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import commonStyles from '../../../styles/Common.module.scss';
+import { PeoplePickerDomainHelper } from '../../../helpers/PeoplePickerDomainHelper';
+import type { IStaticPeopleFilterConfiguration, IStaticPeopleFilterEventInfo } from '../IStaticPeopleFilterConfiguration';
 
 const DEEPLINK_QUERYSTRING_PARAM_BASE = 'f';
 
@@ -49,6 +52,8 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
+    allowedEmailDomains?: string;
+    domainSelectionRemoved?: boolean;
     showWarningMarker?: boolean;
     showLimitExceededWarning?: boolean;
     limitExceededWarningText?: string;
@@ -91,6 +96,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private readonly deeplinkQueryStringParam: string;
     private _isUpdatingDeepLink: boolean = false;
     private _lastProcessedDeepLink: string = '';
+    private _lastWarnedAmbiguousLegacyDeepLink: string | null = null;
     private _nextUpdateDebugEventId: number = 0;
     private _skipNextUiRefreshFromLocalSelection: boolean = false;
     private readonly _enableUpdateDebugLogging: boolean = false;
@@ -112,7 +118,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private static readonly _DISPLAY_NAME_CACHE_LIMIT = 5000;
     private static readonly _HIERARCHY_CACHE_LIMIT = 64;
     private static readonly _PRUNED_HIERARCHY_CACHE_LIMIT = 256;
-    private static readonly _MIN_BUSY_VISIBLE_MS = 2000;
+    private static readonly _MIN_BUSY_VISIBLE_MS = 200;
     private static readonly _STATIC_PEOPLE_BUSY_VISIBLE_MS = 3000;
     private static readonly _MAX_BUSY_DURATION_MS = 10000;
     private static readonly _BUSY_PRIME_TIMEOUT_MS = 1500;
@@ -562,13 +568,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         this._busyStartedAt = performance.now();
         this.setBusyCursor(true);
 
-        this._busyWatchdogTimer = setTimeout(() => {
-            this._busyWatchdogTimer = null;
-
-            if (this.state.isUpdatingResults) {
-                this.endResultsUpdate();
-            }
-        }, SearchFiltersContainer._MAX_BUSY_DURATION_MS);
+        this.scheduleBusyWatchdog();
 
         if (this.isStaticPeopleFilter(sourceFilterName)) {
             this._busyCursorAutoHideTimer = setTimeout(() => {
@@ -684,6 +684,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 this.setBusyCursor(false);
             }
         }, SearchFiltersContainer._BUSY_PRIME_TIMEOUT_MS);
+    }
+
+    private scheduleBusyWatchdog(): void {
+        if (this._busyWatchdogTimer) {
+            clearTimeout(this._busyWatchdogTimer);
+        }
+        const remaining = SearchFiltersContainer._MAX_BUSY_DURATION_MS - (performance.now() - this._busyStartedAt);
+        this._busyWatchdogTimer = setTimeout(() => {
+            this._busyWatchdogTimer = null;
+            if (this.state.isUpdatingResults) {
+                this.endResultsUpdate();
+            }
+        }, Math.max(0, remaining));
     }
 
     private endResultsUpdate(): void {
@@ -1309,9 +1322,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             ? currentUiFilters[selectedFilterIdx].selectedOnce
             : values.some(value => value.selectedOnce);
         const hasSelectedValues = values.some(value => value.selected);
+        const isStaticPeople = selectedFilterIdx !== -1
+            && currentUiFilters[selectedFilterIdx].selectedTemplate === BuiltinFilterTemplates.StaticPeople;
         const currentSelectedValuesInUiForFilter = values
             .filter(value => value.selected)
-            .map(value => `${value.value ?? ''}`);
+            .map(value => `${isStaticPeople ? value.name ?? value.value ?? '' : value.value ?? ''}`);
         const alreadySubmittedValuesForFilter = flatten(
             this.state.submittedFilters
                 .filter(submittedFilter => submittedFilter.filterName === availableFilter.filterName)
@@ -1371,6 +1386,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             warningMarkerTooltipText,
             selectedOnce: selectionState.selectedOnce,
             selectedTemplate: filterConfiguration.selectedTemplate,
+            allowedEmailDomains: filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople
+                ? (filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains
+                : undefined,
+            domainSelectionRemoved: selectedFilterIdx !== -1
+                && !!(currentUiFilters[selectedFilterIdx] as IFilterInternalWithWarning).domainSelectionRemoved,
             hasSelectedValues: selectionState.hasSelectedValues,
             values,
             operator: filterOperator,
@@ -1529,7 +1549,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         };
     }
 
-    private createNewUiFilter(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration): IDataFilterInternal & { termSetId?: string } {
+    private createNewUiFilter(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration): IFilterInternalWithWarning & { termSetId?: string } {
         const filterValuesInternal: IDataFilterValueInternal[] = filterInfo.filterValues.map(filterValue => {
             return {
                 selected: filterValue.selected,
@@ -1550,6 +1570,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             values: filterValuesInternal,
             operator: filterInfo.operator ? filterInfo.operator : filterConfiguration.operator,
             selectedTemplate: filterConfiguration.selectedTemplate,
+            allowedEmailDomains: filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople
+                ? (filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains
+                : undefined,
             sortIdx: filterConfiguration.sortIdx,
             termSetId: (filterConfiguration as IHierarchicalFilterConfiguration).termSetId
         };
@@ -1585,7 +1608,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return updatedUiFilters;
     }
 
-    private updatePendingMultiFilterState(currentUiFilters: IDataFilterInternal[], filterName: string): void {
+    private updatePendingMultiFilterState(currentUiFilters: IDataFilterInternal[], filterName: string, submittedFilters: IDataFilter[] = this.state.submittedFilters): void {
         const updatedFilterIdx = currentUiFilters.findIndex(filter => filter.filterName === filterName);
         if (updatedFilterIdx === -1) {
             return;
@@ -1604,10 +1627,10 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         const currentSelectedValuesInUiForFilter = updatedFilter.values
             .filter(value => value.selected)
-            .map(value => `${value.value}`)
+            .map(value => `${updatedFilter.selectedTemplate === BuiltinFilterTemplates.StaticPeople ? value.name ?? value.value : value.value}`)
             .sort((left, right) => left.localeCompare(right));
         const alreadySubmittedValuesForFilter = flatten(
-            this.state.submittedFilters
+            submittedFilters
                 .filter(submittedFilter => submittedFilter.filterName === updatedFilter.filterName)
                 .map(submittedFilter => submittedFilter.values)
         )
@@ -1632,6 +1655,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 updatedFilter.values = [];
                 updatedFilter.selectedOnce = true;
                 updatedFilter.hasSelectedValues = false;
+                (updatedFilter as IFilterInternalWithWarning).domainSelectionRemoved = false;
             } else {
                 updatedFilter.values = updatedFilter.values.filter(selectedValue => selectedValue.selected);
             }
@@ -1693,6 +1717,50 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         });
     }
 
+    private getClearAllFiltersAction(): JSX.Element | null {
+        if (!this.props.properties.showClearAllFilters) {
+            return null;
+        }
+
+        const hasAppliedFilters = this.hasAppliedFilters(this.state.submittedFilters);
+        return React.createElement('button', {
+            type: 'button',
+            className: commonStyles.linkButton,
+            disabled: this.state.isUpdatingResults || !hasAppliedFilters,
+            style: {
+                '--link': this.props.themeVariant?.semanticColors?.link,
+                '--linkHovered': this.props.themeVariant?.semanticColors?.linkHovered
+            } as React.CSSProperties,
+            onClick: () => this.clearAllFilters()
+        }, webPartStrings.PropertyPane.LayoutPage.ClearAllActionText);
+    }
+
+    private clearAllFilters(): void {
+        if (this.state.isUpdatingResults || !this.hasAppliedFilters(this.state.submittedFilters)) {
+            return;
+        }
+
+        this._filterUpdateVersion++;
+        if (this._deferredSubmittedUpdateTimer) {
+            clearTimeout(this._deferredSubmittedUpdateTimer);
+            this._deferredSubmittedUpdateTimer = null;
+        }
+        this._latestDeferredSubmittedFilters = null;
+
+        this.beginResultsUpdate(undefined, () => {
+            this.setState(prevState => ({
+                currentUiFilters: this.resetSelectedFilterValues(prevState.currentUiFilters),
+                submittedFilters: []
+            }), () => {
+                this.getFiltersToDisplay(this.props.availableFilters, this.state.currentUiFilters, this.props.filtersConfiguration).catch(() => {
+                    // Ignore UI refresh errors during clear-all
+                });
+                this.resetFiltersDeepLink();
+                this.props.onUpdateFilters([]);
+            });
+        });
+    }
+
     public render(): React.ReactElement<ISearchFiltersContainerProps> {
 
         let renderWpContent: JSX.Element = null;
@@ -1703,6 +1771,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             titleFontSize={this.props.titleFontSize}
             titleFontColor={this.props.titleFontColor}
             webPartTitleProps={this.props.webPartTitleProps}
+            titleAction={this.getClearAllFiltersAction()}
         />;
 
         // If no filter 
@@ -1784,7 +1853,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // Use case when the opeartor control is used directly in the Handlebars template. Otherwise, for nested component usage (ex: combo box), the operator value will be changed through the IDataFilterInfo interface direcrtly and not trought a JavaScript event.
         this.bindFilterValueOperatorUpdated();
 
-        const hasDeepLink = !!UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const hasDeepLink = !!this.getFiltersDeepLinkQueryString();
 
         // Process deep links first so restored selections are not overwritten by an empty initial UI refresh.
         if (hasDeepLink) {
@@ -1832,13 +1901,25 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const availableFiltersChanged = !isEqual(prevProps.availableFilters, this.props.availableFilters);
         const currentUiFiltersChanged = !isEqual(prevState.currentUiFilters, this.state.currentUiFilters) && prevState.currentUiFilters.length > 0;
 
-        if (availableFiltersChanged && this.state.isUpdatingResults) {
+        if (this.state.isUpdatingResults && this.props.isResultsLoading && this._busyHideTimer) {
+            clearTimeout(this._busyHideTimer);
+            this._busyHideTimer = null;
+            this.scheduleBusyWatchdog();
+        }
+
+        const resultsLoadingCompleted = !this.props.isResultsLoading
+            && (prevProps.isResultsLoading
+                || prevProps.resultsLoadingCompletionVersion !== this.props.resultsLoadingCompletionVersion);
+        if (this.state.isUpdatingResults && (resultsLoadingCompleted
+            || (availableFiltersChanged && !this.props.isResultsLoading))) {
             this.endResultsUpdate();
         }
 
         // When filters configuration is updated or the layout is changed 
+        const prevPropertiesForComparison = { ...prevProps.properties, showClearAllFilters: undefined };
+        const currentPropertiesForComparison = { ...this.props.properties, showClearAllFilters: undefined };
         if (!isEqual(prevProps.selectedLayoutKey, this.props.selectedLayoutKey)
-            || !isEqual(prevProps.properties, this.props.properties)) {
+            || !isEqual(prevPropertiesForComparison, currentPropertiesForComparison)) {
 
             const updatedfilters = this.resetSelectedFilterValues(this.state.currentUiFilters);
             const submittedFilters = this.getSelectedFiltersFromUIFilters(updatedfilters);
@@ -1887,6 +1968,22 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             availableFilters.map(availableFilter => this.buildFilterToDisplay(availableFilter, currentUiFilters, filtersConfiguration, debugContext))
         )).filter((filter): filter is IDataFilterInternal => Boolean(filter));
 
+        // Keep selected or committed filters visible when results omit them, including pending removals before Apply.
+        currentUiFilters.forEach(uiFilter => {
+            const isStillAvailable = updatedFilters.some(filter => filter.filterName === uiFilter.filterName);
+            const isConfigured = filtersConfiguration.some(configuration => configuration.filterName === uiFilter.filterName);
+            const hasSubmittedValues = this.state.submittedFilters.some(filter =>
+                filter.filterName === uiFilter.filterName && filter.values.length > 0
+            );
+            if (!isStillAvailable && isConfigured && (uiFilter.values?.some(value => value.selected) || hasSubmittedValues)) {
+                const retainedFilter = cloneDeep(uiFilter);
+                retainedFilter.values.forEach(value => {
+                    value.count = 0;
+                });
+                updatedFilters.push(retainedFilter);
+            }
+        });
+
         const sortStartedAt = performance.now();
         const sortedFilters = sortBy(updatedFilters, 'sortIdx');
 
@@ -1931,6 +2028,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     }
 
     private processFilterValuesUpdated(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration, debugContext?: IUpdateDebugContext): void {
+        if ((filterInfo as IStaticPeopleFilterEventInfo).reconcileAllowedEmailDomains
+            && filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople) {
+            this.reconcilePeopleDomainSelections(filterInfo, filterConfiguration);
+            return;
+        }
+
         let currentUiFilters: IDataFilterInternal[] = [];
         const filterIdx = this.state.currentUiFilters.map(filter => filter.filterName).indexOf(filterInfo.filterName);
 
@@ -1938,6 +2041,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             currentUiFilters = update(this.state.currentUiFilters, { $push: [this.createNewUiFilter(filterInfo, filterConfiguration)] });
         } else {
             currentUiFilters = this.mergeFilterValuesIntoUiFilters(this.state.currentUiFilters, filterIdx, filterInfo, filterConfiguration);
+            (currentUiFilters[filterIdx] as IFilterInternalWithWarning).domainSelectionRemoved = false;
         }
 
         if (debugContext) {
@@ -1954,6 +2058,69 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
 
         this.commitSubmittedFilterUpdate(currentUiFilters, filterInfo, filterConfiguration, debugContext);
+    }
+
+    private reconcilePeopleDomainSelections(filterInfo: IDataFilterInfo, filterConfiguration: IDataFilterConfiguration): void {
+        const allowlist = PeoplePickerDomainHelper.parse((filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains);
+        const removedValues = filterInfo.filterValues
+            .filter(value => !value.selected && PeoplePickerDomainHelper.getStatus({ secondaryText: value.value }, allowlist) === 'disallowed')
+            .map(value => value.value);
+        let submittedFiltersChanged = false;
+        let uiFiltersChanged = false;
+        let nextSubmittedFilters: IDataFilter[] = this.state.submittedFilters;
+
+        this._skipNextUiRefreshFromLocalSelection = true;
+        this.setState(previousState => {
+            const currentUiFilters = cloneDeep(previousState.currentUiFilters);
+            const filter = currentUiFilters.find(item => item.filterName === filterInfo.filterName) as IFilterInternalWithWarning | undefined;
+            if (!filter) {
+                return null;
+            }
+
+            const removed = filter.values.filter(value => value.selected && removedValues.includes(value.value));
+            if (removed.length === 0) {
+                return null;
+            }
+
+            removed.forEach(value => { value.selected = false; });
+            filter.domainSelectionRemoved = true;
+            uiFiltersChanged = true;
+
+            const keysFor = (values: Array<{ name?: string; value?: string }>): Set<string> => new Set(
+                values.flatMap(value => [value.name, value.value])
+                    .filter(value => !!value)
+                    .map(value => value.trim().toLowerCase())
+            );
+            const removedKeys = keysFor(removed);
+            const retainedKeys = keysFor(filter.values.filter(value => value.selected));
+            nextSubmittedFilters = previousState.submittedFilters.map(submittedFilter => {
+                if (submittedFilter.filterName !== filterInfo.filterName) {
+                    return submittedFilter;
+                }
+                return {
+                    ...submittedFilter,
+                    values: submittedFilter.values.filter(value => {
+                        const keys = keysFor([value]);
+                        const matchesRemoved = Array.from(keys).some(key => removedKeys.has(key));
+                        const matchesRetained = Array.from(keys).some(key => retainedKeys.has(key));
+                        return !matchesRemoved || matchesRetained;
+                    })
+                };
+            }).filter(filterItem => filterItem.values.length > 0);
+
+            submittedFiltersChanged = !isEqual(previousState.submittedFilters, nextSubmittedFilters);
+            this.updatePendingMultiFilterState(currentUiFilters, filterInfo.filterName, nextSubmittedFilters);
+            return { currentUiFilters: sortBy(currentUiFilters, 'sortIdx'), submittedFilters: nextSubmittedFilters };
+        }, () => {
+            if (!uiFiltersChanged) {
+                this._skipNextUiRefreshFromLocalSelection = false;
+            }
+            if (submittedFiltersChanged) {
+                this.queueDeferredSubmittedFiltersUpdate(nextSubmittedFilters, filterInfo.filterName);
+            } else {
+                this.endResultsUpdate();
+            }
+        });
     }
 
     public componentWillUnmount(): void {
@@ -2005,7 +2172,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
         const selectedFilters: IDataFilter[] = currentUiFilters.map(selectedFilter => {
 
-            const newSelectedFilter = cloneDeep(selectedFilter);
+            const newSelectedFilter = cloneDeep(selectedFilter) as IFilterInternalWithWarning;
 
             // Update the operator to 'or' when single value mode is selected and multiple values are submitted
             if (selectedFilter.values.some(v => v.selected) && !selectedFilter.isMulti && selectedFilter.selectedTemplate !== BuiltinFilterTemplates.DateRange) {
@@ -2043,7 +2210,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         newValue.value = this.sanitizeTaxonomyRefinementValue(`${newValue.value ?? ''}`);
 
                         if (selectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical) {
-                            newValue.value = this.decodeHierarchicalLeafRefinementValue(newValue.value);
+                            newValue.value = this.normalizeHierarchicalLeafRefinementValue(newValue.value);
                         }
                     }
 
@@ -2062,6 +2229,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 delete newSelectedFilter.canClear;
                 delete newSelectedFilter.sortIdx;
                 delete newSelectedFilter.selectedTemplate;
+                delete newSelectedFilter.allowedEmailDomains;
+                delete newSelectedFilter.domainSelectionRemoved;
                 // Strip hierarchical term tree — it's re-fetched on load and must not bloat the URL
                 delete (newSelectedFilter as any).hierarchicalTerms;
                 delete (newSelectedFilter as any).termSetId;
@@ -2099,18 +2268,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return this.encodeTaxonomyRefinementToken(`${tokenMatch[1]}${extractedGuid}${tokenMatch[3] || ''}`);
     }
 
-    private decodeHierarchicalLeafRefinementValue(rawValue: string): string {
-        const encodedTokenPattern = /"ǂǂ[0-9a-fA-F]+"/g;
-        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
-        const isSingleEncodedToken = /^"ǂǂ[0-9a-fA-F]+"$/.test(rawValue);
-
-        if (decodedValue?.startsWith('L0|#') && isSingleEncodedToken) {
-            return decodedValue;
+    private normalizeHierarchicalLeafRefinementValue(rawValue: string): string {
+        const leafTokenPattern = /L0\|#0?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\|/i;
+        const singleTokenMatch = leafTokenPattern.exec(rawValue);
+        if (singleTokenMatch?.index === 0) {
+            // Older deep links contain decoded L0 values. Use the label-independent exact term token.
+            return this.encodeTaxonomyRefinementToken(`GP0|#${singleTokenMatch[1]}`);
         }
 
-        return rawValue.replace(encodedTokenPattern, encodedToken => {
-            const decodedToken = TaxonomyHelper.decodeHexString(encodedToken);
-            return decodedToken?.startsWith('L0|#') ? `"${decodedToken}"` : encodedToken;
+        return rawValue.replace(/"L0\|#0?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\|(?:[^"\\]|\\.)*"/gi, (_token, guid: string) => {
+            return this.encodeTaxonomyRefinementToken(`GP0|#${guid}`);
         });
     }
 
@@ -2351,7 +2518,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
      */
     private getFiltersDeepLink() {
 
-        const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const queryString = this.getFiltersDeepLinkQueryString();
 
         if (!queryString) {
             this._lastProcessedDeepLink = '';
@@ -2376,7 +2543,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         return {
                             ...value,
                             value: filterConfiguration?.selectedTemplate === BuiltinFilterTemplates.Hierarchical
-                                ? this.decodeHierarchicalLeafRefinementValue(normalizedValue)
+                                ? this.normalizeHierarchicalLeafRefinementValue(normalizedValue)
                                 : normalizedValue
                         };
                     });
@@ -2397,6 +2564,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                         filterName: filter.filterName,
                         isMulti: this.isMultiValueFilter(filterConfiguration),
                         selectedTemplate: filterConfiguration.selectedTemplate,
+                        allowedEmailDomains: filterConfiguration.selectedTemplate === BuiltinFilterTemplates.StaticPeople
+                            ? (filterConfiguration as IStaticPeopleFilterConfiguration).allowedEmailDomains
+                            : undefined,
                         showCount: filterConfiguration.showCount,
                         showWarningMarker: false,
                         showLimitExceededWarning: false,
@@ -2484,6 +2654,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
         }
 
+        filtersDeepLinkUrl = this.removeLegacyFiltersDeepLink(filtersDeepLinkUrl);
+
         this._lastProcessedDeepLink = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, filtersDeepLinkUrl) || '';
 
         this._isUpdatingDeepLink = true;
@@ -2493,7 +2665,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
     private resetFiltersDeepLink() {
         // Reset filters query string
-        const filtersDeepLinkUrl = UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+        const filtersDeepLinkUrl = this.removeLegacyFiltersDeepLink(
+            UrlHelper.removeQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href)
+        );
         this._lastProcessedDeepLink = '';
         this._isUpdatingDeepLink = true;
         globalThis.history.pushState({ path: filtersDeepLinkUrl }, '', filtersDeepLinkUrl);
@@ -2519,7 +2693,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // When the browser 'back' or 'forward' button is pressed
         globalThis.onpopstate = () => {
 
-            const queryString = UrlHelper.getQueryStringParam(this.deeplinkQueryStringParam, globalThis.location.href);
+            const queryString = this.getFiltersDeepLinkQueryString();
 
             // Initial state where no filter are selected
             if (!queryString) {
@@ -2537,11 +2711,84 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         };
     }
 
+    private getFiltersDeepLinkQueryString(): string | null {
+        const href = globalThis.location.href;
+        const queryParams = new URL(href).searchParams;
+        const scopedParameterName = this.findQueryStringParameterName(queryParams, this.deeplinkQueryStringParam);
+
+        if (scopedParameterName !== null) {
+            return UrlHelper.getQueryStringParam(scopedParameterName, href) || '';
+        }
+
+        const legacyParameterName = this.findQueryStringParameterName(queryParams, DEEPLINK_QUERYSTRING_PARAM_BASE);
+        if (legacyParameterName === null) {
+            return null;
+        }
+
+        const legacyQueryString = UrlHelper.getQueryStringParam(legacyParameterName, href);
+        if (this.isOnlySearchFiltersInstanceOnPage()) {
+            return legacyQueryString;
+        }
+
+        if (legacyQueryString && this._lastWarnedAmbiguousLegacyDeepLink !== legacyQueryString) {
+            console.warn(`[PnP Modern Search][Search Filters] Ignoring legacy 'f' URL parameter for instance '${this.props.instanceId}' because multiple Search Filters web parts are present. Use 'f_<instanceId>' to target a specific web part.`);
+            this._lastWarnedAmbiguousLegacyDeepLink = legacyQueryString;
+        }
+
+        return null;
+    }
+
+    private findQueryStringParameterName(queryParams: URLSearchParams, expectedName: string): string | null {
+        const normalizedName = expectedName.toLowerCase();
+        let matchedName: string | null = null;
+        queryParams.forEach((_value, name) => {
+            if (matchedName === null && name.toLowerCase() === normalizedName) {
+                matchedName = name;
+            }
+        });
+        return matchedName;
+    }
+
+    private isOnlySearchFiltersInstanceOnPage(): boolean {
+        const instanceIds = Array.from(document.querySelectorAll('[data-sp-feature-tag^="pnpSearchFiltersWebPart"]'))
+            .map(element => element.getAttribute('data-sp-feature-instance-id'))
+            .filter((instanceId): instanceId is string => !!instanceId);
+
+        return instanceIds.length === 1 && instanceIds[0] === this.props.instanceId;
+    }
+
+    private removeLegacyFiltersDeepLink(url: string): string {
+        if (!this.isOnlySearchFiltersInstanceOnPage()) {
+            return url;
+        }
+
+        const hashIndex = url.indexOf('#');
+        const hash = hashIndex === -1 ? '' : url.substring(hashIndex);
+        const urlWithoutHash = hashIndex === -1 ? url : url.substring(0, hashIndex);
+        const queryIndex = urlWithoutHash.indexOf('?');
+        if (queryIndex === -1) {
+            return url;
+        }
+
+        const baseUrl = urlWithoutHash.substring(0, queryIndex);
+        const parameters = urlWithoutHash.substring(queryIndex + 1).split('&');
+        const remainingParameters = parameters.filter(parameter =>
+            parameter.split('=', 1)[0].toLowerCase() !== DEEPLINK_QUERYSTRING_PARAM_BASE.toLowerCase()
+        );
+
+        if (remainingParameters.length === parameters.length) {
+            return url;
+        }
+
+        return `${baseUrl}${remainingParameters.length > 0 ? `?${remainingParameters.join('&')}` : ''}${hash}`;
+    }
+
     private resetSelectedFilterValues(currentUiFilters: IDataFilterInternal[]): IDataFilterInternal[] {
 
         const updatedfilters = currentUiFilters.map(selectedFilter => {
             const updatedFilter = cloneDeep(selectedFilter);
             updatedFilter.values = [];
+            (updatedFilter as IFilterInternalWithWarning).domainSelectionRemoved = false;
             return updatedFilter;
         });
 

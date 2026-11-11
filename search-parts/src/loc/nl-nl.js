@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Vertalingen",
+            Language: "Taal",
+            Toggle: "Geavanceerd zoekvak",
+            All: "Alles",
+            Scope: "Zoekbereik",
+            Scopes: "Zoekbereiken configureren",
+            Key: "Bereiksleutel (URL-waarde)",
+            Label: "Weergavenaam",
+            Property: "Doorzoekbare beheerde eigenschap",
+            QueryParameter: "URL-parameter voor zoektekst",
+            ScopeParameter: "URL-parameter voor zoekbereik",
+            InvalidConfiguration: "Ongeldige instellingen voor geavanceerd zoeken. Gebruik unieke bereiksleutels (niet 'all'), ingevulde namen, geldige namen van beheerde eigenschappen en verschillende URL-parameternamen.",
+            InvalidScope: "Onbekend zoekbereik of niet-ondersteunde eigenschapswaarde. Controleer de bereikwaarde in de URL. Eigenschapszoekopdrachten staan één * achter de tekst toe, maar geen andere jokertekens, dubbele aanhalingstekens of backslashes."
+        },
         Tokens: {
             SelectTokenLabel: "Selecteer een token...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Sorteer op...",
             SortByDefaultOptionText: "Standaard",
             DownloadButtonText: "Download",
-            DownloadCSVButtonText: "Download als CSV"
+            DownloadCSVButtonText: "Geselecteerde downloaden als CSV",
+            DownloadCurrentDataAsCSVButtonText: "Zoekresultaat exporteren",
+            ExportTextOnlyColumn: "{0} [Alleen tekst]",
+            ExportSearchResultsError: "De export kon niet worden voltooid. Probeer het opnieuw. Als de zoekopdracht is gewijzigd, exporteer dan de bijgewerkte resultaten.",
+            ExportSearchResultsDismissError: "Exportfout sluiten"
         },
         Layouts: {
             Debug: {
@@ -246,6 +265,13 @@ define([], function () {
                 EnableStickyHeader: "Sticky header inschakelen",
                 StickyHeaderListViewHeight: "Hoogte van de lijstweergave (px)",
                 EnableDownload: "Downloaden inschakelen",
+                EnableCurrentDataCsvExport: "Download van huidige gegevens als CSV inschakelen",
+                ExportColumnsJsonLabel: "Exportkolommen (JSON)",
+                ExportColumnsMissingPropertiesError: "Deze exporteigenschappen ontbreken in de geselecteerde eigenschappen van de gegevensbron: {0}. Voeg ze toe of verwijder ze uit de exportkoppeling.",
+                ExportColumnsJsonDescription: "Voer een JSON-object in dat beheerde eigenschapsnamen aan CSV-kolomkoppen koppelt. Voorbeeld: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Voer een geldig JSON-object in met ten minste één koppeling tussen een beheerde eigenschap en een kolomkop.",
+                ValidateJsonButtonLabel: "JSON valideren",
+                ExportColumnsJsonValid: "De JSON is geldig en alle gekoppelde eigenschappen zijn geselecteerd.",
                 EnableDetails: "Details inschakelen",
                 DetailsButtonLabel: "Details",
                 DetailsPanelHeader: "Details",
@@ -299,6 +325,7 @@ define([], function () {
                 SlideWidth: "Slide breedte (in px)",
                 PreviousPageLabel: "Vorige pagina",
                 NextPageLabel: "Volgende pagina",
+                NextLabel: "Volgende",
                 GoToPageLabel: "Ga naar pagina {0}"
             },
             People: {

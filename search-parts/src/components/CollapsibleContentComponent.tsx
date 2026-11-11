@@ -2,10 +2,11 @@
 import * as React from 'react';
 import { BaseWebComponent } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { IGroup, IGroupDividerProps, Icon, Text, GroupedList, ITextProps, IStyleFunctionOrObject, ITextStyles, TooltipHost, DirectionalHint } from '@fluentui/react';
+import { IGroup, IGroupDividerProps, Icon, Text, GroupedList, ITextProps, IStyleFunctionOrObject, ITextStyles } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import styles from './CollapsibleContentComponent.module.scss';
 import { DomPurifyHelper } from '../helpers/DomPurifyHelper';
+import { WarningMarker } from './WarningMarkerComponent';
 
 export interface ICollapsibleContentComponentProps {
 
@@ -262,7 +263,6 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         let textColor: string = this.props.themeVariant?.isInverted
             ? this.props.themeVariant?.semanticColors?.bodyText ?? '#323130'
             : this.props.themeVariant?.semanticColors?.inputText ?? '#323130';
-        const warningDescriptionId = `pnp-warning-${(this.props.groupName || 'group').toString().replace(/[^a-zA-Z0-9_-]/g, '-')}`;
         const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
             root: {
                 color: textColor
@@ -289,53 +289,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <Text variant={'large'} styles={textComponentStyles}>{props.group.name}</Text>
                         {this.props.showWarningMarker ?
-                            <>
-                                <TooltipHost content={this.props.warningMarkerTooltip} directionalHint={DirectionalHint.bottomCenter}>
-                                    <button
-                                        type='button'
-                                        title={this.props.warningMarkerTooltip}
-                                        aria-label={this.props.warningMarkerTooltip}
-                                        aria-describedby={warningDescriptionId}
-                                        style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            width: 18,
-                                            height: 18,
-                                            border: '1px solid #d83b01',
-                                            borderRadius: '50%',
-                                            color: '#d83b01',
-                                            background: 'transparent',
-                                            cursor: 'help'
-                                        }}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                        }}
-                                        onKeyDown={(e) => {
-                                            e.stopPropagation();
-                                        }}
-                                    >
-                                        <Icon iconName='Info' styles={{ root: { color: '#d83b01', fontSize: 12 } }} />
-                                    </button>
-                                </TooltipHost>
-                                <span
-                                    id={warningDescriptionId}
-                                    style={{
-                                        border: 0,
-                                        clip: 'rect(0 0 0 0)',
-                                        height: 1,
-                                        margin: -1,
-                                        overflow: 'hidden',
-                                        padding: 0,
-                                        position: 'absolute',
-                                        width: 1,
-                                        whiteSpace: 'nowrap'
-                                    }}
-                                >
-                                    {this.props.warningMarkerTooltip}
-                                </span>
-                            </>
+                            <WarningMarker tooltip={this.props.warningMarkerTooltip} />
                             : null}
                     </div>
                     <div className={styles.collapsible__filterPanel__body__headerIcon}>

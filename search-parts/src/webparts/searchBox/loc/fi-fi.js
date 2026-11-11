@@ -24,6 +24,7 @@ define([], function() {
                 BorderRadiusLabel: "Reunan säde (px)",
                 HeightLabel: "Korkeus (px)",
                 ButtonColorLabel: "Hakupainikkeen väri",
+                ButtonTextColorLabel: "Hakupainikkeen tekstin väri",
                 ButtonHoverColorLabel: "Hakupainikkeen hover-väri",
                 PlaceholderTextColorLabel: "Paikkamerkkitekstin väri",
                 BackgroundColorLabel: "Taustaväri",
@@ -59,6 +60,7 @@ define([], function() {
             
         },
         SearchBox: {
+            ClearButtonLabel: "Tyhjennä haku",
             DefaultPlaceholder: "Syötä hakusanat...",
             SearchButtonLabel: "Suorita haku"
         }

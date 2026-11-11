@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Retirer {0}",
                 SearchUsersPlaceholder: "Rechercher des utilisateurs",
                 LoadingTenantUsersLabel: "Chargement des utilisateurs du locataire...",
-                NoUsersFoundMessage: "Aucun utilisateur trouvé."
+                NoUsersFoundMessage: "Aucun utilisateur trouvé.",
+                UnverifiedDomainsWarning: "Certaines personnes sélectionnées n'ont pas pu être vérifiées par rapport aux domaines autorisés et ont été conservées.",
+                DisallowedDomainsWarning: "Une personne sélectionnée a été retirée, car son domaine de messagerie n'est pas autorisé."
             }
         },
         PropertyPane: {
@@ -42,6 +44,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Avertissement du modèle Personnes : les valeurs ne ressemblent pas à des identités utilisateur. Cette propriété n'est probablement pas mappée à une propriété analysée Q_USER.",
                 FilterDisplayName: "Nom d'affichage",
                 FilterTemplate: "Modèle",
+                AllowedEmailDomains: "Domaines de messagerie autorisés",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Saisissez des domaines de messagerie valides séparés par des points-virgules ou des virgules.",
+                AllowedEmailDomainsButton: "Domaines ({0})",
+                AllowedEmailDomainsDialogDescription: "Seules les personnes dont l'adresse e-mail appartient à l'un de ces domaines peuvent être sélectionnées. Laissez la liste vide pour autoriser tout le monde.",
+                AllowedEmailDomainsNewDomain: "Domaine à ajouter",
+                AllowedEmailDomainsAdd: "Ajouter",
+                AllowedEmailDomainsRemove: "Supprimer {0}",
+                AllowedEmailDomainsEmpty: "Aucun domaine configuré. Tout le monde peut être sélectionné.",
+                AllowedEmailDomainsInvalidEntry: "Saisissez un domaine valide, par exemple contoso.com.",
                 FilterExpandByDefault: "Agrandir par défaut",
                 ExpandAllNodesByDefault: "Développer tous les nœuds par défaut",
                 HideNodesNotInDataSet: "Masquer les nœuds absents du jeu de données actuel",
@@ -63,7 +75,7 @@ define([], function () {
                     ComboBoxTemplate: "Zone de liste modifiable",
                     DateIntervalTemplate: "Intervalle de dates",
                     PeopleTemplate: "Modèle de personne",
-                    StaticPeopleTemplate: "Modèle de personne statique",
+                    StaticPeopleTemplate: "Sélecteur de personnes",
                     TaxonomyPickerTemplate: "Sélecteur de taxonomie",
                     HierarchicalFilterTemplate: "Filtre hiérarchique"
                 },
@@ -75,6 +87,9 @@ define([], function () {
                 SortDescending: "Décroissant"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Effacer tous les filtres",
+                ShowClearAllFiltersToggleLabel: "Afficher le bouton « Tout effacer »",
+                ClearAllActionText: "Tout effacer",
                 AvailableLayoutsGroupName: "Mises en page disponibles",
                 LayoutTemplateOptionsGroupName: "Options de mise en page",
                 TemplateUrlFieldLabel: "Utiliser une adresse URL de modèle externe",

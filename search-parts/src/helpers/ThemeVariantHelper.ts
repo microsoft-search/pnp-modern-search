@@ -1,6 +1,22 @@
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IFontStyles, IRawStyle } from '@fluentui/react';
 
 const THEME_VARIANT_ATTRIBUTE = 'data-theme-variant';
+const BRAND_FONT_TOKEN_BY_STYLE: Partial<Record<keyof IFontStyles, number>> = {
+    tiny: 100,
+    xSmall: 200,
+    small: 300,
+    smallPlus: 400,
+    medium: 600,
+    mediumPlus: 700,
+    large: 900,
+    xLarge: 1000,
+    xLargePlus: 1100,
+    xxLarge: 1200,
+    xxLargePlus: 1300,
+    superLarge: 1500,
+    mega: 1700
+};
 
 export class ThemeVariantHelper {
 
@@ -11,6 +27,42 @@ export class ThemeVariantHelper {
      * hundred values) cheap to render.
      */
     private static readonly _parsedThemes: WeakMap<Element, IReadonlyTheme> = new WeakMap<Element, IReadonlyTheme>();
+
+    /**
+     * Uses the SharePoint Brand Center CSS custom properties documented for SPFx
+     * components. Keeping the var() expression in the serialized theme lets
+     * layouts and Fluent UI components resolve the current font in the page CSS
+     * context, including after the user changes the selected font.
+     */
+    public static resolveThemeVariant(themeVariant: IReadonlyTheme | undefined): IReadonlyTheme | undefined {
+        if (!themeVariant) {
+            return themeVariant;
+        }
+
+        if (!themeVariant.fonts) {
+            return themeVariant;
+        }
+
+        const fonts = { ...themeVariant.fonts } as IFontStyles;
+
+        (Object.keys(BRAND_FONT_TOKEN_BY_STYLE) as (keyof IFontStyles)[]).forEach((styleName) => {
+            const token = BRAND_FONT_TOKEN_BY_STYLE[styleName];
+            const fontStyle = fonts[styleName] as IRawStyle;
+
+            if (token && fontStyle) {
+                const fallbackFontFamily = fontStyle.fontFamily || 'sans-serif';
+                fonts[styleName] = {
+                    ...fontStyle,
+                    fontFamily: `var(--fontFamilyCustomFont${token}, var(--fontFamilyBase, ${fallbackFontFamily}))`
+                };
+            }
+        });
+
+        return {
+            ...themeVariant,
+            fonts
+        };
+    }
 
     /**
      * Resolves the theme variant from the closest ancestor carrying a `data-theme-variant`

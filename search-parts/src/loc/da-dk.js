@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Oversættelser",
+            Language: "Sprog",
+            Toggle: "Avanceret søgefelt",
+            All: "Alle",
+            Scope: "Søgeområde",
+            Scopes: "Konfigurer søgeområder",
+            Key: "Områdenøgle (URL-værdi)",
+            Label: "Visningsnavn",
+            Property: "Administreret egenskab, der kan forespørges",
+            QueryParameter: "URL-parameter til søgetekst",
+            ScopeParameter: "URL-parameter til søgeområde",
+            InvalidConfiguration: "Ugyldige indstillinger for avanceret søgning. Brug entydige områdenøgler (ikke 'all'), udfyldte navne, gyldige administrerede egenskabsnavne og forskellige URL-parameternavne.",
+            InvalidScope: "Ukendt søgeområde eller ikke-understøttet egenskabsværdi. Kontroller områdets URL-værdi. Egenskabssøgninger tillader én afsluttende * efter tekst, men ingen andre jokertegn, dobbelte anførselstegn eller omvendte skråstreger."
+        },
         Tokens: {
             SelectTokenLabel: "Vælg token...",
             Context: {
@@ -199,7 +214,11 @@ define([], function () {
             SortByPlaceholderText: "Sorter efter...",
             SortByDefaultOptionText: "Standard",
             DownloadButtonText: "Download",
-            DownloadCSVButtonText: "Download som CSV"
+            DownloadCSVButtonText: "Download markerede som CSV",
+            DownloadCurrentDataAsCSVButtonText: "Eksportér søgeresultat",
+            ExportTextOnlyColumn: "{0} [Kun tekst]",
+            ExportSearchResultsError: "Eksporten kunne ikke fuldføres. Prøv igen. Hvis søgningen blev ændret, skal du eksportere de opdaterede resultater.",
+            ExportSearchResultsDismissError: "Luk eksportfejl"
         },
         Layouts: {
             Debug: {
@@ -247,6 +266,13 @@ define([], function () {
                 EnableStickyHeader: "Aktivér fastgjort header",
                 StickyHeaderListViewHeight: "Listevisningshøjde (px)",
                 EnableDownload: "Aktivér download",
+                EnableCurrentDataCsvExport: "Aktivér download af aktuelle data som CSV",
+                ExportColumnsJsonLabel: "Eksportkolonner (JSON)",
+                ExportColumnsMissingPropertiesError: "Disse eksportegenskaber findes ikke blandt datakildens valgte egenskaber: {0}. Tilføj dem til de valgte egenskaber, eller fjern dem fra eksporttilknytningen.",
+                ExportColumnsJsonDescription: "Angiv et JSON-objekt, der knytter navne på administrerede egenskaber til CSV-kolonneoverskrifter. Eksempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Angiv et gyldigt JSON-objekt med mindst én tilknytning mellem en administreret egenskab og en kolonneoverskrift.",
+                ValidateJsonButtonLabel: "Validér JSON",
+                ExportColumnsJsonValid: "JSON er gyldig, og alle tilknyttede egenskaber er valgt.",
                 EnableDetails: "Aktivér detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",
@@ -299,6 +325,7 @@ define([], function () {
                 SlideWidth: "Slide bredde (i px)",
                 PreviousPageLabel: "Forrige side",
                 NextPageLabel: "Næste side",
+                NextLabel: "Næste",
                 GoToPageLabel: "Gå til side {0}"
             },
             People: {

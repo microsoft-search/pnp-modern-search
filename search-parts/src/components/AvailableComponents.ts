@@ -27,8 +27,10 @@ import { FilterValueOperatorWebComponent } from './filters/FilterValueOperatorCo
 import { SpoPathBreadcrumbWebComponent } from './SpoPathBreadcrumbComponent';
 import { SortWebComponent } from './SortComponent';
 import { DownloadSelectedItemsButtonWebComponent } from './DownloadSelectedItemsButtonComponent';
+import { ExportCurrentResultsButtonWebComponent } from './ExportCurrentResultsButtonComponent';
 import { DetailsSelectedItemButtonWebComponent } from './DetailsSelectedItemButtonComponent';
 import { FilterHierarchicalWebComponent } from './filters/FilterHierarchicalComponent';
+import { WarningMarkerWebComponent } from './WarningMarkerComponent';
 
 export class AvailableComponents {
 
@@ -149,12 +151,20 @@ export class AvailableComponents {
             componentClass: DownloadSelectedItemsButtonWebComponent
         },
         {
+            componentName: "pnp-export-current-results-button",
+            componentClass: ExportCurrentResultsButtonWebComponent
+        },
+        {
             componentName: "pnp-details-selected-item-button",
             componentClass: DetailsSelectedItemButtonWebComponent
         },
         {
             componentName: "pnp-filterhierarchical",
             componentClass: FilterHierarchicalWebComponent
+        },
+        {
+            componentName: "pnp-warningmarker",
+            componentClass: WarningMarkerWebComponent
         }
     ];
 }

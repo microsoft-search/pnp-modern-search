@@ -1,5 +1,20 @@
 define([], function () {
     return {
+        AdvancedSearch: {
+            Translations: "Översättningar",
+            Language: "Språk",
+            Toggle: "Avancerad sökruta",
+            All: "Alla",
+            Scope: "Sökomfång",
+            Scopes: "Konfigurera sökomfång",
+            Key: "Omfångsnyckel (URL-värde)",
+            Label: "Visningsnamn",
+            Property: "Hanterad egenskap som kan frågas",
+            QueryParameter: "URL-parameter för söktext",
+            ScopeParameter: "URL-parameter för sökomfång",
+            InvalidConfiguration: "Ogiltiga inställningar för avancerad sökning. Använd unika omfångsnycklar (inte 'all'), ifyllda namn, giltiga hanterade egenskapsnamn och olika URL-parameternamn.",
+            InvalidScope: "Okänt sökomfång eller egenskapsvärde som inte stöds. Kontrollera omfångsvärdet i URL:en. Egenskapssökningar tillåter en avslutande * efter text, men inga andra jokertecken, dubbla citattecken eller omvända snedstreck."
+        },
         Tokens: {
             SelectTokenLabel: "Välj tecken...",
             Context: {
@@ -200,7 +215,11 @@ define([], function () {
             TextFieldApplyButtonText: "Tillämpa",
             SortByPlaceholderText: "Sortera efter...",
             DownloadButtonText: "Ladda ner",
-            DownloadCSVButtonText: "Ladda ner som CSV"
+            DownloadCSVButtonText: "Ladda ned markerade som CSV",
+            DownloadCurrentDataAsCSVButtonText: "Exportera sökresultat",
+            ExportTextOnlyColumn: "{0} [Endast text]",
+            ExportSearchResultsError: "Exporten kunde inte slutföras. Försök igen. Om sökningen ändrades, exportera de uppdaterade resultaten.",
+            ExportSearchResultsDismissError: "Stäng exportfel"
         },
         Layouts: {
             Debug: {
@@ -248,6 +267,13 @@ define([], function () {
                 EnableStickyHeader: "Aktivera fast rubrik",
                 StickyHeaderListViewHeight: "Höjd för listvy (px)",
                 EnableDownload: "Aktivera nedladdning",
+                EnableCurrentDataCsvExport: "Aktivera nedladdning av aktuella data som CSV",
+                ExportColumnsJsonLabel: "Exportkolumner (JSON)",
+                ExportColumnsMissingPropertiesError: "Dessa exportegenskaper saknas bland datakällans valda egenskaper: {0}. Lägg till dem eller ta bort dem från exportmappningen.",
+                ExportColumnsJsonDescription: "Ange ett JSON-objekt som mappar namn på hanterade egenskaper till CSV-kolumnrubriker. Exempel: {\"Title\":\"Title\",\"Author\":\"Created by\"}.",
+                ExportColumnsJsonValidationError: "Ange ett giltigt JSON-objekt med minst en mappning från hanterad egenskap till kolumnrubrik.",
+                ValidateJsonButtonLabel: "Validera JSON",
+                ExportColumnsJsonValid: "JSON är giltig och alla mappade egenskaper är markerade.",
                 EnableDetails: "Aktivera detaljer",
                 DetailsButtonLabel: "Detaljer",
                 DetailsPanelHeader: "Detaljer",
@@ -300,6 +326,7 @@ define([], function () {
                 SlideWidth: "Reglagebredd (px)",
                 PreviousPageLabel: "Föregående sida",
                 NextPageLabel: "Nästa sida",
+                NextLabel: "Nästa",
                 GoToPageLabel: "Gå till sida {0}"
             },
             People: {

@@ -19,6 +19,16 @@ export interface ISearchFiltersContainerProps {
   availableFilters: IDataFilterResult[];
 
   /**
+   * Whether any connected results source is loading.
+   */
+  isResultsLoading?: boolean;
+
+  /**
+   * Increments on completion even when asynchronous rendering skips the loading state.
+   */
+  resultsLoadingCompletionVersion?: number;
+
+  /**
    * The filters configuration
    */
   filtersConfiguration: IDataFilterConfiguration[];

@@ -1,4 +1,5 @@
-.pnp-modern-search {
+// Handlebars markup uses literal class names, so these selectors must not be hashed.
+:global .pnp-modern-search {
     @import 'pkg:@fluentui/react/dist/sass/References.scss';
     .template,
     .placeholder {

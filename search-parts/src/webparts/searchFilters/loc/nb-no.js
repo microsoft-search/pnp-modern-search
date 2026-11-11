@@ -13,7 +13,9 @@ define([], function () {
                 RemoveSelectedUserTitle: "Fjern {0}",
                 SearchUsersPlaceholder: "Søk etter brukere",
                 LoadingTenantUsersLabel: "Laster inn leierbrukere...",
-                NoUsersFoundMessage: "Ingen brukere funnet."
+                NoUsersFoundMessage: "Ingen brukere funnet.",
+                UnverifiedDomainsWarning: "Noen valgte personer kunne ikke kontrolleres mot de tillatte domenene og ble beholdt.",
+                DisallowedDomainsWarning: "En valgt person ble fjernet fordi personens e-postdomene ikke er tillatt."
             }
         },
         PropertyPane: {
@@ -40,6 +42,16 @@ define([], function () {
                 PeopleTemplateQUserMappingWarning: "Advarsel for personmal: verdiene ser ikke ut som brukeridentiteter. Denne egenskapen er sannsynligvis ikke mappet til en Q_USER-crawlet egenskap.",
                 FilterDisplayName: "Visningsnavn",
                 FilterTemplate: "Mal",
+                AllowedEmailDomains: "Tillatte e-postdomener",
+                AllowedEmailDomainsPlaceholder: "contoso.com; fabrikam.com",
+                AllowedEmailDomainsInvalid: "Oppgi gyldige e-postdomener atskilt med semikolon eller komma.",
+                AllowedEmailDomainsButton: "Domener ({0})",
+                AllowedEmailDomainsDialogDescription: "Bare personer med en e-postadresse i ett av disse domenene kan velges. La listen være tom for å tillate alle.",
+                AllowedEmailDomainsNewDomain: "Domene som skal legges til",
+                AllowedEmailDomainsAdd: "Legg til",
+                AllowedEmailDomainsRemove: "Fjern {0}",
+                AllowedEmailDomainsEmpty: "Ingen domener er konfigurert. Alle kan velges.",
+                AllowedEmailDomainsInvalidEntry: "Oppgi et gyldig domene, for eksempel contoso.com.",
                 FilterExpandByDefault: "Utvid som standard",
                 ExpandAllNodesByDefault: "Utvid alle noder som standard",
                 HideNodesNotInDataSet: "Skjul noder som ikke finnes i det gjeldende datasettet",
@@ -61,7 +73,7 @@ define([], function () {
                     ComboBoxTemplate: "Kombinasjonsboks",
                     DateIntervalTemplate: "Datointervall (faste intervaller)",
                     PeopleTemplate: "Person mal",
-                    StaticPeopleTemplate: "Statisk personmal",
+                    StaticPeopleTemplate: "Personvelger",
                     TaxonomyPickerTemplate: "Taksonomivelger",
                     HierarchicalFilterTemplate: "Hierarkisk filter"
                 },
@@ -73,6 +85,9 @@ define([], function () {
                 SortDescending: "Synkende"
             },
             LayoutPage: {
+                ClearAllFiltersGroupName: "Fjern alle filtre",
+                ShowClearAllFiltersToggleLabel: "Vis knappen \"Fjern alle\"",
+                ClearAllActionText: "Fjern alle",
                 AvailableLayoutsGroupName: "Tilgjengelige maler",
                 LayoutTemplateOptionsGroupName: "Malvalg",
                 TemplateUrlFieldLabel: "Bruk URL for mal",

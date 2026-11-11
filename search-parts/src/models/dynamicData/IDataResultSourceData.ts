@@ -2,6 +2,8 @@ import { IDataFilterResult } from "@pnp/modern-search-extensibility";
 import { IExtensibilityConfiguration } from "../common/IExtensibilityConfiguration";
 
 export interface IDataResultSourceData {
+    selectedProperties?: string[];
+    connectedSearchBoxSourceId?: string;
 
     /**
      * The available fields extracted from the data source results 
@@ -12,6 +14,11 @@ export interface IDataResultSourceData {
      * The available filters from the data source results
      */
     availablefilters: IDataFilterResult[];
+
+    /**
+     * The source's default number of filter values when no limit is configured, if known.
+     */
+    defaultMaxBuckets?: number;
 
     /**
      * Indicates whether the results source is retrieving data.
@@ -44,4 +51,15 @@ export interface IDataResultSourceData {
      * can inherit these through their existing dynamic-data connection.
      */
     extensibilityLibraryConfiguration?: IExtensibilityConfiguration[];
+
+    /**
+     * The vertical currently selected in the Search Verticals Web Part this results Web Part is connected to.
+     * Lets Search Filters Web Parts connected only to results detect vertical changes.
+     */
+    selectedVerticalKey?: string;
+
+    /**
+     * Whether the connected Search Verticals Web Part clears filters when the selected vertical changes.
+     */
+    clearFiltersOnVerticalChange?: boolean;
 }

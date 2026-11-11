@@ -9,7 +9,7 @@
     {{/if}}
     <div class="template--listItem--contentContainer">
         <span class="template--listItem--title example-themePrimary">
-            <a href="{{slot item @root.slots.PreviewUrl}}" target="_blank" data-interception="off" rel="noopener noreferrer">{{slot item @root.slots.Title}}</a>
+            <a href="{{slot item @root.slots.PreviewUrl}}" style="color:{{@root.theme.semanticColors.link}}" target="_blank" data-interception="off" rel="noopener noreferrer">{{slot item @root.slots.Title}}</a>
         </span>
         <span>
             <div>{{getSummary (slot item @root.slots.Summary)}}</div>
@@ -24,7 +24,7 @@
             {{#if (slot item @root.slots.Tags)}}
             <pnp-icon data-ame="Tag" data-theme-variant="{{JSONstringify @root.theme}}" aria-hidden="true"></pnp-icon>
             {{#each (split (slot item @root.slots.Tags) ",") as |tag| }}
-            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'">{{tag}}</a> {{/each}} {{/if}}
+            <a href="#{{slot item @root.slots.Tags}}:'{{trim tag}}'" style="color:{{@root.theme.semanticColors.link}}">{{tag}}</a> {{/each}} {{/if}}
         </div>
     </div>
 </div>

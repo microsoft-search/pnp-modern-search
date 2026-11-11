@@ -10,17 +10,25 @@
     appearance: none;
     background: none;
     border: 0;
-    color: "[theme: themePrimary, default: #005a9e]";
+    // --link/--linkHovered are set inline from the SPFx section theme; fall back to the page theme slots.
+    color: var(--link, "[theme: themePrimary, default: #005a9e]");
     cursor: pointer;
     font: inherit;
+    font-weight: 600;
     margin: 0;
     padding: 0;
     text-decoration: none;
 
-    &:hover,
-    &:focus-visible {
-        color: "[theme: themeDarkAlt, default: #106ebe]";
+    &:hover:not(:disabled),
+    &:focus-visible:not(:disabled) {
+        color: var(--linkHovered, "[theme: themeDarkAlt, default: #106ebe]");
         text-decoration: underline;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.55;
+        text-decoration: none;
     }
 }
 
@@ -72,6 +80,22 @@
         [class*='tableCell_'] > div.ms-TextField {
             margin-top: 8px;
             margin-bottom: 8px;
+        }
+    }
+}
+
+.filterSettingsTable {
+    min-width: 1600px !important;
+
+    :global {
+        .PropertyFieldCollectionData__panel__table-head > span:nth-child(2),
+        .PropertyFieldCollectionData__panel__table-row > span:nth-child(2) {
+            min-width: 200px;
+        }
+
+        .PropertyFieldCollectionData__panel__table-head > span:nth-child(3),
+        .PropertyFieldCollectionData__panel__table-row > span:nth-child(3) {
+            min-width: 260px;
         }
     }
 }
