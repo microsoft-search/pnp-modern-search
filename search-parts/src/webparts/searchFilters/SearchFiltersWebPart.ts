@@ -604,18 +604,6 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-
-         // Only site owners (permission "Manage web") may edit the settings
-        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
-            return {
-                pages: [
-                    {
-                        header: { description: 'Die Einstellungen können nur von Websitebesitzern geändert werden.' },
-                        groups: []
-                    }
-                ]
-            };
-        }
         
         let propertyPanePages: IPropertyPanePage[] = [];
 
@@ -997,6 +985,10 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 groupName: webPartStrings.PropertyPane.LayoutPage.LayoutTemplateOptionsGroupName,
                 groupFields: layoutOptions
             });
+        }
+             // Site members must not see the styling options, only site owners
+        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
+            return groups.filter(group => group.groupName !== webPartStrings.Styling.StylingOptionsGroupName);
         }
 
         return groups;
