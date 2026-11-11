@@ -798,18 +798,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
-        // Only site owners (permission "Manage web") may edit the settings
-        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
-            return {
-                pages: [
-                    {
-                        header: { description: 'Die Einstellungen können nur von Websitebesitzern geändert werden.' },
-                        groups: []
-                    }
-                ]
-            };
-        }
-
         let propertyPanePages: IPropertyPanePage[] = [];
         let layoutSlotsGroup: IPropertyPaneGroup[] = [];
         let commonDataSourceProperties: IPropertyPaneGroup[] = [];
@@ -1613,10 +1601,15 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             }
         );
 
-        return builder.getStylingPageGroups();
+        const groups = builder.getStylingPageGroups();
+
+        // Site members must not see the styling options, only site owners
+        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
+            return groups.filter(group => group.groupName !== webPartStrings.Styling.StylingOptionsGroupName);
+        }
+
+        return groups;
     }
-
-
 
     private _resetContentStylingToDefault(): void {
         // Reset all content styling properties to their default values
