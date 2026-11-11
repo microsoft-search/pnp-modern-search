@@ -2312,7 +2312,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
 
                 // 1. Concatenate all values from all connected results Web Parts
                 allAvailableFieldsFromResults = allAvailableFieldsFromResults.concat(dataSourceData.availableFieldsFromResults);
-                allAvailableFilters = allAvailableFilters.concat(dataSourceData.availablefilters as IFilterResultWithLimitInfo[]);
+                allAvailableFilters = allAvailableFilters.concat(cloneDeep(dataSourceData.availablefilters) as IFilterResultWithLimitInfo[]);
 
                 // Merge all custom registred Handlebars helpers from all connected Search Results Web Parts
                 if (dataSourceData.handlebarsContext) {

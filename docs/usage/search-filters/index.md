@@ -72,6 +72,8 @@ Use **Show warning when limit is reached** together with **# of values** when a 
 
 When the warning is enabled, an info icon is shown next to the filter title if the connected API reports that the configured **# of values** limit was reached. This means the visible filter list may be truncated and not all matching values are currently shown.
 
+The warning reflects the current response. A completed search with no refiner values clears previous limit counts and warnings while retaining the filter controls needed to clear selections. With multiple connected Results web parts, a warning remains when another applicable source currently reports that its limit was reached.
+
 For troubleshooting, PnP Modern Search also writes a browser console message for each refiner or aggregation showing how many values were returned by the API and what limit was configured. When the returned count matches or exceeds the configured limit, the message is emitted as a warning and notes that additional values may have been truncated by the API.
 
 Example console warning:
