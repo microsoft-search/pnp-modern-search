@@ -2,6 +2,7 @@ jest.mock('@pnp/modern-search-extensibility', () => ({
     BaseLayout: class { public properties = {}; }
 }));
 jest.mock('@microsoft/sp-property-pane', () => ({
+    PropertyPaneFieldType: { Custom: 'Custom' },
     PropertyPaneButton: (targetProperty: string, properties: unknown) => ({ targetProperty, properties }),
     PropertyPaneButtonType: { Normal: 'Normal' },
     PropertyPaneToggle: (targetProperty: string, properties: unknown) => ({ targetProperty, properties }),
@@ -34,6 +35,7 @@ describe('Simple List export settings', () => {
         expect(fields).toContain('layoutProperties.enableCsvExport');
         expect(fields).toContain('layoutProperties.exportColumns');
         expect(fields).toContain('layoutProperties.validateExportColumns');
+        expect(fields).toContain('layoutProperties.exportColumnsEditor');
     });
 
     it('shows validation results for the configured selected properties', async () => {
@@ -59,6 +61,7 @@ describe('Simple List export settings', () => {
 
         expect(fields).not.toContain('layoutProperties.exportColumns');
         expect(fields).not.toContain('layoutProperties.validateExportColumns');
+        expect(fields).not.toContain('layoutProperties.exportColumnsEditor');
     });
 
     it.each([
@@ -98,5 +101,6 @@ describe('Simple List export settings', () => {
         expect(fields).not.toContain('layoutProperties.enableCsvExport');
         expect(fields).not.toContain('layoutProperties.exportColumns');
         expect(fields).not.toContain('layoutProperties.validateExportColumns');
+        expect(fields).not.toContain('layoutProperties.exportColumnsEditor');
     });
 });

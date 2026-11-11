@@ -267,6 +267,12 @@ declare interface ICommonStrings {
         EnableDownload: string;
         EnableCurrentDataCsvExport: string;
         ExportColumnsJsonLabel: string;
+        CsvExportGroupName: string;
+        EditExportColumnsButtonLabel: string;
+        ExportColumnsEditorDescription: string;
+        ExportColumnSelectedLabel: string;
+        ExportManagedPropertyLabel: string;
+        ExportColumnsEditorInvalidJson: string;
         ExportColumnsJsonDescription: string;
         ExportColumnsJsonValidationError: string;
         ExportColumnsMissingPropertiesError: string;

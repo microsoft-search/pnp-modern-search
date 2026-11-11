@@ -3,6 +3,7 @@ import { IPropertyPaneField, PropertyPaneButton, PropertyPaneButtonType, Propert
 import * as strings from 'CommonStrings';
 import { ISliderOptions } from "../../../components/SliderComponent";
 import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
+import { PropertyPaneExportColumns } from '../../../controls/PropertyPaneExportColumns/PropertyPaneExportColumns';
 
 export interface ISliderLayoutProperties {
 
@@ -133,6 +134,11 @@ export class SliderLayout extends BaseLayout<ISliderLayoutProperties> {
 
         if (this.properties.enableCsvExport) {
             groupFields.push(
+                new PropertyPaneExportColumns(
+                    () => this._exportColumnsDraft ?? this.properties.exportColumns,
+                    availableFields,
+                    value => { this._exportColumnsDraft = value; }
+                ),
                 PropertyPaneTextField('layoutProperties.exportColumns', {
                     value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,

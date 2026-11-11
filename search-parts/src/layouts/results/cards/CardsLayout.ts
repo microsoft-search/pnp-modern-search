@@ -7,6 +7,7 @@ import * as React from "react";
 import { TemplateValueFieldEditor, ITemplateValueFieldEditorProps } from "../../../controls/TemplateValueFieldEditor/TemplateValueFieldEditor";
 import commonStyles from '../../../styles/Common.module.scss';
 import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
+import { PropertyPaneExportColumns } from '../../../controls/PropertyPaneExportColumns/PropertyPaneExportColumns';
 
 export interface ICardsLayoutProperties {
 
@@ -265,6 +266,11 @@ export class CardsLayout extends BaseLayout<ICardsLayoutProperties> {
 
         if (this.properties.enableCsvExport) {
             propertyPaneFields.push(
+                new PropertyPaneExportColumns(
+                    () => this._exportColumnsDraft ?? this.properties.exportColumns,
+                    availableFields,
+                    value => { this._exportColumnsDraft = value; }
+                ),
                 PropertyPaneTextField('layoutProperties.exportColumns', {
                     value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,

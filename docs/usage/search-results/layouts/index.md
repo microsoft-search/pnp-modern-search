@@ -43,8 +43,8 @@ The built-in Handlebars **Cards**, **Details List**, **Simple list**, and **Slid
 #### Configuration
 
 1. Edit the Search Results web part and open its **Layouts** property-pane page.
-2. Enable **Enable download of current data as CSV** in the selected layout's settings. This toggle is off by default. It appears after **Enable download**, or after **Use Alternating Background Color** in Details List.
-3. In the **Export columns (JSON)** textbox that appears below the toggle, enter a JSON object mapping data-source property names to CSV column headers.
+2. Expand the **CSV export** section, which is collapsed by default, and enable **Enable download of current data as CSV**. This toggle is off by default. All export configuration controls are grouped in this section.
+3. Select **Configure export columns** below the toggle to open the visual editor. Each row has an export checkbox, a managed property from the data source's **Selected properties**, and an editable CSV column display name. Existing JSON mappings are loaded with their selections, headers, and column order preserved. Select the properties to export, edit their headers, and select **Save** to update **Export columns (JSON)**. **Cancel**, the close button, and Escape discard changes. Alternatively, enter or edit the JSON directly in the textbox.
 4. Ensure the mapped properties are returned by the data source. For SharePoint Search, include the managed properties in **Selected properties**; the export mapping does not add them to the search request automatically. Select **Validate JSON** below the textbox to check its current contents and confirm that every mapped property is selected, including edits that have not been accepted as a valid configuration. A dialog reports success or lists validation errors. This button is shown only when CSV export is enabled.
 5. Save the configuration. Users can then select **Export Search result** in the Results toolbar without selecting individual items or enabling **Allow items selection**.
 
@@ -62,6 +62,8 @@ Example:
 ```
 
 Keys are the property names returned in the result data, not display names or Handlebars expressions. Values are the CSV headers. The mapping is independent of Details List's **Manage columns** configuration. Use one JSON object, not an array of objects. It must contain at least one entry, with non-empty property names and non-empty string headers. Validation runs when the textbox loses focus and checks that every key appears in the data source's selected properties, using exact field names. If any are missing, an error lists them; add those fields to the selected properties or remove them from the export mapping. The mapping does not add missing fields automatically.
+
+The visual editor also displays previously mapped properties that are no longer selected, with a warning. Deselect them before saving, or cancel and add them back to **Selected properties**. Saving is disabled when no columns are checked, a checked column has a blank display name, or a checked property is unavailable. Invalid existing JSON is never silently replaced: cancel and correct it in the JSON textbox before reopening the editor.
 
 The action is disabled when results are loading, when there are no loaded results, when no usable export mapping is configured, and while export is running.
 
