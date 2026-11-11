@@ -778,7 +778,8 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     public render(): React.ReactElement<IFilterHierarchicalProps> {
         const termSetId = this.props.filter?.termSetId;
-        const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
+        const providedHierarchicalTerms = this.props.filter?.hierarchicalTerms;
+        const hierarchicalTerms = providedHierarchicalTerms || [];
 
         if (!termSetId) {
             return (
@@ -788,13 +789,15 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             );
         }
 
-        // A settled search with no refiner values and hide-nodes enabled legitimately yields an
-        // empty hierarchy: show the "no values" message instead of a perpetual loading state
-        const isSettledEmptyResult = this.props.filter?.hideNodesNotInDataSet
-            && !this.props.filter?.isAwaitingResultSignals
-            && (this.props.filter?.values || []).length === 0;
+        // An explicitly provided empty hierarchy with no pending result signals is a settled
+        // state (e.g. zero-result search with hide-nodes enabled): show the "no values"
+        // message instead of a perpetual loading state. UI values may still contain retained
+        // entries (e.g. unchecked selectedOnce values), so they cannot be used to detect this.
+        const isSettledEmptyHierarchy = Array.isArray(providedHierarchicalTerms)
+            && providedHierarchicalTerms.length === 0
+            && !this.props.filter?.isAwaitingResultSignals;
 
-        if (hierarchicalTerms.length === 0 && isSettledEmptyResult) {
+        if (isSettledEmptyHierarchy) {
             return (
                 <div className={styles.filterHierarchical}>
                     <div>{strings.Filters.FilterNoValuesMessage}</div>

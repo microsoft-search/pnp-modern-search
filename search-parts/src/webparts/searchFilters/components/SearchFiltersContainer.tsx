@@ -193,19 +193,24 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return rootTerms;
     }
 
-    private readonly pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>, isZeroResultResponse: boolean = false): IHierarchicalTerm[] => {
+    private readonly pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>, selectedLabels: Set<string>, isZeroResultResponse: boolean = false): IHierarchicalTerm[] => {
         return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
-            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids, isZeroResultResponse);
+            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids, selectedLabels, isZeroResultResponse);
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-            
+            const termLabel = this.normalizeTermLabel(term.label);
+
+            // GUID-less selections (e.g. plain label refinement values) are matched by label,
+            // consistent with the label matching rules used by FilterHierarchicalComponent
+            const isSelected = selectedGuids.has(termGuid) || (!!termLabel && selectedLabels.has(termLabel));
+
             // When hideNodesNotInDataSet is enabled and we have a zero-result response,
             // only keep nodes that are explicitly selected, plus their ancestor path
             // (children.length > 0 after pruning means a descendant is selected).
             // This prevents showing the full hierarchy when search returns no results
             // while retaining selected terms so they can be cleared.
             const keepTerm = isZeroResultResponse
-                ? (selectedGuids.has(termGuid) || children.length > 0)
-                : (resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0);
+                ? (isSelected || children.length > 0)
+                : (resultGuids.has(termGuid) || isSelected || children.length > 0);
 
             if (keepTerm) {
                 visibleTerms.push({
@@ -216,6 +221,61 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             return visibleTerms;
         }, []);
+    }
+
+    private readonly normalizeTermLabel = (label: string): string => {
+        return TaxonomyHelper.resolveDisplayLabel(`${label || ''}`.trim()).toLowerCase();
+    }
+
+    private readonly buildLabelSetFromFilterValues = (filterValues: Array<{ name?: string; value?: string }>): Set<string> => {
+        const labelSet = new Set<string>();
+
+        const addLabel = (label: string): void => {
+            const normalizedLabel = this.normalizeTermLabel(label);
+            if (normalizedLabel) {
+                labelSet.add(normalizedLabel);
+            }
+        };
+
+        const addLabelsFromTokenString = (token: string): void => {
+            if (!token) {
+                return;
+            }
+
+            const taxonomyLabelRegex = /L0\|#0?[0-9a-f-]{32,36}\|([^;)]+)/gi;
+            let regexMatch: RegExpExecArray | null;
+            while ((regexMatch = taxonomyLabelRegex.exec(token)) !== null) {
+                addLabel(regexMatch[1]);
+            }
+        };
+
+        (filterValues || []).forEach(filterValue => {
+            if (!filterValue) {
+                return;
+            }
+
+            if (filterValue.name) {
+                addLabel(filterValue.name);
+                addLabelsFromTokenString(filterValue.name);
+            }
+
+            if (filterValue.value) {
+                const rawValue = filterValue.value.trim().replace(/^"(.*)"$/, '$1');
+                addLabelsFromTokenString(rawValue);
+
+                const decodedValue = TaxonomyHelper.decodeHexString(filterValue.value);
+                if (decodedValue) {
+                    addLabelsFromTokenString(decodedValue);
+                }
+
+                // Plain label-only values (no taxonomy tokens/GUIDs) are used as labels directly
+                if (TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).length === 0) {
+                    addLabel(rawValue);
+                }
+            }
+        });
+
+        return labelSet;
     }
 
     private readonly buildGuidSetFromFilterValues = (filterValues: Array<{ value: string }>): Set<string> => {
@@ -1467,7 +1527,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
 
             const resultGuids = this.buildGuidSetFromFilterValues(availableFilter.values);
-            const selectedGuids = this.buildGuidSetFromFilterValues(values.filter(value => value.selected));
+            const selectedValues = values.filter(value => value.selected);
+            const selectedGuids = this.buildGuidSetFromFilterValues(selectedValues);
+            const selectedLabels = this.buildLabelSetFromFilterValues(selectedValues);
             
             // Detect when search has completed with zero results (not just loading state)
             // to differentiate from initial load where we should show full hierarchy
@@ -1476,11 +1538,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             
             // The zero-result flag changes the pruning semantics, so it must be part of the cache key
             // to avoid collisions between loading and settled zero-result states (both have empty GUID sets)
-            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}::${isZeroResultResponse ? '0' : '1'}`;
+            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}::${this.getGuidSetSignature(selectedLabels)}::${isZeroResultResponse ? '0' : '1'}`;
 
             let prunedHierarchy = this._prunedHierarchyCacheBySelectionKey.get(prunedCacheKey);
             if (!prunedHierarchy) {
-                prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids, isZeroResultResponse);
+                prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids, selectedLabels, isZeroResultResponse);
                 this.setLimitedCacheEntry(
                     this._prunedHierarchyCacheBySelectionKey,
                     prunedCacheKey,
