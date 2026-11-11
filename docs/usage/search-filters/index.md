@@ -104,7 +104,7 @@ When the **Hierarchical Refiner** template is selected, a **Hierarchical Setting
 |------------|-----------------|
 | **Term Set** | Select the term set used to build the tree. Term sets are grouped by term group, and you can search within available term sets. |
 | **Cache Duration** | Number of days to cache retrieved terms (1-5 days, default 3). |
-| **Hide nodes not in the current data set** | Removes branches that do not contain any values returned in the current result set. This option is useful when many terms are never or rarely used, making large parts of the tree irrelevant. |
+| **Hide nodes not in the current data set** | Removes branches that do not contain any values returned in the current result set. This option is useful when many terms are never or rarely used, making large parts of the tree irrelevant. When a completed search returns zero results, no selectable nodes are displayed (a "No values for this filter" message is shown instead); if a term is already selected, only that term and its ancestor path remain visible so the selection can be cleared. |
 | **Expand all nodes by default** | Expands the full taxonomy tree when the filter loads. This is different from the general **Expand by default** option, which only expands the root level. |
 | **Refresh Cache Now** | Clears the cached terms for the selected term set. The terms are fetched again the next time the hierarchical tree is loaded. |
 

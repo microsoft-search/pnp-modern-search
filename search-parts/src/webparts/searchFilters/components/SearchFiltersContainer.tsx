@@ -193,11 +193,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return rootTerms;
     }
 
-    private readonly pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>): IHierarchicalTerm[] => {
+    private readonly pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>, isZeroResultResponse: boolean = false): IHierarchicalTerm[] => {
         return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
-            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids);
+            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids, isZeroResultResponse);
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-            const keepTerm = resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0;
+            
+            // When hideNodesNotInDataSet is enabled and we have a zero-result response,
+            // only keep nodes that are explicitly selected, plus their ancestor path
+            // (children.length > 0 after pruning means a descendant is selected).
+            // This prevents showing the full hierarchy when search returns no results
+            // while retaining selected terms so they can be cleared.
+            const keepTerm = isZeroResultResponse
+                ? (selectedGuids.has(termGuid) || children.length > 0)
+                : (resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0);
 
             if (keepTerm) {
                 visibleTerms.push({
@@ -1460,11 +1468,19 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             const resultGuids = this.buildGuidSetFromFilterValues(availableFilter.values);
             const selectedGuids = this.buildGuidSetFromFilterValues(values.filter(value => value.selected));
-            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}`;
+            
+            // Detect when search has completed with zero results (not just loading state)
+            // to differentiate from initial load where we should show full hierarchy
+            const filterWithLimitInfo = availableFilter as IFilterResultWithLimitInfo;
+            const isZeroResultResponse = availableFilter.values.length === 0 && !filterWithLimitInfo.isAwaitingResultSignals;
+            
+            // The zero-result flag changes the pruning semantics, so it must be part of the cache key
+            // to avoid collisions between loading and settled zero-result states (both have empty GUID sets)
+            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}::${isZeroResultResponse ? '0' : '1'}`;
 
             let prunedHierarchy = this._prunedHierarchyCacheBySelectionKey.get(prunedCacheKey);
             if (!prunedHierarchy) {
-                prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids);
+                prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids, isZeroResultResponse);
                 this.setLimitedCacheEntry(
                     this._prunedHierarchyCacheBySelectionKey,
                     prunedCacheKey,
@@ -1473,7 +1489,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 );
             }
 
-            filterResultInternal.hierarchicalTerms = prunedHierarchy.length > 0 ? prunedHierarchy : hierarchicalTerms;
+            // On a settled zero-result response, keep the pruned hierarchy even when empty
+            // (only intentionally retained selections remain) instead of restoring the full tree
+            filterResultInternal.hierarchicalTerms = (prunedHierarchy.length > 0 || isZeroResultResponse) ? prunedHierarchy : hierarchicalTerms;
         } catch (error) {
             Log.error('SearchFiltersContainer', new Error(`Error fetching hierarchical terms for filter ${availableFilter.filterName}: ${error}`));
         }
