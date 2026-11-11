@@ -349,7 +349,11 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     availableFilters = this._lastAvailableSearchFilters.map(lastAvailableFilter => {
                         const clonedAvailableFilter = cloneDeep(lastAvailableFilter);
                         clonedAvailableFilter.values = [];
-                        return clonedAvailableFilter;
+                        return Object.assign(clonedAvailableFilter, {
+                            isMaxBucketsExceeded: false,
+                            returnedValueCount: 0,
+                            isEditModeCapApplied: false
+                        });
                     });
 
                 } else {
