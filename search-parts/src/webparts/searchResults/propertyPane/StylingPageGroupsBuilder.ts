@@ -12,6 +12,7 @@ import * as React from 'react';
 import { LayoutHelper } from '../../../helpers/LayoutHelper';
 import { PropertyPaneTabsField } from '../../../controls/PropertyPaneTabsField/PropertyPaneTabsField';
 import commonStyles from '../../../styles/Common.module.scss';
+import * as commonStrings from 'CommonStrings';
 
 export class StylingPageGroupsBuilder {
 
@@ -61,10 +62,25 @@ export class StylingPageGroupsBuilder {
         groups.push(this.buildMergedTitleStylingGroup());
 
         const layoutOptions = this.getLayoutTemplateOptions();
-        if (layoutOptions.length > 0) {
+        const exportPropertyPaths = new Set([
+            'layoutProperties.enableCsvExport',
+            'layoutProperties.exportColumnsEditor',
+            'layoutProperties.exportColumns',
+            'layoutProperties.validateExportColumns'
+        ]);
+        const exportOptions = layoutOptions.filter(field => exportPropertyPaths.has(field.targetProperty));
+        const otherLayoutOptions = layoutOptions.filter(field => !exportPropertyPaths.has(field.targetProperty));
+        if (otherLayoutOptions.length > 0) {
             groups.push({
                 groupName: this.webPartStrings.PropertyPane.LayoutPage.LayoutTemplateOptionsGroupName,
-                groupFields: layoutOptions
+                groupFields: otherLayoutOptions
+            });
+        }
+        if (exportOptions.length > 0) {
+            groups.push({
+                groupName: commonStrings.Layouts.DetailsList.CsvExportGroupName,
+                isCollapsed: true,
+                groupFields: exportOptions
             });
         }
 

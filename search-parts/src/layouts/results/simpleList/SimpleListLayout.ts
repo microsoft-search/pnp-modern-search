@@ -2,6 +2,7 @@ import { BaseLayout } from "@pnp/modern-search-extensibility";
 import { IPropertyPaneField, PropertyPaneButton, PropertyPaneButtonType, PropertyPaneToggle, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import * as strings from 'CommonStrings';
 import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
+import { PropertyPaneExportColumns } from '../../../controls/PropertyPaneExportColumns/PropertyPaneExportColumns';
 
 export interface ISimpleListLayoutProperties {
 
@@ -77,6 +78,11 @@ export class SimpleListLayout extends BaseLayout<ISimpleListLayoutProperties> {
 
         if (this.properties.enableCsvExport) {
             propertyPaneFields.push(
+                new PropertyPaneExportColumns(
+                    () => this._exportColumnsDraft ?? this.properties.exportColumns,
+                    availableFields,
+                    value => { this._exportColumnsDraft = value; }
+                ),
                 PropertyPaneTextField('layoutProperties.exportColumns', {
                     value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,

@@ -10,6 +10,7 @@ import { IAsyncComboProps } from "../../../controls/PropertyPaneAsyncCombo/compo
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 import sharedStyles from '../../../styles/Common.module.scss';
 import { validateExportColumnsJson } from '../../../helpers/CsvExportHelper';
+import { PropertyPaneExportColumns } from '../../../controls/PropertyPaneExportColumns/PropertyPaneExportColumns';
 
 /**
  * Details List Builtin Layout
@@ -443,6 +444,11 @@ export class DetailsListLayout extends BaseLayout<IDetailsListLayoutProperties> 
                 checked: this.properties.enableCsvExport
             }),
             ...(this.properties.enableCsvExport ? [
+                new PropertyPaneExportColumns(
+                    () => this._exportColumnsDraft ?? this.properties.exportColumns,
+                    availableFields,
+                    value => { this._exportColumnsDraft = value; }
+                ),
                 PropertyPaneTextField('layoutProperties.exportColumns', {
                     value: this._exportColumnsDraft ?? this.properties.exportColumns,
                     label: strings.Layouts.DetailsList.ExportColumnsJsonLabel,
