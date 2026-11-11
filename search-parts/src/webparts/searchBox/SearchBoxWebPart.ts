@@ -307,18 +307,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-        
-        // Only site owners (permission "Manage web") may edit the settings
-        if (!this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb)) {
-            return {
-                pages: [
-                    {
-                        header: { description: 'Die Einstellungen können nur von Websitebesitzern geändert werden.' },
-                        groups: []
-                    }
-                ]
-            };
-        }
+
+
+    // Site members see all settings except the search box styling, which is for site owners only
+    const isSiteOwner = this.context.pageContext.web.permissions.hasPermission(SPPermission.manageWeb);
         
         let propertyPanePages: IPropertyPanePage[] = [];
         let providerOptionGroups: IPropertyPaneGroup[] = [];
@@ -338,11 +330,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                         groupName: webPartStrings.PropertyPane.SearchBoxSettingsGroup.GroupName,
                         groupFields: this._getSearchBoxSettingsFields()
                     },
-                    {
+                    ...(isSiteOwner ? [{
                         groupName: webPartStrings.PropertyPane.SearchBoxStylingGroup.GroupName,
                         isCollapsed: true,
                         groupFields: this._getSearchBoxStylingFields()
-                    },
+                    }] : []),
                     this.getTitleStylingPropertyPaneGroup()
                 ],
                 displayGroupsAsAccordion: true
