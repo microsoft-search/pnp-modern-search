@@ -235,9 +235,22 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
     private readonly buildLabelSetFromFilterValues = (filterValues: Array<{ name?: string; value?: string }>): Set<string> => {
         const labelSet = new Set<string>();
 
+        // Names covered by GUID-backed values in the same selection set: parent selections emit
+        // GPP/GP0 tokens plus a plain-label companion value with the same name, which must not
+        // be treated as a genuine label-only selection (it would retain unrelated same-named terms)
+        const guidBackedNames = new Set<string>();
+        (filterValues || []).forEach(filterValue => {
+            if (filterValue?.value && TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).length > 0) {
+                const normalizedName = this.normalizeTermLabel(filterValue.name || '');
+                if (normalizedName) {
+                    guidBackedNames.add(normalizedName);
+                }
+            }
+        });
+
         const addLabel = (label: string): void => {
             const normalizedLabel = this.normalizeTermLabel(label);
-            if (normalizedLabel) {
+            if (normalizedLabel && !guidBackedNames.has(normalizedLabel)) {
                 labelSet.add(normalizedLabel);
             }
         };

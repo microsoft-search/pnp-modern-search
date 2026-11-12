@@ -22,6 +22,8 @@ jest.mock('../../../components/filters/FilterHierarchicalComponent.module.scss',
 import SearchFiltersContainer from './SearchFiltersContainer';
 import { TaxonomyHelper } from '../../../helpers/TaxonomyHelper';
 
+const encodeToken = (token: string): string => `"ǂǂ${token.split('').map(char => (char.codePointAt(0) || 0).toString(16).padStart(2, '0')).join('')}"`;
+
 const europeGuid = '11111111-1111-1111-1111-111111111111';
 const franceGuid = '22222222-2222-2222-2222-222222222222';
 const lyonGuid = '33333333-3333-3333-3333-333333333333';
@@ -251,5 +253,35 @@ describe('populateHierarchicalTerms (issue #5060)', () => {
         const signatureOfJoinedLabel = container['getLabelSetSignature'](new Set(['a,b']));
         const signatureOfSeparateLabels = container['getLabelSetSignature'](new Set(['a', 'b']));
         expect(signatureOfJoinedLabel).not.toEqual(signatureOfSeparateLabels);
+    });
+
+    it('does not treat the plain-label companion of a three-value parent selection as a label-only selection', async () => {
+        const duplicateFranceGuid = '77777777-7777-7777-7777-777777777777';
+        const hierarchyWithDuplicateNames: ITestTerm[] = [
+            term(europeGuid, 'Europe', [
+                term(franceGuid, 'France', [
+                    term(lyonGuid, 'Lyon', [], franceGuid)
+                ], europeGuid)
+            ]),
+            term(asiaGuid, 'Asia', [
+                term(duplicateFranceGuid, 'France', [], asiaGuid)
+            ])
+        ];
+        const container = createContainer();
+        // handleParentTermSelection emits GPP + GP0 tokens plus a plain-label companion value
+        const result = await populate(
+            container,
+            { filterName: 'RefinableString10', values: [], isAwaitingResultSignals: false },
+            [
+                { name: 'France', value: encodeToken(`GPP|#${franceGuid}`), selected: true },
+                { name: 'France', value: encodeToken(`GP0|#${franceGuid}`), selected: true },
+                { name: 'France', value: 'France', selected: true }
+            ],
+            {},
+            hierarchyWithDuplicateNames
+        );
+        // Only the GUID-selected France branch is retained; the companion plain-label value
+        // must not retain the unrelated 'France' term under Asia
+        expect(flattenLabels(result.hierarchicalTerms)).toEqual(['Europe', 'France']);
     });
 });
