@@ -778,12 +778,29 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     public render(): React.ReactElement<IFilterHierarchicalProps> {
         const termSetId = this.props.filter?.termSetId;
-        const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
+        const providedHierarchicalTerms = this.props.filter?.hierarchicalTerms;
+        const hierarchicalTerms = providedHierarchicalTerms || [];
 
         if (!termSetId) {
             return (
                 <div className={styles.filterHierarchical}>
                     <div>Term Set ID not configured</div>
+                </div>
+            );
+        }
+
+        // An explicitly provided empty hierarchy with no pending result signals is a settled
+        // state (e.g. zero-result search with hide-nodes enabled): show the "no values"
+        // message instead of a perpetual loading state. UI values may still contain retained
+        // entries (e.g. unchecked selectedOnce values), so they cannot be used to detect this.
+        const isSettledEmptyHierarchy = Array.isArray(providedHierarchicalTerms)
+            && providedHierarchicalTerms.length === 0
+            && !this.props.filter?.isAwaitingResultSignals;
+
+        if (isSettledEmptyHierarchy) {
+            return (
+                <div className={styles.filterHierarchical}>
+                    <div>{strings.Filters.FilterNoValuesMessage}</div>
                 </div>
             );
         }

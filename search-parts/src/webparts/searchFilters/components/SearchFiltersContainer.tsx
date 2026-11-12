@@ -193,11 +193,29 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return rootTerms;
     }
 
-    private readonly pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>): IHierarchicalTerm[] => {
+    private readonly pruneHierarchy = (terms: IHierarchicalTerm[], resultGuids: Set<string>, selectedGuids: Set<string>, selectedLabels: Set<string>, isZeroResultResponse: boolean = false): IHierarchicalTerm[] => {
         return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
-            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids);
+            const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids, selectedLabels, isZeroResultResponse);
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-            const keepTerm = resultGuids.has(termGuid) || selectedGuids.has(termGuid) || children.length > 0;
+            const isSelectedByGuid = selectedGuids.has(termGuid);
+
+            // GUID-less selections (e.g. plain label refinement values) are matched by label,
+            // consistent with the label matching rules used by FilterHierarchicalComponent.
+            // Label matching only applies to the zero-result branch: in the non-empty branch
+            // an empty pruned result falls back to the full hierarchy, which remains the
+            // intended behavior for refiners that supply plain label values.
+            const isSelectedByLabel = isZeroResultResponse
+                && selectedLabels.size > 0
+                && selectedLabels.has(this.normalizeTermLabel(term.label));
+
+            // When hideNodesNotInDataSet is enabled and we have a zero-result response,
+            // only keep nodes that are explicitly selected, plus their ancestor path
+            // (children.length > 0 after pruning means a descendant is selected).
+            // This prevents showing the full hierarchy when search returns no results
+            // while retaining selected terms so they can be cleared.
+            const keepTerm = isZeroResultResponse
+                ? (isSelectedByGuid || isSelectedByLabel || children.length > 0)
+                : (resultGuids.has(termGuid) || isSelectedByGuid || children.length > 0);
 
             if (keepTerm) {
                 visibleTerms.push({
@@ -208,6 +226,67 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
             return visibleTerms;
         }, []);
+    }
+
+    private readonly normalizeTermLabel = (label: string): string => {
+        return TaxonomyHelper.resolveDisplayLabel(`${label || ''}`.trim()).toLowerCase();
+    }
+
+    private readonly buildLabelSetFromFilterValues = (filterValues: Array<{ name?: string; value?: string }>): Set<string> => {
+        const labelSet = new Set<string>();
+
+        // Names covered by GUID-backed values in the same selection set: parent selections emit
+        // GPP/GP0 tokens plus a plain-label companion value with the same name, which must not
+        // be treated as a genuine label-only selection (it would retain unrelated same-named terms)
+        const guidBackedNames = new Set<string>();
+        (filterValues || []).forEach(filterValue => {
+            if (filterValue?.value && TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).length > 0) {
+                const normalizedName = this.normalizeTermLabel(filterValue.name || '');
+                if (normalizedName) {
+                    guidBackedNames.add(normalizedName);
+                }
+            }
+        });
+
+        const addLabel = (label: string): void => {
+            const normalizedLabel = this.normalizeTermLabel(label);
+            if (normalizedLabel && !guidBackedNames.has(normalizedLabel)) {
+                labelSet.add(normalizedLabel);
+            }
+        };
+
+        (filterValues || []).forEach(filterValue => {
+            if (!filterValue) {
+                return;
+            }
+
+            // GUID-backed values are matched by GUID only: extracting their display labels
+            // would also retain distinct terms that share the same label
+            if (filterValue.value && TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).length > 0) {
+                return;
+            }
+
+            if (filterValue.name) {
+                addLabel(filterValue.name);
+            }
+
+            if (filterValue.value) {
+                addLabel(filterValue.value.trim().replace(/^"(.*)"$/, '$1'));
+
+                const decodedValue = TaxonomyHelper.decodeHexString(filterValue.value);
+                if (decodedValue) {
+                    addLabel(decodedValue);
+                }
+            }
+        });
+
+        return labelSet;
+    }
+
+    private readonly getLabelSetSignature = (labelSet: Set<string>): string => {
+        // JSON serialization avoids ambiguity between e.g. {'a,b'} and {'a','b'}
+        // that a plain comma join would produce
+        return JSON.stringify(Array.from(labelSet.values()).sort((left, right) => left.localeCompare(right)));
     }
 
     private readonly buildGuidSetFromFilterValues = (filterValues: Array<{ value: string }>): Set<string> => {
@@ -1459,12 +1538,22 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
 
             const resultGuids = this.buildGuidSetFromFilterValues(availableFilter.values);
-            const selectedGuids = this.buildGuidSetFromFilterValues(values.filter(value => value.selected));
-            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}`;
+            const selectedValues = values.filter(value => value.selected);
+            const selectedGuids = this.buildGuidSetFromFilterValues(selectedValues);
+            const selectedLabels = this.buildLabelSetFromFilterValues(selectedValues);
+            
+            // Detect when search has completed with zero results (not just loading state)
+            // to differentiate from initial load where we should show full hierarchy
+            const filterWithLimitInfo = availableFilter as IFilterResultWithLimitInfo;
+            const isZeroResultResponse = availableFilter.values.length === 0 && !filterWithLimitInfo.isAwaitingResultSignals;
+            
+            // The zero-result flag changes the pruning semantics, so it must be part of the cache key
+            // to avoid collisions between loading and settled zero-result states (both have empty GUID sets)
+            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}::${this.getLabelSetSignature(selectedLabels)}::${isZeroResultResponse ? '0' : '1'}`;
 
             let prunedHierarchy = this._prunedHierarchyCacheBySelectionKey.get(prunedCacheKey);
             if (!prunedHierarchy) {
-                prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids);
+                prunedHierarchy = this.pruneHierarchy(hierarchicalTerms, resultGuids, selectedGuids, selectedLabels, isZeroResultResponse);
                 this.setLimitedCacheEntry(
                     this._prunedHierarchyCacheBySelectionKey,
                     prunedCacheKey,
@@ -1473,7 +1562,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 );
             }
 
-            filterResultInternal.hierarchicalTerms = prunedHierarchy.length > 0 ? prunedHierarchy : hierarchicalTerms;
+            // On a settled zero-result response, keep the pruned hierarchy even when empty
+            // (only intentionally retained selections remain) instead of restoring the full tree
+            filterResultInternal.hierarchicalTerms = (prunedHierarchy.length > 0 || isZeroResultResponse) ? prunedHierarchy : hierarchicalTerms;
         } catch (error) {
             Log.error('SearchFiltersContainer', new Error(`Error fetching hierarchical terms for filter ${availableFilter.filterName}: ${error}`));
         }
