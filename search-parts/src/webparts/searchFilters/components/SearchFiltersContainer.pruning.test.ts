@@ -79,10 +79,10 @@ const hierarchicalFilterConfiguration: any = {
     hideNodesNotInDataSet: true
 };
 
-async function populate(container: any, availableFilter: any, values: any[], configurationOverrides: any = {}): Promise<any> {
+async function populate(container: any, availableFilter: any, values: any[], configurationOverrides: any = {}, hierarchy: ITestTerm[] = buildTestHierarchy()): Promise<any> {
     // Seed the term hierarchy cache so no taxonomy fetch is required
     const cacheKey = container['getHierarchyCacheKey'](availableFilter.filterName, hierarchicalFilterConfiguration.termSetId, hierarchicalFilterConfiguration.termGroupId);
-    container._hierarchyCacheByFilterKey.set(cacheKey, buildTestHierarchy());
+    container._hierarchyCacheByFilterKey.set(cacheKey, hierarchy);
 
     const filterResultInternal: any = {};
     await container['populateHierarchicalTerms'](
@@ -200,5 +200,56 @@ describe('populateHierarchicalTerms (issue #5060)', () => {
         expect(labels).toContain('Europe');
         expect(labels).not.toContain('Asia');
         expect(labels).not.toContain('Thailand');
+    });
+
+    it('keeps the full-tree fallback for non-empty plain-label refiners with a retained selection', async () => {
+        const container = createContainer();
+        // Plain label refiner values produce no result GUIDs; the label-based selection
+        // retention must not defeat the full-hierarchy fallback in the non-empty branch
+        const result = await populate(
+            container,
+            {
+                filterName: 'RefinableString10',
+                values: [{ name: 'Thailand', value: 'Thailand', count: 2 }],
+                isAwaitingResultSignals: false
+            },
+            [{ name: 'Lyon', value: 'Lyon', selected: true }]
+        );
+        const labels = flattenLabels(result.hierarchicalTerms);
+        expect(labels).toContain('Thailand');
+        expect(labels).toContain('Lyon');
+        expect(labels).toEqual(['Europe', 'France', 'Lyon', 'Asia', 'Thailand']);
+    });
+
+    it('does not retain unrelated branches sharing the label of a GUID-backed selection on a settled zero-result response', async () => {
+        const duplicateLyonGuid = '66666666-6666-6666-6666-666666666666';
+        const hierarchyWithDuplicateLabels: ITestTerm[] = [
+            term(europeGuid, 'Europe', [
+                term(franceGuid, 'France', [
+                    term(lyonGuid, 'Lyon', [], franceGuid)
+                ], europeGuid)
+            ]),
+            term(asiaGuid, 'Asia', [
+                term(duplicateLyonGuid, 'Lyon', [], asiaGuid)
+            ])
+        ];
+        const container = createContainer();
+        const result = await populate(
+            container,
+            { filterName: 'RefinableString10', values: [], isAwaitingResultSignals: false },
+            [{ name: 'Lyon', value: `GP0|#${lyonGuid}`, selected: true }],
+            {},
+            hierarchyWithDuplicateLabels
+        );
+        // Only the branch of the selected GUID is retained, not the Asia branch
+        // whose distinct term shares the same 'Lyon' label
+        expect(flattenLabels(result.hierarchicalTerms)).toEqual(['Europe', 'France', 'Lyon']);
+    });
+
+    it('produces unambiguous label signatures for the pruning cache key', () => {
+        const container = createContainer();
+        const signatureOfJoinedLabel = container['getLabelSetSignature'](new Set(['a,b']));
+        const signatureOfSeparateLabels = container['getLabelSetSignature'](new Set(['a', 'b']));
+        expect(signatureOfJoinedLabel).not.toEqual(signatureOfSeparateLabels);
     });
 });

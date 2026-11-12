@@ -197,11 +197,16 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return terms.reduce((visibleTerms: IHierarchicalTerm[], term) => {
             const children = this.pruneHierarchy(term.children || [], resultGuids, selectedGuids, selectedLabels, isZeroResultResponse);
             const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
-            const termLabel = this.normalizeTermLabel(term.label);
+            const isSelectedByGuid = selectedGuids.has(termGuid);
 
             // GUID-less selections (e.g. plain label refinement values) are matched by label,
-            // consistent with the label matching rules used by FilterHierarchicalComponent
-            const isSelected = selectedGuids.has(termGuid) || (!!termLabel && selectedLabels.has(termLabel));
+            // consistent with the label matching rules used by FilterHierarchicalComponent.
+            // Label matching only applies to the zero-result branch: in the non-empty branch
+            // an empty pruned result falls back to the full hierarchy, which remains the
+            // intended behavior for refiners that supply plain label values.
+            const isSelectedByLabel = isZeroResultResponse
+                && selectedLabels.size > 0
+                && selectedLabels.has(this.normalizeTermLabel(term.label));
 
             // When hideNodesNotInDataSet is enabled and we have a zero-result response,
             // only keep nodes that are explicitly selected, plus their ancestor path
@@ -209,8 +214,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             // This prevents showing the full hierarchy when search returns no results
             // while retaining selected terms so they can be cleared.
             const keepTerm = isZeroResultResponse
-                ? (isSelected || children.length > 0)
-                : (resultGuids.has(termGuid) || isSelected || children.length > 0);
+                ? (isSelectedByGuid || isSelectedByLabel || children.length > 0)
+                : (resultGuids.has(termGuid) || isSelectedByGuid || children.length > 0);
 
             if (keepTerm) {
                 visibleTerms.push({
@@ -237,45 +242,38 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             }
         };
 
-        const addLabelsFromTokenString = (token: string): void => {
-            if (!token) {
-                return;
-            }
-
-            const taxonomyLabelRegex = /L0\|#0?[0-9a-f-]{32,36}\|([^;)]+)/gi;
-            let regexMatch: RegExpExecArray | null;
-            while ((regexMatch = taxonomyLabelRegex.exec(token)) !== null) {
-                addLabel(regexMatch[1]);
-            }
-        };
-
         (filterValues || []).forEach(filterValue => {
             if (!filterValue) {
                 return;
             }
 
+            // GUID-backed values are matched by GUID only: extracting their display labels
+            // would also retain distinct terms that share the same label
+            if (filterValue.value && TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).length > 0) {
+                return;
+            }
+
             if (filterValue.name) {
                 addLabel(filterValue.name);
-                addLabelsFromTokenString(filterValue.name);
             }
 
             if (filterValue.value) {
-                const rawValue = filterValue.value.trim().replace(/^"(.*)"$/, '$1');
-                addLabelsFromTokenString(rawValue);
+                addLabel(filterValue.value.trim().replace(/^"(.*)"$/, '$1'));
 
                 const decodedValue = TaxonomyHelper.decodeHexString(filterValue.value);
                 if (decodedValue) {
-                    addLabelsFromTokenString(decodedValue);
-                }
-
-                // Plain label-only values (no taxonomy tokens/GUIDs) are used as labels directly
-                if (TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value).length === 0) {
-                    addLabel(rawValue);
+                    addLabel(decodedValue);
                 }
             }
         });
 
         return labelSet;
+    }
+
+    private readonly getLabelSetSignature = (labelSet: Set<string>): string => {
+        // JSON serialization avoids ambiguity between e.g. {'a,b'} and {'a','b'}
+        // that a plain comma join would produce
+        return JSON.stringify(Array.from(labelSet.values()).sort((left, right) => left.localeCompare(right)));
     }
 
     private readonly buildGuidSetFromFilterValues = (filterValues: Array<{ value: string }>): Set<string> => {
@@ -1538,7 +1536,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             
             // The zero-result flag changes the pruning semantics, so it must be part of the cache key
             // to avoid collisions between loading and settled zero-result states (both have empty GUID sets)
-            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}::${this.getGuidSetSignature(selectedLabels)}::${isZeroResultResponse ? '0' : '1'}`;
+            const prunedCacheKey = `${hierarchyCacheKey}::${this.getGuidSetSignature(resultGuids)}::${this.getGuidSetSignature(selectedGuids)}::${this.getLabelSetSignature(selectedLabels)}::${isZeroResultResponse ? '0' : '1'}`;
 
             let prunedHierarchy = this._prunedHierarchyCacheBySelectionKey.get(prunedCacheKey);
             if (!prunedHierarchy) {
