@@ -27,6 +27,8 @@ import { ComponentType } from '../../common/ComponentType';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { MessageBar, MessageBarType } from '@fluentui/react';
+import { DynamicProperty } from '@microsoft/sp-component-base';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 class TestSearchBoxWebPart extends SearchBoxWebPart {
     public renderCompleted(): void {
@@ -56,6 +58,17 @@ describe('Search Box scoped query publication', () => {
             } }
         });
         return part;
+    };
+    const prepareStandardRender = (part: TestSearchBoxWebPart, sourceReference: string) => {
+        const queryText = {} as DynamicProperty<string>;
+        Object.defineProperty(queryText, 'reference', { value: sourceReference });
+        part['properties'].queryText = queryText;
+        if (!part['domElement']) {
+            Object.defineProperty(part, 'domElement', { value: document.createElement('div') });
+            Object.defineProperty(part['context'], 'pageContext', {
+                value: { cultureInfo: { currentUICultureName: 'en-US' } }
+            });
+        }
     };
     beforeEach(() => {
         notify.mockClear();
@@ -218,6 +231,39 @@ describe('Search Box scoped query publication', () => {
         expect(new URL(window.location.href).searchParams.get('scope')).toBe('all');
         expect(part.getPropertyValue(ComponentType.SearchBox)).toBe('test*');
         render.mockRestore();
+    });
+
+    it('reapplies the URL fragment query after browser hash navigation', () => {
+        const part = create(false);
+        prepareStandardRender(part, 'PageContext:UrlData:fragment');
+        const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockReturnValue('alpha');
+        const render = jest.spyOn(part, 'render').mockResolvedValue();
+        try {
+            part.renderUi();
+            part['_onSearch']('beta');
+            part['_onHashChanged']();
+            part.renderUi();
+            expect(render).toHaveBeenCalled();
+            expect(part['_searchQueryText']).toBe('alpha');
+        } finally {
+            getValue.mockRestore();
+            render.mockRestore();
+        }
+    });
+
+    it('applies a newly connected query source when it returns the same cached value', () => {
+        const part = create(false);
+        prepareStandardRender(part, 'source-a');
+        const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockReturnValue('test');
+        try {
+            part.renderUi();
+            part['_onSearch']('submitted');
+            prepareStandardRender(part, 'source-b');
+            part.renderUi();
+            expect(part['_searchQueryText']).toBe('test');
+        } finally {
+            getValue.mockRestore();
+        }
     });
 
     it.each([
