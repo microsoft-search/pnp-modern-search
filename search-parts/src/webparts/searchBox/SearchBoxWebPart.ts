@@ -81,6 +81,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * The search query text present in the search box
      */
     private _searchQueryText: string = '';
+    /**
+     * The last value and reference read from the connected query text source. Used to avoid overwriting user queries on unrelated re-renders.
+     */
+    private _lastQueryTextSourceValue: string;
+    private _lastQueryTextSourceReference: string;
     private _selectedSearchScope: string = ALL_SEARCH_SCOPE;
     private _scopedQueryText: string = '';
     private _advancedSearchError: string;
@@ -121,7 +126,11 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      */
     private tokenService: ITokenService;
 
-    private readonly _boundRender = this.render.bind(this);
+    private readonly _onHashChanged = (): void => {
+        this._lastQueryTextSourceValue = undefined;
+        this._lastQueryTextSourceReference = undefined;
+        this.render();
+    };
 
     constructor() {
         super();
@@ -241,7 +250,15 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }
         }
 
-        if (inputValue && typeof (inputValue) === 'string') {
+        // Only apply the source value when it changed. Sources such as the page environment search query are not updated on submit,
+        // so re-applying an unchanged value would revert the query typed by the user.
+        const queryTextSourceReference = this.properties.queryText?.reference;
+        const sourceValueChanged = inputValue !== this._lastQueryTextSourceValue
+            || queryTextSourceReference !== this._lastQueryTextSourceReference;
+        this._lastQueryTextSourceValue = inputValue;
+        this._lastQueryTextSourceReference = queryTextSourceReference;
+
+        if (sourceValueChanged && inputValue && typeof (inputValue) === 'string') {
 
             const decodedInputValue = decodeURIComponent(inputValue);
 
@@ -336,7 +353,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     protected onDispose(): void {
         this._webPartDisposed = true;
         window.removeEventListener('popstate', this._onScopedUrlChanged);
-        window.removeEventListener('hashchange', this._boundRender);
+        window.removeEventListener('hashchange', this._onHashChanged);
         if (this._pushStateCallback) {
             window.history.pushState = this._pushStateCallback;
         }
@@ -1168,9 +1185,9 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         const queryTextSource = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
         if (!this.properties.advancedSearch && queryTextSource && this.properties.queryText?.reference?.localeCompare('PageContext:UrlData:fragment') === 0) {
             // Manually subscribe to hash change since the default property doesn't
-            window.addEventListener('hashchange', this._boundRender);
+            window.addEventListener('hashchange', this._onHashChanged);
         } else {
-            window.removeEventListener('hashchange', this._boundRender);
+            window.removeEventListener('hashchange', this._onHashChanged);
         }
     }
 
