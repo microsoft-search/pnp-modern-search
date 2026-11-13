@@ -115,6 +115,11 @@
       }
   }
 
+  .searchTextField.hasSearchText {
+      // The clear (back) button is shown at the start, so remove the start padding to avoid a gap
+      padding-inline-start: 0;
+  }
+
   .hasSearchText {
       :global(.ms-SearchBox-iconContainer) {
           display: none;

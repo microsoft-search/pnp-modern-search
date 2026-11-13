@@ -157,7 +157,7 @@ describe('advanced Search Box', () => {
         expect(button.querySelector('svg')).toBeNull();
     });
 
-    it.each([false, true])('preserves compact button geometry and custom colors with autocomplete=%s', autocomplete => {
+    it.each([false, true])('keeps 4.25 button padding and custom colors with autocomplete=%s', autocomplete => {
         mount(createProps({
             inputValue: 'test',
             searchButtonColor: '#123456',
@@ -171,7 +171,7 @@ describe('advanced Search Box', () => {
         const button = host.querySelector<HTMLElement>('button[aria-label="Search"]');
         const computed = getComputedStyle(button);
         expect(button.parentElement.classList.contains('searchButton')).toBe(true);
-        expect(computed.paddingLeft).toBe('4px');
+        expect(computed.paddingLeft).toBe('12px');
         expect(computed.backgroundColor).toBe('rgb(18, 52, 86)');
         expect(computed.color).toBe('rgb(171, 205, 239)');
         expect(button.querySelector('svg')).not.toBeNull();

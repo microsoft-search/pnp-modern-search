@@ -81,6 +81,10 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
      * The search query text present in the search box
      */
     private _searchQueryText: string = '';
+    /**
+     * The last value read from the connected query text source. Used to avoid overwriting a newer user query on unrelated re-renders (e.g. vertical changes).
+     */
+    private _lastQueryTextSourceValue: string;
     private _selectedSearchScope: string = ALL_SEARCH_SCOPE;
     private _scopedQueryText: string = '';
     private _advancedSearchError: string;
@@ -241,7 +245,12 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             }
         }
 
-        if (inputValue && typeof (inputValue) === 'string') {
+        // Only apply the source value when it changed. Sources such as the page environment search query are not updated on submit,
+        // so re-applying an unchanged value would revert the query typed by the user.
+        const sourceValueChanged = inputValue !== this._lastQueryTextSourceValue;
+        this._lastQueryTextSourceValue = inputValue;
+
+        if (sourceValueChanged && inputValue && typeof (inputValue) === 'string') {
 
             const decodedInputValue = decodeURIComponent(inputValue);
 

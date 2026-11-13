@@ -366,7 +366,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                 width: 'auto',
                 height: '100%',
                 minWidth: '32px',
-                padding: displayMode === 'icon' ? '0 4px' : '0 12px',
+                padding: '0 12px',
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -578,7 +578,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : 'auto',
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
             padding: '0 8px',
-            paddingInlineStart: this.props.scopeLabel ? 0 : 8
+            paddingInlineStart: this.props.scopeLabel || this.state.searchInputValue ? 0 : 8
         };
 
         const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
@@ -611,7 +611,7 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                             value={this.state.searchInputValue}
                             autoComplete="off"
-                            styles={{ root: dynamicSearchBoxTextStyle }}
+                            styles={{ root: dynamicSearchBoxTextStyle, clearButton: { margin: 0 } }}
                             style={{ ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                             //data-is-focusable={this.state.proposedQuerySuggestions.length > 0}
                             onChange={(event) => {
