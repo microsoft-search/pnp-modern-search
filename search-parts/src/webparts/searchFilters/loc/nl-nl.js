@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Selecteer veld",
+                RefinerCheckVerified: "Geverifieerd",
+                RefinerCheckUnknown: "Niet geverifieerd",
+                RefinerCheckFailed: "Controle mislukt",
                 FilterNameLabel: "Filterveld",
                 FilterMaxBuckets: "# waarden",
                 FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Dit filtersjabloon gedraagt zich als een statisch filter en stuurt enkel geselecteerde waarden welke vooraf gedefinieerd zijn naar de verbonden databron.  Filterwaarden afkomstig uit de verbonden databron worden buiten beschouwing gelaten.",
                 CustomizeFiltersBtnLabel: "Bewerk",
                 CustomizeFiltersHeader: "Bewerk filters",
-                CustomizeFiltersDescription: "Configureer de zoekfilters door rijen toe te voegen of te verwijderen. Je kunt velden uit de resultaten van de databron selecteren (wanneer al geselecteerd) of statische waarden gebruiken voor filters. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Voorgestelde velden komen uit verbonden resultaten. Een SharePoint-test kan velden bevestigen die verfijningswaarden teruggeven, maar controleert het zoekschema niet. Je kunt ook handmatig een veld invoeren. Voor statische en aangepaste filters kunnen andere regels gelden. Meer informatie: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Pas filters aan",
                 ShowCount: "Toon aantallen",
                 Operator: "Bewerking tussen waarden",

@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Valitse kenttä",
+                RefinerCheckVerified: "Vahvistettu",
+                RefinerCheckUnknown: "Ei vahvistettu",
+                RefinerCheckFailed: "Tarkistus epäonnistui",
                 FilterNameLabel: "Suodatinkenttä",
                 FilterMaxBuckets: "# arvojen määrä",
                 FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Tämä suodatintemplaatti on staattinen ja ainoastaan lähettää valitut suodatinarvot yhdistettyyn sisältölähteeseen. Palautunut hakutulos ei vaikuta suodattimen arvoihin.",
                 CustomizeFiltersBtnLabel: "Muokkaa",
                 CustomizeFiltersHeader: "Muokkaa suodattimia",
-                CustomizeFiltersDescription: "Konfiguroi haun suodattimet lisäämällä tai poistamalla rivejä. Voit valita kenttiä kaikista sisältölähteistä tai käyttää staattisia arvoja suodattimina. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Ehdotetut kentät tulevat yhdistetyistä tuloksista. SharePoint-testi voi vahvistaa tarkennusarvoja palauttavat kentät, mutta se ei tarkista hakurakennetta. Voit myös kirjoittaa kentän itse. Staattiset ja mukautetut suodattimet voivat käyttää eri sääntöjä. Lisätietoja: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Mukauta suodattimia",
                 ShowCount: "Näytä tulosten määrä",
                 Operator: "Suodatinarvojen välinen operaattori",

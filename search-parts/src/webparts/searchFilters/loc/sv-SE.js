@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Välj fält",
+                RefinerCheckVerified: "Verifierat",
+                RefinerCheckUnknown: "Inte verifierat",
+                RefinerCheckFailed: "Kontrollen misslyckades",
                 FilterNameLabel: "Fält för filter",
                 FilterMaxBuckets: "# av värden",
                 FilterMaxBucketsWarning: "Det maximala antalet värden är 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Denna filtermall fungerar som ett statiskt filter och skickar endast slumpmässigt valda värden till den anslutna datakällan. Inkommande filtervärden beaktas inte.",
                 CustomizeFiltersBtnLabel: "Redigera",
                 CustomizeFiltersHeader: "Redigera filter",
-                CustomizeFiltersDescription: "Konfigurera sökfilter genom att lägga till eller ta bort rader. Du kan välja fält från datakällans resultat (om dessa redan är markerade), eller så kan du använda statiska värden. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Föreslagna fält kommer från anslutna resultat. Ett SharePoint-test kan bekräfta fält som returnerar förfiningsvärden, men validerar inte sökschemat. Du kan också ange ett fält manuellt. Statiska och anpassade filter kan använda andra regler. Mer information: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Anpassa filter",
                 ShowCount: "Visa antal",
                 Operator: "Operator mellan värden",

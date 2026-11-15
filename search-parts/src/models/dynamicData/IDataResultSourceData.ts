@@ -11,6 +11,11 @@ export interface IDataResultSourceData {
     availableFieldsFromResults: string[];
 
     /**
+     * The Results web part's configured data source key, when known.
+     */
+    dataSourceKey?: string;
+
+    /**
      * The available filters from the data source results
      */
     availablefilters: IDataFilterResult[];

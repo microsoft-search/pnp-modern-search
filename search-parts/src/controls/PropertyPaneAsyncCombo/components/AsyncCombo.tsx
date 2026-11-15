@@ -16,6 +16,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
      * Flag to avoid options asynchronous fetch overlap
      */
     private searchInProgress: boolean;
+    private optionsLoaded: boolean = false;
 
     public constructor(props: IAsyncComboProps) {
         super(props);
@@ -186,6 +187,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
         if (this.props.availableOptions && !isEqual(this.props.availableOptions, prevProps.availableOptions) 
             || !isEqual(this.props.stateKey, prevProps.stateKey)) {
 
+            this.optionsLoaded = false;
             this.setState({
                 options: this.props.availableOptions.map(x => ({...x})),
                 textDisplayValue: this.getTextDisplayValue()
@@ -314,17 +316,12 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
 
     private onRenderOption(option: IComboBoxOption, defaultRender?: (renderProps?: IComboBoxOption) => JSX.Element): JSX.Element {
 
-        if (this.props.onRenderOption) {
-            return this.props.onRenderOption(option, defaultRender);
-        } else {
-            if (option.key === LOADING_KEY) {
-                return  <div className={styles.spinner} style={{height: "100%"}}>
-                            <Spinner styles={{root: { height: "100%"}}} key={option.key} size={SpinnerSize.small}/>
-                        </div>;
-            } else {
-                return defaultRender(option);
-            }
+        if (option.key === LOADING_KEY) {
+            return  <div className={styles.spinner} style={{height: "100%"}}>
+                        <Spinner styles={{root: { height: "100%"}}} key={option.key} size={SpinnerSize.small}/>
+                    </div>;
         }
+        return this.props.onRenderOption ? this.props.onRenderOption(option, defaultRender) : defaultRender(option);
     }
 
     /**
@@ -334,7 +331,8 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
     private async getOptions(inputText?: string): Promise<void> {
 
         // Case when user opens the dropdown multiple times on the same field
-        if (this.state.options.length > 0 && !this.props.searchAsYouType) {
+        if (this.state.options.length > 0 && !this.props.searchAsYouType
+            && (!this.props.loadOptionsOnFirstOpen || this.optionsLoaded)) {
             return;
         } else {
 
@@ -352,10 +350,11 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
             });
 
             if (this.props.onLoadOptions) {
-                options = await this.props.onLoadOptions(inputText);
+                options = [...await this.props.onLoadOptions(inputText)];
             } else {
                 options = [];
             }
+            this.optionsLoaded = true;
     
             if (!this.props.searchAsYouType) {
 

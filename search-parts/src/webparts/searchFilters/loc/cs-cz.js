@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Vybrat pole",
+                RefinerCheckVerified: "Ověřeno",
+                RefinerCheckUnknown: "Neověřeno",
+                RefinerCheckFailed: "Ověření selhalo",
                 FilterNameLabel: "Filtrační pole",
                 FilterMaxBuckets: "Počet hodnot",
                 FilterMaxBucketsWarning: "Maximální počet hodnot je 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Tato šablona filtru funguje jako statický filtr a odesílá pouze libovolně vybrané hodnoty do připojeného zdroje dat. Přicházející hodnoty filtrů nejsou brány v úvahu.",
                 CustomizeFiltersBtnLabel: "Upravit",
                 CustomizeFiltersHeader: "Upravit filtry",
-                CustomizeFiltersDescription: "Konfigurujte filtry vyhledávání přidáním nebo odebráním řádků. Můžete vybrat pole z výsledků zdroje dat (pokud již byly vybrány) nebo použít statické hodnoty filtrů. Pro více informací navštivte https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Navrhovaná pole pocházejí z připojených výsledků. Test SharePointu může potvrdit pole, která vracejí hodnoty zpřesnění, ale neověřuje schéma vyhledávání. Pole můžete zadat také ručně. Statické a vlastní filtry mohou používat jiná pravidla. Další informace: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Přizpůsobit filtry",
                 ShowCount: "Zobrazit počet",
                 Operator: "Operátor mezi hodnotami",

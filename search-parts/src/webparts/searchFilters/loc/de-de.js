@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Wähle ein Feld",
+                RefinerCheckVerified: "Überprüft",
+                RefinerCheckUnknown: "Nicht überprüft",
+                RefinerCheckFailed: "Prüfung fehlgeschlagen",
                 FilterNameLabel: "Filter Feld",
                 FilterMaxBuckets: "# der Werte",
                 FilterMaxBucketsWarning: "Die maximale Anzahl von Werten ist 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Diese Filter Vorlage agiert als ein statischer Filter und sendet nur willkürlich ausgewählte Werte zu der verbundenen Datenquelle. Einkommende Filter Werte werden nicht beachtet.",
                 CustomizeFiltersBtnLabel: "Bearbeiten",
                 CustomizeFiltersHeader: "Filter bearbeiten",
-                CustomizeFiltersDescription: "Filter durch Hinzufügen/Entfernen von Zeilen konfigurieren. Für die Filter können Felder von den Datenquellen-Ergebnissen oder statische Werte selektiert werden. Für weitere Informationen sehen Sie https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Vorgeschlagene Felder stammen aus verbundenen Ergebnissen. Ein SharePoint-Test kann Felder bestätigen, die Verfeinerungswerte zurückgeben, prüft aber nicht das Suchschema. Sie können ein Feld auch manuell eingeben. Für statische und benutzerdefinierte Filter können andere Regeln gelten. Weitere Informationen: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Filter anpassen",
                 ShowCount: "Zeige Anzahl",
                 Operator: "Operator zwichen Werten",

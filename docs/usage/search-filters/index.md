@@ -31,7 +31,7 @@ The filter settings are as follow:
 | **Setting** | **Description** |
 |------------|-----------------|
 | **Display Name** | A friendly name for the filter |
-| **Filter field** | The internal data source field to use as filter. Here you can select a field from the current data source (if data have been already retrieved) of type your own custom value (press enter to validate).
+| **Filter field** | The internal data source field to use as a filter. Suggestions come from connected Results web parts when results are available. You can also type a field name or alias and press Enter; existing values are preserved. See [SharePoint refiner checks](#sharepoint-refiner-checks) for the optional, non-blocking status shown for SharePoint Search suggestions. Static and custom filters may follow different rules. |
 | **# of values** | The maximum number of values to retrieve for a filter, up to 1000. When left unset, SharePoint Search defaults to 100 and Microsoft Search to 10. The field shows the default as a hint when all connected results sources have the same known default; it does not save that hint as a configured limit. Enter a number to override the default. |
 | **Show warning when limit is reached** | Off by default. When enabled, an info icon appears after the filter title if the connected API returns a number of refiner or aggregation values equal to or greater than the configured **# of values** limit. Hover the icon to see the warning details. |
 | **Template** | The template to use to display filter values. The builtin templates are: </br><ul><li>**Check box** <p align="center">!["Check box"](../../assets/webparts/search-filters/checkbox_template.png)</p></li><li>**Date range** <p align="center">!["Date range"](../../assets/webparts/search-filters/daterange_template.png)</p></li><li>**Date interval** <p align="center">!["Date interval"](../../assets/webparts/search-filters/dateinterval_template.png)</p></li><li>**Combo** <p align="center">!["Combo"](../../assets/webparts/search-filters/combo_template.png)</p></br> You can search a value directly in the list by typing keywords in the combo text field.</br></br><li>**People Template** <p align="center">!["People Template"](../../assets/webparts/search-filters/people_template.png) (a refiner for people values)</p></li><li>**People Picker** (searchable picker for tenant users)</li><li>**Hierarchical Refiner** (taxonomy tree for parent/child terms)</li></ul>
@@ -42,6 +42,12 @@ The filter settings are as follow:
 | **Operator between values** | If multi values is selected, the operator to use between values (OR/AND).
 | **Sort values by** | Sort values by name or by count.
 | **Sort direction** | Sort values in ascending/descending order.
+
+### SharePoint refiner checks
+
+When all connected Results web parts use SharePoint Search, opening a built-in refiner's field dropdown tests up to the first 100 suggested fields in batches against a wildcard SharePoint Search query from the current site. Hover over the status icon for its label. A green check mark labeled **Verified** means the field returned refiner values for that test query. **Not verified** means no values were returned or the field was not tested; it does not mean the field is invalid. **Check failed** indicates that field's request failed; successful checks in other batches are retained. The check retries HTTP 400 responses in smaller batches, with a limit on retries. Failure details are logged in the browser console.
+
+The test uses the current user's search access, not the connected Results web parts' configured queries, result sources, or filters. Results can therefore differ for another query or user. A returned refiner confirms observed behavior, not an underlying schema flag; SharePoint can use properties marked refinable or sortable as refiners. Check the applicable [search schema](https://learn.microsoft.com/en-us/sharepoint/manage-search-schema) for authoritative settings and aliases. The test does not run for static People Picker or custom filter controls, or when connected sources include Microsoft Search or other data sources. Suggestions remain selectable regardless of status, and manually entered fields are not tested.
 
 ### Restricting the People Picker by email domain
 
