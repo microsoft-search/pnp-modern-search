@@ -60,8 +60,10 @@ import { ExtensibilityConfigurationHelper } from '../../helpers/ExtensibilityCon
 import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
 import { PeoplePickerDomainHelper } from '../../helpers/PeoplePickerDomainHelper';
 import { IStaticPeopleFilterConfiguration } from './IStaticPeopleFilterConfiguration';
-import { getCommonDefaultMaxBuckets } from '../../dataSources/AvailableDataSources';
+import { BuiltinDataSourceProviderKeys, getCommonDefaultMaxBuckets } from '../../dataSources/AvailableDataSources';
+import { ISharePointSearchService } from '../../services/searchService/ISharePointSearchService';
 import MaxBucketsEditor from './components/MaxBucketsEditor';
+import { renderRefinerCheckOption } from './components/RefinerCheckOption';
 
 const LogSource = "SearchFiltersWebPart";
 
@@ -1034,6 +1036,35 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
     private getFilterSettings(): IPropertyPaneField<any>[] {
 
         let availableFieldOptionsFromResults: IComboBoxOption[] = [];
+        const connectedResults = this._dataSourceDynamicProperties
+            .map(property => DynamicPropertyHelper.tryGetValueSafe(property));
+        const canCheckSharePointRefiners = connectedResults.length > 0
+            && connectedResults.every(data => data?.dataSourceKey === BuiltinDataSourceProviderKeys.SharePointSearch);
+        let refinerCheck: Promise<IComboBoxOption[]> | undefined;
+        const loadCheckedOptions = (): Promise<IComboBoxOption[]> => {
+            if (!refinerCheck) {
+                refinerCheck = import(
+                    /* webpackChunkName: 'pnp-modern-search-refiner-check' */
+                    '../../services/searchService/SharePointSearchService'
+                )
+                    .then(({ SharePointSearchService }) =>
+                        this.context.serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey)
+                            .getRefinersWithValues(availableFieldOptionsFromResults.slice(0, 100).map(option => String(option.key)))
+                    )
+                    .then(verified => {
+                        const names = new Set(verified.map(name => name.toLowerCase()));
+                        return availableFieldOptionsFromResults.map(option => ({
+                            ...option,
+                            data: names.has(String(option.key).toLowerCase()) ? 'verified' : 'unknown'
+                        }));
+                    })
+                    .catch(error => {
+                        Log.error(LogSource, error instanceof Error ? error : new Error(String(error)), this.context.serviceScope);
+                        return availableFieldOptionsFromResults.map(option => ({ ...option, data: 'failed' }));
+                    });
+            }
+            return refinerCheck;
+        };
         const defaultMaxBuckets = getCommonDefaultMaxBuckets(this._dataSourceDynamicProperties.map(property => {
             const data: IDataResultSourceData | undefined = DynamicPropertyHelper.tryGetValueSafe(property);
             return data?.defaultMaxBuckets;
@@ -1078,17 +1109,22 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                 type: this._customCollectionFieldType.custom,
                 required: true,
                 onCustomRender: (field, value, onUpdate, item) => {
+                    const checkRefiners = canCheckSharePointRefiners
+                        && item.selectedTemplate !== BuiltinFilterTemplates.StaticPeople
+                        && !this.availableFilterControlDefinitions.some(control => control.key === item.selectedTemplate);
                     return (
                         React.createElement("div", { title: item[field.id] ? item[field.id] : '' },
                             React.createElement(AsyncCombo, {
                                 allowFreeform: true,
-                                availableOptions: availableFieldOptionsFromResults, // We remove already selected fields
+                                availableOptions: availableFieldOptionsFromResults,
+                                loadOptionsOnFirstOpen: checkRefiners,
                                 placeholder: webPartStrings.PropertyPane.DataFilterCollection.SelectFilterComboBoxLabel,
                                 textDisplayValue: item[field.id] ? item[field.id] : '',
                                 defaultSelectedKey: item[field.id] ? item[field.id] : '',
                                 onLoadOptions: () => {
-                                    return Promise.resolve(availableFieldOptionsFromResults);
+                                    return checkRefiners ? loadCheckedOptions() : Promise.resolve(availableFieldOptionsFromResults);
                                 },
+                                onRenderOption: checkRefiners ? renderRefinerCheckOption : undefined,
                                 onUpdateOptions: () => { },
                                 onUpdate: (filterValue: IComboBoxOption) => {
                                     onUpdate(field.id, filterValue.key);

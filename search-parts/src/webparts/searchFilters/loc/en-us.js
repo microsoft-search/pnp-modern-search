@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Select field",
+                RefinerCheckVerified: "Verified",
+                RefinerCheckUnknown: "Not verified",
+                RefinerCheckFailed: "Check failed",
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# of values",
                 FilterMaxBucketsWarning: "The maximum number of values is 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "This filter template acts as a static filter and only sends arbitrary selected values to the connected data source. Incoming filter values are not taken into account.",
                 CustomizeFiltersBtnLabel: "Edit",
                 CustomizeFiltersHeader: "Edit filters",
-                CustomizeFiltersDescription: "Configure search filters by adding or removing rows. You can select fields from the data source results (if already selected) or use static values for filters.For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Suggested fields come from connected results. SharePoint tests can confirm fields that return refiner values, but do not validate the search schema. You can also enter a field manually. Static and custom filters can use different rules. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Customize filters",
                 ShowCount: "Show count",
                 TermSetId: "Termset id",

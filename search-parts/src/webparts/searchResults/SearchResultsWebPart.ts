@@ -470,6 +470,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this._currentDataResultsSourceData.handlebarsContext = this.templateService.Handlebars;
                 this._currentDataResultsSourceData.totalCount = this.dataSource?.getItemCount();
                 this._currentDataResultsSourceData.defaultMaxBuckets = getDataSourceDefaultMaxBuckets(this.properties.dataSourceKey);
+                this._currentDataResultsSourceData.dataSourceKey = this.properties.dataSourceKey;
                 this._currentDataResultsSourceData.connectedFilterSourceReference = this.properties.filtersDataSourceReference;
                 this._currentDataResultsSourceData.selectedProperties = this.getSelectedProperties();
                 this._currentDataResultsSourceData.connectedSearchBoxSourceId = this.properties.queryText?.reference?.split(':')[0];

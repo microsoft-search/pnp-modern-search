@@ -266,6 +266,41 @@ export class SharePointSearchService implements ISharePointSearchService {
         return managedProperties;
     }
 
+    public async getRefinersWithValues(properties: string[]): Promise<string[]> {
+        const candidates = Array.from(new Set(properties.filter(property => /^[a-zA-Z0-9_]+$/.test(property))));
+        const verified: string[] = [];
+
+        for (let index = 0; index < candidates.length; index += 20) {
+            const batch = candidates.slice(index, index + 20);
+            const response = await this.spHttpClient.post(this.searchEndpointUrl, SPHttpClient.configurations.v1, {
+                body: this.getRequestPayload({ Querytext: '*', RowLimit: 1, Refiners: batch.join(',') }),
+                headers: {
+                    'odata-version': '3.0',
+                    'accept': 'application/json;odata=nometadata',
+                    'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
+                    'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`SharePoint refiner check failed: HTTP ${response.status} ${response.statusText}`);
+            }
+
+            const result: ISharePointSearchResponse = await response.json();
+            if (!result.PrimaryQueryResult) {
+                throw new Error('SharePoint refiner check returned an invalid response.');
+            }
+            const requested = new Set(batch.map(name => name.toLowerCase()));
+            for (const refiner of result.PrimaryQueryResult.RefinementResults?.Refiners || []) {
+                if (requested.has(refiner.Name?.toLowerCase()) && refiner.Entries?.length > 0) {
+                    verified.push(refiner.Name);
+                }
+            }
+        }
+
+        return verified;
+    }
+
     /**
      * Get all available languages for the search query
      */

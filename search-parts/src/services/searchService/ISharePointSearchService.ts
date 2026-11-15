@@ -15,6 +15,11 @@ export interface ISharePointSearchService {
      * Get available SharePoint search managed properties from the search schema
      */
 	getAvailableManagedProperties(): Promise<ISharePointManagedProperty[]>;
+
+     /**
+     * Find requested refiners that returned values for a wildcard search.
+     */
+     getRefinersWithValues(properties: string[]): Promise<string[]>;
 	
 	/**
      * Get all available languages for the search query

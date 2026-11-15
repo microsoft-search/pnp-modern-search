@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Velg felt",
+                RefinerCheckVerified: "Bekreftet",
+                RefinerCheckUnknown: "Ikke bekreftet",
+                RefinerCheckFailed: "Kontrollen mislyktes",
                 FilterNameLabel: "Felt for filter",
                 FilterMaxBuckets: "Antall verdier",
                 FilterMaxBucketsWarning: "Maksimalt antall verdier er 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Denne filtermalen fungerer som et statisk filter og sender angitte verdier til den tilkoblede datakilden. Innkommende filterverdier har ingen effekt.",
                 CustomizeFiltersBtnLabel: "Rediger",
                 CustomizeFiltersHeader: "Rediger filter",
-                CustomizeFiltersDescription: "Konfigurer søkefilter ved å legge til eller fjerne rader. Du kan velge felt fra datakildens resultater (om disse allerede er lastet lastet inn), eller så kan du bruke statiske verdier for filter. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Foreslåtte felt kommer fra tilkoblede resultater. En SharePoint-test kan bekrefte felt som returnerer avgrensningsverdier, men validerer ikke søkeskjemaet. Du kan også skrive inn et felt manuelt. Statiske og egendefinerte filtre kan bruke andre regler. Mer informasjon: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Tilpass filter",
                 ShowCount: "Vis antall",
                 Operator: "Uttrykk mellom verdier",

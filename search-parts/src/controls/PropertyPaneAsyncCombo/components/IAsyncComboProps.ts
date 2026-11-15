@@ -30,6 +30,11 @@ export interface IAsyncComboProps {
     onLoadOptions?: (inputText?: string) => Promise<IComboBoxOption[]>;
 
     /**
+     * Load options on first menu opening even when initial options are available.
+     */
+    loadOptionsOnFirstOpen?: boolean;
+
+    /**
      * Callback when a field value is updated
      */
     onUpdate: (value: IComboBoxOption | IComboBoxOption[]) => void;

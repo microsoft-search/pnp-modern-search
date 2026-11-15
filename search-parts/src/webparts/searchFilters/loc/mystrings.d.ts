@@ -32,6 +32,9 @@ declare interface ISearchFiltersWebPartStrings {
         },
         DataFilterCollection: {
             SelectFilterComboBoxLabel: string;
+            RefinerCheckVerified: string;
+            RefinerCheckUnknown: string;
+            RefinerCheckFailed: string;
             FilterNameLabel: string;
             FilterMaxBuckets: string;
             FilterMaxBucketsWarning: string;

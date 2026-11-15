@@ -33,6 +33,9 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Wybierz pole",
+                RefinerCheckVerified: "Zweryfikowane",
+                RefinerCheckUnknown: "Niezweryfikowane",
+                RefinerCheckFailed: "Sprawdzanie nie powiodło się",
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# wartości",
                 FilterMaxBucketsWarning: "Maksymalna liczba wartości to 1000",
@@ -60,7 +63,7 @@ define([], function () {
                 FilterTypeStaticFilter: "Ten szablon filtru działa jak statyczny filtr i jedynie wysyła z góry wybraną wartość do połączonego źródła danych. Przychodzące wartości filtrów nie są brane pod uwagę.",
                 CustomizeFiltersBtnLabel: "Edytuj",
                 CustomizeFiltersHeader: "Edytuj filtry",
-                CustomizeFiltersDescription: "Konfiguruj filtry wyszukiwania dodając i usuwając wiersze. Możesz wybrać pola z wyników źródła wyszukiwania lub użyć stałych wartości filtrów. For more details see https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
+                CustomizeFiltersDescription: "Sugerowane pola pochodzą z połączonych wyników. Test SharePoint może potwierdzić pola zwracające wartości uściślania, ale nie sprawdza schematu wyszukiwania. Możesz też ręcznie wpisać pole. Filtry statyczne i niestandardowe mogą stosować inne reguły. Więcej informacji: https://microsoft-search.github.io/pnp-modern-search/usage/search-filters/#filter-settings",
                 CustomizeFiltersFieldLabel: "Zmodyfikuj filtry",
                 ShowCount: "Pokaż liczność",
                 Operator: "Operator pomiędzy wartościami",
