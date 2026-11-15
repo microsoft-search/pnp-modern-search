@@ -2,6 +2,11 @@ import ISharePointManagedProperty from "../../models/search/ISharePointManagedPr
 import { ISharePointSearchResults } from "../../models/search/ISharePointSearchResults";
 import { ISharePointSearchQuery } from "../../models/search/ISharePointSearchQuery";
 
+export interface IRefinerCheckResult {
+     verified: string[];
+     failed: string[];
+}
+
 export interface ISharePointSearchService {
 
      /**
@@ -17,9 +22,9 @@ export interface ISharePointSearchService {
 	getAvailableManagedProperties(): Promise<ISharePointManagedProperty[]>;
 
      /**
-     * Find requested refiners that returned values for a wildcard search.
+     * Find requested refiners that returned values and those whose checks failed.
      */
-     getRefinersWithValues(properties: string[]): Promise<string[]>;
+     getRefinersWithValues(properties: string[]): Promise<IRefinerCheckResult>;
 	
 	/**
      * Get all available languages for the search query

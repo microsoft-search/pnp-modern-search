@@ -350,7 +350,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
             });
 
             if (this.props.onLoadOptions) {
-                options = await this.props.onLoadOptions(inputText);
+                options = [...await this.props.onLoadOptions(inputText)];
             } else {
                 options = [];
             }

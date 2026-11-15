@@ -1051,16 +1051,21 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         this.context.serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey)
                             .getRefinersWithValues(availableFieldOptionsFromResults.slice(0, 100).map(option => String(option.key)))
                     )
-                    .then(verified => {
-                        const names = new Set(verified.map(name => name.toLowerCase()));
+                    .then(result => {
+                        const verified = new Set(result.verified.map(name => name.toLowerCase()));
+                        const failed = new Set(result.failed.map(name => name.toLowerCase()));
                         return availableFieldOptionsFromResults.map(option => ({
                             ...option,
-                            data: names.has(String(option.key).toLowerCase()) ? 'verified' : 'unknown'
+                            data: verified.has(String(option.key).toLowerCase()) ? 'verified'
+                                : failed.has(String(option.key).toLowerCase()) ? 'failed' : 'unknown'
                         }));
                     })
                     .catch(error => {
                         Log.error(LogSource, error instanceof Error ? error : new Error(String(error)), this.context.serviceScope);
-                        return availableFieldOptionsFromResults.map(option => ({ ...option, data: 'failed' }));
+                        return availableFieldOptionsFromResults.map((option, index) => ({
+                            ...option,
+                            data: index < 100 && /^[a-zA-Z0-9_]+$/.test(String(option.key)) ? 'failed' : 'unknown'
+                        }));
                     });
             }
             return refinerCheck;
