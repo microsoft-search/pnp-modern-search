@@ -102,16 +102,19 @@ describe('advanced Search Box', () => {
                 menuItemText: isInverted ? '#eeeeee' : '#222222'
             }
         });
-        mount(createProps({ themeVariant: theme, inputValue: 'test', selectedScopeKey: 'caseId' }));
+        mount(createProps({ themeVariant: theme, selectedScopeKey: 'caseId' }));
         const root = host.firstElementChild as HTMLElement;
         expect(root.style.getPropertyValue('--search-background')).toBe(theme.semanticColors.inputBackground);
         expect(root.style.getPropertyValue('--search-text')).toBe(theme.semanticColors.inputText);
+        expect(root.style.getPropertyValue('--search-icon-color')).toBe(theme.semanticColors.inputText);
         expect(root.style.getPropertyValue('--placeholder-color')).toBe(theme.semanticColors.inputPlaceholderText);
         expect(root.style.getPropertyValue('--suggestion-background')).toBe(theme.semanticColors.menuBackground);
         expect(root.style.getPropertyValue('--search-button-text')).toBe(theme.semanticColors.primaryButtonText);
         const scope = host.querySelector<HTMLElement>('button[aria-label="Scope: CaseId"]');
         expect(getComputedStyle(scope).backgroundColor).toBe(isInverted ? 'rgb(32, 32, 32)' : 'rgb(255, 255, 255)');
+        expect(getComputedStyle(scope).color).toBe(isInverted ? 'rgb(238, 238, 238)' : 'rgb(34, 34, 34)');
         expect(host.querySelector('label').textContent).toBe('CaseId:');
+        expect(host.querySelector('.ms-SearchBox-icon svg')).not.toBeNull();
     });
 
     it('retains explicit author color overrides over section defaults', () => {
@@ -123,6 +126,7 @@ describe('advanced Search Box', () => {
         expect(root.style.getPropertyValue('--search-border')).toBe('#123456');
         expect(root.style.getPropertyValue('--search-border-hover')).toBe('#123456');
         expect(root.style.getPropertyValue('--search-text')).toBe('#234567');
+        expect(root.style.getPropertyValue('--search-icon-color')).toBe('#234567');
         expect(root.style.getPropertyValue('--placeholder-color')).toBe('#345678');
         expect(root.style.getPropertyValue('--search-button-background')).toBe('#456789');
         expect(root.style.getPropertyValue('--search-button-hover')).toBe('#456789');
@@ -155,6 +159,33 @@ describe('advanced Search Box', () => {
         const button = host.querySelector('button[aria-label="Search"]');
         expect(button.querySelector('[data-icon-name="Forward"]')).not.toBeNull();
         expect(button.querySelector('svg')).toBeNull();
+    });
+
+    it.each([
+        [false, '#ffffff', '#222222', undefined, 'rgb(34, 34, 34)'],
+        [true, '#202020', '#eeeeee', undefined, 'rgb(238, 238, 238)'],
+        [true, '#202020', '#eeeeee', '#abcdef', 'rgb(171, 205, 239)']
+    ] as const)('keeps clear icons readable with inverted=%s and text=%s', (isInverted, inputBackground, inputText, searchBoxTextColor, expectedColor) => {
+        mount(createProps({
+            inputValue: 'test',
+            selectedScopeKey: 'caseId',
+            searchBoxTextColor,
+            themeVariant: createTheme({
+                isInverted,
+                semanticColors: { inputBackground, inputText },
+                palette: { neutralSecondary: inputBackground }
+            })
+        }));
+        const expectIconColor = () => {
+            const icon = host.querySelector<HTMLElement>('button[aria-label="Clear search"] [data-icon-name="Back"]');
+            expect(icon.style.color).toBe(expectedColor);
+            expect(getComputedStyle(icon).color).toBe(expectedColor);
+        };
+        expectIconColor();
+        const ActualAutoComplete = jest.requireActual<typeof import('./SearchBoxAutoComplete/SearchBoxAutoComplete')>('./SearchBoxAutoComplete/SearchBoxAutoComplete').default;
+        const element = component['renderSearchBoxWithAutoComplete']('CaseId');
+        render(<ActualAutoComplete {...element.props} />);
+        expectIconColor();
     });
 
     it.each([false, true])('keeps 4.25 button padding and custom colors with autocomplete=%s', autocomplete => {

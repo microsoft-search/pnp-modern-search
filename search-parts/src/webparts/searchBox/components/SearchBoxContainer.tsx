@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
 import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox, DefaultButton, Icon, concatStyleSets, createTheme, ThemeProvider, getId } from '@fluentui/react';
-import { getSearchButtonColorStyles } from './SearchButtonStyles';
+import { getSearchButtonColorStyles, getSearchClearIconProps } from './SearchButtonStyles';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -190,7 +190,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                     ariaLabel={`${scopeLabel ? `${scopeLabel}: ` : ''}${this.props.placeholderText || webPartStrings.SearchBox.DefaultPlaceholder}`}
                     className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
-                    clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
+                    clearButtonProps={{
+                        iconProps: getSearchClearIconProps(this.props.themeVariant, this.props.searchBoxTextColor),
+                        ariaLabel: webPartStrings.SearchBox.ClearButtonLabel
+                    }}
                     value={this.state.searchInputValue}
                     autoComplete="off"
                     styles={{ root: dynamicSearchBoxTextStyle, clearButton: { margin: 0 } }}
@@ -347,16 +350,17 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         const scopeLabel = `${commonStrings.AdvancedSearch.Scope}: ${selectedScopeLabel}`;
         const scopeTheme = createTheme(this.props.themeVariant);
         const colors = scopeTheme.semanticColors;
+        const searchTextColor = this.props.searchBoxTextColor || colors.inputText;
         const themeStyles = {
             backgroundColor: 'transparent',
             '--search-border': this.props.searchBoxBorderColor || colors.inputBorder,
             '--search-border-hover': this.props.searchBoxBorderColor || colors.inputBorderHovered,
             '--search-focus': this.props.searchBoxBorderColor || colors.inputFocusBorderAlt,
             '--search-background': colors.inputBackground,
-            '--search-text': this.props.searchBoxTextColor || colors.inputText,
+            '--search-text': searchTextColor,
             '--search-font-size': `${this.props.searchBoxFontSize || 14}px`,
             '--placeholder-color': this.props.placeholderTextColor || colors.inputPlaceholderText,
-            '--search-icon-color': colors.inputIcon,
+            '--search-icon-color': searchTextColor,
             '--search-button-background': this.props.searchButtonColor || colors.primaryButtonBackground,
             '--search-button-hover': this.props.searchButtonColor || colors.primaryButtonBackgroundHovered,
             '--search-button-text': colors.primaryButtonText,
@@ -395,11 +399,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     alignSelf: 'stretch',
                     border: 'none',
                     borderRadius: 2,
-                    color: colors.inputIcon,
+                    color: searchTextColor,
                     backgroundColor: colors.inputBackground
                 },
-                rootHovered: { backgroundColor: colors.buttonBackgroundHovered, color: colors.inputIcon },
-                rootPressed: { backgroundColor: colors.buttonBackgroundPressed, color: colors.inputIcon }
+                rootHovered: { backgroundColor: colors.buttonBackgroundHovered, color: searchTextColor },
+                rootPressed: { backgroundColor: colors.buttonBackgroundPressed, color: searchTextColor }
             }}
         /> : undefined;
         const renderSearchBox = this.props.enableQuerySuggestions

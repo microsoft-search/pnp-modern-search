@@ -23,13 +23,17 @@
       .scopePrefix {
           display: flex;
           align-items: center;
+          box-sizing: border-box;
           flex-shrink: 0;
           max-width: 40%;
           min-width: 0;
           overflow: hidden;
+          padding-inline-end: 8px;
           white-space: nowrap;
           color: var(--search-text);
+          font-family: var(--fontFamilyCustomFont600, var(--fontFamilyBase, 'Segoe UI', sans-serif));
           font-size: var(--search-font-size, 14px);
+          line-height: 1.4;
           cursor: text;
       }
 
@@ -83,6 +87,7 @@
       // Support for dynamic placeholder color
       :global(.ms-SearchBox-field) {
         color: var(--search-text);
+        line-height: 1.4;
         &::placeholder {
           color: var(--placeholder-color);
         }
