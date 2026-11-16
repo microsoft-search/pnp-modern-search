@@ -68,9 +68,6 @@ export class ItemSelectionWebComponent extends BaseWebComponent {
             </div>;
         }
         ReactDOM.render(renderItemSelection, this);
-        if (props.isSelected) {
-            this.scrollIntoView();
-        }
     }
 
     protected onDispose(): void {
