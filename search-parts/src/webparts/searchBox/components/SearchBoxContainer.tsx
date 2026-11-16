@@ -358,6 +358,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             '--search-focus': this.props.searchBoxBorderColor || colors.inputFocusBorderAlt,
             '--search-background': colors.inputBackground,
             '--search-text': searchTextColor,
+            '--search-font-family': scopeTheme.fonts.medium.fontFamily,
             '--search-font-size': `${this.props.searchBoxFontSize || 14}px`,
             '--placeholder-color': this.props.placeholderTextColor || colors.inputPlaceholderText,
             '--search-icon-color': searchTextColor,

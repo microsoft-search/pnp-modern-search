@@ -15,6 +15,7 @@ import SearchBoxContainer from './SearchBoxContainer';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { PageOpenBehavior, QueryPathBehavior } from '../../../helpers/UrlHelper';
 import { createTheme } from '@fluentui/react';
+import { ThemeVariantHelper } from '../../../helpers/ThemeVariantHelper';
 
 const createProps = (overrides: Partial<ISearchBoxContainerProps> = {}): ISearchBoxContainerProps => ({
     advancedSearch: true,
@@ -115,6 +116,16 @@ describe('advanced Search Box', () => {
         expect(getComputedStyle(scope).color).toBe(isInverted ? 'rgb(238, 238, 238)' : 'rgb(34, 34, 34)');
         expect(host.querySelector('label').textContent).toBe('CaseId:');
         expect(host.querySelector('.ms-SearchBox-icon svg')).not.toBeNull();
+    });
+
+    it.each([false, true])('shares the input theme font with the prefix with Brand Center normalization=%s', normalizeFonts => {
+        const theme = createTheme({ fonts: { medium: { fontFamily: 'Georgia, serif' } } });
+        const themeVariant = normalizeFonts ? ThemeVariantHelper.resolveThemeVariant(theme) : theme;
+        mount(createProps({ themeVariant, selectedScopeKey: 'caseId', inputValue: 'test' }));
+        const root = host.firstElementChild as HTMLElement;
+        const inputContainer = host.querySelector<HTMLElement>('.ms-SearchBox');
+        expect(root.style.getPropertyValue('--search-font-family')).toBe(themeVariant.fonts.medium.fontFamily);
+        expect(root.style.getPropertyValue('--search-font-family')).toBe(getComputedStyle(inputContainer).fontFamily);
     });
 
     it('retains explicit author color overrides over section defaults', () => {
