@@ -1433,6 +1433,14 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
         if (source && source.id === ComponentType.PageEnvironment) {
             const currentValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
+            let decodedCurrentValue = currentValue;
+            if (typeof currentValue === 'string') {
+                try {
+                    decodedCurrentValue = decodeURIComponent(currentValue);
+                } catch (error) {
+                    decodedCurrentValue = currentValue;
+                }
+            }
             const queryTextReference = this.properties.queryText.reference;
             const queryParameter = queryTextReference.startsWith('PageContext:UrlData:queryParameters.')
                 ? queryTextReference.substring('PageContext:UrlData:queryParameters.'.length)
@@ -1440,7 +1448,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             const queryParameterChanged = queryParameter
                 && previousUrl.searchParams.getAll(queryParameter).join('\0')
                     !== new URL(window.location.href).searchParams.getAll(queryParameter).join('\0');
-            const sourceValueChanged = !queryParameter && currentValue !== this._lastQueryTextSourceValue;
+            const sourceValueChanged = !queryParameter && decodedCurrentValue !== this._lastQueryTextSourceValue;
 
             if (queryParameterChanged || sourceValueChanged) {
                 this._lastQueryTextSourceValue = undefined;

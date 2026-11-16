@@ -281,7 +281,7 @@ describe('Search Box scoped query publication', () => {
     it('preserves a submitted query on vertical rerenders until the source value changes', () => {
         const part = create(false);
         prepareStandardRender(part, 'PageContext:SearchData:searchQuery');
-        let sourceValue = 'alpha';
+        let sourceValue = 'alpha%20beta';
         const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockImplementation(() => sourceValue);
         const getSource = jest.spyOn(DynamicPropertyHelper, 'tryGetSourceSafe')
             .mockReturnValue({ id: ComponentType.PageEnvironment });
