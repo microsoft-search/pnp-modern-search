@@ -14,7 +14,7 @@ jest.mock('CommonStrings', () => ({
     }
 }), { virtual: true });
 jest.mock('@microsoft/sp-component-base', () => ({ DynamicProperty: class {} }));
-jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn() } }));
+jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn(), error: jest.fn() } }));
 jest.mock('@microsoft/sp-property-pane', () => ({
     PropertyPaneToggle: jest.fn(),
     PropertyPaneTextField: jest.fn()
@@ -28,6 +28,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { DynamicProperty } from '@microsoft/sp-component-base';
+import { Log } from '@microsoft/sp-core-library';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 class TestSearchBoxWebPart extends SearchBoxWebPart {
@@ -260,6 +261,20 @@ describe('Search Box scoped query publication', () => {
         } finally {
             getValue.mockRestore();
             render.mockRestore();
+        }
+    });
+
+    it('logs a failed render after browser hash navigation', async () => {
+        const part = create(false);
+        const error = new Error('render failed');
+        const render = jest.spyOn(part, 'render').mockRejectedValue(error);
+        try {
+            part['_onHashChanged']();
+            await Promise.resolve();
+            expect(Log.error).toHaveBeenCalledWith('SearchBoxWebPart', error);
+        } finally {
+            render.mockRestore();
+            jest.mocked(Log.error).mockClear();
         }
     });
 

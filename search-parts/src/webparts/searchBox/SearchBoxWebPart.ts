@@ -129,7 +129,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     private readonly _onHashChanged = (): void => {
         this._lastQueryTextSourceValue = undefined;
         this._lastQueryTextSourceReference = undefined;
-        this.render();
+        this.render().catch((error: Error) => Log.error(LogSource, error));
     };
 
     constructor() {
@@ -1437,7 +1437,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             if (typeof currentValue === 'string') {
                 try {
                     decodedCurrentValue = decodeURIComponent(currentValue);
-                } catch (error) {
+                } catch {
                     decodedCurrentValue = currentValue;
                 }
             }
