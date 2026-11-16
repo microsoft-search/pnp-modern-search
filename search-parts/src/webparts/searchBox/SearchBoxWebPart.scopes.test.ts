@@ -14,7 +14,7 @@ jest.mock('CommonStrings', () => ({
     }
 }), { virtual: true });
 jest.mock('@microsoft/sp-component-base', () => ({ DynamicProperty: class {} }));
-jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn() } }));
+jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn(), error: jest.fn() } }));
 jest.mock('@microsoft/sp-property-pane', () => ({
     PropertyPaneToggle: jest.fn(),
     PropertyPaneTextField: jest.fn()
@@ -27,10 +27,17 @@ import { ComponentType } from '../../common/ComponentType';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { MessageBar, MessageBarType } from '@fluentui/react';
+import { DynamicProperty } from '@microsoft/sp-component-base';
+import { Log } from '@microsoft/sp-core-library';
+import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
 
 class TestSearchBoxWebPart extends SearchBoxWebPart {
     public renderCompleted(): void {
-        this['syncAdvancedSearchFromUrl']();
+        if (this['properties'].advancedSearch) {
+            this['syncAdvancedSearchFromUrl']();
+        } else {
+            super.renderCompleted();
+        }
     }
 
     public renderUi(): void {
@@ -56,6 +63,25 @@ describe('Search Box scoped query publication', () => {
             } }
         });
         return part;
+    };
+    const prepareStandardRender = (part: TestSearchBoxWebPart, sourceReference: string) => {
+        const queryText = {} as DynamicProperty<string>;
+        Object.defineProperty(queryText, 'reference', { value: sourceReference });
+        part['properties'].queryText = queryText;
+        if (!part['domElement']) {
+            Object.defineProperty(part, 'domElement', { value: document.createElement('div') });
+            Object.defineProperty(part['context'], 'pageContext', {
+                value: { cultureInfo: { currentUICultureName: 'en-US' } }
+            });
+        }
+    };
+    const getRenderedInputValue = (): string => {
+        const calls = jest.mocked(ReactDom.render).mock.calls;
+        const root = calls[calls.length - 1]?.[0];
+        if (!React.isValidElement<{ children: React.ReactElement<{ inputValue: string }> }>(root)) {
+            throw new Error('Expected the Search Box render root to be a React element');
+        }
+        return root.props.children.props.inputValue;
     };
     beforeEach(() => {
         notify.mockClear();
@@ -218,6 +244,114 @@ describe('Search Box scoped query publication', () => {
         expect(new URL(window.location.href).searchParams.get('scope')).toBe('all');
         expect(part.getPropertyValue(ComponentType.SearchBox)).toBe('test*');
         render.mockRestore();
+    });
+
+    it('reapplies the URL fragment query after browser hash navigation', () => {
+        const part = create(false);
+        prepareStandardRender(part, 'PageContext:UrlData:fragment');
+        const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockReturnValue('alpha');
+        const render = jest.spyOn(part, 'render').mockResolvedValue();
+        try {
+            part.renderUi();
+            part['_onSearch']('beta');
+            part['_onHashChanged']();
+            part.renderUi();
+            expect(render).toHaveBeenCalled();
+            expect(part['_searchQueryText']).toBe('alpha');
+        } finally {
+            getValue.mockRestore();
+            render.mockRestore();
+        }
+    });
+
+    it('logs a failed render after browser hash navigation', async () => {
+        const part = create(false);
+        const error = new Error('render failed');
+        const render = jest.spyOn(part, 'render').mockRejectedValue(error);
+        try {
+            part['_onHashChanged']();
+            await Promise.resolve();
+            expect(Log.error).toHaveBeenCalledWith('SearchBoxWebPart', error);
+        } finally {
+            render.mockRestore();
+            jest.mocked(Log.error).mockClear();
+        }
+    });
+
+    it('applies a newly connected query source when it returns the same cached value', () => {
+        const part = create(false);
+        prepareStandardRender(part, 'source-a');
+        const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockReturnValue('test');
+        try {
+            part.renderUi();
+            part['_onSearch']('submitted');
+            prepareStandardRender(part, 'source-b');
+            part.renderUi();
+            expect(part['_searchQueryText']).toBe('test');
+        } finally {
+            getValue.mockRestore();
+        }
+    });
+
+    it('preserves a submitted query on vertical rerenders until the source value changes', () => {
+        const part = create(false);
+        prepareStandardRender(part, 'PageContext:SearchData:searchQuery');
+        let sourceValue = 'alpha%20beta';
+        const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockImplementation(() => sourceValue);
+        const getSource = jest.spyOn(DynamicPropertyHelper, 'tryGetSourceSafe')
+            .mockReturnValue({ id: ComponentType.PageEnvironment });
+        const render = jest.mocked(ReactDom.render);
+        render.mockClear();
+        try {
+            part.renderUi();
+            part['_onSearch']('beta');
+            notify.mockClear();
+            part['_pushStateCallback'] = window.history.pushState.bind(window.history);
+            part['pushStateHandler']({}, undefined, '?keep=yes&filters=updated');
+            part['_onVerticalsDataChanged']();
+
+            expect(part['_searchQueryText']).toBe('beta');
+            expect(getRenderedInputValue()).toBe('beta');
+            expect(notify).not.toHaveBeenCalled();
+
+            sourceValue = 'gamma';
+            part['_onVerticalsDataChanged']();
+            expect(part['_searchQueryText']).toBe('gamma');
+            expect(getRenderedInputValue()).toBe('gamma');
+            expect(notify).toHaveBeenCalledWith(ComponentType.SearchBox);
+        } finally {
+            getValue.mockRestore();
+            getSource.mockRestore();
+            render.mockClear();
+        }
+    });
+
+    it('invalidates the source cache when pushState requests URL resynchronization', () => {
+        const part = create(false);
+        prepareStandardRender(part, 'PageContext:UrlData:queryParameters.q');
+        window.history.replaceState({}, '', '/?keep=yes&q=beta');
+        const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockReturnValue('alpha');
+        const getSource = jest.spyOn(DynamicPropertyHelper, 'tryGetSourceSafe')
+            .mockReturnValue({ id: ComponentType.PageEnvironment });
+        const render = jest.spyOn(part, 'render').mockResolvedValue();
+        part['_pushStateCallback'] = window.history.pushState.bind(window.history);
+        try {
+            part.renderUi();
+            part['_onSearch']('beta');
+            notify.mockClear();
+
+            part['pushStateHandler']({}, undefined, '?keep=yes&q=alpha');
+            part.renderUi();
+
+            expect(render).toHaveBeenCalled();
+            expect(part['_searchQueryText']).toBe('alpha');
+            expect(getRenderedInputValue()).toBe('alpha');
+            expect(notify).toHaveBeenCalledWith(ComponentType.SearchBox);
+        } finally {
+            getValue.mockRestore();
+            getSource.mockRestore();
+            render.mockRestore();
+        }
     });
 
     it.each([

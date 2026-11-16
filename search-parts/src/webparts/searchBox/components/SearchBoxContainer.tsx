@@ -44,7 +44,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                 width: '100%',
                 height: '100%',
                 minWidth: '32px',
-                padding: displayMode === 'icon' ? '0 4px' : '0 12px',
+                padding: '0 12px',
                 justifyContent: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -166,7 +166,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
             height: this.props.searchBoxHeight ? `${this.props.searchBoxHeight - 2}px` : 'auto',
             fontSize: this.props.searchBoxFontSize ? `${this.props.searchBoxFontSize}px` : undefined,
             padding: '0 8px',
-            paddingInlineStart: scopeLabel ? 0 : 8
+            paddingInlineStart: scopeLabel || this.state.searchInputValue ? 0 : 8
         };
 
         const dynamicPlaceholderStyle: React.CSSProperties = this.props.placeholderTextColor ? {
@@ -193,7 +193,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                     clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
                     value={this.state.searchInputValue}
                     autoComplete="off"
-                    styles={{ root: dynamicSearchBoxTextStyle }}
+                    styles={{ root: dynamicSearchBoxTextStyle, clearButton: { margin: 0 } }}
                     style={{ ...dynamicPlaceholderStyle, ...dynamicIconStyle }}
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
