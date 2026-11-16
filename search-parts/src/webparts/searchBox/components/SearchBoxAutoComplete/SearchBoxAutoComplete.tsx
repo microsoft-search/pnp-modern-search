@@ -3,7 +3,7 @@ import styles from '../SearchBoxContainer.module.scss';
 import { ISearchBoxAutoCompleteState } from './ISearchBoxAutoCompleteState';
 import { ISearchBoxAutoCompleteProps } from './ISearchBoxAutoCompleteProps';
 import { Spinner, SpinnerSize, FocusZone, FocusZoneDirection, SearchBox, IconButton, Label, Icon, IconType, ISearchBox, DefaultButton, concatStyleSets, getId } from '@fluentui/react';
-import { getSearchButtonColorStyles } from '../SearchButtonStyles';
+import { getSearchButtonColorStyles, getSearchClearIconProps } from '../SearchButtonStyles';
 import { isEqual, debounce } from '@microsoft/sp-lodash-subset';
 import { ISuggestion, ISuggestionProviderContext } from '@pnp/modern-search-extensibility';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -608,7 +608,10 @@ export default class SearchBoxAutoComplete extends React.Component<ISearchBoxAut
                             placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
                             ariaLabel={`${this.props.scopeLabel ? `${this.props.scopeLabel}: ` : ''}${this.props.placeholderText || webPartStrings.SearchBox.DefaultPlaceholder}`}
                             className={`${styles.searchTextField} ${this.state.searchInputValue ? styles.hasSearchText : ''}`}
-                            clearButtonProps={{ iconProps: { iconName: 'Back' }, ariaLabel: webPartStrings.SearchBox.ClearButtonLabel }}
+                            clearButtonProps={{
+                                iconProps: getSearchClearIconProps(this.props.themeVariant, this.props.searchBoxTextColor),
+                                ariaLabel: webPartStrings.SearchBox.ClearButtonLabel
+                            }}
                             value={this.state.searchInputValue}
                             autoComplete="off"
                             styles={{ root: dynamicSearchBoxTextStyle, clearButton: { margin: 0 } }}

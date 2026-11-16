@@ -1,5 +1,14 @@
-import { IButtonStyles } from '@fluentui/react';
+import { createTheme, IButtonStyles, IIconProps } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+
+export function getSearchClearIconProps(themeVariant: IReadonlyTheme | undefined, textColor?: string): IIconProps {
+    const color = textColor || createTheme(themeVariant).semanticColors.inputText;
+
+    return {
+        iconName: 'Back',
+        style: { color }
+    };
+}
 
 /**
  * Builds the search button color styles, falling back to the theme primary button colors.
