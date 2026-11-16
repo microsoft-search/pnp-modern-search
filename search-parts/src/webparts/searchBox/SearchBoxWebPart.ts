@@ -1434,6 +1434,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
             // Only re-render if the dynamic property value actually changed
             const currentValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
             if (currentValue !== this._searchQueryText) {
+                this._lastQueryTextSourceValue = undefined;
+                this._lastQueryTextSourceReference = undefined;
                 this.render();
             }
         }
