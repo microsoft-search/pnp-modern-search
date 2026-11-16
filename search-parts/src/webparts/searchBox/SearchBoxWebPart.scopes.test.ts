@@ -283,12 +283,16 @@ describe('Search Box scoped query publication', () => {
         prepareStandardRender(part, 'PageContext:SearchData:searchQuery');
         let sourceValue = 'alpha';
         const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockImplementation(() => sourceValue);
+        const getSource = jest.spyOn(DynamicPropertyHelper, 'tryGetSourceSafe')
+            .mockReturnValue({ id: ComponentType.PageEnvironment });
         const render = jest.mocked(ReactDom.render);
         render.mockClear();
         try {
             part.renderUi();
             part['_onSearch']('beta');
             notify.mockClear();
+            part['_pushStateCallback'] = window.history.pushState.bind(window.history);
+            part['pushStateHandler']({}, undefined, '?keep=yes&filters=updated');
             part['_onVerticalsDataChanged']();
 
             expect(part['_searchQueryText']).toBe('beta');
@@ -302,6 +306,7 @@ describe('Search Box scoped query publication', () => {
             expect(notify).toHaveBeenCalledWith(ComponentType.SearchBox);
         } finally {
             getValue.mockRestore();
+            getSource.mockRestore();
             render.mockClear();
         }
     });
@@ -309,17 +314,18 @@ describe('Search Box scoped query publication', () => {
     it('invalidates the source cache when pushState requests URL resynchronization', () => {
         const part = create(false);
         prepareStandardRender(part, 'PageContext:UrlData:queryParameters.q');
+        window.history.replaceState({}, '', '/?keep=yes&q=beta');
         const getValue = jest.spyOn(DynamicPropertyHelper, 'tryGetValueSafe').mockReturnValue('alpha');
         const getSource = jest.spyOn(DynamicPropertyHelper, 'tryGetSourceSafe')
             .mockReturnValue({ id: ComponentType.PageEnvironment });
         const render = jest.spyOn(part, 'render').mockResolvedValue();
-        part['_pushStateCallback'] = jest.fn();
+        part['_pushStateCallback'] = window.history.pushState.bind(window.history);
         try {
             part.renderUi();
             part['_onSearch']('beta');
             notify.mockClear();
 
-            part['pushStateHandler']({}, undefined, '?q=alpha');
+            part['pushStateHandler']({}, undefined, '?keep=yes&q=alpha');
             part.renderUi();
 
             expect(render).toHaveBeenCalled();

@@ -1426,14 +1426,23 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
 
     private pushStateHandler(state, key, path) {
 
+        const previousUrl = new URL(window.location.href);
         this._pushStateCallback.apply(history, [state, key, path]);
 
         const source = DynamicPropertyHelper.tryGetSourceSafe(this.properties.queryText);
 
         if (source && source.id === ComponentType.PageEnvironment) {
-            // Only re-render if the dynamic property value actually changed
             const currentValue = DynamicPropertyHelper.tryGetValueSafe(this.properties.queryText);
-            if (currentValue !== this._searchQueryText) {
+            const queryTextReference = this.properties.queryText.reference;
+            const queryParameter = queryTextReference.startsWith('PageContext:UrlData:queryParameters.')
+                ? queryTextReference.substring('PageContext:UrlData:queryParameters.'.length)
+                : undefined;
+            const queryParameterChanged = queryParameter
+                && previousUrl.searchParams.getAll(queryParameter).join('\0')
+                    !== new URL(window.location.href).searchParams.getAll(queryParameter).join('\0');
+            const sourceValueChanged = !queryParameter && currentValue !== this._lastQueryTextSourceValue;
+
+            if (queryParameterChanged || sourceValueChanged) {
                 this._lastQueryTextSourceValue = undefined;
                 this._lastQueryTextSourceReference = undefined;
                 this.render();
