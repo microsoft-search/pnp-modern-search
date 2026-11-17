@@ -20,7 +20,9 @@ import {
     DynamicDataSharedDepth,
     IPropertyPanePage,
     IPropertyPaneGroup,
-    IPropertyPaneDropdownOption
+    IPropertyPaneDropdownOption,
+    IPropertyPaneCustomFieldProps,
+    PropertyPaneFieldType
 } from "@microsoft/sp-property-pane";
 const SearchBoxContainer = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-box-container' */ './components/SearchBoxContainer'));
 const SearchScopeTranslations = React.lazy(() => import(/* webpackChunkName: 'pnp-modern-search-scope-translations' */ './components/SearchScopeTranslations'));
@@ -55,6 +57,8 @@ import commonStyles from '../../styles/Common.module.scss';
 import { IDataVerticalSourceData } from '../../models/dynamicData/IDataVerticalSourceData';
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { ALL_SEARCH_SCOPE, buildScopedSearchQuery, readScopedSearchUrl, SearchScopeError, validateSearchScopes, writeScopedSearchUrl } from '../../helpers/SearchScopeHelper';
+import type { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
+import type { IIconNamePickerProps } from '../../controls/IconNamePicker/IconNamePicker';
 
 const LogSource = "SearchBoxWebPart";
 
@@ -71,6 +75,8 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
     private _propertyFieldCollectionData: any = null;
     private _propertyPanePropertyEditor = null;
     private _customCollectionFieldType: any = null;
+    private _iconNamePicker: React.ComponentType<IIconNamePickerProps> = null;
+    private _iconNameOptions: IComboBoxOption[] = [];
 
     /**
      * The dynamic data service instance
@@ -467,6 +473,13 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         );
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
+
+        const { default: IconNamePicker, loadIconNameOptions } = await import(
+            /* webpackChunkName: 'pnp-modern-search-property-pane' */
+            '../../controls/IconNamePicker/IconNamePicker'
+        );
+        this._iconNamePicker = IconNamePicker;
+        this._iconNameOptions = await loadIconNameOptions();
 
         const { PropertyPanePropertyEditor } = await import(
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -924,13 +937,7 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
                 ],
                 selectedKey: this.properties.searchButtonDisplayMode || 'icon'
             }),
-            PropertyPaneTextField('searchIconName', {
-                label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameLabel,
-                value: this.properties.searchIconName || '',
-                placeholder: 'Search',
-                description: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameDescription,
-                disabled: this.properties.searchButtonDisplayMode === 'text'
-            }),
+            this._getSearchIconNameField(),
             PropertyPaneTextField('searchButtonText', {
                 label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchButtonTextLabel,
                 value: this.properties.searchButtonText || '',
@@ -948,6 +955,38 @@ export default class SearchBoxWebPart extends BaseWebPart<ISearchBoxWebPartProps
         ];
 
         return searchBoxStylingFields;
+    }
+
+    private _getSearchIconNameField(): IPropertyPaneField<IPropertyPaneCustomFieldProps> {
+        return {
+            type: PropertyPaneFieldType.Custom,
+            targetProperty: 'searchIconName',
+            properties: {
+                key: 'searchIconName',
+                onRender: (element, _context, changeCallback) => {
+                    // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with the custom field's onDispose callback
+                    ReactDom.render(React.createElement(this._iconNamePicker, {
+                        options: this._iconNameOptions,
+                        value: this.properties.searchIconName || '',
+                        placeholder: 'Search',
+                        ariaLabel: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameLabel,
+                        label: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameLabel,
+                        description: webPartStrings.PropertyPane.SearchBoxStylingGroup.SearchIconNameDescription,
+                        disabled: this.properties.searchButtonDisplayMode === 'text',
+                        onChange: iconName => {
+                            if (!changeCallback) {
+                                throw new Error('The icon picker property-pane change callback is unavailable.');
+                            }
+                            changeCallback('searchIconName', iconName);
+                        }
+                    }), element);
+                },
+                onDispose: element => {
+                    // eslint-disable-next-line @rushstack/pair-react-dom-render-unmount -- paired with the custom field's onRender callback
+                    ReactDom.unmountComponentAtNode(element);
+                }
+            }
+        };
     }
 
     private _resetSearchBoxStylingToDefault(): void {

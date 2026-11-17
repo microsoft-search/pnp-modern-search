@@ -88,7 +88,7 @@ Both the standard input and the suggestion-enabled input use rounded corners and
 | **Search button text color** | The color of the text and icon on the search button. | _White_
 | **Show search button when input is empty** | Display the search button even when the search input field is empty. | False
 | **Search button display** | Choose how the search button appears: Icon only, Text only, or Both (text with icon). | _Icon only_
-| **Search icon name** | The Fluent UI icon name to display on the search button (e.g., Search, Forward, ChevronRight). See [Fluent UI Icons](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons) for available icons. | _Search_
+| **Search icon name** | The Fluent UI icon to display on the search button. Open the dropdown to browse the full Fluent UI v8 MDL2 catalog, or filter by name using the search field at the top. Searching alone does not change the selection. You can also type a custom registered icon name. Clear the field to restore the default search icon. Disabled in "Text only" mode. See [Fluent UI Icons](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons) for available icons. | _Search_
 | **Search button text** | The text to display on the search button when using "Text only" or "Both" display modes. | _"Search"_
 | **Reset styling to default** | Reset all styling options to their default values. | N/A
 
