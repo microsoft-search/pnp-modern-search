@@ -5,7 +5,14 @@ jest.mock('../../providers/AvailableSuggestionProviders', () => ({ AvailableSugg
 jest.mock('../../helpers/ServiceScopeHelper', () => ({ ServiceScopeHelper: {} }));
 jest.mock('@pnp/telemetry-js', () => ({}));
 jest.mock('../../styles/Common.module.scss', () => ({}));
-jest.mock('SearchBoxWebPartStrings', () => ({}), { virtual: true });
+jest.mock('SearchBoxWebPartStrings', () => ({
+    PropertyPane: {
+        SearchBoxStylingGroup: {
+            SearchIconNameLabel: 'Search icon name',
+            SearchIconNameDescription: 'Choose a Fluent UI icon'
+        }
+    }
+}), { virtual: true });
 jest.mock('CommonStrings', () => ({
     AdvancedSearch: { InvalidConfiguration: 'Invalid settings', InvalidScope: 'Invalid scope' },
     General: {
@@ -16,6 +23,7 @@ jest.mock('CommonStrings', () => ({
 jest.mock('@microsoft/sp-component-base', () => ({ DynamicProperty: class {} }));
 jest.mock('@microsoft/sp-core-library', () => ({ Log: { warn: jest.fn(), error: jest.fn() } }));
 jest.mock('@microsoft/sp-property-pane', () => ({
+    PropertyPaneFieldType: { Custom: 1 },
     PropertyPaneToggle: jest.fn(),
     PropertyPaneTextField: jest.fn()
 }));
@@ -30,6 +38,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { Log } from '@microsoft/sp-core-library';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
+import type { IIconNamePickerProps } from '../../controls/IconNamePicker/IconNamePicker';
 
 class TestSearchBoxWebPart extends SearchBoxWebPart {
     public renderCompleted(): void {
@@ -93,6 +102,39 @@ describe('Search Box scoped query publication', () => {
         delete part['properties'].advancedSearch;
         part['initializeProperties']();
         expect(part['properties'].advancedSearch).toBe(false);
+    });
+
+    it.each(['icon', 'both', 'text'] as const)('uses the shared icon picker in %s mode and forwards changes to SPFx', mode => {
+        const part = create();
+        part['properties'].searchButtonDisplayMode = mode;
+        part['properties'].searchIconName = 'Forward';
+        part['_iconNamePicker'] = () => null;
+        part['_iconNameOptions'] = [{ key: 'Forward', text: 'Forward' }];
+        const field = part['_getSearchIconNameField']();
+        const changed = jest.fn();
+        field.properties.onRender(document.createElement('div'), undefined, changed);
+        const calls = jest.mocked(ReactDom.render).mock.calls;
+        const picker = calls[calls.length - 1][0];
+        if (!React.isValidElement<IIconNamePickerProps>(picker)) {
+            throw new Error('Expected the shared icon picker');
+        }
+        expect(picker.type).toBe(part['_iconNamePicker']);
+        expect(picker.props.options).toBe(part['_iconNameOptions']);
+        expect(picker.props.value).toBe('Forward');
+        expect(picker.props.label).toBe('Search icon name');
+        expect(picker.props.description).toBe('Choose a Fluent UI icon');
+        expect(picker.props.disabled).toBe(mode === 'text');
+        picker.props.onChange('ZoomToFit');
+        picker.props.onChange('');
+        expect(changed.mock.calls).toEqual([['searchIconName', 'ZoomToFit'], ['searchIconName', '']]);
+        delete part['properties'].searchIconName;
+        field.properties.onRender(document.createElement('div'), undefined, changed);
+        const lastCall = jest.mocked(ReactDom.render).mock.calls.slice(-1)[0][0];
+        if (!React.isValidElement<IIconNamePickerProps>(lastCall)) {
+            throw new Error('Expected the default icon picker');
+        }
+        expect(lastCall.props.value).toBe('');
+        expect(lastCall.props.placeholder).toBe('Search');
     });
 
     it('lets the collection panel manage keyboard navigation independently of SharePoint Tabster', () => {

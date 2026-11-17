@@ -36,7 +36,7 @@ import { ITextFieldProps, TextField } from '@fluentui/react/lib/TextField';
 import { Dropdown, IDropdownProps } from '@fluentui/react/lib/Dropdown';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import type { IComboBoxOption } from '@fluentui/react/lib/ComboBox';
-import type { IIconNamePickerProps } from './components/IconNamePicker';
+import type { IIconNamePickerProps } from '../../controls/IconNamePicker/IconNamePicker';
 
 const PeoplePicker = React.lazy(() =>
     import(/* webpackChunkName: 'pnp-modern-search-microsoft-graph-toolkit' */ '@microsoft/mgt-react/dist/es6/generated/people-picker')
@@ -365,9 +365,7 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
 
         const [
             { PropertyFieldCollectionData, CustomCollectionFieldType },
-            { default: IconNamePicker },
-            { initializeIcons },
-            { default: iconNames }
+            { default: IconNamePicker, loadIconNameOptions }
         ] = await Promise.all([
             import(
                 /* webpackChunkName: 'pnp-modern-search-property-pane' */
@@ -375,26 +373,14 @@ export default class DataVerticalsWebPart extends BaseWebPart<ISearchVerticalsWe
             ),
             import(
                 /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                './components/IconNamePicker'
-            ),
-            import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@fluentui/font-icons-mdl2'
-            ),
-            import(
-                /* webpackChunkName: 'pnp-modern-search-property-pane' */
-                '@fluentui/font-icons-mdl2/lib/data/AllIconNames.json'
+                '../../controls/IconNamePicker/IconNamePicker'
             )
         ]);
 
         this._propertyFieldCollectionData = PropertyFieldCollectionData;
         this._customCollectionFieldType = CustomCollectionFieldType;
         this._iconNamePicker = IconNamePicker;
-        this._iconNameOptions = iconNames
-            .filter(icon => typeof icon.name === 'string')
-            .map(icon => ({ key: icon.name, text: icon.name }))
-            .sort((a, b) => a.text.localeCompare(b.text));
-        initializeIcons();
+        this._iconNameOptions = await loadIconNameOptions();
 
         const { PropertyPanePropertyEditor } = await import(
             /* webpackChunkName: 'pnp-modern-search-property-pane' */
