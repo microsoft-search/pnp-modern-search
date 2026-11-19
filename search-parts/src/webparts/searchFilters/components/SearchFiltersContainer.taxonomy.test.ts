@@ -162,7 +162,12 @@ describe('hierarchical terms with identical labels (issue #5088)', () => {
     const textRefiner = { name: '123', value: '123' };
     const filterName = 'RefinableString121';
 
-    it.each([[true, 'B:123'], [false, '123']])('renders %s with the configured summary label', (showParentInSelectionPill, expectedLabel) => {
+    it.each([
+        { showParentInSelectionPill: true, refiner: targetRefiner, terms: hierarchicalTerms, ambiguousTermLabels: undefined, expectedLabel: 'B:123' },
+        { showParentInSelectionPill: false, refiner: targetRefiner, terms: hierarchicalTerms, ambiguousTermLabels: undefined, expectedLabel: '123' },
+        { showParentInSelectionPill: true, refiner: textRefiner, terms: [hierarchicalTerms[1]], ambiguousTermLabels: [], expectedLabel: 'B:123' },
+        { showParentInSelectionPill: true, refiner: textRefiner, terms: [hierarchicalTerms[1]], ambiguousTermLabels: ['123'], expectedLabel: '123' }
+    ])('renders $expectedLabel for $refiner.value with parent display $showParentInSelectionPill', ({ showParentInSelectionPill, refiner, terms, ambiguousTermLabels, expectedLabel }) => {
         const filter = {
             filterName,
             displayName: 'Term Set',
@@ -173,8 +178,9 @@ describe('hierarchical terms with identical labels (issue #5088)', () => {
             selectedTemplate: 'Hierarchical',
             isMulti: false,
             showParentInSelectionPill,
-            hierarchicalTerms,
-            values: [{ ...targetRefiner, selected: true, selectedOnce: true }]
+            hierarchicalTerms: terms,
+            ambiguousTermLabels,
+            values: [{ ...refiner, selected: true, selectedOnce: true }]
         };
         const [submitted] = createContainer()['getSelectedFiltersFromUIFilters']([filter]);
         const component = new SelectedFiltersComponent({
@@ -188,12 +194,16 @@ describe('hierarchical terms with identical labels (issue #5088)', () => {
             return React.isValidElement(node) ? text(node.props.children) : '';
         };
         expect(text(component.render())).toContain(`[Term Set="${expectedLabel}"]`);
-        expect(submitted.values[0]).toMatchObject(targetRefiner);
+        expect(submitted.values[0]).toMatchObject(refiner);
     });
 
-    it('rebuilds the summary label for a deep link without changing the saved token', async () => {
+    it.each([
+        [exactTermToken, hierarchicalTerms, 'B:123'],
+        ['123', [hierarchicalTerms[1]], 'B:123'],
+        ['123', hierarchicalTerms, undefined]
+    ])('rebuilds only unambiguous deep-link summary labels', async (value, terms, displayLabel) => {
         const container = createContainer();
-        const values = [{ name: '123', value: exactTermToken }];
+        const values = [{ name: '123', value }];
         const filters: IDataFilter[] = [{ filterName, values }];
         const onUpdateFilters = jest.fn();
         Object.defineProperty(container, 'props', {
@@ -202,13 +212,48 @@ describe('hierarchical terms with identical labels (issue #5088)', () => {
         Object.defineProperty(container, 'state', { value: { submittedFilters: filters } });
         jest.spyOn(container, 'setState').mockImplementation(() => undefined);
         Object.defineProperty(container, 'populateHierarchicalTerms', {
-            value: async (target: { hierarchicalTerms?: typeof hierarchicalTerms }) => { target.hierarchicalTerms = hierarchicalTerms; }
+            value: async (target: { hierarchicalTerms?: typeof hierarchicalTerms }) => { target.hierarchicalTerms = terms; }
         });
 
         await container['publishHierarchicalDeepLinkLabels'](filters);
 
-        expect(onUpdateFilters).toHaveBeenCalledWith([{ filterName, values: [{ ...values[0], displayLabel: 'B:123' }] }]);
+        expect(onUpdateFilters).toHaveBeenCalledWith([{ filterName, values: displayLabel ? [{ ...values[0], displayLabel }] : values }]);
         expect(filters[0].values[0]).not.toHaveProperty('displayLabel');
+    });
+
+    it('does not use a plain-label refiner when a duplicate is hidden', () => {
+        const onChecked = jest.fn();
+        const component = new FilterHierarchicalComponent({
+            filter: {
+                filterName,
+                hierarchicalTerms: [hierarchicalTerms[1]],
+                ambiguousTermLabels: ['123'],
+                values: [{ ...textRefiner, selected: true }]
+            },
+            onChecked
+        });
+
+        expect(component.state.selectedTerms[targetTerm.id]).toBe(false);
+        component['handleLeafTermSelection'](targetTerm, targetTerm.label, true);
+        expect(onChecked).toHaveBeenCalledWith(filterName, expect.objectContaining({ value: exactTermToken }));
+    });
+
+    it('does not submit a plain-label operand for a parent whose duplicate is hidden', () => {
+        const component = new FilterHierarchicalComponent({
+            filter: {
+                filterName,
+                hierarchicalTerms: [hierarchicalTerms[1]],
+                ambiguousTermLabels: ['123'],
+                values: [textRefiner]
+            },
+            onChecked: jest.fn()
+        });
+        const dispatchFilterUpdate = jest.fn<void, Parameters<FilterHierarchicalComponent['dispatchFilterUpdate']>>();
+        component['dispatchFilterUpdate'] = dispatchFilterUpdate;
+
+        component['handleParentTermSelection'](guid, TaxonomyHelper.normalizeGuid(guid), '123', true);
+        expect(dispatchFilterUpdate.mock.calls[0][0].map(value => TaxonomyHelper.decodeHexString(value.value)))
+            .toEqual([`GPP|#${guid}`, `GP0|#${guid}`]);
     });
 
     it('restores only the GUID-selected term and expands only its branch', () => {

@@ -56,6 +56,7 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
 interface IFilterInternalWithWarning extends IDataFilterInternal {
     showParentInSelectionPill?: boolean;
     hierarchicalTerms?: IHierarchicalTerm[];
+    ambiguousTermLabels?: string[];
     allowedEmailDomains?: string;
     domainSelectionRemoved?: boolean;
     showWarningMarker?: boolean;
@@ -232,8 +233,23 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }, []);
     }
 
-    private readonly normalizeTermLabel = (label: string): string => {
-        return TaxonomyHelper.resolveDisplayLabel(`${label || ''}`.trim()).toLowerCase();
+    private normalizeTermLabel(label: string): string {
+        return TaxonomyHelper.resolveHierarchyLabel(label).toLowerCase();
+    }
+
+    private getAmbiguousTermLabels(terms: IHierarchicalTerm[]): string[] {
+        const seen = new Set<string>();
+        const duplicates = new Set<string>();
+        const visit = (nodes: IHierarchicalTerm[]): void => {
+            nodes.forEach(term => {
+                const label = this.normalizeTermLabel(term.label);
+                if (seen.has(label)) duplicates.add(label);
+                seen.add(label);
+                visit(term.children);
+            });
+        };
+        visit(terms);
+        return Array.from(duplicates);
     }
 
     private readonly buildLabelSetFromFilterValues = (filterValues: Array<{ name?: string; value?: string }>): Set<string> => {
@@ -1489,7 +1505,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         };
     }
 
-    private async populateHierarchicalTerms(filterResultInternal: Pick<IFilterInternalWithWarning, 'hierarchicalTerms'>, availableFilter: IDataFilterResult, values: IDataFilterValueInternal[], filterConfiguration: IHierarchicalFilterConfiguration, debugContext?: IUpdateDebugContext): Promise<void> {
+    private async populateHierarchicalTerms(filterResultInternal: Pick<IFilterInternalWithWarning, 'hierarchicalTerms' | 'ambiguousTermLabels'>, availableFilter: IDataFilterResult, values: IDataFilterValueInternal[], filterConfiguration: IHierarchicalFilterConfiguration, debugContext?: IUpdateDebugContext): Promise<void> {
         if (filterConfiguration.selectedTemplate !== BuiltinFilterTemplates.Hierarchical
             || !filterConfiguration.termSetId
             || !filterConfiguration.termGroupId
@@ -1546,6 +1562,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             const selectedValues = values.filter(value => value.selected);
             const selectedGuids = this.buildGuidSetFromFilterValues(selectedValues);
             const selectedLabels = this.buildLabelSetFromFilterValues(selectedValues);
+            filterResultInternal.ambiguousTermLabels = this.getAmbiguousTermLabels(hierarchicalTerms);
+            filterResultInternal.ambiguousTermLabels.forEach(label => selectedLabels.delete(label));
             
             // Detect when search has completed with zero results (not just loading state)
             // to differentiate from initial load where we should show full hierarchy
@@ -2234,18 +2252,28 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return this.props.filtersConfiguration.some(filter => filter.filterName === filterName && filter.selectedTemplate === BuiltinFilterTemplates.StaticPeople);
     }
 
-    private addHierarchicalDisplayLabels<T extends IFilterValueWithDisplayLabel>(values: T[], terms: IHierarchicalTerm[]): T[] {
+    private addHierarchicalDisplayLabels<T extends IFilterValueWithDisplayLabel>(values: T[], terms: IHierarchicalTerm[], ambiguousLabels = this.getAmbiguousTermLabels(terms)): T[] {
         const guidsByValue = values.map(value => TaxonomyHelper.extractGuidsFromFilterValue(value.value));
         const selectedGuids = new Set(guidsByValue.flat());
+        const ambiguous = new Set(ambiguousLabels);
+        const labelKeys = values.map((value, index) => guidsByValue[index].length === 0
+            ? this.normalizeTermLabel(value.name || value.value)
+            : '');
+        const selectedLabels = new Set(labelKeys.filter(label => label && !ambiguous.has(label)));
         const labelsByGuid = new Map<string, string>();
+        const labelsByKey = new Map<string, string>();
         const visit = (nodes: IHierarchicalTerm[], parentLabel?: string): void => {
-            if (labelsByGuid.size === selectedGuids.size) return;
+            if (labelsByGuid.size === selectedGuids.size && labelsByKey.size === selectedLabels.size) return;
             nodes.forEach(term => {
                 const guid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
+                const termLabel = TaxonomyHelper.resolveHierarchyLabel(term.label);
+                const key = termLabel.toLowerCase();
+                const displayLabel = parentLabel ? `${parentLabel}:${termLabel}` : termLabel;
                 if (selectedGuids.has(guid)) {
-                    labelsByGuid.set(guid, parentLabel ? `${parentLabel}:${term.label}` : term.label);
+                    labelsByGuid.set(guid, displayLabel);
                 }
-                visit(term.children, term.label);
+                if (selectedLabels.has(key)) labelsByKey.set(key, displayLabel);
+                visit(term.children, termLabel);
             });
         };
         visit(terms);
@@ -2264,9 +2292,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         // A selected parent can also submit a plain-label companion. Give it the same summary label.
         return labelledValues.map((value, index) => {
             const labels = labelsByName.get(value.name);
-            return guidsByValue[index].length === 0 && value.value === value.name && labels?.size === 1
-                ? { ...value, displayLabel: Array.from(labels)[0] }
-                : value;
+            if (guidsByValue[index].length > 0) return value;
+            const label = value.value === value.name && labels?.size === 1
+                ? Array.from(labels)[0]
+                : labelsByKey.get(labelKeys[index]);
+            return label ? { ...value, displayLabel: label } : value;
         });
     }
 
@@ -2324,7 +2354,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                 if (newSelectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical
                     && newSelectedFilter.showParentInSelectionPill && newSelectedFilter.hierarchicalTerms) {
-                    newSelectedFilter.values = this.addHierarchicalDisplayLabels(newSelectedFilter.values, newSelectedFilter.hierarchicalTerms);
+                    newSelectedFilter.values = this.addHierarchicalDisplayLabels(newSelectedFilter.values, newSelectedFilter.hierarchicalTerms, newSelectedFilter.ambiguousTermLabels);
                 }
 
                 // Remove useless properties since we don't want to expose them in the data source, especially for consumers
@@ -2343,6 +2373,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 delete newSelectedFilter.domainSelectionRemoved;
                 // Strip hierarchical term tree — it's re-fetched on load and must not bloat the URL
                 delete newSelectedFilter.hierarchicalTerms;
+                delete newSelectedFilter.ambiguousTermLabels;
                 delete newSelectedFilter.showParentInSelectionPill;
                 delete (newSelectedFilter as any).termSetId;
                 delete (newSelectedFilter as any).termGroupId;

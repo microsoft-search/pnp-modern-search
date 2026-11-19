@@ -137,76 +137,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }
 
     private readonly normalizeLabel = (value: string): string => {
-        return this.getResolvedLabel(value).toLowerCase();
+        return TaxonomyHelper.resolveHierarchyLabel(value).toLowerCase();
     }
 
     private readonly getResolvedLabel = (value: string): string => {
-        const trimmedValue = `${value || ''}`.trim();
-
-        // Fast path for already readable labels (most taxonomy term labels).
-        // Avoid regex/decode work for each node on every render.
-        if (trimmedValue
-            && !trimmedValue.includes('|')
-            && !trimmedValue.includes('ǂ')
-            && !/^#?[0-9a-fA-F]{24,}$/.test(trimmedValue)) {
-            return trimmedValue;
-        }
-
-        const extractReadableLabel = (input: string): string => {
-            const cleanedValue = TaxonomyHelper.normalizeReadableLabelCandidate(input);
-            if (!cleanedValue) {
-                return '';
-            }
-
-            const taxonomyLabel = TaxonomyHelper.extractTaxonomyLabel(cleanedValue);
-            if (taxonomyLabel) {
-                return taxonomyLabel;
-            }
-
-            const claimsLabel = TaxonomyHelper.extractClaimsLabel(cleanedValue);
-            if (claimsLabel) {
-                return claimsLabel;
-            }
-
-            if (TaxonomyHelper.isReadablePlainLabel(cleanedValue)) {
-                return cleanedValue;
-            }
-
-            if (TaxonomyHelper.isReadablePlainLabelWithPipe(cleanedValue)) {
-                return cleanedValue;
-            }
-
-            const personLikeLabel = TaxonomyHelper.extractPersonLikeLabel(cleanedValue);
-            if (personLikeLabel) {
-                return personLikeLabel;
-            }
-
-            const emailLikeLabel = TaxonomyHelper.extractEmailLikeLabel(cleanedValue);
-            if (emailLikeLabel) {
-                return emailLikeLabel;
-            }
-
-            const firstReadablePipeSegment = TaxonomyHelper.extractFirstReadablePipeSegment(cleanedValue);
-            if (firstReadablePipeSegment) {
-                return firstReadablePipeSegment;
-            }
-
-            return '';
-        };
-
-        const rawValue = `${value || ''}`;
-        const readableRawValue = extractReadableLabel(rawValue);
-        if (readableRawValue) {
-            return readableRawValue;
-        }
-
-        const decodedValue = TaxonomyHelper.decodeHexString(rawValue);
-        const readableDecodedValue = extractReadableLabel(decodedValue);
-        if (readableDecodedValue) {
-            return readableDecodedValue;
-        }
-
-        return rawValue.trim();
+        return TaxonomyHelper.resolveHierarchyLabel(value);
     }
 
     private readonly findAndExpandPathToTerm = (terms: any[], guidToMatch: string, expandedTerms: { [key: string]: boolean }): boolean => {
@@ -298,6 +233,9 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }
 
     private isUniqueTermLabel(normalizedLabel: string): boolean {
+        if (this.props.filter?.ambiguousTermLabels?.includes(normalizedLabel)) {
+            return false;
+        }
         let matches = 0;
         const hasDuplicate = (terms: any[]): boolean => terms.some(term => {
             if (this.normalizeLabel(term.label) === normalizedLabel) {

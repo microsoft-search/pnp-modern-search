@@ -277,6 +277,25 @@ export class TaxonomyHelper {
         return getPreferredPipeSegment(decodedValue);
     }
 
+    public static resolveHierarchyLabel(value: string): string {
+        const raw = `${value || ''}`.trim();
+        if (!raw.includes('|') && !raw.includes('ǂ') && !/^#?[0-9a-f]{24,}$/i.test(raw)) {
+            return raw;
+        }
+
+        const resolve = (input: string): string => {
+            const cleaned = this.normalizeReadableLabelCandidate(input);
+            if (!cleaned) return '';
+            return this.extractTaxonomyLabel(cleaned)
+                || this.extractClaimsLabel(cleaned)
+                || (this.isReadablePlainLabel(cleaned) || this.isReadablePlainLabelWithPipe(cleaned) ? cleaned : '')
+                || this.extractPersonLikeLabel(cleaned)
+                || this.extractEmailLikeLabel(cleaned)
+                || this.extractFirstReadablePipeSegment(cleaned);
+        };
+        return resolve(raw) || resolve(this.decodeHexString(raw)) || raw;
+    }
+
     /**
      * Resolves the human readable label for a raw refiner value. Falls back to the decoded
      * value (and eventually to the raw value) when no readable label can be extracted.
