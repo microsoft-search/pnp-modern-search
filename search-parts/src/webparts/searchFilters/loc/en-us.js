@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Enter a valid domain, for example contoso.com.",
                 FilterExpandByDefault: "Expand by default",
                 ExpandAllNodesByDefault: "Expand all nodes by default",
+                ShowParentInSelectionPill: "Show parent term in selection pills",
                 HideNodesNotInDataSet: "Hide nodes not in the current data set",
                 // FilterType: "Filter type",
                 FilterTypeRefiner: "This filter template acts as a refiner and receives/sends available/selected values from/to the connected data source.",

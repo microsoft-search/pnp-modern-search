@@ -10,6 +10,7 @@ import { TaxonomyHelper } from '../../helpers/TaxonomyHelper';
 import { BuiltinFilterTemplates } from '../../layouts/AvailableTemplates';
 import { TestConstants } from '../../common/Constants';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import type { IFilterValueWithDisplayLabel } from '../../models/dynamicData/IDataFilterSourceData';
 const SelectedFilters_LogSource = "PnPModernSearch:SelectedFiltersComponent";
 
 export interface ISelectedFiltersProps {
@@ -86,15 +87,15 @@ export class SelectedFiltersComponent extends React.Component<ISelectedFiltersPr
 
                 const uniqueDisplayValues: Array<{ displayValue: string; operator: FilterComparisonOperator }> = [];
                 const seenDisplayValues = new Set<string>();
-                const hasReadableDisplayValue = filter.values.some(value => {
-                    const candidate = this.resolveDisplayValue(value.name, value.value, selectedTemplate);
+                const hasReadableDisplayValue = filter.values.some((value: IFilterValueWithDisplayLabel) => {
+                    const candidate = value.displayLabel || this.resolveDisplayValue(value.name, value.value, selectedTemplate);
                     return !!candidate && !this.isTaxonomyTokenDisplayValue(candidate);
                 });
 
-                filter.values.forEach(value => {
-                    let displayValue = this.props.dayjs && this.props.dayjs(value.value).isValid()
+                filter.values.forEach((value: IFilterValueWithDisplayLabel) => {
+                    let displayValue = value.displayLabel || (this.props.dayjs && this.props.dayjs(value.value).isValid()
                         ? this.props.dayjs(value.value).format('LL')
-                        : this.resolveDisplayValue(value.name, value.value, selectedTemplate);
+                        : this.resolveDisplayValue(value.name, value.value, selectedTemplate));
 
                     // For taxonomy filters (GPP/GP0 tokens), extract the label if name is not set
                     if (!displayValue || displayValue.indexOf("GPP|#") === 0 || displayValue.indexOf("GP0|#") === 0) {

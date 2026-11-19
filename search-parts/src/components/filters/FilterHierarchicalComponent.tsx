@@ -119,25 +119,10 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
 
     private readonly getExpandedTermsForSelectedValues = (): { [key: string]: boolean } => {
         const expandedTerms: { [key: string]: boolean } = {};
-        const selectedFilters = this.getSelectedFilterValues();
         const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
-
-        selectedFilters.forEach((filterValue: any) => {
-            if (!filterValue?.value) {
-                return;
-            }
-
-            const guidPart = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value)[0] || '';
-            const labelPart = this.normalizeLabel(filterValue.name || '');
-
-            if (guidPart) {
-                this.findAndExpandPathToTerm(hierarchicalTerms, guidPart, expandedTerms);
-            }
-
-            if (labelPart) {
-                this.findAndExpandPathToTermByLabel(hierarchicalTerms, labelPart, expandedTerms);
-            }
-        });
+        const { selectedGuids, selectedLabels } = this.getSelectedTermIdentities();
+        selectedGuids.forEach(guid => this.findAndExpandPathToTerm(hierarchicalTerms, guid, expandedTerms));
+        selectedLabels.forEach(label => this.findAndExpandPathToTermByLabel(hierarchicalTerms, label, expandedTerms));
 
         return expandedTerms;
     }
@@ -274,31 +259,14 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     private readonly initializeSelectedTerms = (): { [key: string]: boolean } => {
         const selectedTerms: { [key: string]: boolean } = {};
         const hierarchicalTerms = this.props.filter?.hierarchicalTerms || [];
-        const selectedFilters = this.getSelectedFilterValues();
-
-        const selectedGuids = new Set<string>();
-        const selectedLabels = new Set<string>();
-
-        selectedFilters.forEach((fv: any) => {
-            if (!fv?.value) {
-                return;
-            }
-
-            TaxonomyHelper.extractGuidsFromFilterValue(fv.value).forEach(guid => selectedGuids.add(guid));
-            const normalizedName = this.normalizeLabel(fv.name || '');
-            if (normalizedName) {
-                selectedLabels.add(normalizedName);
-            }
-
-            this.extractLabelsFromFilter(fv).forEach(label => selectedLabels.add(label));
-        });
+        const { selectedGuids, selectedLabels } = this.getSelectedTermIdentities();
 
         // Single-pass: initialize all terms and mark the selected one
         const collectTerms = (terms: any[]) => {
             terms.forEach(term => {
                 const termGuid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
                 const termLabel = this.normalizeLabel(term.label);
-                selectedTerms[term.id] = (selectedGuids.size > 0 && selectedGuids.has(termGuid)) || (termLabel.length > 0 && selectedLabels.has(termLabel));
+                selectedTerms[term.id] = selectedGuids.has(termGuid) || selectedLabels.has(termLabel);
                 if (term.children?.length > 0) {
                     collectTerms(term.children);
                 }
@@ -307,6 +275,38 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         collectTerms(hierarchicalTerms);
 
         return selectedTerms;
+    }
+
+    private getSelectedTermIdentities(): { selectedGuids: Set<string>; selectedLabels: Set<string> } {
+        const selectedGuids = new Set<string>();
+        const selectedLabels = new Set<string>();
+        const guidBackedLabels = new Set<string>();
+        this.getSelectedFilterValues().forEach(filterValue => {
+            const guids = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value);
+            const labels = this.extractLabelsFromFilter(filterValue);
+            guids.forEach(guid => selectedGuids.add(guid));
+            labels.forEach(label => (guids.length > 0 ? guidBackedLabels : selectedLabels).add(label));
+        });
+
+        // A parent token can have a plain-label companion; it is not a second selection.
+        selectedLabels.forEach(label => {
+            if (guidBackedLabels.has(label) || !this.isUniqueTermLabel(label)) {
+                selectedLabels.delete(label);
+            }
+        });
+        return { selectedGuids, selectedLabels };
+    }
+
+    private isUniqueTermLabel(normalizedLabel: string): boolean {
+        let matches = 0;
+        const hasDuplicate = (terms: any[]): boolean => terms.some(term => {
+            if (this.normalizeLabel(term.label) === normalizedLabel) {
+                matches++;
+                if (matches > 1) return true;
+            }
+            return term.children?.length > 0 && hasDuplicate(term.children);
+        });
+        return !!normalizedLabel && !hasDuplicate(this.props.filter?.hierarchicalTerms || []) && matches === 1;
     }
 
     private readonly getSelectedFilterValues = (): any[] => {
@@ -433,9 +433,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
         const matchingRefiner = this.findMatchingRefiner(currentFilterValues, normalizedTermGuid, normalizedTermLabel);
         const baseParentValues: IDataFilterValueInfo[] = [
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GPP|#${termGuid}`), checked),
-            this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GP0|#${termGuid}`), checked),
-            this.createSelectedFilterValue(resolvedTermLabel, resolvedTermLabel, checked)
+            this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GP0|#${termGuid}`), checked)
         ];
+        if (this.isUniqueTermLabel(normalizedTermLabel)) {
+            baseParentValues.push(this.createSelectedFilterValue(resolvedTermLabel, resolvedTermLabel, checked));
+        }
 
         const matchingValue = matchingRefiner
             ? this.createSelectedFilterValue(
@@ -487,19 +489,15 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     }
 
     private findMatchingRefiner(filterValues: any[], normalizedTermGuid: string, normalizedTermLabel: string): any {
-        return filterValues.find((filterValue: any) => {
-            if (!filterValue?.value) {
-                return false;
-            }
+        const refiners = filterValues.filter(filterValue => filterValue?.value)
+            .map(filterValue => ({ filterValue, guids: TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value) }));
+        const exactRefiner = refiners.find(({ guids }) => guids.includes(normalizedTermGuid));
+        if (exactRefiner || !this.isUniqueTermLabel(normalizedTermLabel)) {
+            return exactRefiner?.filterValue;
+        }
 
-            const filterGuids = TaxonomyHelper.extractGuidsFromFilterValue(filterValue.value);
-            if (normalizedTermGuid.length > 0 && filterGuids.includes(normalizedTermGuid)) {
-                return true;
-            }
-
-            const filterLabels = this.extractLabelsFromFilter(filterValue);
-            return normalizedTermLabel.length > 0 && filterLabels.includes(normalizedTermLabel);
-        });
+        return refiners.find(({ filterValue, guids }) =>
+            guids.length === 0 && this.extractLabelsFromFilter(filterValue).includes(normalizedTermLabel))?.filterValue;
     }
 
     private createSelectedFilterValue(
@@ -701,18 +699,21 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
     private readonly getSelectedHierarchyTerms = (terms: any[]): ISelectedHierarchyTerm[] => {
         const selectedTerms: ISelectedHierarchyTerm[] = [];
 
-        const collectSelectedTerms = (items: any[]): void => {
+        const collectSelectedTerms = (items: any[], parentLabel?: string): void => {
             items.forEach((item: any) => {
                 if (this.state.selectedTerms[item.id]) {
+                    const termLabel = this.getResolvedLabel(item.label);
                     selectedTerms.push({
                         id: item.id,
-                        label: this.getResolvedLabel(item.label),
+                        label: parentLabel ? `${parentLabel}:${termLabel}` : termLabel,
                         term: item
                     });
                 }
 
                 if (item.children?.length > 0) {
-                    collectSelectedTerms(item.children);
+                    collectSelectedTerms(item.children, this.props.filter?.showParentInSelectionPill
+                        ? this.getResolvedLabel(item.label)
+                        : undefined);
                 }
             });
         };
@@ -822,8 +823,11 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             if (!isAvailable) {
                 return;
             }
-            TaxonomyHelper.extractGuidsFromFilterValue(fv.value).forEach(guid => resultGuidSet.add(guid));
-            this.extractLabelsFromFilter(fv).forEach(label => resultLabelSet.add(label));
+            const guids = TaxonomyHelper.extractGuidsFromFilterValue(fv.value);
+            guids.forEach(guid => resultGuidSet.add(guid));
+            if (guids.length === 0) {
+                this.extractLabelsFromFilter(fv).forEach(label => resultLabelSet.add(label));
+            }
         });
         const hasResultSignals = resultGuidSet.size > 0 || resultLabelSet.size > 0;
 

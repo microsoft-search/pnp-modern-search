@@ -1,4 +1,8 @@
-import { IDataFilterConfiguration, IDataFilter, FilterConditionOperator } from "@pnp/modern-search-extensibility";
+import { IDataFilterConfiguration, IDataFilter, IDataFilterValue, FilterConditionOperator } from "@pnp/modern-search-extensibility";
+
+export interface IFilterValueWithDisplayLabel extends IDataFilterValue {
+    displayLabel?: string;
+}
 
 export interface IDataFilterSourceData {
 

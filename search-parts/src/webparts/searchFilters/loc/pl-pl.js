@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Wprowadź poprawną domenę, na przykład contoso.com.",
                 FilterExpandByDefault: "Domyślnie rozwinięte",
                 ExpandAllNodesByDefault: "Domyślnie rozwiń wszystkie węzły",
+                ShowParentInSelectionPill: "Pokaż termin nadrzędny w etykietach wyboru",
                 HideNodesNotInDataSet: "Ukryj węzły, których nie ma w bieżącym zestawie danych",
                 FilterType: "Rodzaj filtru",
                 FilterTypeRefiner: "Ten szablon filtru działa jak zawężacz i odbiera/wysyła dostępne/wybrane wartości z/do połączonego źródła danych.",

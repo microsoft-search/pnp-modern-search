@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Voer een geldig domein in, bijvoorbeeld contoso.com.",
                 FilterExpandByDefault: "Standaard uitklappen",
                 ExpandAllNodesByDefault: "Alle knooppunten standaard uitklappen",
+                ShowParentInSelectionPill: "Bovenliggende term weergeven in selectielabels",
                 HideNodesNotInDataSet: "Knooppunten verbergen die niet in de huidige gegevensset voorkomen",
                 FilterType: "Soort filter",
                 FilterTypeRefiner: "Dit filtersjabloon gedraagt zich als verfijning en ontvangt/zendt beschikbare/geselecteerde waarden van/naar de verbonden databron.",

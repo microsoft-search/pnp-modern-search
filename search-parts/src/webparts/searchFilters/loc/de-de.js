@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Geben Sie eine gültige Domäne ein, z. B. contoso.com.",
                 FilterExpandByDefault: "Standardmäßig erweitert",
                 ExpandAllNodesByDefault: "Alle Knoten standardmäßig erweitern",
+                ShowParentInSelectionPill: "Übergeordneten Begriff in Auswahlchips anzeigen",
                 HideNodesNotInDataSet: "Knoten ausblenden, die nicht im aktuellen Datensatz enthalten sind",
                 FilterType: "Filter Typ",
                 FilterTypeRefiner: "Diese Filter Vorlage agiert als ein Verfeinerer und erhält/sendet verfügbare/ausgewählte Werte von/zu einer verbundenen Datenquelle.",

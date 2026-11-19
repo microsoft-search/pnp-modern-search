@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Angiv et gyldigt domæne, f.eks. contoso.com.",
                 FilterExpandByDefault: "Udvid som standard",
                 ExpandAllNodesByDefault: "Udvid alle noder som standard",
+                ShowParentInSelectionPill: "Vis den overordnede term i valgets mærkat",
                 HideNodesNotInDataSet: "Skjul noder, der ikke findes i det aktuelle datasæt",
                 // FilterType: "Filtertype",
                 FilterTypeRefiner: "Denne skabelon til filtre agerer som en refiner og modtager/sender tilgængelige/valgte værdier fra/til the forbundne datakilde.",

@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Zadejte platnou doménu, například contoso.com.",
                 FilterExpandByDefault: "Rozbalit ve výchozím nastavení",
                 ExpandAllNodesByDefault: "Rozbalit všechny uzly ve výchozím nastavení",
+                ShowParentInSelectionPill: "Zobrazit nadřazený termín ve štítcích výběru",
                 HideNodesNotInDataSet: "Skrýt uzly, které nejsou v aktuální sadě dat",
                 // FilterType: "Typ filtru",
                 FilterTypeRefiner: "Tato šablona filtru funguje jako upřesňující filtr a přijímá/odesílá dostupné/vybrané hodnoty do/z připojeného zdroje dat.",
