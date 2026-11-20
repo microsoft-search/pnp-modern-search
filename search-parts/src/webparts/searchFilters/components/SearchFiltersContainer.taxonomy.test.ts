@@ -6,6 +6,8 @@ jest.mock('@pnp/modern-search-extensibility', () => ({
     BaseWebComponent: class {},
     FilterComparisonOperator: { Eq: 0 },
     FilterConditionOperator: { OR: 'or', AND: 'and' },
+    FilterSortDirection: { Ascending: 'Ascending' },
+    FilterSortType: { ByName: 'ByName' },
     FilterType: { Refiner: 'Refiner' }
 }));
 jest.mock('@microsoft/sp-core-library', () => ({}));
@@ -21,6 +23,7 @@ jest.mock('../../../components/filters/SelectedFiltersComponent.module.scss', ()
 
 import * as React from 'react';
 import type { IDataFilter, IDataFilterInternal } from '@pnp/modern-search-extensibility';
+import { FilterConditionOperator, FilterSortDirection, FilterSortType } from '@pnp/modern-search-extensibility';
 import { FilterHierarchicalComponent } from '../../../components/filters/FilterHierarchicalComponent';
 import { SelectedFiltersComponent } from '../../../components/filters/SelectedFiltersComponent';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
@@ -33,7 +36,11 @@ const encodeToken = (token: string): string => `"ǂǂ${encodeURIComponent(token)
 const exactTermToken = encodeToken(`GP0|#${guid}`);
 
 function createContainer(): SearchFiltersContainer {
-    return Object.create(SearchFiltersContainer.prototype);
+    return Object.create(SearchFiltersContainer.prototype, {
+        _resolvedDisplayNameCache: { value: new Map<string, string>() },
+        _peopleDisplayNameByValue: { value: new Map<string, string>() },
+        _peopleDisplayNameByName: { value: new Map<string, string>() }
+    });
 }
 
 function publishSelection(value: string, name: string = 'Child'): IDataFilter[] {
@@ -254,6 +261,52 @@ describe('hierarchical terms with identical labels (issue #5088)', () => {
         component['handleParentTermSelection'](guid, TaxonomyHelper.normalizeGuid(guid), '123', true);
         expect(dispatchFilterUpdate.mock.calls[0][0].map(value => TaxonomyHelper.decodeHexString(value.value)))
             .toEqual([`GPP|#${guid}`, `GP0|#${guid}`]);
+    });
+
+    it('clears a legacy parent companion without clearing another same-label term in multi-select mode', () => {
+        const values = [
+            { name: '123', value: encodeToken(`GPP|#${guid}`) },
+            { name: '123', value: exactTermToken },
+            textRefiner,
+            firstRefiner
+        ].map(value => ({ ...value, selected: true, selectedOnce: true }));
+        const terms = [hierarchicalTerms[0], {
+            ...hierarchicalTerms[1],
+            children: [{ ...targetTerm, children: [{ id: 'child', label: 'Child', children: [] }] }]
+        }];
+        const filter = {
+            filterName,
+            displayName: filterName,
+            expandByDefault: false,
+            showCount: true,
+            sortIdx: 0,
+            selectedTemplate: 'Hierarchical',
+            isMulti: true,
+            hierarchicalTerms: terms,
+            values
+        };
+        const component = new FilterHierarchicalComponent({ filter, onChecked: jest.fn() });
+        const dispatchFilterUpdate = jest.fn<void, Parameters<FilterHierarchicalComponent['dispatchFilterUpdate']>>();
+        component['dispatchFilterUpdate'] = dispatchFilterUpdate;
+        const container = createContainer();
+
+        component['handleParentTermSelection'](guid, TaxonomyHelper.normalizeGuid(guid), '123', false);
+        const updatedFilters = container['mergeFilterValuesIntoUiFilters']([filter], 0, {
+            filterName,
+            instanceId: 'test',
+            filterValues: dispatchFilterUpdate.mock.calls[0][0]
+        }, {
+            ...filter,
+            displayValue: filterName,
+            operator: FilterConditionOperator.OR,
+            sortBy: FilterSortType.ByName,
+            sortDirection: FilterSortDirection.Ascending,
+            maxBuckets: 0,
+            rangeDefinition: 0
+        });
+
+        expect(container['getSelectedFiltersFromUIFilters'](updatedFilters)[0].values.map(value => value.value))
+            .toEqual([firstRefiner.value]);
     });
 
     it('restores only the GUID-selected term and expands only its branch', () => {

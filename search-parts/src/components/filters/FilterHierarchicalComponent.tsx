@@ -373,7 +373,9 @@ export class FilterHierarchicalComponent extends React.Component<IFilterHierarch
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GPP|#${termGuid}`), checked),
             this.createSelectedFilterValue(resolvedTermLabel, this.encodeRefinementToken(`GP0|#${termGuid}`), checked)
         ];
-        if (this.isUniqueTermLabel(normalizedTermLabel)) {
+        const clearingLegacyCompanion = !checked
+            && currentFilterValues.some(value => value.selected && value.value === resolvedTermLabel);
+        if (clearingLegacyCompanion || this.isUniqueTermLabel(normalizedTermLabel)) {
             baseParentValues.push(this.createSelectedFilterValue(resolvedTermLabel, resolvedTermLabel, checked));
         }
 

@@ -138,6 +138,7 @@ When the **Hierarchical Refiner** template is selected, a **Hierarchical Setting
 - Selecting a leaf node applies that specific term only.
 - GUID-backed refiners distinguish terms with identical labels in different branches. Use a managed property mapped to the taxonomy ID crawled property when your term set contains duplicate labels.
 - Label-only matches are used only when the label is unique across the full term set, even if other branches are hidden.
+- Clearing a parent restored from an older filter link also clears the plain-label value saved with that parent.
 - If the search response does not contain a matching leaf refiner bucket, the fallback exact-term token preserves the term GUID's hyphens.
 - When a hierarchical value is already selected, the component automatically expands the selected branch so users can see the current context.
 
