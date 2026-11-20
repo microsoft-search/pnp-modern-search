@@ -246,6 +246,7 @@ describe('populateHierarchicalTerms (issue #5060)', () => {
         // Only the branch of the selected GUID is retained, not the Asia branch
         // whose distinct term shares the same 'Lyon' label
         expect(flattenLabels(result.hierarchicalTerms)).toEqual(['Europe', 'France', 'Lyon']);
+        expect(result.ambiguousTermLabels).toContain('lyon');
     });
 
     it('produces unambiguous label signatures for the pruning cache key', () => {

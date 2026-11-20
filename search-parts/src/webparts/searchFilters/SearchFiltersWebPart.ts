@@ -73,6 +73,7 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     cacheDuration?: number;
     hideNodesNotInDataSet?: boolean;
     expandAllNodesByDefault?: boolean;
+    showParentInSelectionPill?: boolean;
     showLimitExceededWarning?: boolean;
 }
 
@@ -748,6 +749,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                     configuration.cacheDuration = correspondingNewConfig.cacheDuration;
                     configuration.hideNodesNotInDataSet = correspondingNewConfig.hideNodesNotInDataSet;
                     configuration.expandAllNodesByDefault = correspondingNewConfig.expandAllNodesByDefault;
+                    configuration.showParentInSelectionPill = correspondingNewConfig.showParentInSelectionPill;
                 }
 
                 return configuration;
@@ -1449,6 +1451,8 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                             const effectiveCacheDuration = item.cacheDuration ?? 3;
                             const hideNodesNotInDataSet = item.hideNodesNotInDataSet ?? false;
                             const expandAllNodesByDefault = item.expandAllNodesByDefault ?? false;
+                            const showParentInSelectionPill = item.showParentInSelectionPill ?? false;
+                            const showParentLabel = webPartStrings.PropertyPane.DataFilterCollection.ShowParentInSelectionPill;
 
                             if (!showModal) {
                                 return React.createElement("div", {
@@ -1578,6 +1582,16 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                             label: webPartStrings.PropertyPane.DataFilterCollection.ExpandAllNodesByDefault,
                                             onChange: (ev, checked?: boolean) => {
                                                 onUpdate('expandAllNodesByDefault', checked ?? false);
+                                            }
+                                        })
+                                    ),
+
+                                    React.createElement("div", { style: { marginBottom: '20px' } },
+                                        React.createElement(Checkbox, {
+                                            checked: showParentInSelectionPill,
+                                            label: showParentLabel,
+                                            onChange: (_ev, checked) => {
+                                                onUpdate('showParentInSelectionPill', checked ?? false);
                                             }
                                         })
                                     ),

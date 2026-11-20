@@ -22,6 +22,7 @@ import {
     LayoutRenderType
 } from '@pnp/modern-search-extensibility';
 import { ISearchFiltersTemplateContext } from '../../../models/common/ITemplateContext';
+import type { IFilterValueWithDisplayLabel } from '../../../models/dynamicData/IDataFilterSourceData';
 import { DisplayMode, Log } from '@microsoft/sp-core-library';
 import { DataFilterHelper } from '../../../helpers/DataFilterHelper';
 import { TaxonomyHelper } from '../../../helpers/TaxonomyHelper';
@@ -40,6 +41,7 @@ interface IHierarchicalFilterConfiguration extends IDataFilterConfiguration {
     cacheDuration?: number;
     hideNodesNotInDataSet?: boolean;
     expandAllNodesByDefault?: boolean;
+    showParentInSelectionPill?: boolean;
     showLimitExceededWarning?: boolean;
 }
 
@@ -52,6 +54,9 @@ interface IFilterResultWithLimitInfo extends IDataFilterResult {
 }
 
 interface IFilterInternalWithWarning extends IDataFilterInternal {
+    showParentInSelectionPill?: boolean;
+    hierarchicalTerms?: IHierarchicalTerm[];
+    ambiguousTermLabels?: string[];
     allowedEmailDomains?: string;
     domainSelectionRemoved?: boolean;
     showWarningMarker?: boolean;
@@ -228,8 +233,23 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }, []);
     }
 
-    private readonly normalizeTermLabel = (label: string): string => {
-        return TaxonomyHelper.resolveDisplayLabel(`${label || ''}`.trim()).toLowerCase();
+    private normalizeTermLabel(label: string): string {
+        return TaxonomyHelper.resolveHierarchyLabel(label).toLowerCase();
+    }
+
+    private getAmbiguousTermLabels(terms: IHierarchicalTerm[]): string[] {
+        const seen = new Set<string>();
+        const duplicates = new Set<string>();
+        const visit = (nodes: IHierarchicalTerm[]): void => {
+            nodes.forEach(term => {
+                const label = this.normalizeTermLabel(term.label);
+                if (seen.has(label)) duplicates.add(label);
+                seen.add(label);
+                visit(term.children);
+            });
+        };
+        visit(terms);
+        return Array.from(duplicates);
     }
 
     private readonly buildLabelSetFromFilterValues = (filterValues: Array<{ name?: string; value?: string }>): Set<string> => {
@@ -1480,11 +1500,12 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             termGroupId: filterConfiguration.termGroupId,
             hideNodesNotInDataSet: filterConfiguration.hideNodesNotInDataSet,
             expandAllNodesByDefault: filterConfiguration.expandAllNodesByDefault,
+            showParentInSelectionPill: filterConfiguration.showParentInSelectionPill,
             isAwaitingResultSignals: filterWithLimitInfo.isAwaitingResultSignals
         };
     }
 
-    private async populateHierarchicalTerms(filterResultInternal: IFilterInternalWithWarning & { termSetId?: string; termGroupId?: string; hierarchicalTerms?: IHierarchicalTerm[]; hideNodesNotInDataSet?: boolean; expandAllNodesByDefault?: boolean }, availableFilter: IDataFilterResult, values: IDataFilterValueInternal[], filterConfiguration: IHierarchicalFilterConfiguration, debugContext?: IUpdateDebugContext): Promise<void> {
+    private async populateHierarchicalTerms(filterResultInternal: Pick<IFilterInternalWithWarning, 'hierarchicalTerms' | 'ambiguousTermLabels'>, availableFilter: IDataFilterResult, values: IDataFilterValueInternal[], filterConfiguration: IHierarchicalFilterConfiguration, debugContext?: IUpdateDebugContext): Promise<void> {
         if (filterConfiguration.selectedTemplate !== BuiltinFilterTemplates.Hierarchical
             || !filterConfiguration.termSetId
             || !filterConfiguration.termGroupId
@@ -1541,6 +1562,8 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
             const selectedValues = values.filter(value => value.selected);
             const selectedGuids = this.buildGuidSetFromFilterValues(selectedValues);
             const selectedLabels = this.buildLabelSetFromFilterValues(selectedValues);
+            filterResultInternal.ambiguousTermLabels = this.getAmbiguousTermLabels(hierarchicalTerms);
+            filterResultInternal.ambiguousTermLabels.forEach(label => selectedLabels.delete(label));
             
             // Detect when search has completed with zero results (not just loading state)
             // to differentiate from initial load where we should show full hierarchy
@@ -2229,9 +2252,56 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         return this.props.filtersConfiguration.some(filter => filter.filterName === filterName && filter.selectedTemplate === BuiltinFilterTemplates.StaticPeople);
     }
 
+    private addHierarchicalDisplayLabels<T extends IFilterValueWithDisplayLabel>(values: T[], terms: IHierarchicalTerm[], ambiguousLabels = this.getAmbiguousTermLabels(terms)): T[] {
+        const guidsByValue = values.map(value => TaxonomyHelper.extractGuidsFromFilterValue(value.value));
+        const selectedGuids = new Set(guidsByValue.flat());
+        const ambiguous = new Set(ambiguousLabels);
+        const labelKeys = values.map((value, index) => guidsByValue[index].length === 0
+            ? this.normalizeTermLabel(value.name || value.value)
+            : '');
+        const selectedLabels = new Set(labelKeys.filter(label => label && !ambiguous.has(label)));
+        const labelsByGuid = new Map<string, string>();
+        const labelsByKey = new Map<string, string>();
+        const visit = (nodes: IHierarchicalTerm[], parentLabel?: string): void => {
+            if (labelsByGuid.size === selectedGuids.size && labelsByKey.size === selectedLabels.size) return;
+            nodes.forEach(term => {
+                const guid = TaxonomyHelper.normalizeGuid(TaxonomyHelper.extractGuidFromTermId(term.id));
+                const termLabel = TaxonomyHelper.resolveHierarchyLabel(term.label);
+                const key = termLabel.toLowerCase();
+                const displayLabel = parentLabel ? `${parentLabel}:${termLabel}` : termLabel;
+                if (selectedGuids.has(guid)) {
+                    labelsByGuid.set(guid, displayLabel);
+                }
+                if (selectedLabels.has(key)) labelsByKey.set(key, displayLabel);
+                visit(term.children, termLabel);
+            });
+        };
+        visit(terms);
+
+        const labelsByName = new Map<string, Set<string>>();
+        const labelledValues = values.map((value, index) => {
+            const guids = guidsByValue[index];
+            const label = guids.length === 1 ? labelsByGuid.get(guids[0]) : undefined;
+            if (!label) return value;
+            const labels = labelsByName.get(value.name) ?? new Set<string>();
+            labels.add(label);
+            labelsByName.set(value.name, labels);
+            return { ...value, displayLabel: label };
+        });
+
+        // A selected parent can also submit a plain-label companion. Give it the same summary label.
+        return labelledValues.map((value, index) => {
+            const labels = labelsByName.get(value.name);
+            if (guidsByValue[index].length > 0) return value;
+            const label = value.value === value.name && labels?.size === 1
+                ? Array.from(labels)[0]
+                : labelsByKey.get(labelKeys[index]);
+            return label ? { ...value, displayLabel: label } : value;
+        });
+    }
+
     /**
-     * Gets only the selected filters from the UI and convert them to format sent to the data source
-     * @param currentUiFilters the current UI filters (selected or not)
+     * Gets only the selected filters from the UI and converts them to the format sent to the data source.
      */
     private getSelectedFiltersFromUIFilters(currentUiFilters: IDataFilterInternal[]): IDataFilter[] {
 
@@ -2282,6 +2352,11 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                     return newValue;
                 });
 
+                if (newSelectedFilter.selectedTemplate === BuiltinFilterTemplates.Hierarchical
+                    && newSelectedFilter.showParentInSelectionPill && newSelectedFilter.hierarchicalTerms) {
+                    newSelectedFilter.values = this.addHierarchicalDisplayLabels(newSelectedFilter.values, newSelectedFilter.hierarchicalTerms, newSelectedFilter.ambiguousTermLabels);
+                }
+
                 // Remove useless properties since we don't want to expose them in the data source, especially for consumers
                 // We need to return only proeprties used for IDataFilter to avoid confusion
                 delete newSelectedFilter.expandByDefault;
@@ -2297,7 +2372,9 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
                 delete newSelectedFilter.allowedEmailDomains;
                 delete newSelectedFilter.domainSelectionRemoved;
                 // Strip hierarchical term tree — it's re-fetched on load and must not bloat the URL
-                delete (newSelectedFilter as any).hierarchicalTerms;
+                delete newSelectedFilter.hierarchicalTerms;
+                delete newSelectedFilter.ambiguousTermLabels;
+                delete newSelectedFilter.showParentInSelectionPill;
                 delete (newSelectedFilter as any).termSetId;
                 delete (newSelectedFilter as any).termGroupId;
 
@@ -2675,7 +2752,13 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
 
                     // Update the connected data source only after UI state has been restored.
                     // This prevents a stale getFiltersToDisplay() pass from overwriting deep-link selections on refresh.
-                    this.props.onUpdateFilters(dataFilters);
+                    if (dataFilters.some(filter => this.getHierarchicalDisplayConfiguration(filter))) {
+                        this.publishHierarchicalDeepLinkLabels(dataFilters).catch(error =>
+                            Log.error('SearchFiltersContainer', error)
+                        );
+                    } else {
+                        this.props.onUpdateFilters(dataFilters);
+                    }
                 });
 
             } catch {
@@ -2694,6 +2777,32 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         }
     }
 
+    private getHierarchicalDisplayConfiguration(filter: IDataFilter): IHierarchicalFilterConfiguration | undefined {
+        const configuration: IHierarchicalFilterConfiguration = DataFilterHelper.getConfigurationForFilter(filter, this.props.filtersConfiguration);
+        return configuration?.selectedTemplate === BuiltinFilterTemplates.Hierarchical && configuration.showParentInSelectionPill
+            ? configuration
+            : undefined;
+    }
+
+    private async publishHierarchicalDeepLinkLabels(filters: IDataFilter[]): Promise<void> {
+        const labelledFilters = await Promise.all(filters.map(async filter => {
+            const configuration = this.getHierarchicalDisplayConfiguration(filter);
+            if (!configuration) return filter;
+
+            const hierarchy: Pick<IFilterInternalWithWarning, 'hierarchicalTerms'> = {};
+            await this.populateHierarchicalTerms(hierarchy, { filterName: filter.filterName, values: [] }, [],
+                { ...configuration, hideNodesNotInDataSet: false });
+            return hierarchy.hierarchicalTerms
+                ? { ...filter, values: this.addHierarchicalDisplayLabels(filter.values, hierarchy.hierarchicalTerms) }
+                : filter;
+        }));
+
+        if (this.state.submittedFilters === filters) {
+            this.setState({ submittedFilters: labelledFilters });
+            this.props.onUpdateFilters(labelledFilters);
+        }
+    }
+
     /**
      * Set the current selected filters as query string in the URL for deep linking
      * @param submittedFilters the current submitted filters
@@ -2703,7 +2812,7 @@ export default class SearchFiltersContainer extends React.Component<ISearchFilte
         const sanitizedSubmittedFilters: IDataFilter[] = (submittedFilters || []).map(filter => {
             return {
                 ...filter,
-                values: (filter.values || []).map(value => {
+                values: (filter.values || []).map(({ displayLabel: _displayLabel, ...value }: IFilterValueWithDisplayLabel) => {
                     return {
                         ...value,
                             value: this.sanitizeTaxonomyRefinementValue(`${value.value ?? ''}`)

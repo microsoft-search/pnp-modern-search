@@ -105,3 +105,37 @@ describe('FilterHierarchicalComponent empty-hierarchy render branch (issue #5060
         expect(elementContainsText(rendered, 'No values for this filter')).toBe(false);
     });
 });
+
+describe('Hierarchical refiner selection pill format', () => {
+    const rootId = '11111111-1111-1111-1111-111111111111';
+    const aId = '22222222-2222-2222-2222-222222222222';
+    const bId = '33333333-3333-3333-3333-333333333333';
+    const aLeafId = '44444444-4444-4444-4444-444444444444';
+    const bLeafId = '55555555-5555-5555-5555-555555555555';
+    const hierarchicalTerms = [{
+        id: rootId, label: 'Root', children: [
+            { id: aId, label: 'A', children: [{ id: aLeafId, label: '123' }] },
+            { id: bId, label: 'B', children: [{ id: bLeafId, label: '123' }] }
+        ]
+    }];
+
+    it.each([
+        [undefined, bLeafId, '123', 'B:123'],
+        [true, bLeafId, 'B:123', 'A:123'],
+        [true, rootId, 'Root', ':Root']
+    ])('formats only the selection pill (enabled: %s, selected ID: %s)', (showParentInSelectionPill, id, expectedLabel, unexpectedLabel) => {
+        const rendered = renderWithFilter({
+            termSetId,
+            hierarchicalTerms,
+            showParentInSelectionPill,
+            values: [{ name: id === rootId ? 'Root' : '123', value: `GP0|#${id}`, selected: true }]
+        });
+
+        const pillContainer = React.Children.toArray(rendered.props.children)[1] as React.ReactElement;
+        const [pill] = React.Children.toArray(pillContainer.props.children) as React.ReactElement[];
+        const [label, clearButton] = React.Children.toArray(pill.props.children) as React.ReactElement[];
+        expect(label.props.children).toBe(expectedLabel);
+        expect(clearButton.props.ariaLabel).toBe(`Clear ${expectedLabel}`);
+        expect(elementContainsText(rendered, unexpectedLabel)).toBe(false);
+    });
+});

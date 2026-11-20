@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Ange en giltig domän, till exempel contoso.com.",
                 FilterExpandByDefault: "Expandera som standard",
                 ExpandAllNodesByDefault: "Expandera alla noder som standard",
+                ShowParentInSelectionPill: "Visa överordnad term i valetiketterna",
                 HideNodesNotInDataSet: "Dölj noder som inte finns i den aktuella datamängden",
                 FilterType: "Filtertyp",
                 FilterTypeRefiner: "Denna filtermall fungerar som en raffinör och tar emot/skickar tillgängliga/valda värden från/till den anslutna datakällan.",

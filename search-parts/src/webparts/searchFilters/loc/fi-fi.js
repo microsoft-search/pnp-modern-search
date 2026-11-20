@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Anna kelvollinen toimialue, esimerkiksi contoso.com.",
                 FilterExpandByDefault: "Näytä oletuksena laajennettuna",
                 ExpandAllNodesByDefault: "Laajenna kaikki solmut oletusarvoisesti",
+                ShowParentInSelectionPill: "Näytä ylempi termi valintatunnisteissa",
                 HideNodesNotInDataSet: "Piilota solmut, jotka eivät ole nykyisessä tietojoukossa",
                 FilterType: "Suodatintyyppi",
                 FilterTypeRefiner: "Tämä suodatintemplaatti mukautuu sisältölähteen palauttaman tulosjoukon saatavilla olevien arvojen perusteella, ja rajaa hakutulosta suodattimesta valittujen arvojen perusteella.",

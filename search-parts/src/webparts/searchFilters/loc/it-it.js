@@ -57,6 +57,7 @@ define([], function () {
                 AllowedEmailDomainsInvalidEntry: "Immetti un dominio valido, ad esempio contoso.com.",
                 FilterExpandByDefault: "Espandi per impostazione predefinita",
                 ExpandAllNodesByDefault: "Espandi tutti i nodi per impostazione predefinita",
+                ShowParentInSelectionPill: "Mostra il termine padre nelle etichette di selezione",
                 HideNodesNotInDataSet: "Nascondi i nodi non presenti nel set di dati corrente",
                 FilterType: "Tipo di filtro",
                 FilterTypeRefiner: "Questo modello di filtro agisce come un raffinatore e riceve/invia valori disponibili/selezionati da/a la fonte dati collegata.",

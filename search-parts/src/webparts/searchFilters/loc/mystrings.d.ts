@@ -56,6 +56,7 @@ declare interface ISearchFiltersWebPartStrings {
             AllowedEmailDomainsInvalidEntry: string;
             FilterExpandByDefault: string;
             ExpandAllNodesByDefault: string;
+            ShowParentInSelectionPill: string;
             HideNodesNotInDataSet: string;
             FilterType: string;
             FilterTypeRefiner: string;
