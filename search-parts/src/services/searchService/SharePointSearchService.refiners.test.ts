@@ -79,6 +79,33 @@ describe('SharePoint refiner checks', () => {
         await expect(createService(post).validateSortableProperty('Title')).rejects.toThrow('baseline returned an invalid response');
     });
 
+    it.each(['throttled', 'network'])('retries a %s baseline failure while sharing in-flight and successful requests', async failure => {
+        let baselines = 0;
+        const post = jest.fn().mockImplementation(async (_url, _config, options) => {
+            if (JSON.parse(options.body).request.SortList.results.length > 0) {
+                return { ok: false, status: 400, statusText: 'Bad Request' };
+            }
+            baselines++;
+            if (baselines === 1) {
+                if (failure === 'network') {
+                    throw new Error('Network failure');
+                }
+                return { ok: false, status: 429, statusText: 'Too Many Requests' };
+            }
+            return { ok: true, json: async () => ({ PrimaryQueryResult: {} }) };
+        });
+        const service = createService(post);
+        await Promise.all([
+            service.validateSortableProperty('One'),
+            service.validateSortableProperty('Two')
+        ].map(check => expect(check).rejects.toThrow(failure === 'network' ? 'Network failure' : 'HTTP 429')));
+        expect(baselines).toBe(1);
+        await expect(service.validateSortableProperty('Three')).resolves.toBe(false);
+        await expect(service.validateSortableProperty('Four')).resolves.toBe(false);
+        expect(baselines).toBe(2);
+        expect(post).toHaveBeenCalledTimes(6);
+    });
+
     it('does not verify malformed successful responses or swallow network failures', async () => {
         const post = jest.fn()
             .mockResolvedValueOnce({ ok: true, json: async () => ({}) })

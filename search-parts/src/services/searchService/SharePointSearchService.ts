@@ -398,6 +398,9 @@ export class SharePointSearchService implements ISharePointSearchService {
                         if (!result.PrimaryQueryResult) {
                             throw new Error('SharePoint sort baseline returned an invalid response.');
                         }
+                    }).catch(error => {
+                        this.sortCheckBaseline = undefined;
+                        throw error;
                     });
                 }
                 await this.sortCheckBaseline;

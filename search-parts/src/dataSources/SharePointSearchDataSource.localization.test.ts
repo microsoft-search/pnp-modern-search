@@ -61,6 +61,18 @@ describe('SharePointSearchDataSource sort suggestions', () => {
         return source;
     }
 
+    it.each(['verified', 'notSortable', 'failed', 'unknown'])('preserves a saved row casing and its %s status without duplicating the field', status => {
+        const source = createDataSource(jest.fn(), jest.fn());
+        const shared = [{ key: 'Title', text: 'Title', data: status }, { key: 'Created', text: 'Created' }];
+        const firstRow = source['getSortOptionsForRow'](shared, 'Title');
+        const secondRow = source['getSortOptionsForRow'](shared, 'TITLE');
+        expect(firstRow[0]).toEqual({ key: 'Title', text: 'Title', data: status });
+        expect(secondRow[0]).toEqual({ key: 'TITLE', text: 'TITLE', data: status });
+        expect(secondRow.filter(option => String(option.key).toLowerCase() === 'title')).toHaveLength(1);
+        expect(shared[0].key).toBe('Title');
+        expect(secondRow[1]).toEqual(shared[1]);
+    });
+
     it('merges suggestions, preserves aliases and tokens, and isolates failed sort checks', async () => {
         const validate = jest.fn().mockImplementation(async (field: string) => {
             if (field === 'NotSortable') {

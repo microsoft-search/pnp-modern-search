@@ -27,6 +27,8 @@ Opening a sort field dropdown discovers additional managed properties and tests 
 
 For a particular field, add it to the sort configuration, then reopen the property pane. Configured sort fields get checked first.
 
+Saved field-name casing is preserved without losing check status. Successful and in-flight baseline requests are shared; failed baselines are retried by subsequent checks, so a temporary failure does not require reloading the page.
+
 Hover over the status icon for its label:
 
 - **Verified**: SharePoint accepted the sort request and returned a valid search response, even if there were no matching items.

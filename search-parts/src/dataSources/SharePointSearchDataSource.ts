@@ -440,14 +440,16 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                 required: true,
                                 onCustomRender: ((field, value, onUpdate, item, itemId, onError) => {
 
+                                    const selectedField: string = item[field.id] || '';
                                     return React.createElement("div", { key: `${field.id}-${itemId}` },
                                         React.createElement(AsyncCombo, {
-                                            defaultSelectedKey: item[field.id] ? item[field.id] : '',
+                                            defaultSelectedKey: selectedField,
                                             allowMultiSelect: false,
                                             allowFreeform: true,
-                                            availableOptions: this._sortableFields,
+                                            availableOptions: this.getSortOptionsForRow(this._sortableFields, selectedField),
                                             loadOptionsOnFirstOpen: true,
-                                            onLoadOptions: loadCheckedSortOptions,
+                                            onLoadOptions: () => loadCheckedSortOptions()
+                                                .then(options => this.getSortOptionsForRow(options, selectedField)),
                                             onRenderOption: (option, defaultRender) => renderCheckOption(option, {
                                                 verified: commonStrings.DataSources.SearchCommon.Sort.SortCheckVerified,
                                                 failed: commonStrings.DataSources.SearchCommon.Sort.SortCheckFailed,
@@ -944,6 +946,12 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
 
         return this._availableManagedProperties;
+    }
+
+    private getSortOptionsForRow(options: IComboBoxOption[], selectedField: string): IComboBoxOption[] {
+        return options.map(option => String(option.key).toLowerCase() === selectedField.toLowerCase()
+            ? { ...option, key: selectedField, text: selectedField }
+            : option);
     }
 
     private async getCheckedSortFields(): Promise<IComboBoxOption[]> {
