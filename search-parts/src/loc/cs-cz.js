@@ -199,7 +199,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Uživatelské řazení",
                     EditSortLabel: "Upravit nastavení řazení",
                     SortInvalidSortableFieldMessage: "Tato vlastnost nelze řadit",
-                    SortFieldColumnPlaceholder: "Vyberte pole..."
+                    SortFieldColumnPlaceholder: "Vyberte pole...",
+                    SortCheckVerified: "Ověřeno",
+                    SortCheckFailed: "Kontrola selhala",
+                    SortCheckNotSortable: "Nelze řadit: SharePoint odmítl řazení podle této vlastnosti.",
+                    SortCheckUnknown: "Nezkontrolováno"
                 }
             }
         },

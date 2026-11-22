@@ -30,6 +30,7 @@ import { Dropdown, IComboBoxOption, IDropdownProps, ITextFieldProps, TextField }
 import { ISharePointSearchQuery, SortDirection, ISort } from "../models/search/ISharePointSearchQuery";
 import { AsyncCombo } from '../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { IAsyncComboProps } from '../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
+import { renderCheckOption } from '../controls/PropertyPaneAsyncCombo/components/CheckOption';
 import { DateHelper } from '../helpers/DateHelper';
 import { PropertyPaneNonReactiveTextField } from '../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveTextField';
 import { ITerm } from '../services/taxonomyService/ITaxonomyItems';
@@ -360,6 +361,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
 
     public getPropertyPaneGroupsConfiguration(): IPropertyPaneGroup[] {
 
+        let sortCheck: Promise<IComboBoxOption[]> | undefined;
+        const loadCheckedSortOptions = (): Promise<IComboBoxOption[]> => {
+            if (!sortCheck) {
+                sortCheck = this.getCheckedSortFields();
+            }
+            return sortCheck;
+        };
+
         return [
             {
                 groupName: commonStrings.DataSources.SharePointSearch.SourceName,
@@ -437,6 +446,14 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             allowMultiSelect: false,
                                             allowFreeform: true,
                                             availableOptions: this._sortableFields,
+                                            loadOptionsOnFirstOpen: true,
+                                            onLoadOptions: loadCheckedSortOptions,
+                                            onRenderOption: (option, defaultRender) => renderCheckOption(option, {
+                                                verified: commonStrings.DataSources.SearchCommon.Sort.SortCheckVerified,
+                                                failed: commonStrings.DataSources.SearchCommon.Sort.SortCheckFailed,
+                                                notSortable: commonStrings.DataSources.SearchCommon.Sort.SortCheckNotSortable,
+                                                unknown: commonStrings.DataSources.SearchCommon.Sort.SortCheckUnknown
+                                            }, defaultRender),
                                             onUpdateOptions: ((options: IComboBoxOption[]) => {
                                                 this._sortableFields = options;
                                             }).bind(this),
@@ -927,6 +944,49 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
         });
 
         return this._availableManagedProperties;
+    }
+
+    private async getCheckedSortFields(): Promise<IComboBoxOption[]> {
+        let discovered: string[] = [];
+        try {
+            discovered = (await this._sharePointSearchService.getAvailableManagedProperties()).map(property => property.name);
+        } catch (error) {
+            Log.error('[SharePointSearchDataSource.getCheckedSortFields()]',
+                error instanceof Error ? error : new Error(String(error)), this.serviceScope);
+        }
+
+        const fields = [
+            ...(this.properties.sortList || []).map(sort => sort.sortField),
+            ...(this.properties.selectedProperties || []),
+            ...discovered,
+            ...this._sortableFields.map(option => String(option.key))
+        ];
+        const seen = new Set<string>();
+        const options: IComboBoxOption[] = fields.filter(field => {
+            if (!field || seen.has(field.toLowerCase())) {
+                return false;
+            }
+            seen.add(field.toLowerCase());
+            return true;
+        }).map(field => ({ key: field, text: field, data: 'unknown' }));
+        const candidates = options.filter(option => /^[a-zA-Z0-9_]+$/.test(String(option.key))).slice(0, 100);
+        const checkedOptions = new Map<string, IComboBoxOption>();
+
+        // One request per field isolates rejected properties; four concurrent requests keep the check bounded.
+        for (let index = 0; index < candidates.length; index += 4) {
+            const checked = await Promise.all(candidates.slice(index, index + 4).map(async option => {
+                try {
+                    const verified = await this._sharePointSearchService.validateSortableProperty(String(option.key));
+                    return { ...option, data: verified ? 'verified' : 'notSortable' };
+                } catch (error) {
+                    Log.error('[SharePointSearchDataSource.getCheckedSortFields()]',
+                        error instanceof Error ? error : new Error(String(error)), this.serviceScope);
+                    return { ...option, data: 'failed' };
+                }
+            }));
+            checked.forEach(option => checkedOptions.set(String(option.key), option));
+        }
+        return options.map(option => checkedOptions.get(String(option.key)) ?? option);
     }
 
     private async _convertToSortList(sortList: ISortFieldConfiguration[]): Promise<ISort[]> {

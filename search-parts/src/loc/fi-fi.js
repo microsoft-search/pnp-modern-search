@@ -197,7 +197,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Käyttäjälajittelu",
                     EditSortLabel: "Muokkaa lajittelujärjestystä",
                     SortInvalidSortableFieldMessage: "Tämä ominaisuus ei ole lajiteltava",
-                    SortFieldColumnPlaceholder: "Valitse kenttä..."
+                    SortFieldColumnPlaceholder: "Valitse kenttä...",
+                    SortCheckVerified: "Vahvistettu",
+                    SortCheckFailed: "Tarkistus epäonnistui",
+                    SortCheckNotSortable: "Ei lajiteltavissa: SharePoint hylkäsi lajittelun tämän ominaisuuden mukaan.",
+                    SortCheckUnknown: "Ei tarkistettu"
                 }
             }
         },

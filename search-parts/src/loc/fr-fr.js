@@ -199,7 +199,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Tri par l'utilisateur",
                     EditSortLabel: "Modifier l’ordre de tri",
                     SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
-                    SortFieldColumnPlaceholder: "Sélectionner le champ..."
+                    SortFieldColumnPlaceholder: "Sélectionner le champ...",
+                    SortCheckVerified: "Vérifié",
+                    SortCheckFailed: "Échec de la vérification",
+                    SortCheckNotSortable: "Non triable : SharePoint a refusé le tri sur cette propriété.",
+                    SortCheckUnknown: "Non vérifié"
                 }
             }
         },

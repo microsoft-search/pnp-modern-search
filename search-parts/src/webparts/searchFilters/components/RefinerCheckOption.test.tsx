@@ -12,6 +12,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { renderRefinerCheckOption } from './RefinerCheckOption';
+import { renderCheckOption } from '../../../controls/PropertyPaneAsyncCombo/components/CheckOption';
 
 describe('refiner check option', () => {
     let host: HTMLDivElement;
@@ -29,13 +30,17 @@ describe('refiner check option', () => {
     it.each([
         ['verified', 'Verified', 'CheckMark'],
         ['unknown', 'Not verified', 'Info'],
-        ['failed', 'Check failed', 'ErrorBadge']
+        ['failed', 'Check failed', 'ErrorBadge'],
+        ['notSortable', 'Not sortable: SharePoint rejected sorting by this property.', 'Blocked']
     ])('shows the %s status as an accessible icon with a hover label', (status, label, icon) => {
         act(() => {
-            ReactDom.render(renderRefinerCheckOption(
-                { key: 'Title', text: 'Title', data: status },
-                option => <span>{option.text}</span>
-            ), host);
+            const option = { key: 'Title', text: 'Title', data: status };
+            const content = status === 'notSortable'
+                ? renderCheckOption(option, {
+                    verified: 'Verified', failed: 'Check failed', unknown: 'Not checked', notSortable: label
+                })
+                : renderRefinerCheckOption(option, props => <span>{props.text}</span>);
+            ReactDom.render(content, host);
         });
         expect(host.textContent).toBe('Title');
         const marker = host.querySelector('[role="img"]');

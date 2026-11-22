@@ -199,7 +199,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Gebruiker sorteren",
                     EditSortLabel: "Bewerk sorteervolgorde",
                     SortInvalidSortableFieldMessage: "Deze eigenschap kan niet worden gesorteerd",
-                    SortFieldColumnPlaceholder: "Selecteer veld..."
+                    SortFieldColumnPlaceholder: "Selecteer veld...",
+                    SortCheckVerified: "Geverifieerd",
+                    SortCheckFailed: "Controle mislukt",
+                    SortCheckNotSortable: "Niet sorteerbaar: SharePoint heeft sorteren op deze eigenschap geweigerd.",
+                    SortCheckUnknown: "Niet gecontroleerd"
                 }
             }
         },

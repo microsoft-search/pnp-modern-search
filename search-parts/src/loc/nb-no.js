@@ -199,7 +199,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Bruker sortering",
                     EditSortLabel: "Rediger sorteringsrekkefølge",
                     SortInvalidSortableFieldMessage: "Denne egenskapen kan inte sorteres",
-                    SortFieldColumnPlaceholder: "Velg egenskap…"
+                    SortFieldColumnPlaceholder: "Velg egenskap…",
+                    SortCheckVerified: "Bekreftet",
+                    SortCheckFailed: "Kontroll mislyktes",
+                    SortCheckNotSortable: "Kan ikke sorteres: SharePoint avviste sortering etter denne egenskapen.",
+                    SortCheckUnknown: "Ikke kontrollert"
                 }
             }
         },

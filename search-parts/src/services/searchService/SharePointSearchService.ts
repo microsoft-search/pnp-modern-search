@@ -64,6 +64,7 @@ export class SharePointSearchService implements ISharePointSearchService {
      * The client storage instance
      */
     private clientStorage: PnPClientStorage;
+    private sortCheckBaseline?: Promise<void>;
 
     constructor(serviceScope: ServiceScope) {
 
@@ -355,8 +356,6 @@ export class SharePointSearchService implements ISharePointSearchService {
      */
     public async validateSortableProperty(property: string): Promise<boolean> {
 
-        let isSortable: boolean = false;
-
         let searchQuery: ISharePointSearchQuery = {};
         searchQuery.Querytext = "*";
         searchQuery.SortList = [
@@ -368,28 +367,50 @@ export class SharePointSearchService implements ISharePointSearchService {
         searchQuery.RowLimit = 1;
         searchQuery.SelectProperties = ['Path'];
 
+        const postQuery = (query: ISharePointSearchQuery) => this.spHttpClient.post(this.searchEndpointUrl, SPHttpClient.configurations.v1, {
+            body: this.getRequestPayload(query),
+            headers: {
+                'odata-version': '3.0',
+                'accept': 'application/json;odata=nometadata',
+                'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
+                'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
+            }
+        });
+
         try {
-            const response = await this.spHttpClient.post(this.searchEndpointUrl, SPHttpClient.configurations.v1, {
-                body: this.getRequestPayload(searchQuery),
-                headers: {
-                    'odata-version': '3.0',
-                    'accept': 'application/json;odata=nometadata',
-                    'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
-                    'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
-                }
-            });
+            const response = await postQuery(searchQuery);
 
             if (response.ok) {
-                isSortable = true;
-
-            } else {
-                isSortable = false;
+                const result: ISharePointSearchResponse = await response.json();
+                if (!result.PrimaryQueryResult) {
+                    throw new Error(`SharePoint sort check for ${property} returned an invalid response.`);
+                }
+                return true;
             }
-        } catch {
-            isSortable = false;
+            if (response.status === 400) {
+                // SharePoint reports unsupported sort fields as generic syntax errors. Verify the query without sorting first.
+                if (!this.sortCheckBaseline) {
+                    this.sortCheckBaseline = postQuery({ ...searchQuery, SortList: undefined }).then(async baseline => {
+                        if (!baseline.ok) {
+                            throw new Error(`SharePoint sort baseline failed: HTTP ${baseline.status} ${baseline.statusText}`);
+                        }
+                        const result: ISharePointSearchResponse = await baseline.json();
+                        if (!result.PrimaryQueryResult) {
+                            throw new Error('SharePoint sort baseline returned an invalid response.');
+                        }
+                    });
+                }
+                await this.sortCheckBaseline;
+                Log.warn('[SharePointSearchService.validateSortableProperty()]',
+                    `SharePoint rejected sorting by ${property} (HTTP 400); the same query without sorting succeeded.`, this.serviceScope);
+                return false;
+            }
+            throw new Error(`SharePoint sort check failed for ${property}: HTTP ${response.status} ${response.statusText}`);
+        } catch (error) {
+            Log.error('[SharePointSearchService.validateSortableProperty()]',
+                error instanceof Error ? error : new Error(String(error)), this.serviceScope);
+            throw error;
         }
-
-        return isSortable;
     }
 
     /**

@@ -15,7 +15,7 @@ jest.mock('CommonStrings', () => ({
 }), { virtual: true });
 jest.mock('@microsoft/sp-core-library', () => ({
     Text: { format: (s: string, ...args: string[]) => args.reduce((acc, arg, i) => acc.replace(`{${i}}`, arg), s) },
-    Log: { warn: jest.fn() },
+    Log: { warn: jest.fn(), error: jest.fn() },
     Guid: {},
     ServiceScope: {}
 }));
@@ -46,6 +46,76 @@ jest.mock('@microsoft/sp-lodash-subset', () => ({
 }));
 
 import { SharePointSearchDataSource } from './SharePointSearchDataSource';
+
+describe('SharePointSearchDataSource sort suggestions', () => {
+    function createDataSource(getAvailableManagedProperties: jest.Mock, validateSortableProperty: jest.Mock): SharePointSearchDataSource {
+        const source: SharePointSearchDataSource = Object.create(SharePointSearchDataSource.prototype);
+        Object.defineProperties(source, {
+            properties: { value: {
+                sortList: [{ sortField: 'CustomAlias' }, { sortField: '{QueryString.sort}' }],
+                selectedProperties: ['Title', 'TITLE', 'NotSortable', 'CheckFailed']
+            } },
+            _sortableFields: { value: [{ key: 'Created', text: 'Created' }] },
+            _sharePointSearchService: { value: { getAvailableManagedProperties, validateSortableProperty } }
+        });
+        return source;
+    }
+
+    it('merges suggestions, preserves aliases and tokens, and isolates failed sort checks', async () => {
+        const validate = jest.fn().mockImplementation(async (field: string) => {
+            if (field === 'NotSortable') {
+                return false;
+            }
+            if (field === 'CheckFailed') {
+                throw new Error('HTTP 400');
+            }
+            return true;
+        });
+        const source = createDataSource(jest.fn().mockResolvedValue([
+            { name: 'RefinableString199' }, { name: 'title' }
+        ]), validate);
+        const options = await source['getCheckedSortFields']();
+        expect(options.map(option => [option.key, option.data])).toEqual([
+            ['CustomAlias', 'verified'],
+            ['{QueryString.sort}', 'unknown'],
+            ['Title', 'verified'],
+            ['NotSortable', 'notSortable'],
+            ['CheckFailed', 'failed'],
+            ['RefinableString199', 'verified'],
+            ['Created', 'verified']
+        ]);
+        expect(validate).toHaveBeenCalledTimes(6);
+        expect(validate).not.toHaveBeenCalledWith('{QueryString.sort}');
+    });
+
+    it('limits checks to 100 fields and four concurrent requests, keeping the remaining suggestions', async () => {
+        let active = 0;
+        let peak = 0;
+        const validate = jest.fn().mockImplementation(async () => {
+            active++;
+            peak = Math.max(peak, active);
+            await Promise.resolve();
+            active--;
+            return true;
+        });
+        const source = createDataSource(jest.fn().mockResolvedValue(
+            Array.from({ length: 110 }, (_, index) => ({ name: `Field${index}` }))
+        ), validate);
+        const options = await source['getCheckedSortFields']();
+        expect(validate).toHaveBeenCalledTimes(100);
+        expect(peak).toBe(4);
+        expect(options.find(option => option.key === 'Field109').data).toBe('unknown');
+    });
+
+    it('retains configured and built-in suggestions when discovery fails', async () => {
+        const source = createDataSource(jest.fn().mockRejectedValue(new Error('HTTP 403')),
+            jest.fn().mockResolvedValue(true));
+        const options = await source['getCheckedSortFields']();
+        expect(options.map(option => option.key)).toEqual([
+            'CustomAlias', '{QueryString.sort}', 'Title', 'NotSortable', 'CheckFailed', 'Created'
+        ]);
+    });
+});
 
 const FINANCE_ID = '8ead6aea-9b46-4831-9b06-1c4d8410f672';
 const INFRA_ID = '8a7d788f-96d7-4b84-a005-0377dce115e1';
