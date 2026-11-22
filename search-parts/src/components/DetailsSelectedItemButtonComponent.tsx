@@ -6,7 +6,7 @@ import type { IPickerTerms } from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { PageContext } from "@microsoft/sp-page-context";
 import { SPHttpClient } from "@microsoft/sp-http";
-import { Text } from "@microsoft/sp-core-library";
+import { Log, Text } from "@microsoft/sp-core-library";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import { TaxonomyHelper } from "../helpers/TaxonomyHelper";
@@ -1714,6 +1714,13 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       }
 
       if (this._isDetailsDocumentItem(item)) {
+        const { path: documentPath } = this._getDocumentPath(item);
+
+        if (documentPath && new URL(documentPath, window.location.origin).origin !== baseUrl.origin) {
+          Log.warn("DetailsSelectedItemButtonComponent", "Cannot open document details for a cross-origin item.");
+          return null;
+        }
+
         return this._buildDocumentDetailsPaneUrl(item, baseUrl) ?? this._buildDocumentViewerUrl(item, baseUrl);
       }
 
@@ -1733,7 +1740,8 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       formUrl.searchParams.set("env", "Embedded");
 
       return formUrl.toString();
-    } catch {
+    } catch (error) {
+      Log.warn("DetailsSelectedItemButtonComponent", `Cannot construct the details form URL: ${error}`);
       return null;
     }
   }
@@ -1763,8 +1771,24 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return null;
   }
 
+  private _getDocumentPath(item: any): { path: string | undefined; isEncoded: boolean } {
+    const encodedPath = this._resolveExternalItemFieldValue(item, "DefaultEncodingURL") || undefined;
+    return {
+      path: encodedPath
+        ?? this._resolveExternalItemFieldValue(item, "Path")
+        ?? this._resolveExternalItemFieldValue(item, "OriginalPath")
+        ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL"),
+      isEncoded: !!encodedPath,
+    };
+  }
+
+  private _isAmbiguousDocumentPath(item: any): boolean {
+    const { path, isEncoded } = this._getDocumentPath(item);
+    return !isEncoded && typeof path === "string" && /[%#?]/.test(path);
+  }
+
   private _buildDocumentDetailsPaneUrl(item: any, baseUrl: URL): string | null {
-    const itemPath = this._resolveExternalItemFieldValue(item, "Path") ?? this._resolveExternalItemFieldValue(item, "OriginalPath") ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
+    const { path: itemPath } = this._getDocumentPath(item);
     const selectedItemId = this._resolveDetailsListItemId(item);
     const normalizedSelectedItemId = /^\d+$/.test(String(selectedItemId ?? "")) ? String(selectedItemId) : null;
 
@@ -1772,8 +1796,18 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return null;
     }
 
+    if (this._isAmbiguousDocumentPath(item)) {
+      Log.warn("DetailsSelectedItemButtonComponent", "Cannot safely interpret the document path without an encoded URL; falling back to the document viewer.");
+      return null;
+    }
+
     try {
       const itemUrl = new URL(itemPath, window.location.origin);
+      if (itemUrl.origin !== baseUrl.origin) {
+        Log.warn("DetailsSelectedItemButtonComponent", "Cannot open document details for a cross-origin item.");
+        return null;
+      }
+
       const webServerRelativePath = baseUrl.pathname.replace(/\/$/, "");
       const itemServerRelativePath = itemUrl.pathname;
 
@@ -1787,8 +1821,9 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         return null;
       }
 
-      const listUrl = `${webServerRelativePath}/${relativeSegments[0]}`;
-      const parentPath = itemServerRelativePath.slice(0, itemServerRelativePath.lastIndexOf("/"));
+      const listUrl = decodeURIComponent(`${webServerRelativePath}/${relativeSegments[0]}`);
+      const parentPath = decodeURIComponent(itemServerRelativePath.slice(0, itemServerRelativePath.lastIndexOf("/")));
+      const decodedItemPath = decodeURIComponent(itemServerRelativePath);
       const detailsPaneUrl = new URL(baseUrl.origin);
       detailsPaneUrl.pathname = `${webServerRelativePath}/_layouts/15/modernFrame.aspx`;
       detailsPaneUrl.searchParams.set("origin", window.location.origin);
@@ -1800,7 +1835,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       detailsPaneUrl.searchParams.set("component", "detailsPane");
       detailsPaneUrl.searchParams.set("isDarkMode", String(this._getDetailsIsDarkMode()));
       detailsPaneUrl.searchParams.set("options", JSON.stringify({
-        itemIds: [`id=${encodeURIComponent(itemServerRelativePath)}`],
+        itemIds: [`id=${encodeURIComponent(decodedItemPath)}`],
         isOD3UIEnabled: true,
         isCrossList: false,
         ...(normalizedSelectedItemId ? { selectedItemIds: [normalizedSelectedItemId] } : {}),
@@ -1809,27 +1844,38 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       detailsPaneUrl.searchParams.set("disableAutoScroll", "1");
 
       return detailsPaneUrl.toString();
-    } catch {
+    } catch (error) {
+      Log.warn("DetailsSelectedItemButtonComponent", `Cannot construct the document details URL: ${error}`);
       return null;
     }
   }
 
   private _buildDocumentViewerUrl(item: any, baseUrl: URL): string | null {
     const autoPreviewUrl = this._resolveExternalItemFieldValue(item, "AutoPreviewUrl");
+    const ambiguousPath = this._isAmbiguousDocumentPath(item);
+    const documentUniqueId = this._resolveExternalItemFieldValue(item, "UniqueID") || this._resolveExternalItemFieldValue(item, "NormUniqueID");
+    let normalizedDocumentGuid = documentUniqueId ? this._tryNormalizeDetailsGuid(String(documentUniqueId)) : null;
 
     if (autoPreviewUrl) {
       try {
-        return new URL(autoPreviewUrl, window.location.origin).toString();
+        const viewerUrl = new URL(autoPreviewUrl, window.location.origin);
+        if (viewerUrl.origin !== baseUrl.origin) {
+          Log.warn("DetailsSelectedItemButtonComponent", "Cannot open a cross-origin document viewer.");
+        } else if (!ambiguousPath) {
+          return viewerUrl.toString();
+        } else if (!normalizedDocumentGuid && viewerUrl.pathname.toLowerCase() === `${baseUrl.pathname.replace(/\/$/, "")}/_layouts/15/viewer.aspx`.toLowerCase()) {
+          const previewGuid = viewerUrl.searchParams.get("sourcedoc");
+          normalizedDocumentGuid = previewGuid ? this._tryNormalizeDetailsGuid(previewGuid) : null;
+        }
       } catch {
         // Fall back to a sourcedoc-based viewer URL.
       }
     }
 
-    const documentUniqueId = this._resolveExternalItemFieldValue(item, "UniqueID") ?? this._resolveExternalItemFieldValue(item, "NormUniqueID");
-
-    const normalizedDocumentGuid = documentUniqueId ? this._tryNormalizeDetailsGuid(String(documentUniqueId)) : null;
-
     if (!normalizedDocumentGuid) {
+      if (ambiguousPath) {
+        Log.warn("DetailsSelectedItemButtonComponent", "Cannot open a document with an ambiguous path without a valid document ID.");
+      }
       return null;
     }
 
