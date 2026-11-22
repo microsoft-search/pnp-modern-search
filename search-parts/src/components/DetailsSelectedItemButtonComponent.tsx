@@ -6,7 +6,7 @@ import type { IPickerTerms } from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { PageContext } from "@microsoft/sp-page-context";
 import { SPHttpClient } from "@microsoft/sp-http";
-import { Text } from "@microsoft/sp-core-library";
+import { Log, Text } from "@microsoft/sp-core-library";
 import { ISearchResultsTemplateContext } from "../models/common/ITemplateContext";
 import { ObjectHelper } from "../helpers/ObjectHelper";
 import { TaxonomyHelper } from "../helpers/TaxonomyHelper";
@@ -1714,6 +1714,16 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       }
 
       if (this._isDetailsDocumentItem(item)) {
+        const documentPath = this._resolveExternalItemFieldValue(item, "DefaultEncodingURL")
+          ?? this._resolveExternalItemFieldValue(item, "Path")
+          ?? this._resolveExternalItemFieldValue(item, "OriginalPath")
+          ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
+
+        if (documentPath && new URL(documentPath, window.location.origin).origin !== baseUrl.origin) {
+          Log.warn("DetailsSelectedItemButtonComponent", "Cannot open document details for a cross-origin item.");
+          return null;
+        }
+
         return this._buildDocumentDetailsPaneUrl(item, baseUrl) ?? this._buildDocumentViewerUrl(item, baseUrl);
       }
 
@@ -1733,7 +1743,8 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       formUrl.searchParams.set("env", "Embedded");
 
       return formUrl.toString();
-    } catch {
+    } catch (error) {
+      Log.warn("DetailsSelectedItemButtonComponent", `Cannot construct the details form URL: ${error}`);
       return null;
     }
   }
@@ -1764,7 +1775,8 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
   }
 
   private _buildDocumentDetailsPaneUrl(item: any, baseUrl: URL): string | null {
-    const itemPath = this._resolveExternalItemFieldValue(item, "Path") ?? this._resolveExternalItemFieldValue(item, "OriginalPath") ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
+    const encodedItemPath = this._resolveExternalItemFieldValue(item, "DefaultEncodingURL");
+    const itemPath = encodedItemPath ?? this._resolveExternalItemFieldValue(item, "Path") ?? this._resolveExternalItemFieldValue(item, "OriginalPath") ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
     const selectedItemId = this._resolveDetailsListItemId(item);
     const normalizedSelectedItemId = /^\d+$/.test(String(selectedItemId ?? "")) ? String(selectedItemId) : null;
 
@@ -1772,8 +1784,18 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return null;
     }
 
+    if (!encodedItemPath && /[%#?]/.test(itemPath)) {
+      Log.warn("DetailsSelectedItemButtonComponent", "Cannot safely interpret the document path without an encoded URL; falling back to the document viewer.");
+      return null;
+    }
+
     try {
       const itemUrl = new URL(itemPath, window.location.origin);
+      if (itemUrl.origin !== baseUrl.origin) {
+        Log.warn("DetailsSelectedItemButtonComponent", "Cannot open document details for a cross-origin item.");
+        return null;
+      }
+
       const webServerRelativePath = baseUrl.pathname.replace(/\/$/, "");
       const itemServerRelativePath = itemUrl.pathname;
 
@@ -1787,8 +1809,9 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
         return null;
       }
 
-      const listUrl = `${webServerRelativePath}/${relativeSegments[0]}`;
-      const parentPath = itemServerRelativePath.slice(0, itemServerRelativePath.lastIndexOf("/"));
+      const listUrl = decodeURIComponent(`${webServerRelativePath}/${relativeSegments[0]}`);
+      const parentPath = decodeURIComponent(itemServerRelativePath.slice(0, itemServerRelativePath.lastIndexOf("/")));
+      const decodedItemPath = decodeURIComponent(itemServerRelativePath);
       const detailsPaneUrl = new URL(baseUrl.origin);
       detailsPaneUrl.pathname = `${webServerRelativePath}/_layouts/15/modernFrame.aspx`;
       detailsPaneUrl.searchParams.set("origin", window.location.origin);
@@ -1800,7 +1823,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       detailsPaneUrl.searchParams.set("component", "detailsPane");
       detailsPaneUrl.searchParams.set("isDarkMode", String(this._getDetailsIsDarkMode()));
       detailsPaneUrl.searchParams.set("options", JSON.stringify({
-        itemIds: [`id=${encodeURIComponent(itemServerRelativePath)}`],
+        itemIds: [`id=${encodeURIComponent(decodedItemPath)}`],
         isOD3UIEnabled: true,
         isCrossList: false,
         ...(normalizedSelectedItemId ? { selectedItemIds: [normalizedSelectedItemId] } : {}),
@@ -1809,7 +1832,8 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       detailsPaneUrl.searchParams.set("disableAutoScroll", "1");
 
       return detailsPaneUrl.toString();
-    } catch {
+    } catch (error) {
+      Log.warn("DetailsSelectedItemButtonComponent", `Cannot construct the document details URL: ${error}`);
       return null;
     }
   }
@@ -1819,7 +1843,12 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
     if (autoPreviewUrl) {
       try {
-        return new URL(autoPreviewUrl, window.location.origin).toString();
+        const viewerUrl = new URL(autoPreviewUrl, window.location.origin);
+        if (viewerUrl.origin !== baseUrl.origin) {
+          Log.warn("DetailsSelectedItemButtonComponent", "Cannot open a cross-origin document viewer.");
+        } else {
+          return viewerUrl.toString();
+        }
       } catch {
         // Fall back to a sourcedoc-based viewer URL.
       }
