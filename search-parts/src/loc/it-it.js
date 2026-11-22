@@ -199,7 +199,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Ordinamento utente",
                     EditSortLabel: "Modifica impostazioni di ordinamento",
                     SortInvalidSortableFieldMessage: "Questa proprietà non è ordinabile",
-                    SortFieldColumnPlaceholder: "Seleziona campo…"
+                    SortFieldColumnPlaceholder: "Seleziona campo…",
+                    SortCheckVerified: "Verificato",
+                    SortCheckFailed: "Verifica non riuscita",
+                    SortCheckNotSortable: "Non ordinabile: SharePoint ha rifiutato l'ordinamento per questa proprietà.",
+                    SortCheckUnknown: "Non verificato"
                 }
             }
         },

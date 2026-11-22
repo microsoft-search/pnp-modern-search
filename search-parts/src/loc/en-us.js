@@ -199,7 +199,11 @@ define([], function () {
                     SortFieldUserSortLabel: "User sort",
                     EditSortLabel: "Edit sort settings",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
-                    SortFieldColumnPlaceholder: "Select field..."
+                    SortFieldColumnPlaceholder: "Select field...",
+                    SortCheckVerified: "Verified",
+                    SortCheckFailed: "Check failed",
+                    SortCheckNotSortable: "Not sortable: SharePoint rejected sorting by this property.",
+                    SortCheckUnknown: "Not checked"
                 }
             }
         },

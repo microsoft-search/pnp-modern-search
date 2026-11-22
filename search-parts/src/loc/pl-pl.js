@@ -200,7 +200,11 @@ define([], function () {
                     SortFieldUserSortLabel: "Sortowanie użytkowników",
                     EditSortLabel: "Edytuj porządek sortowania",
                     SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
-                    SortFieldColumnPlaceholder: "Wybierz pole..."
+                    SortFieldColumnPlaceholder: "Wybierz pole...",
+                    SortCheckVerified: "Zweryfikowano",
+                    SortCheckFailed: "Sprawdzanie nie powiodło się",
+                    SortCheckNotSortable: "Nie można sortować: SharePoint odrzucił sortowanie według tej właściwości.",
+                    SortCheckUnknown: "Nie sprawdzono"
                 }
             }
         },

@@ -32,7 +32,8 @@ export interface ISharePointSearchService {
      getAvailableQueryLanguages(): Promise<any>;
 
      /**
-     * Determine if a SharePoint managed property is sortable
+     * Test a SharePoint sort request. Returns false when sorting is rejected but the query without sorting succeeds.
+     * Rejects on other request failures or an invalid response.
      * @param property the SharePoint managed property
      */
      validateSortableProperty(property: string): Promise<boolean>;

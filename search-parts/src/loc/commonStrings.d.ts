@@ -199,6 +199,10 @@ declare interface ICommonStrings {
           EditSortLabel: string;
           SortInvalidSortableFieldMessage: string;
           SortFieldColumnPlaceholder: string;
+          SortCheckVerified: string;
+          SortCheckFailed: string;
+          SortCheckNotSortable: string;
+          SortCheckUnknown: string;
         };
       }
     },
