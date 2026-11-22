@@ -223,7 +223,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Exportar resultado de búsqueda",
             ExportTextOnlyColumn: "{0} [Solo texto]",
             ExportSearchResultsError: "No se pudo completar la exportación. Inténtelo de nuevo. Si cambió la búsqueda, exporte los resultados actualizados.",
-            ExportSearchResultsDismissError: "Cerrar error de exportación"
+            ExportSearchResultsDismissError: "Cerrar error de exportación",
+            ExportSearchResultsMissingColumnsWarning: "La exportación está deshabilitada porque no hay columnas de exportación configuradas. Configure las columnas en los ajustes de exportación CSV del elemento web.",
+            ExportSearchResultsInvalidColumnsWarning: "La exportación está deshabilitada porque la configuración de las columnas de exportación no es válida. Corríjala en los ajustes de exportación CSV del elemento web.",
+            SearchResultsMissingTitleWarning: "Mostrar título está habilitado, pero el elemento web no tiene título. Introduzca un título directamente en el elemento web durante la edición. El enlace Ver todo también requiere un título."
         },
         Layouts: {
             Debug: {

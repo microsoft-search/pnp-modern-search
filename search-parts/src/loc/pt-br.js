@@ -222,7 +222,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Exportar resultado da pesquisa",
             ExportTextOnlyColumn: "{0} [Somente texto]",
             ExportSearchResultsError: "Não foi possível concluir a exportação. Tente novamente. Se a pesquisa mudou, exporte os resultados atualizados.",
-            ExportSearchResultsDismissError: "Fechar erro de exportação"
+            ExportSearchResultsDismissError: "Fechar erro de exportação",
+            ExportSearchResultsMissingColumnsWarning: "A exportação está desabilitada porque nenhuma coluna de exportação foi configurada. Configure as colunas nas configurações de exportação CSV da Web Part.",
+            ExportSearchResultsInvalidColumnsWarning: "A exportação está desabilitada porque a configuração das colunas de exportação é inválida. Corrija-a nas configurações de exportação CSV da Web Part.",
+            SearchResultsMissingTitleWarning: "Mostrar título está habilitado, mas nenhum título foi definido para a Web Part. Insira um título diretamente na Web Part durante a edição. O link Ver tudo também exige um título."
         },
         Layouts: {
             Debug: {

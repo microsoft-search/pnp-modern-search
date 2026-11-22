@@ -220,7 +220,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Vie hakutulos",
             ExportTextOnlyColumn: "{0} [Vain teksti]",
             ExportSearchResultsError: "Vientiä ei voitu suorittaa loppuun. Yritä uudelleen. Jos haku muuttui, vie päivitetyt tulokset.",
-            ExportSearchResultsDismissError: "Sulje vientivirhe"
+            ExportSearchResultsDismissError: "Sulje vientivirhe",
+            ExportSearchResultsMissingColumnsWarning: "Vienti on poistettu käytöstä, koska vientisarakkeita ei ole määritetty. Määritä sarakkeet verkko-osan CSV-vientiasetuksissa.",
+            ExportSearchResultsInvalidColumnsWarning: "Vienti on poistettu käytöstä, koska vientisarakkeiden määritys on virheellinen. Korjaa se verkko-osan CSV-vientiasetuksissa.",
+            SearchResultsMissingTitleWarning: "Näytä otsikko on käytössä, mutta verkko-osalle ei ole asetettu otsikkoa. Kirjoita otsikko suoraan verkko-osaan muokkaustilassa. Myös Näytä kaikki -linkki edellyttää otsikkoa."
         },
         Layouts: {
             Debug: {

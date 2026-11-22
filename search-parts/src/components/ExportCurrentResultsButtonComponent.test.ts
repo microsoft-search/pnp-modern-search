@@ -3,14 +3,16 @@ jest.mock('@pnp/modern-search-extensibility', () => ({ BaseWebComponent: class {
 jest.mock('@fluentui/react', () => ({
     ActionButton: 'button',
     MessageBar: 'div',
-    MessageBarType: { error: 1 },
+    MessageBarType: { error: 1, warning: 2 },
     getTheme: () => ({ semanticColors: {} })
 }));
 jest.mock('CommonStrings', () => ({
     Controls: {
         DownloadCurrentDataAsCSVButtonText: 'Export Search result',
         ExportSearchResultsError: 'Export failed. Try again.',
-        ExportSearchResultsDismissError: 'Dismiss export error'
+        ExportSearchResultsDismissError: 'Dismiss export error',
+        ExportSearchResultsMissingColumnsWarning: 'Configure export columns.',
+        ExportSearchResultsInvalidColumnsWarning: 'Correct the export column configuration.'
     }
 }), { virtual: true });
 
@@ -21,11 +23,12 @@ describe('ExportCurrentResultsButtonComponent error feedback', () => {
     const originalCreateObjectURL = URL.createObjectURL;
     const originalRevokeObjectURL = URL.revokeObjectURL;
 
-    function createComponent(controller = new CsvExportController(async () => []), isAvailable = true): ExportCurrentResultsButtonComponent {
+    function createComponent(controller = new CsvExportController(async () => []), isAvailable = true,
+        exportColumns: string | Record<string, string> = { Title: 'Title' }): ExportCurrentResultsButtonComponent {
         controller.setAvailable(isAvailable);
         const component = new ExportCurrentResultsButtonComponent({
             items: [{ Title: 'Example' }],
-            exportColumns: { Title: 'Title' }
+            exportColumns
         });
         jest.spyOn(component, 'setState').mockImplementation(update => {
             Object.assign(component.state, update);
@@ -61,13 +64,50 @@ describe('ExportCurrentResultsButtonComponent error feedback', () => {
         expect(component.render().props.children[1]).toBe('');
     });
 
+    it.each(['', '  ', '{}'])('explains missing export columns for configuration %j', config => {
+        const component = createComponent(undefined, true, config);
+        const children = component.render().props.children;
+        expect(children[0].props.disabled).toBe(true);
+        expect(children[2].props.children).toBe('Configure export columns.');
+        expect(children[2].props.role).toBe('status');
+        expect(children[2].props.messageBarType).toBe(2);
+    });
+
+    it.each(['{', '[]', 'null', '{"Title":42}', '{" ":"Header"}'])('explains an unusable export configuration %j', config => {
+        const component = createComponent(undefined, true, config);
+        const children = component.render().props.children;
+        expect(children[0].props.disabled).toBe(true);
+        expect(children[2].props.children).toBe('Correct the export column configuration.');
+    });
+
+    it('explains omitted configuration without confusing it with an export request failure', () => {
+        const component = new ExportCurrentResultsButtonComponent({ items: [{ Title: 'Example' }] });
+        const children = component.render().props.children;
+        expect(children[1]).toBe('');
+        expect(children[2].props.children).toBe('Configure export columns.');
+    });
+
+    it('preserves export behavior for usable mappings and removes the configuration warning', () => {
+        const component = createComponent(undefined, true, '{"Title":"Title","Ignored":42}');
+        const children = component.render().props.children;
+        expect(children[0].props.disabled).toBe(false);
+        expect(children[2]).toBeUndefined();
+    });
+
     it('blocks export while results are loading', async () => {
         const fetchItems = jest.fn(async () => []);
         const component = createComponent(new CsvExportController(fetchItems), false);
 
         expect(component.render().props.children[0].props.disabled).toBe(true);
+        expect(component.render().props.children[2]).toBeUndefined();
         await component['_downloadCurrentData']();
         expect(fetchItems).not.toHaveBeenCalled();
+    });
+
+    it('does not show a configuration warning when disabled only because there are no results', () => {
+        const component = new ExportCurrentResultsButtonComponent({ items: [], exportColumns: { Title: 'Title' } });
+        expect(component.render().props.children[0].props.disabled).toBe(true);
+        expect(component.render().props.children[2]).toBeUndefined();
     });
 
     it('shows a localized, dismissible alert on failure and retains diagnostics', async () => {

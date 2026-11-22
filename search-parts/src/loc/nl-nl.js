@@ -222,7 +222,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Zoekresultaat exporteren",
             ExportTextOnlyColumn: "{0} [Alleen tekst]",
             ExportSearchResultsError: "De export kon niet worden voltooid. Probeer het opnieuw. Als de zoekopdracht is gewijzigd, exporteer dan de bijgewerkte resultaten.",
-            ExportSearchResultsDismissError: "Exportfout sluiten"
+            ExportSearchResultsDismissError: "Exportfout sluiten",
+            ExportSearchResultsMissingColumnsWarning: "Exporteren is uitgeschakeld omdat er geen exportkolommen zijn geconfigureerd. Configureer kolommen in de CSV-exportinstellingen van het webonderdeel.",
+            ExportSearchResultsInvalidColumnsWarning: "Exporteren is uitgeschakeld omdat de configuratie van de exportkolommen ongeldig is. Corrigeer deze in de CSV-exportinstellingen van het webonderdeel.",
+            SearchResultsMissingTitleWarning: "Titel weergeven is ingeschakeld, maar er is geen titel voor het webonderdeel ingesteld. Voer tijdens het bewerken rechtstreeks in het webonderdeel een titel in. De koppeling Alles weergeven vereist ook een titel."
         },
         Layouts: {
             Debug: {

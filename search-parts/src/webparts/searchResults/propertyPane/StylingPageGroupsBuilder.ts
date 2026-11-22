@@ -309,6 +309,16 @@ export class StylingPageGroupsBuilder {
         ];
 
         if (this.properties.showTitle) {
+            if (!this.properties.title?.trim()) {
+                titleFields.push(PropertyFieldMessage('messageMissingTitle', {
+                    key: 'messageMissingTitleKey',
+                    multiline: true,
+                    text: commonStrings.Controls.SearchResultsMissingTitleWarning,
+                    messageType: MessageBarType.warning,
+                    isVisible: true
+                }));
+            }
+
             titleFields.push(
                 PropertyPaneTextField('titleLinkText', {
                     label: this.webPartStrings.PropertyPane.LayoutPage.TitleLinkTextFieldLabel,

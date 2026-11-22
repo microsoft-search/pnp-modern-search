@@ -223,7 +223,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Eksportuj wynik wyszukiwania",
             ExportTextOnlyColumn: "{0} [Tylko tekst]",
             ExportSearchResultsError: "Nie udało się ukończyć eksportu. Spróbuj ponownie. Jeśli wyszukiwanie się zmieniło, wyeksportuj zaktualizowane wyniki.",
-            ExportSearchResultsDismissError: "Zamknij błąd eksportu"
+            ExportSearchResultsDismissError: "Zamknij błąd eksportu",
+            ExportSearchResultsMissingColumnsWarning: "Eksport jest wyłączony, ponieważ nie skonfigurowano kolumn eksportu. Skonfiguruj kolumny w ustawieniach eksportu CSV składnika Web Part.",
+            ExportSearchResultsInvalidColumnsWarning: "Eksport jest wyłączony, ponieważ konfiguracja kolumn eksportu jest nieprawidłowa. Popraw ją w ustawieniach eksportu CSV składnika Web Part.",
+            SearchResultsMissingTitleWarning: "Opcja Pokaż tytuł jest włączona, ale nie ustawiono tytułu składnika Web Part. Wpisz tytuł bezpośrednio w składniku podczas edycji. Link Zobacz wszystko również wymaga tytułu."
         },
         Layouts: {
             Debug: {

@@ -222,6 +222,9 @@ declare interface ICommonStrings {
       ExportTextOnlyColumn: string;
       ExportSearchResultsError: string;
       ExportSearchResultsDismissError: string;
+      ExportSearchResultsMissingColumnsWarning: string;
+      ExportSearchResultsInvalidColumnsWarning: string;
+      SearchResultsMissingTitleWarning: string;
     },
     Layouts: {
       Debug: {

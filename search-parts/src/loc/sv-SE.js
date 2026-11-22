@@ -223,7 +223,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Exportera sökresultat",
             ExportTextOnlyColumn: "{0} [Endast text]",
             ExportSearchResultsError: "Exporten kunde inte slutföras. Försök igen. Om sökningen ändrades, exportera de uppdaterade resultaten.",
-            ExportSearchResultsDismissError: "Stäng exportfel"
+            ExportSearchResultsDismissError: "Stäng exportfel",
+            ExportSearchResultsMissingColumnsWarning: "Export är inaktiverad eftersom inga exportkolumner har konfigurerats. Konfigurera kolumner i webbdelens inställningar för CSV-export.",
+            ExportSearchResultsInvalidColumnsWarning: "Export är inaktiverad eftersom konfigurationen av exportkolumner är ogiltig. Korrigera den i webbdelens inställningar för CSV-export.",
+            SearchResultsMissingTitleWarning: "Visa titel är aktiverat, men webbdelen har ingen titel. Ange en titel direkt i webbdelen under redigering. Länken Visa alla kräver också en titel."
         },
         Layouts: {
             Debug: {

@@ -222,7 +222,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Exportovat výsledek hledání",
             ExportTextOnlyColumn: "{0} [Pouze text]",
             ExportSearchResultsError: "Export se nepodařilo dokončit. Zkuste to znovu. Pokud se hledání změnilo, exportujte aktualizované výsledky.",
-            ExportSearchResultsDismissError: "Zavřít chybu exportu"
+            ExportSearchResultsDismissError: "Zavřít chybu exportu",
+            ExportSearchResultsMissingColumnsWarning: "Export je zakázán, protože nejsou nakonfigurovány žádné sloupce exportu. Nakonfigurujte sloupce v nastavení exportu CSV webové části.",
+            ExportSearchResultsInvalidColumnsWarning: "Export je zakázán, protože konfigurace sloupců exportu je neplatná. Opravte ji v nastavení exportu CSV webové části.",
+            SearchResultsMissingTitleWarning: "Zobrazení názvu je zapnuto, ale webová část nemá název. Zadejte název přímo do webové části při úpravách. Také odkaz Zobrazit vše vyžaduje název."
         },
         Layouts: {
             Debug: {
