@@ -86,6 +86,10 @@ The title styling section allows you to customize the visual appearance of the w
 | **Open in new tab** | Opens the action link in a new browser tab. | _Off_
 | **Reset title styling to default** | Reset all title styling options to their default values. | N/A
 
+Enter the actual title directly on the web part while editing the page. **Show title** controls the title row; it does not set the title text. When enabled without a title, a warning appears directly below **Show title** in the property pane. The warning disappears when a non-empty title is entered or **Show title** is disabled. No warning is added to the web part header or published page.
+
+The optional **See all** link requires **Show title** to be enabled, a non-empty web part title, link text, and a destination URL. It navigates to that URL; it does not automatically expand results or remove filters.
+
 ## Common Settings
 
 These settings are available across all PnP Modern Search web parts:

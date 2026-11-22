@@ -2659,8 +2659,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     private _updateTitleProperty(value: string) {
+        const hadTitle = !!this.properties.title?.trim();
         this.properties.title = value;
         this.renderCompleted();
+        if (this.properties.showTitle && hadTitle !== !!value.trim()) {
+            this.context.propertyPane.refresh();
+        }
     }
 
     private getTitleMoreLink(): JSX.Element | null {

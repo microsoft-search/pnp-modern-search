@@ -39,27 +39,37 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
         this._unsubscribe?.();
     }
 
-    private _getExportColumns(): IExportColumn[] {
-        let mapping: Record<string, string>;
+    private _getExportConfiguration(): { columns: IExportColumn[]; warning?: string } {
+        const value = this.props.exportColumns;
+        if (value === undefined || typeof value === 'string' && !value.trim()) {
+            return { columns: [], warning: strings.Controls.ExportSearchResultsMissingColumnsWarning };
+        }
+
+        let mapping: unknown;
         try {
-            mapping = typeof this.props.exportColumns === 'string'
-                ? JSON.parse(this.props.exportColumns)
-                : this.props.exportColumns;
+            mapping = typeof value === 'string' ? JSON.parse(value) : value;
         } catch {
-            return [];
+            return { columns: [], warning: strings.Controls.ExportSearchResultsInvalidColumnsWarning };
         }
 
         if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)) {
-            return [];
+            return { columns: [], warning: strings.Controls.ExportSearchResultsInvalidColumnsWarning };
         }
 
-        return Object.entries(mapping)
-            .filter(([managedProperty, csvHeader]) => managedProperty.trim().length > 0 && typeof csvHeader === 'string')
-            .map(([managedProperty, csvHeader]) => ({ managedProperty, csvHeader }));
+        const entries = Object.entries(mapping);
+        const columns = entries.flatMap(([managedProperty, csvHeader]) =>
+            managedProperty.trim().length > 0 && typeof csvHeader === 'string'
+                ? [{ managedProperty, csvHeader }] : []);
+        return {
+            columns,
+            warning: columns.length > 0 ? undefined
+                : entries.length === 0 ? strings.Controls.ExportSearchResultsMissingColumnsWarning
+                    : strings.Controls.ExportSearchResultsInvalidColumnsWarning
+        };
     }
 
     private _downloadCurrentData = async (): Promise<void> => {
-        const columns = this._getExportColumns();
+        const { columns } = this._getExportConfiguration();
         if (columns.length === 0 || !this.props.items?.length || this.state.isExporting) {
             return;
         }
@@ -68,13 +78,13 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
     };
 
     public render(): React.ReactElement {
-        const columns = this._getExportColumns();
+        const { columns, warning } = this._getExportConfiguration();
         const downloadIcon: IIconProps = { iconName: 'Download' };
 
         const theme = (this.props.themeVariant as ITheme) || getTheme();
 
         return (
-            <div ref={this._rootRef} style={{ display: 'inline-block' }}>
+            <div ref={this._rootRef} style={{ display: 'inline-block', maxWidth: warning ? 320 : undefined, whiteSpace: warning ? 'normal' : undefined }}>
                 <ActionButton
                     text={strings.Controls.DownloadCurrentDataAsCSVButtonText}
                     iconProps={downloadIcon}
@@ -93,6 +103,14 @@ export class ExportCurrentResultsButtonComponent extends React.Component<IExport
                         {this.state.errorMessage}
                     </MessageBar>
                 )}
+                {warning && <MessageBar
+                    messageBarType={MessageBarType.warning}
+                    role="status"
+                    theme={theme}
+                    styles={{ root: { marginTop: 4 } }}
+                >
+                    {warning}
+                </MessageBar>}
             </div>
         );
     }

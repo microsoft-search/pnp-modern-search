@@ -222,7 +222,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Suchergebnis exportieren",
             ExportTextOnlyColumn: "{0} [Nur Text]",
             ExportSearchResultsError: "Der Export konnte nicht abgeschlossen werden. Versuchen Sie es erneut. Falls sich die Suche geändert hat, exportieren Sie die aktualisierten Ergebnisse.",
-            ExportSearchResultsDismissError: "Exportfehler schließen"
+            ExportSearchResultsDismissError: "Exportfehler schließen",
+            ExportSearchResultsMissingColumnsWarning: "Der Export ist deaktiviert, da keine Exportspalten konfiguriert sind. Konfigurieren Sie Spalten in den CSV-Exporteinstellungen des Webparts.",
+            ExportSearchResultsInvalidColumnsWarning: "Der Export ist deaktiviert, da die Konfiguration der Exportspalten ungültig ist. Korrigieren Sie sie in den CSV-Exporteinstellungen des Webparts.",
+            SearchResultsMissingTitleWarning: "Titel anzeigen ist aktiviert, aber es wurde kein Webparttitel festgelegt. Geben Sie beim Bearbeiten direkt im Webpart einen Titel ein. Auch der Link Alle anzeigen benötigt einen Titel."
         },
         Layouts: {
             Debug: {

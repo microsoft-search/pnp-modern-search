@@ -222,7 +222,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Eksportér søgeresultat",
             ExportTextOnlyColumn: "{0} [Kun tekst]",
             ExportSearchResultsError: "Eksporten kunne ikke fuldføres. Prøv igen. Hvis søgningen blev ændret, skal du eksportere de opdaterede resultater.",
-            ExportSearchResultsDismissError: "Luk eksportfejl"
+            ExportSearchResultsDismissError: "Luk eksportfejl",
+            ExportSearchResultsMissingColumnsWarning: "Eksport er deaktiveret, fordi der ikke er konfigureret eksportkolonner. Konfigurer kolonner i webdelens indstillinger for CSV-eksport.",
+            ExportSearchResultsInvalidColumnsWarning: "Eksport er deaktiveret, fordi konfigurationen af eksportkolonner er ugyldig. Ret den i webdelens indstillinger for CSV-eksport.",
+            SearchResultsMissingTitleWarning: "Vis titel er aktiveret, men webdelen har ingen titel. Indtast en titel direkte i webdelen under redigering. Linket Se alle kræver også en titel."
         },
         Layouts: {
             Debug: {

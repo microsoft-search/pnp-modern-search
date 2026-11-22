@@ -67,6 +67,8 @@ The visual editor also displays previously mapped properties that are no longer 
 
 The action is disabled when results are loading, when there are no loaded results, when no usable export mapping is configured, and while export is running.
 
+When no columns are configured, a warning message directly below the disabled **Export Search result** action explains that columns must be configured in the web part's CSV export settings. Malformed JSON or a mapping with no usable entries shows a different warning asking you to correct the configuration. These messages are accessible to screen readers, appear in both edit and display modes, and are separate from export request errors. No CSV configuration warning is added to the property pane. A valid mapping disabled only because of loading, no results, or an ongoing export does not show a configuration warning.
+
 Successful exports do not display a status message. If export fails, a localized, dismissible error is announced to assistive technologies. Changing the search inputs, filters, vertical, sorting, or paging during export cancels it and discards collected rows to avoid mixing results from different queries. Retry the export for the updated search.
 
 Selecting or deselecting result items does not cancel a full-dataset export. The active export and its busy/error state are retained when selection updates replace the toolbar, preventing duplicate exports and allowing the original download to finish.

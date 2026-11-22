@@ -222,7 +222,10 @@ define([], function () {
             DownloadCurrentDataAsCSVButtonText: "Export Search result",
             ExportTextOnlyColumn: "{0} [Text Only]",
             ExportSearchResultsError: "The export could not be completed. Try again. If the search changed, export the updated results.",
-            ExportSearchResultsDismissError: "Dismiss export error"
+            ExportSearchResultsDismissError: "Dismiss export error",
+            ExportSearchResultsMissingColumnsWarning: "Export is disabled because no export columns are configured. Configure columns in the web part's CSV export settings.",
+            ExportSearchResultsInvalidColumnsWarning: "Export is disabled because the export column configuration is invalid. Correct it in the web part's CSV export settings.",
+            SearchResultsMissingTitleWarning: "Show title is enabled, but no web part title is set. Enter a title directly on the web part while editing. The See all link also requires a title."
         },
         Layouts: {
             Debug: {
