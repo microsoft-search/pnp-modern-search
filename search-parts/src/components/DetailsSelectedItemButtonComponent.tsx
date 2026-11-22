@@ -1714,10 +1714,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       }
 
       if (this._isDetailsDocumentItem(item)) {
-        const documentPath = this._resolveExternalItemFieldValue(item, "DefaultEncodingURL")
-          ?? this._resolveExternalItemFieldValue(item, "Path")
-          ?? this._resolveExternalItemFieldValue(item, "OriginalPath")
-          ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
+        const { path: documentPath } = this._getDocumentPath(item);
 
         if (documentPath && new URL(documentPath, window.location.origin).origin !== baseUrl.origin) {
           Log.warn("DetailsSelectedItemButtonComponent", "Cannot open document details for a cross-origin item.");
@@ -1774,9 +1771,24 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
     return null;
   }
 
+  private _getDocumentPath(item: any): { path: string | undefined; isEncoded: boolean } {
+    const encodedPath = this._resolveExternalItemFieldValue(item, "DefaultEncodingURL") || undefined;
+    return {
+      path: encodedPath
+        ?? this._resolveExternalItemFieldValue(item, "Path")
+        ?? this._resolveExternalItemFieldValue(item, "OriginalPath")
+        ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL"),
+      isEncoded: !!encodedPath,
+    };
+  }
+
+  private _isAmbiguousDocumentPath(item: any): boolean {
+    const { path, isEncoded } = this._getDocumentPath(item);
+    return !isEncoded && typeof path === "string" && /[%#?]/.test(path);
+  }
+
   private _buildDocumentDetailsPaneUrl(item: any, baseUrl: URL): string | null {
-    const encodedItemPath = this._resolveExternalItemFieldValue(item, "DefaultEncodingURL");
-    const itemPath = encodedItemPath ?? this._resolveExternalItemFieldValue(item, "Path") ?? this._resolveExternalItemFieldValue(item, "OriginalPath") ?? this._resolveExternalItemFieldValue(item, "ServerRedirectedURL");
+    const { path: itemPath } = this._getDocumentPath(item);
     const selectedItemId = this._resolveDetailsListItemId(item);
     const normalizedSelectedItemId = /^\d+$/.test(String(selectedItemId ?? "")) ? String(selectedItemId) : null;
 
@@ -1784,7 +1796,7 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
       return null;
     }
 
-    if (!encodedItemPath && /[%#?]/.test(itemPath)) {
+    if (this._isAmbiguousDocumentPath(item)) {
       Log.warn("DetailsSelectedItemButtonComponent", "Cannot safely interpret the document path without an encoded URL; falling back to the document viewer.");
       return null;
     }
@@ -1840,25 +1852,30 @@ export class DetailsSelectedItemButtonComponent extends React.Component<IDetails
 
   private _buildDocumentViewerUrl(item: any, baseUrl: URL): string | null {
     const autoPreviewUrl = this._resolveExternalItemFieldValue(item, "AutoPreviewUrl");
+    const ambiguousPath = this._isAmbiguousDocumentPath(item);
+    const documentUniqueId = this._resolveExternalItemFieldValue(item, "UniqueID") || this._resolveExternalItemFieldValue(item, "NormUniqueID");
+    let normalizedDocumentGuid = documentUniqueId ? this._tryNormalizeDetailsGuid(String(documentUniqueId)) : null;
 
     if (autoPreviewUrl) {
       try {
         const viewerUrl = new URL(autoPreviewUrl, window.location.origin);
         if (viewerUrl.origin !== baseUrl.origin) {
           Log.warn("DetailsSelectedItemButtonComponent", "Cannot open a cross-origin document viewer.");
-        } else {
+        } else if (!ambiguousPath) {
           return viewerUrl.toString();
+        } else if (!normalizedDocumentGuid && viewerUrl.pathname.toLowerCase() === `${baseUrl.pathname.replace(/\/$/, "")}/_layouts/15/viewer.aspx`.toLowerCase()) {
+          const previewGuid = viewerUrl.searchParams.get("sourcedoc");
+          normalizedDocumentGuid = previewGuid ? this._tryNormalizeDetailsGuid(previewGuid) : null;
         }
       } catch {
         // Fall back to a sourcedoc-based viewer URL.
       }
     }
 
-    const documentUniqueId = this._resolveExternalItemFieldValue(item, "UniqueID") ?? this._resolveExternalItemFieldValue(item, "NormUniqueID");
-
-    const normalizedDocumentGuid = documentUniqueId ? this._tryNormalizeDetailsGuid(String(documentUniqueId)) : null;
-
     if (!normalizedDocumentGuid) {
+      if (ambiguousPath) {
+        Log.warn("DetailsSelectedItemButtonComponent", "Cannot open a document with an ambiguous path without a valid document ID.");
+      }
       return null;
     }
 

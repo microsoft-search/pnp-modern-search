@@ -18,6 +18,7 @@ jest.mock('../services/taxonomyService/TaxonomyService', () => ({
 
 import { DetailsSelectedItemButtonComponent } from './DetailsSelectedItemButtonComponent';
 import { Log } from '@microsoft/sp-core-library';
+import { DataSourceHelper } from '../helpers/DataSourceHelper';
 
 describe('document details pane URL', () => {
     const component = new DetailsSelectedItemButtonComponent({});
@@ -64,6 +65,27 @@ describe('document details pane URL', () => {
             .toEqual(['id=%2Fsites%2FMySite%2FDocuments%2FReport.pdf']);
     });
 
+    it('uses the document path when DefaultEncodingURL is empty', () => {
+        const url = component['_buildDetailsFormUrl']({
+            SPWebUrl: `${window.location.origin}/sites/MySite`,
+            DefaultEncodingURL: '',
+            Path: `${window.location.origin}/sites/MySite/Documents/Report.pdf`,
+            FileExtension: 'pdf'
+        });
+
+        expect(new URL(url!).searchParams.get('listUrl')).toBe('/sites/MySite/Documents');
+    });
+
+    it('rejects a cross-origin document path when DefaultEncodingURL is empty', () => {
+        expect(component['_buildDetailsFormUrl']({
+            SPWebUrl: `${window.location.origin}/sites/MySite`,
+            DefaultEncodingURL: '',
+            Path: 'https://other.example.com/sites/MySite/Documents/Report.pdf',
+            FileExtension: 'pdf',
+            UniqueID: '73b2a1e4-6599-452a-8bb3-56f93214523a'
+        })).toBeNull();
+    });
+
     it('uses the encoded URL instead of an ambiguous raw search path', () => {
         const url = component['_buildDocumentDetailsPaneUrl']({
             Path: 'https://example.sharepoint.com/sites/My Site/Shared Documents/100% #report%20.pdf',
@@ -101,6 +123,56 @@ describe('document details pane URL', () => {
         const viewerUrl = new URL(url!);
         expect(viewerUrl.pathname).toBe('/sites/MySite/_layouts/15/viewer.aspx');
         expect(viewerUrl.searchParams.get('sourcedoc')).toBe('{73b2a1e4-6599-452a-8bb3-56f93214523a}');
+    });
+
+    it.each(['report#1.pdf', 'report%20final.pdf', 'report?draft.pdf'])(
+        'uses the document ID instead of the generated preview for ambiguous path %s',
+        fileName => {
+            const webUrl = `${window.location.origin}/sites/MySite`;
+            const path = `${webUrl}/Documents/${fileName}`;
+            const autoPreviewUrl = DataSourceHelper.generatePreviewUrl({
+                webUrl, pathProperty: path, fileType: 'pdf', isContainer: false
+            });
+            const url = component['_buildDetailsFormUrl']({
+                SPWebUrl: webUrl,
+                DefaultEncodingURL: '',
+                Path: path,
+                AutoPreviewUrl: autoPreviewUrl,
+                FileExtension: 'pdf',
+                UniqueID: '73b2a1e4-6599-452a-8bb3-56f93214523a'
+            });
+
+            const viewerUrl = new URL(url!);
+            expect(viewerUrl.pathname).toBe('/sites/MySite/_layouts/15/viewer.aspx');
+            expect(viewerUrl.searchParams.get('sourcedoc')).toBe('{73b2a1e4-6599-452a-8bb3-56f93214523a}');
+        }
+    );
+
+    it('rejects a generated direct-file preview when the ambiguous path has no document ID', () => {
+        const webUrl = `${window.location.origin}/sites/MySite`;
+        const path = `${webUrl}/Documents/report#1.pdf`;
+        const autoPreviewUrl = DataSourceHelper.generatePreviewUrl({
+            webUrl, pathProperty: path, fileType: 'pdf', isContainer: false
+        });
+
+        expect(component['_buildDetailsFormUrl']({
+            SPWebUrl: webUrl,
+            Path: path,
+            AutoPreviewUrl: autoPreviewUrl,
+            FileExtension: 'pdf'
+        })).toBeNull();
+    });
+
+    it('accepts a safe SharePoint viewer URL containing a document ID', () => {
+        const webUrl = `${window.location.origin}/sites/MySite`;
+        const url = component['_buildDetailsFormUrl']({
+            SPWebUrl: webUrl,
+            Path: `${webUrl}/Documents/report#1.pdf`,
+            AutoPreviewUrl: `${webUrl}/_layouts/15/viewer.aspx?sourcedoc={73b2a1e4-6599-452a-8bb3-56f93214523a}`,
+            FileExtension: 'pdf'
+        });
+
+        expect(new URL(url!).searchParams.get('sourcedoc')).toBe('{73b2a1e4-6599-452a-8bb3-56f93214523a}');
     });
 
     it('rejects a document URL from a different origin', () => {
