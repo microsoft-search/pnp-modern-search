@@ -912,9 +912,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 this.layout.properties = this.properties.layoutProperties;
             }
 
-            this._selectedCustomQueryModifier.forEach(modifier => {
-                modifier.properties = this.properties.queryModifierProperties;
-            });
+            const queryModifierConfiguration = this.properties.queryModifierConfiguration;
+            this._selectedCustomQueryModifier = await this.initializeQueryModifiers(queryModifierConfiguration);
+            this.lastQueryModifierKeys = queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
         } catch (error) {
             this.errorMessage = error?.message ? error.message : error;
             Log.error(LogSource, error);
@@ -2861,33 +2861,38 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 ]);
 
                 childServiceScope.whenFinished(async () => {
+                    try {
 
-                    queryModifier = childServiceScope.consume<IQueryModifier>(serviceKey);
+                        queryModifier = childServiceScope.consume<IQueryModifier>(serviceKey);
 
-                    // Verify a queryModifier is a valid QueryModifier
-                    const isValidProvider = (providerInstance: IQueryModifier): providerInstance is BaseQueryModifier<any> => {
-                        return (
-                            (providerInstance as BaseQueryModifier<any>).getPropertyPaneGroupsConfiguration !== undefined &&
-                            (providerInstance as BaseQueryModifier<any>).modifyQuery !== undefined &&
-                            (providerInstance as BaseQueryModifier<any>).onPropertyUpdate !== undefined &&
-                            (providerInstance as BaseQueryModifier<any>).onInit !== undefined
-                        );
-                    };
+                        // Verify a queryModifier is a valid QueryModifier
+                        const isValidProvider = (providerInstance: IQueryModifier): providerInstance is BaseQueryModifier<any> => {
+                            return (
+                                (providerInstance as BaseQueryModifier<any>).getPropertyPaneGroupsConfiguration !== undefined &&
+                                (providerInstance as BaseQueryModifier<any>).modifyQuery !== undefined &&
+                                (providerInstance as BaseQueryModifier<any>).onPropertyUpdate !== undefined &&
+                                (providerInstance as BaseQueryModifier<any>).onInit !== undefined
+                            );
+                        };
 
 
-                    if (!isValidProvider(queryModifier)) {
-                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidQueryModifierInstance, providerKey)));
-                    }
+                        if (!isValidProvider(queryModifier)) {
+                            reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidQueryModifierInstance, providerKey)));
+                            return;
+                        }
 
-                    // Initialize the queryModifier
-                    if (queryModifier) {
+                        // Initialize the queryModifier
+                        if (queryModifier) {
 
-                        queryModifier.properties = this.properties.queryModifierProperties;
-                        queryModifier.context = this.context;
-                        queryModifier.endWhenSuccessfull = endWhenSuccessfull;
-                        await queryModifier.onInit();
+                            queryModifier.properties = this.properties.queryModifierProperties;
+                            queryModifier.context = this.context;
+                            queryModifier.endWhenSuccessfull = endWhenSuccessfull;
+                            await queryModifier.onInit();
 
-                        resolve(queryModifier);
+                            resolve(queryModifier);
+                        }
+                    } catch (error) {
+                        reject(error);
                     }
                 });
             });
