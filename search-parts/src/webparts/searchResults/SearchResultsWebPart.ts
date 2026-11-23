@@ -42,6 +42,7 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsof
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
+import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
@@ -93,6 +94,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Promise guard to prevent concurrent loadExtensions calls during render re-entry
      */
     private _extensionsLoadingPromise: Promise<void> = null;
+    private readonly handlebarsCustomizationTracker = new HandlebarsCustomizationTracker();
 
     /**
      * Dynamic data related fields
@@ -903,12 +905,26 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
     private async onPropertiesImported(): Promise<void> {
         try {
+            if (this._extensionsLoadingPromise) {
+                await this._extensionsLoadingPromise;
+            }
+            this.extensionsLoaded = false;
+            this._extensionsLoadingPromise = this.loadExtensions(uniqBy(this.properties.extensibilityLibraryConfiguration, 'id'), true);
+            try {
+                await this._extensionsLoadingPromise;
+            } finally {
+                this._extensionsLoadingPromise = null;
+            }
+
             const dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
             await this.loadComponentPropertyPaneResources(dataSource);
             this.dataSource = dataSource;
             this.lastDataSourceKey = this.properties.dataSourceKey;
 
-            if (this.layout && this.lastLayoutKey === this.properties.selectedLayoutKey) {
+            const isBuiltinLayout = AvailableLayouts.BuiltinLayouts.some(layout => layout.key === this.properties.selectedLayoutKey);
+            if (!isBuiltinLayout) {
+                this.lastLayoutKey = undefined;
+            } else if (this.layout && this.lastLayoutKey === this.properties.selectedLayoutKey) {
                 this.layout.properties = this.properties.layoutProperties;
             }
 
@@ -1283,6 +1299,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         ExtensibilityUsageHelper.debugLog(`[${LogSource}] extensibility resolution took ${(performance.now() - extResolveStart).toFixed(0)}ms (requested ${librariesToLoad.length}, loaded ${extensibilityLibraries.length}).`);
         const customQueryModifierConfiguration: IQueryModifierConfiguration[] = [];
 
+        this.handlebarsCustomizationTracker.reset(this.templateService.Handlebars);
+        this.templateService.AdaptiveCardsExtensibilityLibraries = [];
+        this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
+        this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => layout.type === LayoutType.Results);
+        this.availableCustomQueryModifierDefinitions = [];
+
         // Load extensibility additions
         if (extensibilityLibraries.length > 0) {
 
@@ -1299,7 +1321,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Registers Handlebars customizations in the local namespace
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
-                    extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+                    this.handlebarsCustomizationTracker.register(this.templateService.Handlebars,
+                        () => extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars));
 
                 // Registers event handler for custom action in Adaptive Cards
                 if (extensibilityLibrary.invokeCardAction)
@@ -1331,6 +1354,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Add custom providers to the available providers
         this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
+        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
 
         // Register web components in the global page context. This must happen every time
         // extensions are loaded (not just once in onInit) so that newly-enabled extension
