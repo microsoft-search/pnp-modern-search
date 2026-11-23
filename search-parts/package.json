@@ -33,7 +33,7 @@
         "@pnp/common": "2.15.0",
         "@pnp/modern-search-extensibility": "2.2.0",
         "@pnp/spfx-controls-react": "3.24.0",
-        "@pnp/spfx-property-controls": "3.23.0",
+        "@pnp/spfx-property-controls": "3.25.0",
         "@pnp/telemetry-js": "2.0.0",
         "adaptive-expressions": "4.23.3",
         "adaptivecards": "2.11.2",

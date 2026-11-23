@@ -835,7 +835,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.getAudienceTargetingPropertyPaneGroup.bind(this),
             this._propertyPanePropertyEditor,
             this,
-            commonStrings
+            commonStrings,
+            this.onPropertiesImported.bind(this)
         );
 
         // Build data source page
@@ -898,6 +899,28 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return {
             pages: propertyPanePages
         };
+    }
+
+    private async onPropertiesImported(): Promise<void> {
+        try {
+            const dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+            await this.loadComponentPropertyPaneResources(dataSource);
+            this.dataSource = dataSource;
+            this.lastDataSourceKey = this.properties.dataSourceKey;
+
+            if (this.layout && this.lastLayoutKey === this.properties.selectedLayoutKey) {
+                this.layout.properties = this.properties.layoutProperties;
+            }
+
+            this._selectedCustomQueryModifier.forEach(modifier => {
+                modifier.properties = this.properties.queryModifierProperties;
+            });
+        } catch (error) {
+            this.errorMessage = error?.message ? error.message : error;
+            Log.error(LogSource, error);
+            this.renderCompleted();
+            throw error;
+        }
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void> {
@@ -2023,58 +2046,63 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 ]);
 
                 childServiceScope.whenFinished(async () => {
+                    try {
 
-                    this.tokenService = childServiceScope.consume<ITokenService>(TokenService.ServiceKey);
+                        this.tokenService = childServiceScope.consume<ITokenService>(TokenService.ServiceKey);
 
-                    // Initialize the token values
-                    await this.setTokens();
+                        // Initialize the token values
+                        await this.setTokens();
 
-                    // Register the data source service in the Web Part scope only (child scope of the current scope)
-                    dataSource = childServiceScope.consume<IDataSource>(serviceKey);
+                        // Register the data source service in the Web Part scope only (child scope of the current scope)
+                        dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
-                    // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
-                        return (
-                            (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
-                            (dataSourceInstance as IDataSource).getData !== undefined &&
-                            (dataSourceInstance as IDataSource).getFilterBehavior !== undefined &&
-                            (dataSourceInstance as IDataSource).getItemCount !== undefined &&
-                            (dataSourceInstance as IDataSource).getPagingBehavior !== undefined &&
-                            (dataSourceInstance as IDataSource).getPropertyPaneGroupsConfiguration !== undefined &&
-                            (dataSourceInstance as IDataSource).getTemplateSlots !== undefined &&
-                            (dataSourceInstance as IDataSource).onInit !== undefined &&
-                            (dataSourceInstance as IDataSource).onPropertyUpdate !== undefined &&
-                            (dataSourceInstance as IDataSource).getItemsPreview !== undefined
+                        // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
+                        const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
+                            return (
+                                (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
+                                (dataSourceInstance as IDataSource).getData !== undefined &&
+                                (dataSourceInstance as IDataSource).getFilterBehavior !== undefined &&
+                                (dataSourceInstance as IDataSource).getItemCount !== undefined &&
+                                (dataSourceInstance as IDataSource).getPagingBehavior !== undefined &&
+                                (dataSourceInstance as IDataSource).getPropertyPaneGroupsConfiguration !== undefined &&
+                                (dataSourceInstance as IDataSource).getTemplateSlots !== undefined &&
+                                (dataSourceInstance as IDataSource).onInit !== undefined &&
+                                (dataSourceInstance as IDataSource).onPropertyUpdate !== undefined &&
+                                (dataSourceInstance as IDataSource).getItemsPreview !== undefined
 
-                        );
-                    };
-
-                    if (!isValidDataSource(dataSource)) {
-                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidDataSourceInstance, dataSourceKey)));
-                    }
-
-                    // Initialize the data source with current Web Part properties
-                    if (dataSource) {
-                        // Initializes Web part lifecycle methods and properties
-                        dataSource.properties = this.properties.dataSourceProperties;
-                        dataSource.context = this.context;
-                        dataSource.editMode = this.displayMode == DisplayMode.Edit;
-                        dataSource.render = this.render;
-
-                        // Initializes available services
-                        dataSource.serviceKeys = {
-                            TokenService: TokenService.ServiceKey
+                            );
                         };
 
-                        await dataSource.onInit();
-
-                        // Initialize slots
-                        if (isEmpty(this.properties.templateSlots)) {
-                            this.properties.templateSlots = dataSource.getTemplateSlots();
-                            this._defaultTemplateSlots = dataSource.getTemplateSlots();
+                        if (!isValidDataSource(dataSource)) {
+                            reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidDataSourceInstance, dataSourceKey)));
+                            return;
                         }
 
-                        resolve(dataSource);
+                        // Initialize the data source with current Web Part properties
+                        if (dataSource) {
+                            // Initializes Web part lifecycle methods and properties
+                            dataSource.properties = this.properties.dataSourceProperties;
+                            dataSource.context = this.context;
+                            dataSource.editMode = this.displayMode == DisplayMode.Edit;
+                            dataSource.render = this.render;
+
+                            // Initializes available services
+                            dataSource.serviceKeys = {
+                                TokenService: TokenService.ServiceKey
+                            };
+
+                            await dataSource.onInit();
+
+                            // Initialize slots
+                            if (isEmpty(this.properties.templateSlots)) {
+                                this.properties.templateSlots = dataSource.getTemplateSlots();
+                                this._defaultTemplateSlots = dataSource.getTemplateSlots();
+                            }
+
+                            resolve(dataSource);
+                        }
+                    } catch (error) {
+                        reject(error);
                     }
                 });
             });

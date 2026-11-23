@@ -149,8 +149,8 @@ importers:
         specifier: 3.24.0
         version: 3.24.0(@babel/core@7.29.6)(@babel/template@7.28.6)(@microsoft/microsoft-graph-client@1.7.2-spfx)(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
       '@pnp/spfx-property-controls':
-        specifier: 3.23.0
-        version: 3.23.0(@microsoft/microsoft-graph-client@1.7.2-spfx)(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)(swiper@12.1.2)
+        specifier: 3.25.0
+        version: 3.25.0(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
       '@pnp/telemetry-js':
         specifier: 2.0.0
         version: 2.0.0
@@ -2219,6 +2219,10 @@ packages:
     resolution: {integrity: sha1-D126OnZkGRqjhTiJD/+KTHOhntI=}
     engines: {node: '>=18.17.1 <19.0.0 || >=22.14.0 < 23.0.0'}
 
+  '@microsoft/sp-office-ui-fabric-core@1.23.2':
+    resolution: {integrity: sha1-OpwVMOHvfMxZnXnKNVTvEz9oiz8=}
+    engines: {node: '>=18.17.1 <19.0.0 || >=22.14.0 < 23.0.0'}
+
   '@microsoft/sp-page-context@1.22.2':
     resolution: {integrity: sha1-1hvrnaGP6UFUVEepgyGq2sQS5cw=}
     engines: {node: '>=18.17.1 <19.0.0 || >=22.14.0 < 23.0.0'}
@@ -2389,8 +2393,8 @@ packages:
     resolution: {integrity: sha512-rVZXGBFTbijeIU5WiUHD/wPj7oHQntQRZe2OyPydIu2EA40waAvFJPcNtDyLRcOVytT24K3XO81zSWq3ztL6pw==}
     engines: {node: '>=22.14.0 < 23.0.0'}
 
-  '@pnp/spfx-property-controls@3.23.0':
-    resolution: {integrity: sha1-trYbxidnJyc6x+bHeV041oq1dhE=}
+  '@pnp/spfx-property-controls@3.25.0':
+    resolution: {integrity: sha512-/jIQYPGsFuCjvQAIFgLnqP6cLjyImJQUKQU54dOTR1laxHQ1ycDnQj60rkNx8jcSrVDeUjN+gmzamWZv6eAgbg==}
     engines: {node: '>=22.14.0 < 23.0.0'}
 
   '@pnp/telemetry-js@2.0.0':
@@ -6178,7 +6182,7 @@ packages:
     resolution: {integrity: sha1-RPoWGwGHuVSd2Eu5GAL5vYOFzWo=}
 
   sass-embedded-android-arm64@1.85.1:
-    resolution: {integrity: sha1-HKnF4G6hqOz3T/f76mcXBs/lAyA=}
+    resolution: {integrity: sha512-27oRheqNA3SJM2hAxpVbs7mCKUwKPWmEEhyiNFpBINb5ELVLg+Ck5RsGg+SJmo130ul5YX0vinmVB5uPWc8X5w==}
     engines: {node: '>=14.0.0'}
     cpu: [arm64]
     os: [android]
@@ -6196,7 +6200,7 @@ packages:
     os: [android]
 
   sass-embedded-android-riscv64@1.85.1:
-    resolution: {integrity: sha1-sgJKrrdUVAEb0qOujuTKwnO15xE=}
+    resolution: {integrity: sha512-IP6OijpJ8Mqo7XqCe0LsuZVbAxEFVboa0kXqqR5K55LebEplsTIA2GnmRyMay3Yr/2FVGsZbCb6Wlgkw23eCiA==}
     engines: {node: '>=14.0.0'}
     cpu: [riscv64]
     os: [android]
@@ -6214,7 +6218,7 @@ packages:
     os: [darwin]
 
   sass-embedded-darwin-x64@1.85.1:
-    resolution: {integrity: sha1-FH7PSb8tGC295s7zN6WKBbepOrE=}
+    resolution: {integrity: sha512-J4UFHUiyI9Z+mwYMwz11Ky9TYr3hY1fCxeQddjNGL/+ovldtb0yAIHvoVM0BGprQDm5JqhtUk8KyJ3RMJqpaAA==}
     engines: {node: '>=14.0.0'}
     cpu: [x64]
     os: [darwin]
@@ -6226,7 +6230,7 @@ packages:
     os: [linux]
 
   sass-embedded-linux-arm@1.85.1:
-    resolution: {integrity: sha1-iZy6lLc+sRn2Q0aInkZt4xtvXTw=}
+    resolution: {integrity: sha512-X0fDh95nNSw1wfRlnkE4oscoEA5Au4nnk785s9jghPFkTBg+A+5uB6trCjf0fM22+Iw6kiP4YYmDdw3BqxAKLQ==}
     engines: {node: '>=14.0.0'}
     cpu: [arm]
     os: [linux]
@@ -6250,13 +6254,13 @@ packages:
     os: [linux]
 
   sass-embedded-linux-musl-ia32@1.85.1:
-    resolution: {integrity: sha1-BwYJr9mc0Pnq5yGGyfSi0M32lE0=}
+    resolution: {integrity: sha512-N1093T84zQJor1yyIAdYScB5eAuQarGK1tKgZ4uTnxVlgA7Xi1lXV8Eh7ox9sDqKCaWkVQ3MjqU26vYRBeRWyw==}
     engines: {node: '>=14.0.0'}
     cpu: [ia32]
     os: [linux]
 
   sass-embedded-linux-musl-riscv64@1.85.1:
-    resolution: {integrity: sha1-D0JkvkAnfXzBgUnJ4PA68JVi5vc=}
+    resolution: {integrity: sha512-WRsZS/7qlfYXsa93FBpSruieuURIu7ySfFhzYfF1IbKrNAGwmbduutkHZh2ddm5/vQMvQ0Rdosgv+CslaQHMcw==}
     engines: {node: '>=14.0.0'}
     cpu: [riscv64]
     os: [linux]
@@ -7807,7 +7811,7 @@ snapshots:
 
   '@fluentui/keyboard-keys@9.0.8':
     dependencies:
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
 
   '@fluentui/keyboard-keys@9.0.9':
     dependencies:
@@ -7830,7 +7834,7 @@ snapshots:
 
   '@fluentui/priority-overflow@9.3.0':
     dependencies:
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
 
   '@fluentui/react-accordion@9.11.0(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)':
     dependencies:
@@ -7845,7 +7849,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7863,7 +7867,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7878,7 +7882,7 @@ snapshots:
       '@fluentui/react-shared-contexts': 9.26.2(@types/react@17.0.45)(react@17.0.1)
       '@fluentui/react-tabster': 9.26.14(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7897,7 +7901,7 @@ snapshots:
       '@fluentui/react-tooltip': 9.10.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7913,7 +7917,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7950,7 +7954,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7967,7 +7971,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -7999,7 +8003,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8018,7 +8022,7 @@ snapshots:
       '@fluentui/react-tooltip': 9.10.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       embla-carousel: 8.6.0
@@ -8040,7 +8044,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8058,7 +8062,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8081,7 +8085,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8195,8 +8199,8 @@ snapshots:
 
   '@fluentui/react-context-selector@9.2.16(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)':
     dependencies:
-      '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@fluentui/react-utilities': 9.27.0(@types/react@17.0.45)(react@17.0.1)
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8242,7 +8246,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8257,7 +8261,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8275,7 +8279,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8293,7 +8297,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8381,7 +8385,7 @@ snapshots:
 
   '@fluentui/react-icons@2.0.344(react@17.0.1)':
     dependencies:
-      '@griffel/react': 1.7.4(react@17.0.1)
+      '@griffel/react': 1.7.8(react@17.0.1)
       react: 17.0.1
       tslib: 2.8.1
 
@@ -8392,7 +8396,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8408,7 +8412,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8427,7 +8431,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8443,7 +8447,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8453,8 +8457,8 @@ snapshots:
 
   '@fluentui/react-jsx-runtime@9.4.2(@types/react@17.0.45)(react@17.0.1)':
     dependencies:
-      '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@fluentui/react-utilities': 9.27.0(@types/react@17.0.45)(react@17.0.1)
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       react: 17.0.1
 
@@ -8465,7 +8469,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8480,7 +8484,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8497,7 +8501,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8521,7 +8525,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8541,7 +8545,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8567,8 +8571,8 @@ snapshots:
   '@fluentui/react-motion-components-preview@0.15.4(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
       '@fluentui/react-motion': 9.15.0(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@fluentui/react-utilities': 9.27.0(@types/react@17.0.45)(react@17.0.1)
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8578,7 +8582,7 @@ snapshots:
     dependencies:
       '@fluentui/react-shared-contexts': 9.26.2(@types/react@17.0.45)(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8601,7 +8605,7 @@ snapshots:
       '@fluentui/react-tooltip': 9.10.1(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8672,7 +8676,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8689,7 +8693,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8712,7 +8716,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8739,7 +8743,7 @@ snapshots:
       '@fluentui/react-tabster': 9.26.14(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8753,7 +8757,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8769,7 +8773,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8793,7 +8797,7 @@ snapshots:
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/core': 1.21.2
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8809,7 +8813,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8826,7 +8830,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8841,7 +8845,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8858,7 +8862,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8869,7 +8873,7 @@ snapshots:
   '@fluentui/react-shared-contexts@9.26.2(@types/react@17.0.45)(react@17.0.1)':
     dependencies:
       '@fluentui/react-theme': 9.2.1
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       react: 17.0.1
 
@@ -8889,7 +8893,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8906,7 +8910,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8924,7 +8928,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8940,7 +8944,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8964,7 +8968,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -8983,7 +8987,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9006,7 +9010,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9023,7 +9027,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9075,7 +9079,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9095,7 +9099,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9116,7 +9120,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9132,7 +9136,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9146,7 +9150,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9175,7 +9179,7 @@ snapshots:
   '@fluentui/react-theme@9.2.1':
     dependencies:
       '@fluentui/tokens': 1.0.0-alpha.23
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
 
   '@fluentui/react-theme@9.2.2':
     dependencies:
@@ -9196,7 +9200,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9214,7 +9218,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9233,7 +9237,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9257,7 +9261,7 @@ snapshots:
       '@fluentui/react-theme': 9.2.1
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9269,7 +9273,7 @@ snapshots:
     dependencies:
       '@fluentui/keyboard-keys': 9.0.8
       '@fluentui/react-shared-contexts': 9.26.2(@types/react@17.0.45)(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       react: 17.0.1
 
@@ -9288,7 +9292,7 @@ snapshots:
       '@fluentui/react-shared-contexts': 9.26.2(@types/react@17.0.45)(react@17.0.1)
       '@fluentui/react-utilities': 9.26.3(@types/react@17.0.45)(react@17.0.1)
       '@griffel/react': 1.7.4(react@17.0.1)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
       '@types/react': 17.0.45
       '@types/react-dom': 17.0.17
       react: 17.0.1
@@ -9451,7 +9455,7 @@ snapshots:
 
   '@fluentui/tokens@1.0.0-alpha.23':
     dependencies:
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.23
 
   '@fluentui/tokens@1.0.0-alpha.24':
     dependencies:
@@ -10771,6 +10775,12 @@ snapshots:
       office-ui-fabric-core: 11.0.1
       tslib: 2.3.1
 
+  '@microsoft/sp-office-ui-fabric-core@1.23.2':
+    dependencies:
+      '@swc/helpers': 0.5.23
+      office-ui-fabric-core: 11.0.1
+      tslib: 2.3.1
+
   '@microsoft/sp-page-context@1.22.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
       '@microsoft/sp-core-library': 1.22.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
@@ -11343,16 +11353,17 @@ snapshots:
       - stream-browserify
       - supports-color
 
-  '@pnp/spfx-property-controls@3.23.0(@microsoft/microsoft-graph-client@1.7.2-spfx)(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)(swiper@12.1.2)':
+  '@pnp/spfx-property-controls@3.25.0(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)':
     dependencies:
+      '@emotion/css': 11.13.5
       '@fluentui/react': 8.106.4(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       '@fluentui/react-components': 9.73.8(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)
-      '@microsoft/sp-adaptive-card-extension-base': 1.22.2(@microsoft/microsoft-graph-client@1.7.2-spfx)(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)(swiper@12.1.2)
-      '@microsoft/sp-core-library': 1.22.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
-      '@microsoft/sp-lodash-subset': 1.22.2
-      '@microsoft/sp-office-ui-fabric-core': 1.22.2
-      '@microsoft/sp-property-pane': 1.22.2(@microsoft/microsoft-graph-client@1.7.2-spfx)(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
-      '@microsoft/sp-webpart-base': 1.22.2(@microsoft/microsoft-graph-client@1.7.2-spfx)(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
+      '@microsoft/sp-adaptive-card-extension-base': 1.23.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)(scheduler@0.20.2)
+      '@microsoft/sp-core-library': 1.23.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
+      '@microsoft/sp-lodash-subset': 1.23.2
+      '@microsoft/sp-office-ui-fabric-core': 1.23.2
+      '@microsoft/sp-property-pane': 1.23.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
+      '@microsoft/sp-webpart-base': 1.23.2(@types/node@26.6.5)(@types/react-dom@17.0.17)(@types/react@17.0.45)(scheduler@0.20.2)
       '@monaco-editor/loader': 1.7.0
       '@pnp/telemetry-js': 2.0.0
       '@uifabric/icons': 7.5.17(@types/react-dom@17.0.17)(@types/react@17.0.45)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
@@ -11364,14 +11375,16 @@ snapshots:
       react-ace: 10.1.0(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       react-dom: 17.0.1(react@17.0.1)
     transitivePeerDependencies:
-      - '@microsoft/microsoft-graph-client'
+      - '@azure/identity'
+      - '@azure/msal-browser'
       - '@types/node'
       - '@types/react'
       - '@types/react-dom'
+      - buffer
       - encoding
       - scheduler
+      - stream-browserify
       - supports-color
-      - swiper
 
   '@pnp/telemetry-js@2.0.0':
     dependencies:

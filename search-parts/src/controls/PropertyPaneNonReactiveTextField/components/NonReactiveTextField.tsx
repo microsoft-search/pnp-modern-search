@@ -26,7 +26,7 @@ export class NonReactiveTextField extends React.Component<INonReactiveTextFieldP
         return  <>
                     <TextField
                         key={this.props.key}
-                        defaultValue={this.props.defaultValue}
+                        value={this.state.value ?? ''}
                         label={this.props.label}
                         placeholder={this.props.placeholderText}
                         description={this.props.description}
@@ -52,7 +52,8 @@ export class NonReactiveTextField extends React.Component<INonReactiveTextFieldP
     public componentDidUpdate(prevProps: INonReactiveTextFieldProps, prevState: INonReactiveTextFieldState) {
         if (!isEqual(prevProps.defaultValue, this.props.defaultValue)) {
             this.setState({
-                value: this.props.defaultValue
+                value: this.props.defaultValue,
+                iconName: null
             });
         }
     }

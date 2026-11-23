@@ -180,18 +180,35 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
     }
 
     public componentDidUpdate(prevProps: IAsyncComboProps, prevState: IAsyncComboState) {
-        if (!isEqual(this.props.textDisplayValue, prevProps.textDisplayValue) && !isEqual(this.props.textDisplayValue, this.state.textDisplayValue)) {
-          this.setState({textDisplayValue: this.getTextDisplayValue()});
-        }
-        
-        if (this.props.availableOptions && !isEqual(this.props.availableOptions, prevProps.availableOptions) 
-            || !isEqual(this.props.stateKey, prevProps.stateKey)) {
+        const selectedKeysChanged = this.props.allowMultiSelect && !isEqual(this.props.defaultSelectedKeys, prevProps.defaultSelectedKeys);
+        const optionsChanged = (this.props.availableOptions && !isEqual(this.props.availableOptions, prevProps.availableOptions))
+            || !isEqual(this.props.stateKey, prevProps.stateKey);
 
-            this.optionsLoaded = false;
+        const singleKeyChanged = !this.props.allowMultiSelect && !isEqual(this.props.defaultSelectedKey, prevProps.defaultSelectedKey);
+        const displayValueChanged = !isEqual(this.props.textDisplayValue, prevProps.textDisplayValue);
+
+        if (selectedKeysChanged || optionsChanged) {
+            const selectedKeys = selectedKeysChanged ? (this.props.defaultSelectedKeys || []) : this.state.selectedOptionKeys;
+            const options = optionsChanged ? (this.props.availableOptions || []).map(x => ({ ...x })) : [...this.state.options];
+            if (this.props.allowMultiSelect) {
+                selectedKeys.forEach(key => {
+                    if (!options.some(option => option.key === key)) {
+                        options.push({ key, text: key });
+                    }
+                });
+            }
+            if (optionsChanged) {
+                this.optionsLoaded = false;
+            }
             this.setState({
-                options: this.props.availableOptions.map(x => ({...x})),
-                textDisplayValue: this.getTextDisplayValue()
+                selectedOptionKeys: selectedKeys,
+                options,
+                textDisplayValue: singleKeyChanged ? (this.props.textDisplayValue || this.props.defaultSelectedKey || '') : this.getTextDisplayValue()
             });
+        } else if (singleKeyChanged) {
+            this.setState({ textDisplayValue: this.props.textDisplayValue || this.props.defaultSelectedKey || '' });
+        } else if (displayValueChanged && !isEqual(this.props.textDisplayValue, this.state.textDisplayValue)) {
+            this.setState({ textDisplayValue: this.props.textDisplayValue === '' ? '' : this.getTextDisplayValue() });
         }
     }
 
@@ -332,6 +349,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
 
         // Case when user opens the dropdown multiple times on the same field
         if (this.state.options.length > 0 && !this.props.searchAsYouType
+            && (this.optionsLoaded || this.props.availableOptions?.length > 0)
             && (!this.props.loadOptionsOnFirstOpen || this.optionsLoaded)) {
             return;
         } else {
@@ -368,7 +386,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
                     }
                 } else {
 
-                    this.props.defaultSelectedKeys.map(defaultKey => {
+                    this.state.selectedOptionKeys.forEach(defaultKey => {
     
                         if (options.filter(e => { return e.key === defaultKey; }).length === 0) {
                             options.push({
@@ -384,7 +402,6 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
             
             this.setState({
                 options: options,
-                selectedOptionKeys: this.props.defaultSelectedKeys,
             });
 
             if (this.props.onUpdateOptions) {

@@ -8,7 +8,8 @@ export class AboutPropertyPaneBuilder {
         private getAudienceTargetingPropertyPaneGroup: () => IPropertyPaneGroup,
         private propertyPanePropertyEditor: any,
         private webpart: any,
-        private commonStrings: any
+        private commonStrings: any,
+        private onPropertiesImported: () => Promise<void>
     ) {}
 
     public buildAboutPage(): IPropertyPaneGroup[] {
@@ -26,7 +27,8 @@ export class AboutPropertyPaneBuilder {
                 groupFields: [
                     this.propertyPanePropertyEditor({
                         webpart: this.webpart,
-                        key: 'propertyEditor'
+                        key: 'propertyEditor',
+                        onPropertiesImported: this.onPropertiesImported
                     })
                 ]
             }

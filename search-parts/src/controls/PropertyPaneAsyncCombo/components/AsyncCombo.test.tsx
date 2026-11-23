@@ -72,4 +72,48 @@ describe('AsyncCombo initial options', () => {
         expect(renderOption({ key: 'LOADING_ITEM', text: '' })).toBeTruthy();
         expect(onRenderOption).not.toHaveBeenCalled();
     });
+
+    it('updates imported selections and keeps them selectable when options change', () => {
+        const ref = React.createRef<AsyncCombo>();
+        const onUpdate = jest.fn();
+        render(<AsyncCombo ref={ref} availableOptions={[{ key: 'Title', text: 'Title' }]}
+            defaultSelectedKeys={['Title']} allowMultiSelect={true} onUpdate={onUpdate} />);
+        render(<AsyncCombo ref={ref} availableOptions={[{ key: 'Path', text: 'Path' }]}
+            defaultSelectedKeys={['Path', 'Custom']} allowMultiSelect={true} onUpdate={onUpdate} />);
+        expect(ref.current.state.selectedOptionKeys).toEqual(['Path', 'Custom']);
+        expect(ref.current.state.textDisplayValue).toBe('Path,Custom');
+        expect(ref.current.state.options.map(option => option.key)).toEqual(['Path', 'Custom']);
+        expect(onUpdate).not.toHaveBeenCalled();
+
+        render(<AsyncCombo ref={ref} availableOptions={[{ key: 'Path', text: 'Path' }]}
+            defaultSelectedKeys={[]} allowMultiSelect={true} onUpdate={onUpdate} />);
+        expect(ref.current.state.selectedOptionKeys).toEqual([]);
+        expect(ref.current.state.textDisplayValue).toBe('');
+    });
+
+    it('loads asynchronous options after importing an unknown selection and retains it', async () => {
+        const ref = React.createRef<AsyncCombo>();
+        const onUpdate = jest.fn();
+        const onLoadOptions = jest.fn().mockResolvedValue([{ key: 'Path', text: 'Path' }]);
+        const renderSelection = (keys: string[], options: { key: string; text: string }[]): void => {
+            render(<AsyncCombo ref={ref} availableOptions={options} defaultSelectedKeys={keys}
+                allowMultiSelect={true} onLoadOptions={onLoadOptions} onUpdate={onUpdate} />);
+        };
+        renderSelection([], []);
+        renderSelection(['Custom'], []);
+        await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
+        expect(onLoadOptions).toHaveBeenCalledTimes(1);
+        expect(ref.current.state.options.map(option => option.key)).toEqual(['Custom', 'Path']);
+
+        renderSelection(['Custom'], [{ key: 'Path', text: 'Path' }]);
+        await act(async () => { await ref.current.onChangeMulti(null, { key: 'Path', text: 'Path', selected: true }); });
+        expect(onUpdate).toHaveBeenCalledWith([{ key: 'Path', text: 'Path' }, { key: 'Custom', text: 'Custom' }]);
+    });
+
+    it('clears a single selection when its default changes to empty', () => {
+        const ref = React.createRef<AsyncCombo>();
+        render(<AsyncCombo ref={ref} availableOptions={[]} defaultSelectedKey="Old" onUpdate={jest.fn()} />);
+        render(<AsyncCombo ref={ref} availableOptions={[]} defaultSelectedKey="" onUpdate={jest.fn()} />);
+        expect(ref.current.state.textDisplayValue).toBe('');
+    });
 });
