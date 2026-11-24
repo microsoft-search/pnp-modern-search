@@ -42,6 +42,7 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsof
 import { IDataResultSourceData } from '../../models/dynamicData/IDataResultSourceData';
 import { LayoutHelper } from '../../helpers/LayoutHelper';
 import { ExtensibilityUsageHelper } from '../../helpers/ExtensibilityUsageHelper';
+import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomizationTracker';
 import { IAsyncComboProps } from '../../controls/PropertyPaneAsyncCombo/components/IAsyncComboProps';
 import type { AsyncCombo as AsyncComboType } from '../../controls/PropertyPaneAsyncCombo/components/AsyncCombo';
 import { Constants } from '../../common/Constants';
@@ -93,6 +94,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
      * Promise guard to prevent concurrent loadExtensions calls during render re-entry
      */
     private _extensionsLoadingPromise: Promise<void> = null;
+    private readonly handlebarsCustomizationTracker = new HandlebarsCustomizationTracker();
 
     /**
      * Dynamic data related fields
@@ -835,7 +837,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
             this.getAudienceTargetingPropertyPaneGroup.bind(this),
             this._propertyPanePropertyEditor,
             this,
-            commonStrings
+            commonStrings,
+            this.onPropertiesImported.bind(this)
         );
 
         // Build data source page
@@ -898,6 +901,42 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return {
             pages: propertyPanePages
         };
+    }
+
+    private async onPropertiesImported(): Promise<void> {
+        try {
+            if (this._extensionsLoadingPromise) {
+                await this._extensionsLoadingPromise;
+            }
+            this.extensionsLoaded = false;
+            this._extensionsLoadingPromise = this.loadExtensions(uniqBy(this.properties.extensibilityLibraryConfiguration, 'id'), true);
+            try {
+                await this._extensionsLoadingPromise;
+            } finally {
+                this._extensionsLoadingPromise = null;
+            }
+
+            const dataSource = await this.getDataSourceInstance(this.properties.dataSourceKey);
+            await this.loadComponentPropertyPaneResources(dataSource);
+            this.dataSource = dataSource;
+            this.lastDataSourceKey = this.properties.dataSourceKey;
+
+            const isBuiltinLayout = AvailableLayouts.BuiltinLayouts.some(layout => layout.key === this.properties.selectedLayoutKey);
+            if (!isBuiltinLayout) {
+                this.lastLayoutKey = undefined;
+            } else if (this.layout && this.lastLayoutKey === this.properties.selectedLayoutKey) {
+                this.layout.properties = this.properties.layoutProperties;
+            }
+
+            const queryModifierConfiguration = this.properties.queryModifierConfiguration;
+            this._selectedCustomQueryModifier = await this.initializeQueryModifiers(queryModifierConfiguration);
+            this.lastQueryModifierKeys = queryModifierConfiguration.filter(c => c.enabled).map(c => c.key);
+        } catch (error) {
+            this.errorMessage = error?.message ? error.message : error;
+            Log.error(LogSource, error);
+            this.renderCompleted();
+            throw error;
+        }
     }
 
     protected async onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): Promise<void> {
@@ -1260,6 +1299,12 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         ExtensibilityUsageHelper.debugLog(`[${LogSource}] extensibility resolution took ${(performance.now() - extResolveStart).toFixed(0)}ms (requested ${librariesToLoad.length}, loaded ${extensibilityLibraries.length}).`);
         const customQueryModifierConfiguration: IQueryModifierConfiguration[] = [];
 
+        this.handlebarsCustomizationTracker.reset(this.templateService.Handlebars);
+        this.templateService.AdaptiveCardsExtensibilityLibraries = [];
+        this.availableDataSourceDefinitions = AvailableDataSources.BuiltinDataSources;
+        this.availableLayoutDefinitions = AvailableLayouts.BuiltinLayouts.filter(layout => layout.type === LayoutType.Results);
+        this.availableCustomQueryModifierDefinitions = [];
+
         // Load extensibility additions
         if (extensibilityLibraries.length > 0) {
 
@@ -1276,7 +1321,8 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
                 // Registers Handlebars customizations in the local namespace
                 if (extensibilityLibrary.registerHandlebarsCustomizations)
-                    extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars);
+                    this.handlebarsCustomizationTracker.register(this.templateService.Handlebars,
+                        () => extensibilityLibrary.registerHandlebarsCustomizations(this.templateService.Handlebars));
 
                 // Registers event handler for custom action in Adaptive Cards
                 if (extensibilityLibrary.invokeCardAction)
@@ -1308,6 +1354,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Add custom providers to the available providers
         this.properties.queryModifierConfiguration = this.properties.queryModifierConfiguration.concat(customQueryModifierConfiguration);
+        this.availableLayoutsInPropertyPane = this.availableLayoutDefinitions.filter(layout => layout.renderType === this.properties.layoutRenderType);
 
         // Register web components in the global page context. This must happen every time
         // extensions are loaded (not just once in onInit) so that newly-enabled extension
@@ -2023,58 +2070,63 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 ]);
 
                 childServiceScope.whenFinished(async () => {
+                    try {
 
-                    this.tokenService = childServiceScope.consume<ITokenService>(TokenService.ServiceKey);
+                        this.tokenService = childServiceScope.consume<ITokenService>(TokenService.ServiceKey);
 
-                    // Initialize the token values
-                    await this.setTokens();
+                        // Initialize the token values
+                        await this.setTokens();
 
-                    // Register the data source service in the Web Part scope only (child scope of the current scope)
-                    dataSource = childServiceScope.consume<IDataSource>(serviceKey);
+                        // Register the data source service in the Web Part scope only (child scope of the current scope)
+                        dataSource = childServiceScope.consume<IDataSource>(serviceKey);
 
-                    // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
-                    const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
-                        return (
-                            (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
-                            (dataSourceInstance as IDataSource).getData !== undefined &&
-                            (dataSourceInstance as IDataSource).getFilterBehavior !== undefined &&
-                            (dataSourceInstance as IDataSource).getItemCount !== undefined &&
-                            (dataSourceInstance as IDataSource).getPagingBehavior !== undefined &&
-                            (dataSourceInstance as IDataSource).getPropertyPaneGroupsConfiguration !== undefined &&
-                            (dataSourceInstance as IDataSource).getTemplateSlots !== undefined &&
-                            (dataSourceInstance as IDataSource).onInit !== undefined &&
-                            (dataSourceInstance as IDataSource).onPropertyUpdate !== undefined &&
-                            (dataSourceInstance as IDataSource).getItemsPreview !== undefined
+                        // Verifiy if the data source implements correctly the IDataSource interface and BaseDataSource methods
+                        const isValidDataSource = (dataSourceInstance: IDataSource): dataSourceInstance is IDataSource => {
+                            return (
+                                (dataSourceInstance as IDataSource).getAppliedFilters !== undefined &&
+                                (dataSourceInstance as IDataSource).getData !== undefined &&
+                                (dataSourceInstance as IDataSource).getFilterBehavior !== undefined &&
+                                (dataSourceInstance as IDataSource).getItemCount !== undefined &&
+                                (dataSourceInstance as IDataSource).getPagingBehavior !== undefined &&
+                                (dataSourceInstance as IDataSource).getPropertyPaneGroupsConfiguration !== undefined &&
+                                (dataSourceInstance as IDataSource).getTemplateSlots !== undefined &&
+                                (dataSourceInstance as IDataSource).onInit !== undefined &&
+                                (dataSourceInstance as IDataSource).onPropertyUpdate !== undefined &&
+                                (dataSourceInstance as IDataSource).getItemsPreview !== undefined
 
-                        );
-                    };
-
-                    if (!isValidDataSource(dataSource)) {
-                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidDataSourceInstance, dataSourceKey)));
-                    }
-
-                    // Initialize the data source with current Web Part properties
-                    if (dataSource) {
-                        // Initializes Web part lifecycle methods and properties
-                        dataSource.properties = this.properties.dataSourceProperties;
-                        dataSource.context = this.context;
-                        dataSource.editMode = this.displayMode == DisplayMode.Edit;
-                        dataSource.render = this.render;
-
-                        // Initializes available services
-                        dataSource.serviceKeys = {
-                            TokenService: TokenService.ServiceKey
+                            );
                         };
 
-                        await dataSource.onInit();
-
-                        // Initialize slots
-                        if (isEmpty(this.properties.templateSlots)) {
-                            this.properties.templateSlots = dataSource.getTemplateSlots();
-                            this._defaultTemplateSlots = dataSource.getTemplateSlots();
+                        if (!isValidDataSource(dataSource)) {
+                            reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidDataSourceInstance, dataSourceKey)));
+                            return;
                         }
 
-                        resolve(dataSource);
+                        // Initialize the data source with current Web Part properties
+                        if (dataSource) {
+                            // Initializes Web part lifecycle methods and properties
+                            dataSource.properties = this.properties.dataSourceProperties;
+                            dataSource.context = this.context;
+                            dataSource.editMode = this.displayMode == DisplayMode.Edit;
+                            dataSource.render = this.render;
+
+                            // Initializes available services
+                            dataSource.serviceKeys = {
+                                TokenService: TokenService.ServiceKey
+                            };
+
+                            await dataSource.onInit();
+
+                            // Initialize slots
+                            if (isEmpty(this.properties.templateSlots)) {
+                                this.properties.templateSlots = dataSource.getTemplateSlots();
+                                this._defaultTemplateSlots = dataSource.getTemplateSlots();
+                            }
+
+                            resolve(dataSource);
+                        }
+                    } catch (error) {
+                        reject(error);
                     }
                 });
             });
@@ -2833,33 +2885,38 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
                 ]);
 
                 childServiceScope.whenFinished(async () => {
+                    try {
 
-                    queryModifier = childServiceScope.consume<IQueryModifier>(serviceKey);
+                        queryModifier = childServiceScope.consume<IQueryModifier>(serviceKey);
 
-                    // Verify a queryModifier is a valid QueryModifier
-                    const isValidProvider = (providerInstance: IQueryModifier): providerInstance is BaseQueryModifier<any> => {
-                        return (
-                            (providerInstance as BaseQueryModifier<any>).getPropertyPaneGroupsConfiguration !== undefined &&
-                            (providerInstance as BaseQueryModifier<any>).modifyQuery !== undefined &&
-                            (providerInstance as BaseQueryModifier<any>).onPropertyUpdate !== undefined &&
-                            (providerInstance as BaseQueryModifier<any>).onInit !== undefined
-                        );
-                    };
+                        // Verify a queryModifier is a valid QueryModifier
+                        const isValidProvider = (providerInstance: IQueryModifier): providerInstance is BaseQueryModifier<any> => {
+                            return (
+                                (providerInstance as BaseQueryModifier<any>).getPropertyPaneGroupsConfiguration !== undefined &&
+                                (providerInstance as BaseQueryModifier<any>).modifyQuery !== undefined &&
+                                (providerInstance as BaseQueryModifier<any>).onPropertyUpdate !== undefined &&
+                                (providerInstance as BaseQueryModifier<any>).onInit !== undefined
+                            );
+                        };
 
 
-                    if (!isValidProvider(queryModifier)) {
-                        reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidQueryModifierInstance, providerKey)));
-                    }
+                        if (!isValidProvider(queryModifier)) {
+                            reject(new Error(Text.format(commonStrings.General.Extensibility.InvalidQueryModifierInstance, providerKey)));
+                            return;
+                        }
 
-                    // Initialize the queryModifier
-                    if (queryModifier) {
+                        // Initialize the queryModifier
+                        if (queryModifier) {
 
-                        queryModifier.properties = this.properties.queryModifierProperties;
-                        queryModifier.context = this.context;
-                        queryModifier.endWhenSuccessfull = endWhenSuccessfull;
-                        await queryModifier.onInit();
+                            queryModifier.properties = this.properties.queryModifierProperties;
+                            queryModifier.context = this.context;
+                            queryModifier.endWhenSuccessfull = endWhenSuccessfull;
+                            await queryModifier.onInit();
 
-                        resolve(queryModifier);
+                            resolve(queryModifier);
+                        }
+                    } catch (error) {
+                        reject(error);
                     }
                 });
             });
