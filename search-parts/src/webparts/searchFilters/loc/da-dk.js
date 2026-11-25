@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Vælg felt",
-                RefinerCheckVerified: "Bekræftet",
-                RefinerCheckUnknown: "Ikke bekræftet",
-                RefinerCheckFailed: "Kontrollen mislykkedes",
+                RefinerCheckVerified: "Kan bruges som filter i schemaets øjebliksbillede",
+                RefinerCheckUnknown: "Ikke bekræftet i schemaets øjebliksbillede",
+                RefinerCheckFailed: "Kontrollen af schemaets øjebliksbillede mislykkedes",
+                RefinerCheckNotRefinable: "Kan ikke bruges som filter ifølge schemaets øjebliksbillede",
                 FilterNameLabel: "Felt til filter",
                 FilterDisplayName: "Visningsnavn",
                 FilterMaxBuckets: "Antal værdier",

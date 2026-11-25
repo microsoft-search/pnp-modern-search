@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Selecteer veld",
-                RefinerCheckVerified: "Geverifieerd",
-                RefinerCheckUnknown: "Niet geverifieerd",
-                RefinerCheckFailed: "Controle mislukt",
+                RefinerCheckVerified: "Filterbaar volgens momentopname van het schema",
+                RefinerCheckUnknown: "Niet geverifieerd in momentopname van het schema",
+                RefinerCheckFailed: "Controle van momentopname van het schema mislukt",
+                RefinerCheckNotRefinable: "Niet filterbaar volgens momentopname van het schema",
                 FilterNameLabel: "Filterveld",
                 FilterMaxBuckets: "# waarden",
                 FilterMaxBucketsWarning: "Het maximale aantal waarden is 1000",

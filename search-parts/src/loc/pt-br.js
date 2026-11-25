@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Editar configurações da ordenação",
                     SortInvalidSortableFieldMessage: "Esta propriedade não é ordenável",
                     SortFieldColumnPlaceholder: "Selecionar campo...",
-                    SortCheckVerified: "Verificado",
-                    SortCheckFailed: "Falha na verificação",
-                    SortCheckNotSortable: "Não classificável: o SharePoint rejeitou a classificação por esta propriedade.",
+                    SortCheckVerified: "Classificável no instantâneo do esquema",
+                    SortCheckFailed: "Falha ao verificar o instantâneo do esquema",
+                    SortCheckNotSortable: "Não classificável no instantâneo do esquema",
                     SortCheckUnknown: "Não verificado"
                 }
             }

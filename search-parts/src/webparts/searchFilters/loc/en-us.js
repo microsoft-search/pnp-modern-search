@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Select field",
-                RefinerCheckVerified: "Verified",
-                RefinerCheckUnknown: "Not verified",
-                RefinerCheckFailed: "Check failed",
+                RefinerCheckVerified: "Refinable in schema snapshot",
+                RefinerCheckUnknown: "Not verified in schema snapshot",
+                RefinerCheckFailed: "Schema snapshot check failed",
+                RefinerCheckNotRefinable: "Not refinable in schema snapshot",
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# of values",
                 FilterMaxBucketsWarning: "The maximum number of values is 1000",

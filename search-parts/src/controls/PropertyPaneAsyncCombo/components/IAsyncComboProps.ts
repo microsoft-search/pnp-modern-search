@@ -35,6 +35,11 @@ export interface IAsyncComboProps {
     loadOptionsOnFirstOpen?: boolean;
 
     /**
+     * Add saved and freeform single values to the dropdown when they are not in the loaded options.
+     */
+    addUnlistedSingleValueToOptions?: boolean;
+
+    /**
      * Callback when a field value is updated
      */
     onUpdate: (value: IComboBoxOption | IComboBoxOption[]) => void;

@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Edit sort settings",
                     SortInvalidSortableFieldMessage: "This property is not sortable",
                     SortFieldColumnPlaceholder: "Select field...",
-                    SortCheckVerified: "Verified",
-                    SortCheckFailed: "Check failed",
-                    SortCheckNotSortable: "Not sortable: SharePoint rejected sorting by this property.",
+                    SortCheckVerified: "Sortable in schema snapshot",
+                    SortCheckFailed: "Schema snapshot check failed",
+                    SortCheckNotSortable: "Not sortable in schema snapshot",
                     SortCheckUnknown: "Not checked"
                 }
             }

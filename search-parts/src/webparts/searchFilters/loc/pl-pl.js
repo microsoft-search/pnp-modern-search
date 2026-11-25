@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Wybierz pole",
-                RefinerCheckVerified: "Zweryfikowane",
-                RefinerCheckUnknown: "Niezweryfikowane",
-                RefinerCheckFailed: "Sprawdzanie nie powiodło się",
+                RefinerCheckVerified: "Można filtrować według migawki schematu",
+                RefinerCheckUnknown: "Niezweryfikowane w migawce schematu",
+                RefinerCheckFailed: "Sprawdzanie migawki schematu nie powiodło się",
+                RefinerCheckNotRefinable: "Nie można filtrować według migawki schematu",
                 FilterNameLabel: "Filter field",
                 FilterMaxBuckets: "# wartości",
                 FilterMaxBucketsWarning: "Maksymalna liczba wartości to 1000",

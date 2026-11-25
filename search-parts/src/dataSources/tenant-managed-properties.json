@@ -1,0 +1,2661 @@
+{
+  "source": "SharePoint tenant Managed Properties list",
+  "tenant": "m365thinking.sharepoint.com",
+  "capturedDate": "2026-11-25",
+  "flagMeaning": "True means the flag was displayed as enabled; false means it was not displayed as enabled and may be hidden.",
+  "missingPropertyMeaning": "Unknown; only properties with at least one displayed enabled flag are included.",
+  "properties": {
+    "AADObjectID": {
+      "refine": false,
+      "sort": true
+    },
+    "AssignedToPeople": {
+      "refine": true,
+      "sort": false
+    },
+    "AssignedToPeopleEmail": {
+      "refine": true,
+      "sort": false
+    },
+    "AssignedToPeopleUpn": {
+      "refine": true,
+      "sort": false
+    },
+    "AttachmentType": {
+      "refine": true,
+      "sort": false
+    },
+    "Audiences": {
+      "refine": true,
+      "sort": false
+    },
+    "Author": {
+      "refine": false,
+      "sort": true
+    },
+    "AutoTagClassificationId": {
+      "refine": true,
+      "sort": false
+    },
+    "BaseOfficeLocation": {
+      "refine": true,
+      "sort": false
+    },
+    "CategoryOWSCHCS": {
+      "refine": true,
+      "sort": false
+    },
+    "ClassificationLastScan": {
+      "refine": true,
+      "sort": true
+    },
+    "ClassificationType": {
+      "refine": true,
+      "sort": false
+    },
+    "clickdistance": {
+      "refine": false,
+      "sort": true
+    },
+    "ClickStreamClickedCount": {
+      "refine": false,
+      "sort": true
+    },
+    "ClickStreamLastClickCount": {
+      "refine": false,
+      "sort": true
+    },
+    "ClickStreamSkippedCount": {
+      "refine": false,
+      "sort": true
+    },
+    "CombinedUserProfileNames": {
+      "refine": true,
+      "sort": false
+    },
+    "CommunityMembersCount": {
+      "refine": false,
+      "sort": true
+    },
+    "CommunityRepliesCount": {
+      "refine": false,
+      "sort": true
+    },
+    "CommunityTopicsCount": {
+      "refine": false,
+      "sort": true
+    },
+    "companies": {
+      "refine": true,
+      "sort": true
+    },
+    "ComplianceTag": {
+      "refine": true,
+      "sort": true
+    },
+    "ComplianceTagWrittenTime": {
+      "refine": true,
+      "sort": true
+    },
+    "ContainerName": {
+      "refine": true,
+      "sort": false
+    },
+    "contentclass": {
+      "refine": true,
+      "sort": false
+    },
+    "ContentDomainInstanceId": {
+      "refine": true,
+      "sort": true
+    },
+    "ContentSource": {
+      "refine": true,
+      "sort": false
+    },
+    "ContentType": {
+      "refine": true,
+      "sort": false
+    },
+    "ContentTypeId": {
+      "refine": true,
+      "sort": false
+    },
+    "Created": {
+      "refine": true,
+      "sort": true
+    },
+    "Department": {
+      "refine": true,
+      "sort": false
+    },
+    "DepartmentId": {
+      "refine": true,
+      "sort": false
+    },
+    "DetectedLanguageRanking": {
+      "refine": false,
+      "sort": true
+    },
+    "DisplayAuthor": {
+      "refine": true,
+      "sort": false
+    },
+    "DMSDocAccessRight": {
+      "refine": false,
+      "sort": true
+    },
+    "DMSDocAuthor": {
+      "refine": true,
+      "sort": true
+    },
+    "DMSDocTitle": {
+      "refine": false,
+      "sort": true
+    },
+    "docrank": {
+      "refine": false,
+      "sort": true
+    },
+    "DocumentAnalyticsLastActivityTimestamp": {
+      "refine": false,
+      "sort": true
+    },
+    "DocumentSignature": {
+      "refine": false,
+      "sort": true
+    },
+    "EndDateOWSDATE": {
+      "refine": false,
+      "sort": true
+    },
+    "EventDateOWSDATE": {
+      "refine": false,
+      "sort": true
+    },
+    "EventRate": {
+      "refine": false,
+      "sort": true
+    },
+    "EventsRollUpCategory": {
+      "refine": true,
+      "sort": false
+    },
+    "EventsRollUpEndDate": {
+      "refine": false,
+      "sort": true
+    },
+    "EventsRollUpStartDate": {
+      "refine": false,
+      "sort": true
+    },
+    "ExpirationTime": {
+      "refine": false,
+      "sort": true
+    },
+    "FileExtension": {
+      "refine": true,
+      "sort": true
+    },
+    "Filename": {
+      "refine": false,
+      "sort": true
+    },
+    "FileType": {
+      "refine": true,
+      "sort": false
+    },
+    "FirstName": {
+      "refine": false,
+      "sort": true
+    },
+    "FirstPublishedDate": {
+      "refine": true,
+      "sort": true
+    },
+    "GeoLocation": {
+      "refine": true,
+      "sort": false
+    },
+    "HostingPartition": {
+      "refine": true,
+      "sort": false
+    },
+    "hwboost": {
+      "refine": false,
+      "sort": true
+    },
+    "importance": {
+      "refine": false,
+      "sort": true
+    },
+    "InboundLinkCount": {
+      "refine": false,
+      "sort": true
+    },
+    "InformationProtectionLabelId": {
+      "refine": true,
+      "sort": false
+    },
+    "InternalFileType": {
+      "refine": false,
+      "sort": true
+    },
+    "IRMProtected": {
+      "refine": true,
+      "sort": true
+    },
+    "IRMTemplateName": {
+      "refine": true,
+      "sort": true
+    },
+    "IsExternalContent": {
+      "refine": true,
+      "sort": true
+    },
+    "ItemPath": {
+      "refine": true,
+      "sort": false
+    },
+    "JobTitle": {
+      "refine": true,
+      "sort": false
+    },
+    "languages": {
+      "refine": true,
+      "sort": false
+    },
+    "LastAccessTimeByMailboxOwner": {
+      "refine": false,
+      "sort": true
+    },
+    "LastCommentedDateTime": {
+      "refine": false,
+      "sort": true
+    },
+    "LastMentionedByOtherDateTime": {
+      "refine": false,
+      "sort": true
+    },
+    "LastMentionedDateTime": {
+      "refine": false,
+      "sort": true
+    },
+    "LastModifiedTime": {
+      "refine": true,
+      "sort": true
+    },
+    "LastModifiedTimeForRetention": {
+      "refine": true,
+      "sort": true
+    },
+    "LastModifyTimeByMailboxOwner": {
+      "refine": false,
+      "sort": true
+    },
+    "LastName": {
+      "refine": false,
+      "sort": true
+    },
+    "LastSharedWithMailboxOwnerDateTime": {
+      "refine": false,
+      "sort": true
+    },
+    "LevelsToTop": {
+      "refine": false,
+      "sort": true
+    },
+    "Location": {
+      "refine": true,
+      "sort": false
+    },
+    "ManagedProperties": {
+      "refine": true,
+      "sort": false
+    },
+    "MediaDuration": {
+      "refine": true,
+      "sort": false
+    },
+    "MeetingCallStartTime": {
+      "refine": false,
+      "sort": true
+    },
+    "ModifiedBy": {
+      "refine": true,
+      "sort": true
+    },
+    "ModifierAADIDs": {
+      "refine": true,
+      "sort": true
+    },
+    "NonWordBrokenComplianceTag": {
+      "refine": true,
+      "sort": true
+    },
+    "owsmetadatafacetinfo": {
+      "refine": true,
+      "sort": false
+    },
+    "owstaxidmetadataalltagsinfo": {
+      "refine": true,
+      "sort": false
+    },
+    "owstaxIdProductCatalogItemCategory": {
+      "refine": true,
+      "sort": false
+    },
+    "owstaxIdVideoPortalItemCategory": {
+      "refine": true,
+      "sort": false
+    },
+    "People": {
+      "refine": true,
+      "sort": false
+    },
+    "PeopleInMedia": {
+      "refine": true,
+      "sort": false
+    },
+    "PeopleKeywords": {
+      "refine": true,
+      "sort": false
+    },
+    "PostAuthor": {
+      "refine": true,
+      "sort": false
+    },
+    "Priority": {
+      "refine": true,
+      "sort": false
+    },
+    "processingtime": {
+      "refine": false,
+      "sort": true
+    },
+    "ProductCatalogGroupNumberOWSTEXT": {
+      "refine": false,
+      "sort": true
+    },
+    "PromotedState": {
+      "refine": false,
+      "sort": true
+    },
+    "QLogClicks": {
+      "refine": false,
+      "sort": true
+    },
+    "QLogLastClicks": {
+      "refine": false,
+      "sort": true
+    },
+    "QLogSiteClicks": {
+      "refine": false,
+      "sort": true
+    },
+    "QLogSiteLastClicks": {
+      "refine": false,
+      "sort": true
+    },
+    "QLogSiteSkips": {
+      "refine": false,
+      "sort": true
+    },
+    "QLogSkips": {
+      "refine": false,
+      "sort": true
+    },
+    "RecentViewCount": {
+      "refine": false,
+      "sort": true
+    },
+    "RecentViewerCount": {
+      "refine": false,
+      "sort": true
+    },
+    "recommendedfor": {
+      "refine": true,
+      "sort": true
+    },
+    "RecsClickedLifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "RecsClickedRecent": {
+      "refine": false,
+      "sort": true
+    },
+    "RefinableDate00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate10": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate11": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate12": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate13": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate14": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate15": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate16": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate17": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate18": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDate19": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateFirst00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateFirst01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateFirst02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateFirst03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateFirst04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateInvariant00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateInvariant01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateSingle00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateSingle01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateSingle02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateSingle03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDateSingle04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDecimal09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableDouble09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt10": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt11": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt12": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt13": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt14": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt15": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt16": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt17": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt18": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt19": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt20": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt21": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt22": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt23": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt24": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt25": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt26": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt27": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt28": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt29": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt30": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt31": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt32": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt33": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt34": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt35": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt36": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt37": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt38": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt39": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt40": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt41": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt42": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt43": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt44": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt45": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt46": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt47": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt48": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableInt49": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableIntFirst00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableIntFirst01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableIntFirst02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableIntFirst03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableIntFirst04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString10": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString100": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString101": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString102": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString103": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString104": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString105": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString106": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString107": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString108": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString109": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString11": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString110": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString111": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString112": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString113": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString114": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString115": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString116": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString117": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString118": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString119": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString12": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString120": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString121": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString122": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString123": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString124": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString125": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString126": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString127": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString128": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString129": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString13": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString130": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString131": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString132": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString133": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString134": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString135": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString136": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString137": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString138": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString139": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString14": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString140": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString141": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString142": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString143": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString144": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString145": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString146": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString147": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString148": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString149": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString15": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString150": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString151": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString152": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString153": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString154": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString155": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString156": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString157": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString158": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString159": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString16": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString160": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString161": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString162": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString163": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString164": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString165": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString166": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString167": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString168": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString169": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString17": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString170": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString171": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString172": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString173": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString174": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString175": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString176": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString177": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString178": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString179": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString18": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString180": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString181": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString182": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString183": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString184": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString185": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString186": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString187": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString188": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString189": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString19": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString190": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString191": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString192": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString193": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString194": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString195": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString196": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString197": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString198": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString199": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString20": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString200": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString201": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString202": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString203": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString204": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString205": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString206": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString207": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString208": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString209": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString21": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString210": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString211": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString212": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString213": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString214": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString215": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString216": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString217": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString218": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString219": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString22": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString23": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString24": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString25": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString26": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString27": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString28": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString29": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString30": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString31": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString32": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString33": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString34": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString35": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString36": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString37": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString38": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString39": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString40": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString41": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString42": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString43": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString44": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString45": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString46": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString47": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString48": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString49": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString50": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString51": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString52": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString53": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString54": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString55": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString56": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString57": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString58": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString59": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString60": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString61": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString62": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString63": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString64": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString65": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString66": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString67": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString68": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString69": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString70": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString71": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString72": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString73": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString74": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString75": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString76": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString77": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString78": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString79": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString80": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString81": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString82": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString83": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString84": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString85": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString86": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString87": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString88": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString89": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString90": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString91": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString92": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString93": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString94": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString95": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString96": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString97": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString98": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableString99": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst10": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst11": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst12": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst13": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst14": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst15": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst16": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst17": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst18": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst19": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst20": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst21": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst22": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst23": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst24": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst25": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst26": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst27": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst28": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst29": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst30": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst31": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst32": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst33": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst34": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst35": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst36": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst37": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst38": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringFirst39": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringInternal100": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal101": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal102": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal103": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal104": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal105": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal106": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal107": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal108": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringInternal109": {
+      "refine": true,
+      "sort": false
+    },
+    "RefinableStringLn00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringLn09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff10": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff11": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff12": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff13": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff14": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff15": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff16": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff17": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff18": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff19": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff20": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff21": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff22": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff23": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff24": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff25": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff26": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff27": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff28": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff29": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff30": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff31": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff32": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff33": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff34": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff35": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff36": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff37": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff38": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff39": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff40": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff41": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff42": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff43": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff44": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff45": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff46": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff47": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff48": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOff49": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst04": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst05": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst06": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst07": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst08": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst09": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst10": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst11": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst12": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst13": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst14": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst15": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst16": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst17": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst18": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst19": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst20": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst21": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst22": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst23": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst24": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst25": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst26": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst27": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst28": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst29": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst30": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst31": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst32": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst33": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst34": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst35": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst36": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst37": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst38": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst39": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst40": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst41": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst42": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst43": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst44": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst45": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst46": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst47": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst48": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableStringWbOffFirst49": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableYesNo00": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableYesNo01": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableYesNo02": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableYesNo03": {
+      "refine": true,
+      "sort": true
+    },
+    "RefinableYesNo04": {
+      "refine": true,
+      "sort": true
+    },
+    "Responsibilities": {
+      "refine": true,
+      "sort": false
+    },
+    "Restricted": {
+      "refine": true,
+      "sort": true
+    },
+    "Severity": {
+      "refine": true,
+      "sort": false
+    },
+    "SharedWithInternal": {
+      "refine": true,
+      "sort": false
+    },
+    "Site": {
+      "refine": true,
+      "sort": false
+    },
+    "SiteNumFollowers": {
+      "refine": false,
+      "sort": true
+    },
+    "siterank": {
+      "refine": false,
+      "sort": true
+    },
+    "SiteTemplate": {
+      "refine": true,
+      "sort": true
+    },
+    "SiteTemplateId": {
+      "refine": true,
+      "sort": true
+    },
+    "Size": {
+      "refine": true,
+      "sort": true
+    },
+    "SPContentType": {
+      "refine": true,
+      "sort": false
+    },
+    "SPSiteURL": {
+      "refine": true,
+      "sort": true
+    },
+    "State": {
+      "refine": true,
+      "sort": false
+    },
+    "Tags": {
+      "refine": true,
+      "sort": false
+    },
+    "UrlDepth": {
+      "refine": true,
+      "sort": true
+    },
+    "UsageEvent10LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent10Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent11LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent11Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent12LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent12Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent1LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent1Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent2LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent2Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent3LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent3Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent4LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent4Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent5LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent5Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent6LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent6Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent7LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent7Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent8LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent8Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent9LifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEvent9Recent": {
+      "refine": false,
+      "sort": true
+    },
+    "UsageEventItemId": {
+      "refine": true,
+      "sort": false
+    },
+    "ViewableByAnonymousUsers": {
+      "refine": true,
+      "sort": true
+    },
+    "ViewableByExternalUsers": {
+      "refine": true,
+      "sort": true
+    },
+    "ViewCount": {
+      "refine": false,
+      "sort": true
+    },
+    "ViewerCount": {
+      "refine": false,
+      "sort": true
+    },
+    "ViewsLifeTime": {
+      "refine": false,
+      "sort": true
+    },
+    "ViewsLifeTimeUniqueUsers": {
+      "refine": false,
+      "sort": true
+    },
+    "ViewsRecent": {
+      "refine": false,
+      "sort": true
+    },
+    "ViewsRecentUniqueUsers": {
+      "refine": false,
+      "sort": true
+    },
+    "WebTemplate": {
+      "refine": true,
+      "sort": false
+    },
+    "WordCustomRefiner1": {
+      "refine": true,
+      "sort": true
+    },
+    "WordCustomRefiner2": {
+      "refine": true,
+      "sort": true
+    },
+    "WordCustomRefiner3": {
+      "refine": true,
+      "sort": true
+    },
+    "WordCustomRefiner4": {
+      "refine": true,
+      "sort": true
+    },
+    "WordCustomRefiner5": {
+      "refine": true,
+      "sort": true
+    },
+    "WordExactCustomRefiner": {
+      "refine": true,
+      "sort": true
+    },
+    "WordPartCustomRefiner1": {
+      "refine": true,
+      "sort": true
+    },
+    "WordPartCustomRefiner2": {
+      "refine": true,
+      "sort": true
+    },
+    "WordPartCustomRefiner3": {
+      "refine": true,
+      "sort": true
+    },
+    "WordPartCustomRefiner4": {
+      "refine": true,
+      "sort": true
+    },
+    "WordPartCustomRefiner5": {
+      "refine": true,
+      "sort": true
+    },
+    "WordPartExactCustomRefiner": {
+      "refine": true,
+      "sort": true
+    },
+    "XLDataConnCountRngID": {
+      "refine": true,
+      "sort": true
+    },
+    "XLFormulaCountRngID": {
+      "refine": true,
+      "sort": true
+    },
+    "XLLinkedWkbkCountRngID": {
+      "refine": true,
+      "sort": true
+    },
+    "XLUniqueFormulaSetCountRngID": {
+      "refine": true,
+      "sort": true
+    },
+    "XLWorksheetCountRngID": {
+      "refine": true,
+      "sort": true
+    }
+  }
+}

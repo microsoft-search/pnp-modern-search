@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Sortierung bearbeiten",
                     SortInvalidSortableFieldMessage: "Diese Eigenschaft ist nicht sortierbar",
                     SortFieldColumnPlaceholder: "Wähle Feld...",
-                    SortCheckVerified: "Bestätigt",
-                    SortCheckFailed: "Prüfung fehlgeschlagen",
-                    SortCheckNotSortable: "Nicht sortierbar: SharePoint hat die Sortierung nach dieser Eigenschaft abgelehnt.",
+                    SortCheckVerified: "Laut Schemaschnappschuss sortierbar",
+                    SortCheckFailed: "Prüfung des Schemaschnappschusses fehlgeschlagen",
+                    SortCheckNotSortable: "Laut Schemaschnappschuss nicht sortierbar",
                     SortCheckUnknown: "Nicht geprüft"
                 }
             }

@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Upravit nastavení řazení",
                     SortInvalidSortableFieldMessage: "Tato vlastnost nelze řadit",
                     SortFieldColumnPlaceholder: "Vyberte pole...",
-                    SortCheckVerified: "Ověřeno",
-                    SortCheckFailed: "Kontrola selhala",
-                    SortCheckNotSortable: "Nelze řadit: SharePoint odmítl řazení podle této vlastnosti.",
+                    SortCheckVerified: "Lze řadit podle snímku schématu",
+                    SortCheckFailed: "Ověření snímku schématu selhalo",
+                    SortCheckNotSortable: "Nelze řadit podle snímku schématu",
                     SortCheckUnknown: "Nezkontrolováno"
                 }
             }

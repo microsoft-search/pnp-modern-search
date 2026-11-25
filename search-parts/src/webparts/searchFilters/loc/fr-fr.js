@@ -35,9 +35,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Sélectionner un champ",
-                RefinerCheckVerified: "Vérifié",
-                RefinerCheckUnknown: "Non vérifié",
-                RefinerCheckFailed: "Échec de la vérification",
+                RefinerCheckVerified: "Utilisable comme filtre dans l’instantané du schéma",
+                RefinerCheckUnknown: "Non vérifié dans l’instantané du schéma",
+                RefinerCheckFailed: "Échec de la vérification de l’instantané du schéma",
+                RefinerCheckNotRefinable: "Non utilisable comme filtre dans l’instantané du schéma",
                 FilterNameLabel: "Champ de filtre",
                 FilterMaxBuckets: "Nombre de valeurs",
                 FilterMaxBucketsWarning: "Le nombre maximum de valeurs est 1000",

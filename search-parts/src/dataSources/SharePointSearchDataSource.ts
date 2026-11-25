@@ -446,8 +446,13 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             defaultSelectedKey: selectedField,
                                             allowMultiSelect: false,
                                             allowFreeform: true,
-                                            availableOptions: this.getSortOptionsForRow(this._sortableFields, selectedField),
+                                            availableOptions: [],
                                             loadOptionsOnFirstOpen: true,
+                                            addUnlistedSingleValueToOptions: false,
+                                            stateKey: JSON.stringify([
+                                                this.properties.selectedProperties,
+                                                this.properties.sortList?.map(sort => sort.sortField)
+                                            ]),
                                             onLoadOptions: () => loadCheckedSortOptions()
                                                 .then(options => this.getSortOptionsForRow(options, selectedField)),
                                             onRenderOption: (option, defaultRender) => renderCheckOption(option, {
@@ -967,7 +972,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ...(this.properties.sortList || []).map(sort => sort.sortField),
             ...(this.properties.selectedProperties || []),
             ...discovered,
-            ...this._sortableFields.map(option => String(option.key))
+            ...this._sortableFields.map(option => String(option.key)),
+            ...SortableFields
         ];
         const seen = new Set<string>();
         const options: IComboBoxOption[] = fields.filter(field => {
@@ -977,24 +983,17 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             seen.add(field.toLowerCase());
             return true;
         }).map(field => ({ key: field, text: field, data: 'unknown' }));
-        const candidates = options.filter(option => /^[a-zA-Z0-9_]+$/.test(String(option.key))).slice(0, 100);
-        const checkedOptions = new Map<string, IComboBoxOption>();
-
-        // One request per field isolates rejected properties; four concurrent requests keep the check bounded.
-        for (let index = 0; index < candidates.length; index += 4) {
-            const checked = await Promise.all(candidates.slice(index, index + 4).map(async option => {
-                try {
-                    const verified = await this._sharePointSearchService.validateSortableProperty(String(option.key));
-                    return { ...option, data: verified ? 'verified' : 'notSortable' };
-                } catch (error) {
-                    Log.error('[SharePointSearchDataSource.getCheckedSortFields()]',
-                        error instanceof Error ? error : new Error(String(error)), this.serviceScope);
-                    return { ...option, data: 'failed' };
-                }
-            }));
-            checked.forEach(option => checkedOptions.set(String(option.key), option));
+        try {
+            const { checkSortSchemaOptions } = await import(
+                /* webpackChunkName: 'pnp-modern-search-managed-property-schema' */
+                '../helpers/ManagedPropertySchema'
+            );
+            return checkSortSchemaOptions(options);
+        } catch (error) {
+            Log.error('[SharePointSearchDataSource.getCheckedSortFields()]',
+                error instanceof Error ? error : new Error(String(error)), this.serviceScope);
+            return [];
         }
-        return options.map(option => checkedOptions.get(String(option.key)) ?? option);
     }
 
     private async _convertToSortList(sortList: ISortFieldConfiguration[]): Promise<ISort[]> {

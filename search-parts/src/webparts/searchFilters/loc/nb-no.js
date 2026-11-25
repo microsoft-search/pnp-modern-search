@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Velg felt",
-                RefinerCheckVerified: "Bekreftet",
-                RefinerCheckUnknown: "Ikke bekreftet",
-                RefinerCheckFailed: "Kontrollen mislyktes",
+                RefinerCheckVerified: "Kan brukes som filter i øyeblikksbildet av skjemaet",
+                RefinerCheckUnknown: "Ikke bekreftet i øyeblikksbildet av skjemaet",
+                RefinerCheckFailed: "Kontrollen av øyeblikksbildet av skjemaet mislyktes",
+                RefinerCheckNotRefinable: "Kan ikke brukes som filter ifølge øyeblikksbildet av skjemaet",
                 FilterNameLabel: "Felt for filter",
                 FilterMaxBuckets: "Antall verdier",
                 FilterMaxBucketsWarning: "Maksimalt antall verdier er 1000",

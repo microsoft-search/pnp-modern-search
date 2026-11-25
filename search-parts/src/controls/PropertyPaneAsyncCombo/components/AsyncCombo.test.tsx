@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { AsyncCombo } from './AsyncCombo';
+import { checkRefinerSchemaOptions, checkSortSchemaOptions } from '../../../helpers/ManagedPropertySchema';
 
 describe('AsyncCombo initial options', () => {
     let host: HTMLDivElement;
@@ -43,6 +44,88 @@ describe('AsyncCombo initial options', () => {
             onLoadOptions={onLoadOptions} onUpdate={jest.fn()} />);
         await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
         expect(onLoadOptions).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        ['refiner', checkRefinerSchemaOptions, 'FileType', 'AuthorOWSUSER'],
+        ['sort', checkSortSchemaOptions, 'Author', 'FileType']
+    ])('shows only validated %s suggestions without changing saved or freeform values', async (_label, checkOptions, valid, saved) => {
+        const ref = React.createRef<AsyncCombo>();
+        const onUpdate = jest.fn();
+        const options = [{ key: saved, text: saved }, { key: valid, text: valid }, { key: '[rank]', text: '[rank]' }];
+        render(<AsyncCombo ref={ref} availableOptions={[]} allowFreeform={true}
+            defaultSelectedKey={saved} textDisplayValue={saved} addUnlistedSingleValueToOptions={false}
+            loadOptionsOnFirstOpen={true} onLoadOptions={async () => checkOptions(options)}
+            onUpdate={onUpdate} />);
+
+        await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
+        expect(ref.current.state.textDisplayValue).toBe(saved);
+        expect(ref.current.state.options.map(option => option.key)).toEqual([valid]);
+        act(() => { host.querySelector('button').click(); });
+        const displayedOptions = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+            .map(element => element.textContent);
+        expect(displayedOptions.some(text => text.includes(valid))).toBe(true);
+        expect(displayedOptions.some(text => text.includes(saved) || text.includes('[rank]'))).toBe(false);
+        expect(onUpdate).not.toHaveBeenCalled();
+        await act(async () => { await ref.current.onChange(null, undefined, undefined, 'Custom'); });
+        expect(onUpdate).toHaveBeenCalledWith({ key: 'Custom', text: 'Custom' });
+        expect(ref.current.state.options.map(option => option.key)).toEqual([valid]);
+    });
+
+    it('saves an unlisted manual value without waiting for or changing suggestions', async () => {
+        const ref = React.createRef<AsyncCombo>();
+        const onUpdate = jest.fn();
+        const onUpdateOptions = jest.fn();
+        const onLoadOptions = jest.fn(() => new Promise<never>(() => undefined));
+        render(<AsyncCombo ref={ref} availableOptions={[]} allowFreeform={true}
+            addUnlistedSingleValueToOptions={false} onLoadOptions={onLoadOptions}
+            onUpdate={onUpdate} onUpdateOptions={onUpdateOptions} />);
+
+        await act(async () => { await ref.current.onChange(null, undefined, undefined, '{QueryString.sort}'); });
+        expect(onUpdate).toHaveBeenCalledWith({ key: '{QueryString.sort}', text: '{QueryString.sort}' });
+        expect(onLoadOptions).not.toHaveBeenCalled();
+        expect(onUpdateOptions).not.toHaveBeenCalled();
+        expect(ref.current.state.options).toEqual([]);
+    });
+
+    it('reloads cached suggestions when their state key changes', async () => {
+        const ref = React.createRef<AsyncCombo>();
+        const onLoadOptions = jest.fn()
+            .mockResolvedValueOnce([{ key: 'FileType', text: 'FileType' }])
+            .mockResolvedValueOnce([{ key: 'Author', text: 'Author' }]);
+        const renderCombo = (stateKey: string): void => render(<AsyncCombo ref={ref} availableOptions={[]}
+            stateKey={stateKey} addUnlistedSingleValueToOptions={false}
+            onLoadOptions={onLoadOptions} onUpdate={jest.fn()} />);
+
+        renderCombo('first');
+        await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
+        expect(ref.current.state.options.map(option => option.key)).toEqual(['FileType']);
+        renderCombo('second');
+        await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
+        expect(onLoadOptions).toHaveBeenCalledTimes(2);
+        expect(ref.current.state.options.map(option => option.key)).toEqual(['Author']);
+    });
+
+    it('ignores a pending load after its state key changes', async () => {
+        const ref = React.createRef<AsyncCombo>();
+        let finishOldLoad: (options: { key: string; text: string }[]) => void;
+        const onLoadOptions = jest.fn()
+            .mockImplementationOnce(() => new Promise(resolve => { finishOldLoad = resolve; }))
+            .mockResolvedValueOnce([{ key: 'Author', text: 'Author' }]);
+        const renderCombo = (stateKey: string): void => render(<AsyncCombo ref={ref} availableOptions={[]}
+            stateKey={stateKey} addUnlistedSingleValueToOptions={false}
+            onLoadOptions={onLoadOptions} onUpdate={jest.fn()} />);
+
+        renderCombo('first');
+        let oldLoad: Promise<void>;
+        act(() => { oldLoad = ref.current.render().props.children[0].props.onMenuOpen(); });
+        renderCombo('second');
+        await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
+        await act(async () => {
+            finishOldLoad([{ key: 'FileType', text: 'FileType' }]);
+            await oldLoad;
+        });
+        expect(ref.current.state.options.map(option => option.key)).toEqual(['Author']);
     });
 
     it('does not add a saved value to another row of shared suggestions', async () => {

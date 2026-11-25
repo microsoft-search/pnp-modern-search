@@ -17,6 +17,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
      */
     private searchInProgress: boolean;
     private optionsLoaded: boolean = false;
+    private optionsVersion: number = 0;
 
     public constructor(props: IAsyncComboProps) {
         super(props);
@@ -190,6 +191,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
         if (selectedKeysChanged || optionsChanged) {
             if (optionsChanged) {
                 this.optionsLoaded = false;
+                this.optionsVersion++;
             }
             this.setState(state => this.getSynchronizedState(state, selectedKeysChanged, optionsChanged, singleKeyChanged));
         } else if (singleKeyChanged) {
@@ -237,12 +239,17 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
 
                 if (!this.props.searchAsYouType) {
 
+                    const newOption: IComboBoxOption = { key: value, text: value };
+                    if (this.props.addUnlistedSingleValueToOptions === false) {
+                        this.props.onUpdate(newOption);
+                        return;
+                    }
+
                     // Case where the user starts to enter manual values without opening the dropdown values so the options are no fetched yet
                     if (this.props.availableOptions.length === 0) {
                         await this.getOptions();
                     }
 
-                    const newOption: IComboBoxOption = { key: value, text: value };
                     let options = update(this.state.options, {$push: [newOption] });
 
                     options = this.sortOptions(options);
@@ -360,6 +367,7 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
         } else {
 
             let options: IComboBoxOption[] = [];
+            const optionsVersion = this.optionsVersion;
 
             this.setState({
                 options: [
@@ -377,13 +385,17 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
             } else {
                 options = [];
             }
+            if (optionsVersion !== this.optionsVersion) {
+                return;
+            }
             this.optionsLoaded = true;
     
             if (!this.props.searchAsYouType) {
 
                 if (!this.props.allowMultiSelect) {
                     
-                    if (options.filter(e => { return e.key === this.props.defaultSelectedKey; }).length === 0) {
+                    if (this.props.addUnlistedSingleValueToOptions !== false
+                        && options.filter(e => { return e.key === this.props.defaultSelectedKey; }).length === 0) {
                         options.push({
                             key: this.props.defaultSelectedKey,
                             text: this.props.textDisplayValue ? this.props.textDisplayValue : this.props.defaultSelectedKey as string
