@@ -9,6 +9,7 @@ export function renderRefinerCheckOption(
     return renderCheckOption(option, {
         verified: strings.PropertyPane.DataFilterCollection.RefinerCheckVerified,
         failed: strings.PropertyPane.DataFilterCollection.RefinerCheckFailed,
-        unknown: strings.PropertyPane.DataFilterCollection.RefinerCheckUnknown
+        unknown: strings.PropertyPane.DataFilterCollection.RefinerCheckUnknown,
+        notRefinable: strings.PropertyPane.DataFilterCollection.RefinerCheckNotRefinable
     }, defaultRender);
 }

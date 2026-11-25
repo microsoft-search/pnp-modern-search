@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Wähle ein Feld",
-                RefinerCheckVerified: "Überprüft",
-                RefinerCheckUnknown: "Nicht überprüft",
-                RefinerCheckFailed: "Prüfung fehlgeschlagen",
+                RefinerCheckVerified: "Im Schemaschnappschuss als Filter verwendbar",
+                RefinerCheckUnknown: "Im Schemaschnappschuss nicht bestätigt",
+                RefinerCheckFailed: "Prüfung des Schemaschnappschusses fehlgeschlagen",
+                RefinerCheckNotRefinable: "Im Schemaschnappschuss nicht als Filter verwendbar",
                 FilterNameLabel: "Filter Feld",
                 FilterMaxBuckets: "# der Werte",
                 FilterMaxBucketsWarning: "Die maximale Anzahl von Werten ist 1000",

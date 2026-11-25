@@ -1,7 +1,7 @@
 import { Text } from '@microsoft/sp-core-library';
 import { ServiceKey, ServiceScope, Log } from "@microsoft/sp-core-library";
 import { SPHttpClient } from "@microsoft/sp-http";
-import { IRefinerCheckResult, ISharePointSearchService } from './ISharePointSearchService';
+import { ISharePointSearchService } from './ISharePointSearchService';
 import { PnPClientStorage } from "@pnp/common/storage";
 import { dateAdd } from "@pnp/common/util";
 import { PageContext } from '@microsoft/sp-page-context';
@@ -12,7 +12,7 @@ import { IDataFilterResultValue, IDataFilterResult, FilterComparisonOperator } f
 import LocalizationHelper from '../../helpers/LocalizationHelper';
 import { ISharePointSearchResponse } from '../../models/search/ISharePointSearchResponse';
 import { ISuggestResult, ISuggestQuery } from '../../models/search/ISuggestQuery';
-import { ISharePointSearchQuery, SortDirection } from '../../models/search/ISharePointSearchQuery';
+import { ISharePointSearchQuery } from '../../models/search/ISharePointSearchQuery';
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
 import { Constants } from '../../common/Constants';
 
@@ -64,7 +64,6 @@ export class SharePointSearchService implements ISharePointSearchService {
      * The client storage instance
      */
     private clientStorage: PnPClientStorage;
-    private sortCheckBaseline?: Promise<void>;
 
     constructor(serviceScope: ServiceScope) {
 
@@ -267,57 +266,6 @@ export class SharePointSearchService implements ISharePointSearchService {
         return managedProperties;
     }
 
-    public async getRefinersWithValues(properties: string[]): Promise<IRefinerCheckResult> {
-        const candidates = Array.from(new Set(properties.filter(property => /^[a-zA-Z0-9_]+$/.test(property))));
-        const checks: IRefinerCheckResult = { verified: [], failed: [] };
-
-        const checkBatch = async (batch: string[], retries: { remaining: number }): Promise<void> => {
-            try {
-                const response = await this.spHttpClient.post(this.searchEndpointUrl, SPHttpClient.configurations.v1, {
-                    body: this.getRequestPayload({ Querytext: '*', RowLimit: 1, Refiners: batch.join(',') }),
-                    headers: {
-                        'odata-version': '3.0',
-                        'accept': 'application/json;odata=nometadata',
-                        'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
-                        'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
-                    }
-                });
-
-                if (!response.ok) {
-                    if (response.status === 400 && batch.length > 1 && retries.remaining >= 2) {
-                        retries.remaining -= 2;
-                        const midpoint = Math.floor(batch.length / 2);
-                        await checkBatch(batch.slice(0, midpoint), retries);
-                        await checkBatch(batch.slice(midpoint), retries);
-                        return;
-                    }
-                    throw new Error(`SharePoint refiner check failed for ${batch.join(', ')}: HTTP ${response.status} ${response.statusText}`);
-                }
-
-                const result: ISharePointSearchResponse = await response.json();
-                if (!result.PrimaryQueryResult) {
-                    throw new Error('SharePoint refiner check returned an invalid response.');
-                }
-                const requested = new Set(batch.map(name => name.toLowerCase()));
-                for (const refiner of result.PrimaryQueryResult.RefinementResults?.Refiners || []) {
-                    if (requested.has(refiner.Name?.toLowerCase()) && refiner.Entries?.length > 0) {
-                        checks.verified.push(refiner.Name);
-                    }
-                }
-            } catch (error) {
-                Log.error('[SharePointSearchService.getRefinersWithValues()]',
-                    error instanceof Error ? error : new Error(String(error)), this.serviceScope);
-                checks.failed.push(...batch);
-            }
-        };
-
-        for (let index = 0; index < candidates.length; index += 20) {
-            await checkBatch(candidates.slice(index, index + 20), { remaining: 10 });
-        }
-
-        return checks;
-    }
-
     /**
      * Get all available languages for the search query
      */
@@ -347,72 +295,6 @@ export class SharePointSearchService implements ISharePointSearchService {
         } catch (error) {
             Log.error("[SharePointSearchService._getQueryLanguages()]", error, this.serviceScope);
             throw new Error(error);
-        }
-    }
-
-    /**
-     * Determine if a SharePoint managed property is sortable
-     * @param property the SharePoint managed property
-     */
-    public async validateSortableProperty(property: string): Promise<boolean> {
-
-        let searchQuery: ISharePointSearchQuery = {};
-        searchQuery.Querytext = "*";
-        searchQuery.SortList = [
-            {
-                Property: property,
-                Direction: SortDirection.Ascending
-            }
-        ];
-        searchQuery.RowLimit = 1;
-        searchQuery.SelectProperties = ['Path'];
-
-        const postQuery = (query: ISharePointSearchQuery) => this.spHttpClient.post(this.searchEndpointUrl, SPHttpClient.configurations.v1, {
-            body: this.getRequestPayload(query),
-            headers: {
-                'odata-version': '3.0',
-                'accept': 'application/json;odata=nometadata',
-                'X-ClientService-ClientTag': Constants.X_CLIENTSERVICE_CLIENTTAG,
-                'UserAgent': Constants.X_CLIENTSERVICE_CLIENTTAG
-            }
-        });
-
-        try {
-            const response = await postQuery(searchQuery);
-
-            if (response.ok) {
-                const result: ISharePointSearchResponse = await response.json();
-                if (!result.PrimaryQueryResult) {
-                    throw new Error(`SharePoint sort check for ${property} returned an invalid response.`);
-                }
-                return true;
-            }
-            if (response.status === 400) {
-                // SharePoint reports unsupported sort fields as generic syntax errors. Verify the query without sorting first.
-                if (!this.sortCheckBaseline) {
-                    this.sortCheckBaseline = postQuery({ ...searchQuery, SortList: undefined }).then(async baseline => {
-                        if (!baseline.ok) {
-                            throw new Error(`SharePoint sort baseline failed: HTTP ${baseline.status} ${baseline.statusText}`);
-                        }
-                        const result: ISharePointSearchResponse = await baseline.json();
-                        if (!result.PrimaryQueryResult) {
-                            throw new Error('SharePoint sort baseline returned an invalid response.');
-                        }
-                    }).catch(error => {
-                        this.sortCheckBaseline = undefined;
-                        throw error;
-                    });
-                }
-                await this.sortCheckBaseline;
-                Log.warn('[SharePointSearchService.validateSortableProperty()]',
-                    `SharePoint rejected sorting by ${property} (HTTP 400); the same query without sorting succeeded.`, this.serviceScope);
-                return false;
-            }
-            throw new Error(`SharePoint sort check failed for ${property}: HTTP ${response.status} ${response.statusText}`);
-        } catch (error) {
-            Log.error('[SharePointSearchService.validateSortableProperty()]',
-                error instanceof Error ? error : new Error(String(error)), this.serviceScope);
-            throw error;
         }
     }
 

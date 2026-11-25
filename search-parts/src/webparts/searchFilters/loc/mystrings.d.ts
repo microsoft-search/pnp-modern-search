@@ -35,6 +35,7 @@ declare interface ISearchFiltersWebPartStrings {
             RefinerCheckVerified: string;
             RefinerCheckUnknown: string;
             RefinerCheckFailed: string;
+            RefinerCheckNotRefinable: string;
             FilterNameLabel: string;
             FilterMaxBuckets: string;
             FilterMaxBucketsWarning: string;

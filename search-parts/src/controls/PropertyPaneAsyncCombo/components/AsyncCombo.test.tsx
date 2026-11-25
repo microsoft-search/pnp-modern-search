@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { AsyncCombo } from './AsyncCombo';
+import { checkRefinerSchemaOptions, checkSortSchemaOptions } from '../../../helpers/ManagedPropertySchema';
 
 describe('AsyncCombo initial options', () => {
     let host: HTMLDivElement;
@@ -43,6 +44,32 @@ describe('AsyncCombo initial options', () => {
             onLoadOptions={onLoadOptions} onUpdate={jest.fn()} />);
         await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
         expect(onLoadOptions).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        ['refiner', checkRefinerSchemaOptions, 'FileType', 'AuthorOWSUSER'],
+        ['sort', checkSortSchemaOptions, 'Author', 'FileType']
+    ])('shows only validated %s suggestions without changing saved or freeform values', async (_label, checkOptions, valid, saved) => {
+        const ref = React.createRef<AsyncCombo>();
+        const onUpdate = jest.fn();
+        const options = [{ key: saved, text: saved }, { key: valid, text: valid }, { key: '[rank]', text: '[rank]' }];
+        render(<AsyncCombo ref={ref} availableOptions={[]} allowFreeform={true}
+            defaultSelectedKey={saved} textDisplayValue={saved} addUnlistedSingleValueToOptions={false}
+            loadOptionsOnFirstOpen={true} onLoadOptions={async () => checkOptions(options)}
+            onUpdate={onUpdate} />);
+
+        await act(async () => { await ref.current.render().props.children[0].props.onMenuOpen(); });
+        expect(ref.current.state.textDisplayValue).toBe(saved);
+        expect(ref.current.state.options.map(option => option.key)).toEqual([valid]);
+        act(() => { host.querySelector('button').click(); });
+        const displayedOptions = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+            .map(element => element.textContent);
+        expect(displayedOptions.some(text => text.includes(valid))).toBe(true);
+        expect(displayedOptions.some(text => text.includes(saved) || text.includes('[rank]'))).toBe(false);
+        expect(onUpdate).not.toHaveBeenCalled();
+        await act(async () => { await ref.current.onChange(null, undefined, undefined, 'Custom'); });
+        expect(onUpdate).toHaveBeenCalledWith({ key: 'Custom', text: 'Custom' });
+        expect(ref.current.state.options.map(option => option.key)).toEqual([valid]);
     });
 
     it('does not add a saved value to another row of shared suggestions', async () => {

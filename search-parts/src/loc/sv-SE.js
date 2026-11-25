@@ -201,9 +201,9 @@ define([], function () {
                     EditSortLabel: "Redigera sorteringsordning",
                     SortInvalidSortableFieldMessage: "Den här egenskapen kan inte sorteras",
                     SortFieldColumnPlaceholder: "Välj fält...",
-                    SortCheckVerified: "Verifierad",
-                    SortCheckFailed: "Kontrollen misslyckades",
-                    SortCheckNotSortable: "Kan inte sorteras: SharePoint avvisade sortering efter den här egenskapen.",
+                    SortCheckVerified: "Kan sorteras enligt schemats ögonblicksbild",
+                    SortCheckFailed: "Kontroll av schemats ögonblicksbild misslyckades",
+                    SortCheckNotSortable: "Kan inte sorteras enligt schemats ögonblicksbild",
                     SortCheckUnknown: "Inte kontrollerad",
                     SortByDefaultOptionText: "Standard"
                 }

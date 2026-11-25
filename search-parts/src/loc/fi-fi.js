@@ -198,9 +198,9 @@ define([], function () {
                     EditSortLabel: "Muokkaa lajittelujärjestystä",
                     SortInvalidSortableFieldMessage: "Tämä ominaisuus ei ole lajiteltava",
                     SortFieldColumnPlaceholder: "Valitse kenttä...",
-                    SortCheckVerified: "Vahvistettu",
-                    SortCheckFailed: "Tarkistus epäonnistui",
-                    SortCheckNotSortable: "Ei lajiteltavissa: SharePoint hylkäsi lajittelun tämän ominaisuuden mukaan.",
+                    SortCheckVerified: "Lajiteltavissa rakenteen tilannekuvan mukaan",
+                    SortCheckFailed: "Rakenteen tilannekuvan tarkistus epäonnistui",
+                    SortCheckNotSortable: "Ei lajiteltavissa rakenteen tilannekuvan mukaan",
                     SortCheckUnknown: "Ei tarkistettu"
                 }
             }

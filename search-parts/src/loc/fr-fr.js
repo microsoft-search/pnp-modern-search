@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Modifier l’ordre de tri",
                     SortInvalidSortableFieldMessage: "Cette propriété n’est pas triable",
                     SortFieldColumnPlaceholder: "Sélectionner le champ...",
-                    SortCheckVerified: "Vérifié",
-                    SortCheckFailed: "Échec de la vérification",
-                    SortCheckNotSortable: "Non triable : SharePoint a refusé le tri sur cette propriété.",
+                    SortCheckVerified: "Triable dans l’instantané du schéma",
+                    SortCheckFailed: "Échec de la vérification de l’instantané du schéma",
+                    SortCheckNotSortable: "Non triable dans l’instantané du schéma",
                     SortCheckUnknown: "Non vérifié"
                 }
             }

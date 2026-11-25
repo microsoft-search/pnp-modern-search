@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Välj fält",
-                RefinerCheckVerified: "Verifierat",
-                RefinerCheckUnknown: "Inte verifierat",
-                RefinerCheckFailed: "Kontrollen misslyckades",
+                RefinerCheckVerified: "Kan användas som filter enligt schemats ögonblicksbild",
+                RefinerCheckUnknown: "Inte verifierat i schemats ögonblicksbild",
+                RefinerCheckFailed: "Kontroll av schemats ögonblicksbild misslyckades",
+                RefinerCheckNotRefinable: "Kan inte användas som filter enligt schemats ögonblicksbild",
                 FilterNameLabel: "Fält för filter",
                 FilterMaxBuckets: "# av värden",
                 FilterMaxBucketsWarning: "Det maximala antalet värden är 1000",

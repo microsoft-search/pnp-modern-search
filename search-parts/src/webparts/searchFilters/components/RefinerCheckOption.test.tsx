@@ -1,9 +1,10 @@
 jest.mock('SearchFiltersWebPartStrings', () => ({
     PropertyPane: {
         DataFilterCollection: {
-            RefinerCheckVerified: 'Verified',
-            RefinerCheckUnknown: 'Not verified',
-            RefinerCheckFailed: 'Check failed'
+            RefinerCheckVerified: 'Refinable in schema snapshot',
+            RefinerCheckUnknown: 'Not verified in schema snapshot',
+            RefinerCheckFailed: 'Schema snapshot check failed',
+            RefinerCheckNotRefinable: 'Not refinable in schema snapshot'
         }
     }
 }), { virtual: true });
@@ -28,10 +29,11 @@ describe('refiner check option', () => {
     });
 
     it.each([
-        ['verified', 'Verified', 'CheckMark'],
-        ['unknown', 'Not verified', 'Info'],
-        ['failed', 'Check failed', 'ErrorBadge'],
-        ['notSortable', 'Not sortable: SharePoint rejected sorting by this property.', 'Blocked']
+        ['verified', 'Refinable in schema snapshot', 'CheckMark'],
+        ['unknown', 'Not verified in schema snapshot', 'Info'],
+        ['failed', 'Schema snapshot check failed', 'ErrorBadge'],
+        ['notRefinable', 'Not refinable in schema snapshot', 'Blocked'],
+        ['notSortable', 'Not sortable in schema snapshot', 'Blocked']
     ])('shows the %s status as an accessible icon with a hover label', (status, label, icon) => {
         act(() => {
             const option = { key: 'Title', text: 'Title', data: status };

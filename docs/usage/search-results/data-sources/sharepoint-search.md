@@ -23,17 +23,6 @@ The _'SharePoint Search'_ data source retrieves items from the SharePoint search
 
 #### SharePoint sort checks
 
-Opening a sort field dropdown discovers additional managed properties and tests up to 100 candidate fields against a wildcard SharePoint Search query from the current site. Configured sort fields and selected properties are prioritized. Each field is tested in its own `SortList` request, with at most four field checks running concurrently. A rejected sort request also triggers one shared query without sorting to confirm that the underlying query works; this baseline is reused for the page session. The dropdowns share the results for the current property-pane configuration.
+Opening a sort field dropdown discovers additional managed properties and checks the suggestions against the bundled managed-property schema snapshot. Only properties with a displayed Sort flag are shown, with a green check mark labeled **Sortable in schema snapshot**. Properties absent from the snapshot, properties without that flag, and unchecked expressions or tokens are omitted. If the snapshot cannot be loaded, no suggestions are shown and details are logged in the browser console.
 
-For a particular field, add it to the sort configuration, then reopen the property pane. Configured sort fields get checked first.
-
-Saved field-name casing is preserved without losing check status. Successful and in-flight baseline requests are shared; failed baselines are retried by subsequent checks, so a temporary failure does not require reloading the page.
-
-Hover over the status icon for its label:
-
-- **Verified**: SharePoint accepted the sort request and returned a valid search response, even if there were no matching items.
-- **Not sortable: SharePoint rejected sorting by this property.**: SharePoint rejected the sort request with HTTP 400 while the same query without sorting succeeded. This identifies a rejected sort field, not an authoritative schema flag.
-- **Not checked**: the field was outside the check limit or could not be tested as a literal property name, for example a dynamic token.
-- **Check failed**: the request failed for another reason, the unsorted baseline failed, or a response was invalid. Permissions, throttling, and network errors are not classified as non-sortable properties. Failure details are logged in the browser console.
-
-These checks use the current user's search access, not the configured result source, query template, or filters. They are observations, not authoritative search schema settings or refiner checks. All suggestions remain selectable, and existing settings, manual field names, aliases, and dynamic tokens are preserved. If managed-property discovery fails, configured fields and built-in suggestions remain available. Microsoft Search sort settings are unchanged and do not use these SharePoint checks.
+The snapshot was captured from one tenant's managed-property list and is not a live check of the current tenant, site, aliases, or search results. Flags hidden in that list cannot be verified, so an omitted suggestion is not conclusive proof that it cannot be used. Existing settings and their casing are preserved, and manually entered names, aliases, and dynamic tokens are not blocked. If managed-property discovery fails, verified configured fields and built-in suggestions remain available. Microsoft Search sort settings are unchanged.

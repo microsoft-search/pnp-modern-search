@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Valitse kenttä",
-                RefinerCheckVerified: "Vahvistettu",
-                RefinerCheckUnknown: "Ei vahvistettu",
-                RefinerCheckFailed: "Tarkistus epäonnistui",
+                RefinerCheckVerified: "Suodatettavissa rakenteen tilannekuvan mukaan",
+                RefinerCheckUnknown: "Ei vahvistettu rakenteen tilannekuvassa",
+                RefinerCheckFailed: "Rakenteen tilannekuvan tarkistus epäonnistui",
+                RefinerCheckNotRefinable: "Ei suodatettavissa rakenteen tilannekuvan mukaan",
                 FilterNameLabel: "Suodatinkenttä",
                 FilterMaxBuckets: "# arvojen määrä",
                 FilterMaxBucketsWarning: "Arvojen enimmäismäärä on 1000",

@@ -33,9 +33,10 @@ define([], function () {
             },
             DataFilterCollection: {
                 SelectFilterComboBoxLabel: "Vybrat pole",
-                RefinerCheckVerified: "Ověřeno",
-                RefinerCheckUnknown: "Neověřeno",
-                RefinerCheckFailed: "Ověření selhalo",
+                RefinerCheckVerified: "Lze použít jako filtr podle snímku schématu",
+                RefinerCheckUnknown: "Neověřeno ve snímku schématu",
+                RefinerCheckFailed: "Ověření snímku schématu selhalo",
+                RefinerCheckNotRefinable: "Nelze použít jako filtr podle snímku schématu",
                 FilterNameLabel: "Filtrační pole",
                 FilterMaxBuckets: "Počet hodnot",
                 FilterMaxBucketsWarning: "Maximální počet hodnot je 1000",

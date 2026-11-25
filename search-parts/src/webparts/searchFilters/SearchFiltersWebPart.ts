@@ -61,7 +61,6 @@ import { HandlebarsCustomizationTracker } from '../../helpers/HandlebarsCustomiz
 import { PeoplePickerDomainHelper } from '../../helpers/PeoplePickerDomainHelper';
 import { IStaticPeopleFilterConfiguration } from './IStaticPeopleFilterConfiguration';
 import { BuiltinDataSourceProviderKeys, getCommonDefaultMaxBuckets } from '../../dataSources/AvailableDataSources';
-import { ISharePointSearchService } from '../../services/searchService/ISharePointSearchService';
 import MaxBucketsEditor from './components/MaxBucketsEditor';
 import { renderRefinerCheckOption } from './components/RefinerCheckOption';
 
@@ -1046,28 +1045,13 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
         const loadCheckedOptions = (): Promise<IComboBoxOption[]> => {
             if (!refinerCheck) {
                 refinerCheck = import(
-                    /* webpackChunkName: 'pnp-modern-search-refiner-check' */
-                    '../../services/searchService/SharePointSearchService'
+                    /* webpackChunkName: 'pnp-modern-search-managed-property-schema' */
+                    '../../helpers/ManagedPropertySchema'
                 )
-                    .then(({ SharePointSearchService }) =>
-                        this.context.serviceScope.consume<ISharePointSearchService>(SharePointSearchService.ServiceKey)
-                            .getRefinersWithValues(availableFieldOptionsFromResults.slice(0, 100).map(option => String(option.key)))
-                    )
-                    .then(result => {
-                        const verified = new Set(result.verified.map(name => name.toLowerCase()));
-                        const failed = new Set(result.failed.map(name => name.toLowerCase()));
-                        return availableFieldOptionsFromResults.map(option => ({
-                            ...option,
-                            data: verified.has(String(option.key).toLowerCase()) ? 'verified'
-                                : failed.has(String(option.key).toLowerCase()) ? 'failed' : 'unknown'
-                        }));
-                    })
+                    .then(({ checkRefinerSchemaOptions }) => checkRefinerSchemaOptions(availableFieldOptionsFromResults))
                     .catch(error => {
                         Log.error(LogSource, error instanceof Error ? error : new Error(String(error)), this.context.serviceScope);
-                        return availableFieldOptionsFromResults.map((option, index) => ({
-                            ...option,
-                            data: index < 100 && /^[a-zA-Z0-9_]+$/.test(String(option.key)) ? 'failed' : 'unknown'
-                        }));
+                        return [];
                     });
             }
             return refinerCheck;
@@ -1123,8 +1107,9 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                         React.createElement("div", { title: item[field.id] ? item[field.id] : '' },
                             React.createElement(AsyncCombo, {
                                 allowFreeform: true,
-                                availableOptions: availableFieldOptionsFromResults,
+                                availableOptions: checkRefiners ? [] : availableFieldOptionsFromResults,
                                 loadOptionsOnFirstOpen: checkRefiners,
+                                addUnlistedSingleValueToOptions: !checkRefiners,
                                 placeholder: webPartStrings.PropertyPane.DataFilterCollection.SelectFilterComboBoxLabel,
                                 textDisplayValue: item[field.id] ? item[field.id] : '',
                                 defaultSelectedKey: item[field.id] ? item[field.id] : '',

@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Bewerk sorteervolgorde",
                     SortInvalidSortableFieldMessage: "Deze eigenschap kan niet worden gesorteerd",
                     SortFieldColumnPlaceholder: "Selecteer veld...",
-                    SortCheckVerified: "Geverifieerd",
-                    SortCheckFailed: "Controle mislukt",
-                    SortCheckNotSortable: "Niet sorteerbaar: SharePoint heeft sorteren op deze eigenschap geweigerd.",
+                    SortCheckVerified: "Sorteerbaar volgens momentopname van het schema",
+                    SortCheckFailed: "Controle van momentopname van het schema mislukt",
+                    SortCheckNotSortable: "Niet sorteerbaar volgens momentopname van het schema",
                     SortCheckUnknown: "Niet gecontroleerd"
                 }
             }

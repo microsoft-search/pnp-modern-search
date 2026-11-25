@@ -243,7 +243,9 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
                     }
 
                     const newOption: IComboBoxOption = { key: value, text: value };
-                    let options = update(this.state.options, {$push: [newOption] });
+                    let options = this.props.addUnlistedSingleValueToOptions === false
+                        ? [...this.state.options]
+                        : update(this.state.options, {$push: [newOption] });
 
                     options = this.sortOptions(options);
 
@@ -383,7 +385,8 @@ export class AsyncCombo extends React.Component<IAsyncComboProps, IAsyncComboSta
 
                 if (!this.props.allowMultiSelect) {
                     
-                    if (options.filter(e => { return e.key === this.props.defaultSelectedKey; }).length === 0) {
+                    if (this.props.addUnlistedSingleValueToOptions !== false
+                        && options.filter(e => { return e.key === this.props.defaultSelectedKey; }).length === 0) {
                         options.push({
                             key: this.props.defaultSelectedKey,
                             text: this.props.textDisplayValue ? this.props.textDisplayValue : this.props.defaultSelectedKey as string

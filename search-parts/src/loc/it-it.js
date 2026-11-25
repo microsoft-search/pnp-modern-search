@@ -200,9 +200,9 @@ define([], function () {
                     EditSortLabel: "Modifica impostazioni di ordinamento",
                     SortInvalidSortableFieldMessage: "Questa proprietà non è ordinabile",
                     SortFieldColumnPlaceholder: "Seleziona campo…",
-                    SortCheckVerified: "Verificato",
-                    SortCheckFailed: "Verifica non riuscita",
-                    SortCheckNotSortable: "Non ordinabile: SharePoint ha rifiutato l'ordinamento per questa proprietà.",
+                    SortCheckVerified: "Ordinabile nell'istantanea dello schema",
+                    SortCheckFailed: "Verifica dell'istantanea dello schema non riuscita",
+                    SortCheckNotSortable: "Non ordinabile nell'istantanea dello schema",
                     SortCheckUnknown: "Non verificato"
                 }
             }

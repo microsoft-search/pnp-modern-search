@@ -201,9 +201,9 @@ define([], function () {
                     EditSortLabel: "Edytuj porządek sortowania",
                     SortInvalidSortableFieldMessage: "Ta właściwość nie jest sortowalna",
                     SortFieldColumnPlaceholder: "Wybierz pole...",
-                    SortCheckVerified: "Zweryfikowano",
-                    SortCheckFailed: "Sprawdzanie nie powiodło się",
-                    SortCheckNotSortable: "Nie można sortować: SharePoint odrzucił sortowanie według tej właściwości.",
+                    SortCheckVerified: "Można sortować według migawki schematu",
+                    SortCheckFailed: "Sprawdzanie migawki schematu nie powiodło się",
+                    SortCheckNotSortable: "Nie można sortować według migawki schematu",
                     SortCheckUnknown: "Nie sprawdzono"
                 }
             }
