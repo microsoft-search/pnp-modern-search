@@ -34,7 +34,7 @@ jest.mock('../controls/PropertyPaneNonReactiveTextField/PropertyPaneNonReactiveT
 jest.mock('../helpers/DataFilterHelper', () => ({}));
 jest.mock('../helpers/EnumHelper', () => ({}));
 jest.mock('./AvailableDataSources', () => ({ BuiltinDataSourceProviderKeys: {}, DEFAULT_SHAREPOINT_SEARCH_MAX_BUCKETS: 100 }));
-jest.mock('../common/Constants', () => ({ AutoCalculatedDataSourceFields: {}, SortableFields: {} }));
+jest.mock('../common/Constants', () => ({ AutoCalculatedDataSourceFields: {}, SortableFields: ['Author', 'Created', 'FileType'] }));
 jest.mock('../helpers/ObjectHelper', () => ({}));
 jest.mock('../layouts/AvailableTemplates', () => ({ BuiltinFilterTemplates: {} }));
 jest.mock('../styles/Common.module.scss', () => ({}));
@@ -48,14 +48,14 @@ jest.mock('@microsoft/sp-lodash-subset', () => ({
 import { SharePointSearchDataSource } from './SharePointSearchDataSource';
 
 describe('SharePointSearchDataSource sort suggestions', () => {
-    function createDataSource(getAvailableManagedProperties: jest.Mock): SharePointSearchDataSource {
+    function createDataSource(getAvailableManagedProperties: jest.Mock, cachedFields = [{ key: 'Created', text: 'Created' }]): SharePointSearchDataSource {
         const source: SharePointSearchDataSource = Object.create(SharePointSearchDataSource.prototype);
         Object.defineProperties(source, {
             properties: { value: {
                 sortList: [{ sortField: 'CustomAlias' }, { sortField: '{QueryString.sort}' }],
                 selectedProperties: ['Title', 'TITLE', 'FileType', 'Author']
             } },
-            _sortableFields: { value: [{ key: 'Created', text: 'Created' }] },
+            _sortableFields: { value: cachedFields },
             _sharePointSearchService: { value: { getAvailableManagedProperties } }
         });
         return source;
@@ -101,6 +101,16 @@ describe('SharePointSearchDataSource sort suggestions', () => {
             'Author', 'Created'
         ]);
         expect(options.find(option => option.key === 'Author')).toMatchObject({ data: 'verified' });
+    });
+
+    it('recovers verified built-in suggestions after an empty cache when discovery fails', async () => {
+        const source = createDataSource(jest.fn().mockRejectedValue(new Error('HTTP 403')), []);
+        source.properties.sortList = [];
+        source.properties.selectedProperties = [];
+
+        const options = await source['getCheckedSortFields']();
+        expect(options.map(option => option.key)).toEqual(['Author', 'Created']);
+        expect(options.every(option => option.data === 'verified')).toBe(true);
     });
 });
 

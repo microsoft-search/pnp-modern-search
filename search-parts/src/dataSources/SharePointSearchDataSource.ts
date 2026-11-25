@@ -972,7 +972,8 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
             ...(this.properties.sortList || []).map(sort => sort.sortField),
             ...(this.properties.selectedProperties || []),
             ...discovered,
-            ...this._sortableFields.map(option => String(option.key))
+            ...this._sortableFields.map(option => String(option.key)),
+            ...SortableFields
         ];
         const seen = new Set<string>();
         const options: IComboBoxOption[] = fields.filter(field => {
