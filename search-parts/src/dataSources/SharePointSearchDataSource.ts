@@ -449,6 +449,10 @@ export class SharePointSearchDataSource extends BaseDataSource<ISharePointSearch
                                             availableOptions: [],
                                             loadOptionsOnFirstOpen: true,
                                             addUnlistedSingleValueToOptions: false,
+                                            stateKey: JSON.stringify([
+                                                this.properties.selectedProperties,
+                                                this.properties.sortList?.map(sort => sort.sortField)
+                                            ]),
                                             onLoadOptions: () => loadCheckedSortOptions()
                                                 .then(options => this.getSortOptionsForRow(options, selectedField)),
                                             onRenderOption: (option, defaultRender) => renderCheckOption(option, {

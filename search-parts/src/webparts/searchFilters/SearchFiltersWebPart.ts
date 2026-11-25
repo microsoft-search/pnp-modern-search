@@ -1110,6 +1110,7 @@ export default class SearchFiltersWebPart extends BaseWebPart<ISearchFiltersWebP
                                 availableOptions: checkRefiners ? [] : availableFieldOptionsFromResults,
                                 loadOptionsOnFirstOpen: checkRefiners,
                                 addUnlistedSingleValueToOptions: !checkRefiners,
+                                stateKey: checkRefiners ? JSON.stringify(availableFieldOptionsFromResults) : undefined,
                                 placeholder: webPartStrings.PropertyPane.DataFilterCollection.SelectFilterComboBoxLabel,
                                 textDisplayValue: item[field.id] ? item[field.id] : '',
                                 defaultSelectedKey: item[field.id] ? item[field.id] : '',
